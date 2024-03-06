@@ -20,7 +20,7 @@ on:
 jobs:
   docs-build:
 
-    runs-on: self-hosted
+    runs-on: ubuntu
 
     steps:
     - uses: actions/checkout@v3
