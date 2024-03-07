@@ -34,7 +34,8 @@ RUN npm run build
 
 ## Deploy ######################################################################
 # Use a stable nginx image
-FROM nginx:stable-alpine as deploy
+FROM nginx:mainline-alpine3.18 as deploy
+RUN apk add expat=2.6.0-r0
 WORKDIR /home/node/app
 # Copy what we've installed/built from production
 COPY --from=production /home/node/app/build /usr/share/nginx/html/
