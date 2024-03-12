@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 ---
-# On-Prem Installation
+# Installation
 
 ### Requirements
 Before installing the nudgebee Server, make sure you have the following prerequisites:
