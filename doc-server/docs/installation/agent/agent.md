@@ -17,7 +17,7 @@ Nugdebee Agent runs on customer Kuberetes cluster. Main component is Runner whic
 - Filters and processes events based on predefined criteria.
 - Forwards relevant events to the Runner component.
 
-### [Node Agent](https://github.com/coroot/coroot-node-agent) - Network Metrics Collection using eBPF
+### [Node Agent](https://github.com/nudgebee/node-agent) - Network Metrics Collection using eBPF
 The Node Agent is responsible for collecting network metrics on each Kubernetes node using eBPF (Extended Berkeley Packet Filter) and publishing them to Prometheus for further analysis.
 
 *eBPF Probe​*
