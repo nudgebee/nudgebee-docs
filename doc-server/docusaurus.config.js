@@ -57,16 +57,10 @@ const config = {
       navbar: {
         title: 'Nudgebee',
         logo: {
-          alt: 'My Site Logo',
+          alt: 'Nudgebee Logo',
           src: 'img/logo.svg',
         },
         items: [
-          {
-            type: 'docSidebar',
-            sidebarId: 'datasourceSidebar',
-            position: 'left',
-            label: 'Data Sources',
-          }
         ],
       },
       footer: {
