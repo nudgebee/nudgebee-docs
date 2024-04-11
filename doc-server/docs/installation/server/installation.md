@@ -13,22 +13,23 @@ Before installing the nudgebee Server, make sure you have the following prerequi
 - Install [Helm](https://helm.sh/docs/intro/install/).
 - Nudgebee License Keys
 
-### Permissions
-TBD
-
 ### Installation Steps
 Follow these steps to install the nudgebee server using Helm:
 
 #### Helm Registry Login
-
 ```shell
 helm registry login https://registry.nudgebee.com --username nudgebee --password $NUDGEBEE_LICENSE_KEY
 ```
 
 #### Install Nudgebee
-
+To install latest nudgebee version 
 ```shell
-helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee --version $CHART_VERSION -f values.yaml  --install --namespace nudgebee --wait --kube-context $KUBE_CONTEXT
+helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee -f values.yaml  --install --namespace nudgebee --create-namespace --wait --kube-context $KUBE_CONTEXT
+```
+
+If you want to install specific version of nudgebee then please use below helm command
+```shell
+helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee --version $CHART_VERSION -f values.yaml  --install --namespace nudgebee --create-namespace --wait --kube-context $KUBE_CONTEXT
 ```
 
 ##### Sample Values File
@@ -68,9 +69,37 @@ app:
     annotations: 
       cert-manager.io/issuer: cert-letsencrypt-issuer
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+k8s-collector:
+  ingress:
+    enabled: false
+    hosts:
+      - host: "<Nudgebee collector Base Domain>"
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: nudgebee-tls
+        hosts:
+        - "<Nudgebee Base Domain>"
+    annotations: 
+      cert-manager.io/issuer: cert-letsencrypt-issuer
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+relay-server:
+  ingress:
+    enabled: false
+    hosts:
+      - host: "<Nudgebee relay Base Domain>"
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: nudgebee-tls
+        hosts:
+        - "<Nudgebee Base Domain>"
+    annotations: 
+      cert-manager.io/issuer: cert-letsencrypt-issuer
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 ```
-
-
 
 #### Uninstall Nudgebee
 
