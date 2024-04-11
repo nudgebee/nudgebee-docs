@@ -32,15 +32,15 @@ jobs:
         cache: 'npm'
         cache-dependency-path: ./doc-server/package-lock.json
 
-    - name: Run NPM install
+    - name: Run NPM install --legacy-peer-deps
       working-directory: ./doc-server
       run: |
-        npm install
+        npm install --legacy-peer-deps
 
-    - name: Run NPM build
+    - name: Run NPM build --legacy-peer-deps
       working-directory: ./doc-server
       run: |
-        npm run build
+        npm run build --legacy-peer-deps
 
     - name: Run NPM lint
       working-directory: ./doc-server

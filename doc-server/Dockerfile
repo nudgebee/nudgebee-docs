@@ -16,7 +16,7 @@ COPY --chown=node:node . /home/node/app/
 FROM base as development
 WORKDIR /home/node/app
 # Install (not ci) with dependencies, and for Linux vs. Linux Musl (which we use for -alpine)
-RUN npm install
+RUN npm install --legacy-peer-deps
 # Switch to the node user vs. root
 USER node
 # Expose port 3000
@@ -30,7 +30,7 @@ FROM base as production
 WORKDIR /home/node/app
 COPY --from=development /home/node/app/node_modules /home/node/app/node_modules
 # Build the Docusaurus app
-RUN npm run build
+RUN npm run build --legacy-peer-deps
 
 ## Deploy ######################################################################
 # Use a stable nginx image
