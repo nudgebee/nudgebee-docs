@@ -22,7 +22,8 @@ Follow these steps to install the nudgebee agent:
 
 #### Generate nudgebee Agent Keys
 
-Log in to [nudgebee](https://app.nudgebee.com), go to your account settings, and then click "Add Account." Select "K8s" and provide the required details. Use the generated keys in the commands below.
+Log in to [nudgebee](https://app.nudgebee.com), click on kubernetes option on left side menu, and then click "Connect cluster.". Provide name for cluster which can be idetified Use the generated keys in the commands below.
+
 #### Installation using shell script 
 Use below command to install agent with dependent installation. Below script will auto detect  
 
@@ -37,7 +38,7 @@ Install agent using below steps
 Use the following command to install Prometheus:
 
 ```shell
-helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-stack -n nudgebee-agent --create-namespace --set nodeExporter.enabled=false --set pushgateway.enabled=false --set alertmanager.enabled=false --set kubeStateMetrics.enabled=true -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
+helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-stack -n nudgebee-agent --create-namespace --set nodeExporter.enabled=false --set pushgateway.enabled=false --set alertmanager.enabled=true --set kubeStateMetrics.enabled=true -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
 ```
 
 ##### 2. Add Prometheus ScrapeConfig (if not already installed)
@@ -63,3 +64,29 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent  --namespace
 ```
 
 Make sure to replace `<NUDBGEE_AUTH_KEY>` and `<prometheus_url>` with the appropriate values.
+
+
+### Install Agent on premise instance
+
+ If you are using nudgebee on-premise instance then you will need to update url params of agent, Please refer to below sample values file. 
+
+ ```yaml
+runner:
+  relay_address: "wss://{relay-server-url}/register"
+  nudgebee: 
+    auth_secret_key: "{agent_keys}"
+    endpoint: "https://{collector-server-url}/"
+
+existingPrometheus:
+  url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+
+opencost:
+  opencost:
+    prometheus:
+      external:
+        url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+ ```
+
+ ```shell
+ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent  --namespace nudgebee-agent --create-namespace -f values.yaml
+ ```
