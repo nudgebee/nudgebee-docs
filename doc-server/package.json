@@ -29,7 +29,7 @@
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.2.1",
     "@tsconfig/docusaurus": "^2.0.2",
-    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "@typescript-eslint/eslint-plugin": "^7.6.0",
     "@typescript-eslint/parser": "^5.46.0",
     "concurrently": "^8.2.2",
     "eslint": "^9.0.0",
