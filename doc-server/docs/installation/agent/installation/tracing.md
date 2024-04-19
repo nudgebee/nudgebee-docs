@@ -39,7 +39,7 @@ ClickHouse serves as the storage backend for the collected tracing data. It is a
 
 ## Installation
 By default tracing is disabled, To enable traces collection add below config in values.yaml
-```
+```yaml
 runner:
   clickhouse_enabled: true
 
