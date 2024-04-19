@@ -73,6 +73,7 @@ Make sure to replace `<NUDBGEE_AUTH_KEY>` and `<prometheus_url>` with the approp
  ```yaml
 runner:
   relay_address: "wss://{relay-server-url}/register"
+  clickhouse_enabled: true
   nudgebee: 
     auth_secret_key: "{agent_keys}"
     endpoint: "https://{collector-server-url}/"
@@ -85,6 +86,12 @@ opencost:
     prometheus:
       external:
         url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+
+nodeAgent:
+  enabled: true
+
+opentelemetry-collector:
+  enabled: true
  ```
 
  ```shell

@@ -60,7 +60,7 @@ Yes, we use ZAP for our security testing, and can share reports based on request
 Yes, configure agents on each targeted cluster.
 
 ### What are different Nudgebee Distributions ?
-NudgeBee has both SaaS and On-Prem Solutions. As an end-user you can use SaaS solution to quickly validate/test product and On-Prem solution for long-term deployment (if there are compliance constraints which don't allow any kind of data movement)
+NudgeBee has both SaaS and Self-Hosted Solutions. As an end-user you can use SaaS solution to quickly validate/test product and Self-Hosted solution for long-term deployment (if there are compliance constraints which don't allow any kind of data movement)
 
 ### What is Nudgebee Release Cycle ?
 We target to have a weekly release cycle with Hotfixes as per requirements. We follow SemVer for our versioning.
