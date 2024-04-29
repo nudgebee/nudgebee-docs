@@ -13,7 +13,9 @@ If Loki is deployed as external service then need to provide external Loki URL a
 
 ```yaml
 runner:
-  loki_url: "http://loki:3100"
-  loki_username: "loki"
-  loki_password: "loki"
+  loki:
+    url: "http://loki:3100"
+    user: ""
+    password: ""
+    headers: "a:b;c:d"
 ```
