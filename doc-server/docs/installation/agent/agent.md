@@ -56,3 +56,9 @@ Nudgebee Currently uses Krr for Generating Usage related recommendation
 Nudgebee Currently uses Popeye for generating Best Practices related recommendation
 
 [Prometheus](https://github.com/prometheus/prometheus) (Or [VictoriaMetrics](https://victoriametrics.com/)) - Metrics Collection and alerting
+
+
+## Network Requirements
+- Installer requires access to `registry.nudgebee.com` and `https://nudgebee.github.io/k8s-agent/` to pull docker images
+- Agents connect to Collector/Relay Servers over Websockt and Http, so both the protocols should be allowed
+- Agent (OpenCost) collect pricing data from CloudProviders like AWS/Azure etc, so pricing endpoints should be enabled
