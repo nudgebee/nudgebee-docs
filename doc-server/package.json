@@ -28,11 +28,11 @@
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.2.1",
-    "@tsconfig/docusaurus": "^2.0.2",
-    "@typescript-eslint/eslint-plugin": "^7.6.0",
+    "@tsconfig/docusaurus": "^2.0.3",
+    "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^5.46.0",
     "concurrently": "^8.2.2",
-    "eslint": "^9.0.0",
+    "eslint": "^9.1.0",
     "typescript": "^5.4.5"
   },
   "browserslist": {
