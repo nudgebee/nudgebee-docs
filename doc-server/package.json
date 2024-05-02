@@ -21,9 +21,9 @@
     "@docusaurus/preset-classic": "3.2.1",
     "@mdx-js/react": "^3.0.1",
     "axios": "^1.6.8",
-    "clsx": "^2.1.0",
+    "clsx": "^2.1.1",
     "prism-react-renderer": "^2.3.1",
-    "react": "^18.2.0",
+    "react": "^18.3.1",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
@@ -32,7 +32,7 @@
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^5.46.0",
     "concurrently": "^8.2.2",
-    "eslint": "^9.1.0",
+    "eslint": "^9.1.1",
     "typescript": "^5.4.5"
   },
   "browserslist": {
