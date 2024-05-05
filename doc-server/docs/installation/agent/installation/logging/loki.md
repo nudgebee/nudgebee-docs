@@ -1,10 +1,9 @@
 ---
 sidebar_position: 2
 ---
-# Logging
-
+# Loki
 ## Overview
-Nudgebee support integration with Loki and provies UI iterface to view logs data using Loki query format. 
+If you have existing loki instance you can integrate using below config
 
 ## Installation
 By default nudgebee auto discovers Loki if agent is installed in same cluster as Loki. 
@@ -17,5 +16,5 @@ runner:
     url: "http://loki:3100"
     user: ""
     password: ""
-    headers: "a:b;c:d"
+    headers: "X-Scope-OrgID:tenant1"
 ```
