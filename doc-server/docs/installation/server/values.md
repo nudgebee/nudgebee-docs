@@ -3,8 +3,6 @@ sidebar_position: 2
 ---
 # Helm values
 
-![Version: 0.2](https://img.shields.io/badge/Version-0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: V0.2](https://img.shields.io/badge/AppVersion-V0.2-informational?style=flat-square)
-
 ## Values
 
 | Key | Type | Default | Description |
