@@ -5,7 +5,7 @@ sidebar_position: 2
 ## Overview
 If you have existing ELK stack you can integrate using below config
 
-## Installation
+## Nudgebee Agent Configuration
 By default ELK stack flag is disabled and to enabled same and provide config use below config
 
 1. Generate api key using steps mentioned in [documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html)
@@ -14,15 +14,15 @@ A successful call returns a JSON structure that provides API key information.
     "id": "VuaCfGcBCdbkQm-e5aOx",        
     "name": "my-api-key",
     "expiration": 1544068612110,         
-    "api_key": "ui2lp2axTNmsyakw9tvNnw", 
-    "encoded": "VnVhQ2ZHY0JDZGJrUW0tZTVhT3g6dWkybHAyYXhUTm1zeWFrdzl0dk5udw=="  
+    "api_key": "xxxxxxxxxx", 
+    "encoded": "xxxxxxx=="  
   }
 ```
 
 2. On a Unix-like system, the encoded value can be created with the following command:
-
+replace id and api_key from above
 ```bash
- echo -n "VuaCfGcBCdbkQm-e5aOx:ui2lp2axTNmsyakw9tvNnw" | base64 
+ echo -n "<id>:<api_key>" | base64 
  ```
 3. Use above generated keys as apiKey in below agent values config
 
