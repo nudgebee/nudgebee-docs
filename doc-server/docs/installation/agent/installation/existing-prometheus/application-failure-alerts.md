@@ -5,5 +5,5 @@ If Prometheus is already installed, add the scrapeConfig using the preferred mea
 If installed using helm then below command can be used
 
 ```shell
- helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-stack -n $namespace -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
+ helm upgrade $name prometheus-community/kube-prometheus-stack -n $namespace -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
 ```
