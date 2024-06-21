@@ -24,10 +24,10 @@ The following user inputs are required to configure the Execute Image action:
    - **Optional**: Specify any arguments to be passed to the container image.
 
 6. **Service Account**:
-   - **Optional**: Provide the service account to be used by the image pod.
+   - **Optional**: Provide the service account to be used by the image pod. If not provided, the pod will use the same service account as the Nudgebee agent.
 
 7. **Namespace**:
-   - **Optional**: Specify the namespace in which the image pod should be deployed.
+   - **Optional**: Specify the namespace in which the image pod should be deployed. If not provided, the pod will run in the same namespace as the Nudgebee agent.
 
 8. **Environment Variables**:
    - **Optional**: Provide any environment variables to be set in the image pod.
@@ -55,10 +55,10 @@ The Execute Image action interface provides a versatile way to run custom contai
   - Optionally, specify any command-line arguments to be passed to the container image. These arguments can modify the behavior of the container.
 
 - **Service Account**:
-  - Optionally, provide a service account for the image pod. This service account will be used to control permissions and access within the Kubernetes cluster.
+  - Optionally, provide a service account for the image pod. If not provided, the pod will use the same service account as the Nudgebee agent. This service account will be used to control permissions and access within the Kubernetes cluster.
 
 - **Namespace**:
-  - Optionally, specify the namespace in which the image pod should be deployed. This helps in organizing resources within the cluster.
+  - Optionally, specify the namespace in which the image pod should be deployed. If not provided, the pod will run in the same namespace as the Nudgebee agent. This helps in organizing resources within the cluster.
 
 - **Environment Variables**:
   - Optionally, provide environment variables to be set in the image pod. These variables can be used to configure the container’s runtime behavior.
@@ -73,6 +73,7 @@ This action allows users to leverage the full power of containerization to run c
 
 - **Security**: Ensure that the images and secrets used are from trusted sources to avoid security vulnerabilities.
 - **Accessibility**: Make sure that the specified image is accessible to the Kubernetes cluster, either by hosting it in a public registry or ensuring proper authentication for private registries.
+- **Default Namespace and Service Account**: If not specified, the image pod will run in the same namespace and use the same service account as the Nudgebee agent.
 
 ---
 
