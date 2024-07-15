@@ -1,4 +1,4 @@
-# Vertical Rightsize
+# Action: Vertical Rightsize
 
 ## Overview
 
