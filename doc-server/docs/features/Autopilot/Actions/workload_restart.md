@@ -1,4 +1,4 @@
-# Action - Restart Workload Gracefully
+# Action: Restart Workload Gracefully
 
 The "Restart Workload Gracefully" action is designed to restart the specified Kubernetes workloads gracefully. This action ensures that the workloads are restarted without causing any disruption or downtime.
 
