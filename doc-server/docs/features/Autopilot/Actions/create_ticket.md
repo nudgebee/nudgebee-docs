@@ -1,5 +1,4 @@
-
-# Create Ticket Action
+# Action: Create Ticket Action
 
 ## Overview
 The Create Ticket action allows users to create tickets for integrations like Jira or GitHub Issues based on a predefined template. This action helps in automating the process of ticket creation for resource monitoring and issue tracking.

@@ -1,4 +1,4 @@
-# Action - Resource Scalar
+# Action: Resource Scalar
 
 The "Resource Scalar" action allows users to downscale resources for a specified time window.
 
