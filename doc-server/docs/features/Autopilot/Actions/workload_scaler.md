@@ -1,6 +1,6 @@
-# Action: Resource Scalar
+# Action: Resource Scaler
 
-The "Resource Scalar" action allows users to downscale resources for a specified time window.
+The "Resource Scaler" action allows users to downscale resources for a specified time window.
 
 ## Description
 
