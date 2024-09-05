@@ -1,6 +1,6 @@
-# Action: Resource Scalar
+# Action: Resource Scaler
 
-The "Resource Scalar" action allows users to downscale resources for a specified time window.
+The "Resource Scaler" action allows users to downscale resources for a specified time window.
 
 ## Description
 
@@ -20,11 +20,16 @@ Users can specify the number of replicas to downscale to during the specified ti
 ## Example Usage
 
 1. **Night Time Downscale**:
-    - Scale Down Cron Expression: `0 0 * * *` (Every night at 12 AM)
-    - Scale Up Cron Expression: `0 7 * * *` (Every morning at 7 AM)
+    - Scale Down Cron Expression: `0 0 * * *` (Every night at 12 AM UTC)
+    - Scale Up Cron Expression: `0 7 * * *` (Every morning at 7 AM UTC)
     - Scale Down Replica: `0` (Set replicas to 0)
+    - Remember to change UTC time to your local time while configuration
+        
+        ex:- If user is in IST(Indian standard time) 
+        the above cron will change accordingly.
+        apply 30 18 * * * to get same effect as 12:00 am (IST)
 
 2. **Sunday Downscale**:
-    - Scale Down Cron Expression: `0 0 * * 0` (Every Sunday at 12 AM)
-    - Scale Up Cron Expression: `0 7 * * 1` (Every Monday at 7 AM)
+    - Scale Down Cron Expression: `0 0 * * 0` (Every Sunday at 12 AM UTC)
+    - Scale Up Cron Expression: `0 7 * * 1` (Every Monday at 7 AM UTC)
     - Scale Down Replica: `1` (Set replicas to 1)
