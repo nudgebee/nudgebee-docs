@@ -4,6 +4,38 @@
 
 The VerticalRightsize action in the Kubernetes Automation Tool allows you to scale the CPU and memory resources of a Kubernetes workload either up or down. This action ensures that your workloads have the optimal resource allocations based on their performance needs.
 
+## Video tutorial
+
+<div style={{position: "relative",paddingBottom: "55.625%", height: 0}}><iframe src="https://www.loom.com/embed/0f14df28cf654cbaab61837609b469cb?sid=52f84126-0994-41a6-9f3b-f5bdf6a2da8a" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
+
+## Steps to create
+
+1. Creating a New Runbook
+
+   - Accessing the autopilot app.
+   - Choosing between event type triggers and schedule type triggers.
+
+2. Setting Up a Test Case
+
+   - Objective: Increase memory by 10% in case of an out of memory event.
+   - Selecting namespace and workload.
+   - Choosing the event trigger for out of memory events.
+
+3. Configuring the Action
+
+   - Selecting "right size CPU and memory" action.
+   - Options to change memory, CPU, or both.
+   - Choosing to increase memory by 10% with a maximum limit.
+   - Option to remove the limit for CPU when the trigger occurs.
+
+4. Naming and Creating the Runbook
+
+   - Naming the runbook and creating it.
+
+5. Functionality of the Runbook
+
+   - Whenever an out of memory event occurs for the selected workloads, the runbook will automatically increase memory by 10%.
+
 ## User Inputs
 
 The following user inputs are required to configure the VerticalRightsize action:
