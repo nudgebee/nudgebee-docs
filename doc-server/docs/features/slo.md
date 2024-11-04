@@ -1,3 +1,9 @@
+---
+sidebar_position: 10
+---
+# SLO
+
+
 ## Service Level Objective (SLO)
 
 An SLO is a target value or range of values for a service level that is measured by one or more Service Level Indicators (SLIs). It represents the desired level of performance for a specific aspect of a service, typically expressed as a percentage or time duration over a given period.
