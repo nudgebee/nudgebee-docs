@@ -17,7 +17,7 @@
     "lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .tsx --fix"
   },
   "dependencies": {
-    "@docusaurus/core": "3.5.2",
+    "@docusaurus/core": "3.6.1",
     "@docusaurus/preset-classic": "3.5.2",
     "@mdx-js/react": "^3.1.0",
     "axios": "^1.7.7",
