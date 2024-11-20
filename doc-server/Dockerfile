@@ -35,7 +35,7 @@ RUN npm run build --legacy-peer-deps
 ## Deploy ######################################################################
 # Use a stable nginx image
 FROM nginx:mainline-alpine3.18 as deploy
-RUN apk add expat=2.6.3-r0
+RUN apk add expat=2.6.4-r0
 WORKDIR /home/node/app
 # Copy what we've installed/built from production
 COPY --from=production /home/node/app/build /usr/share/nginx/html/
