@@ -11,10 +11,10 @@ const config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://nudgebee.pollux.in/',
+  url: 'https://app.nudgebee.com/',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/help/',
+  baseUrl: '/',
   trailingSlash: true,
 
   // GitHub pages deployment config.
