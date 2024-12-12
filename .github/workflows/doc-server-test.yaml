@@ -70,7 +70,9 @@ jobs:
     - name: Setup Kubectl Context
       if: github.ref == 'refs/heads/test'
       run: |
-        aws eks update-kubeconfig --region us-east-1 --name nudgebee-dev
+        mkdir ${HOME}/.kube
+        echo ${{ secrets.CIVO_KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
+        chmod 400 ${HOME}/.kube/config
 
     - name: Authorize AWS to Docker Push
       if: github.ref == 'refs/heads/test'
@@ -91,4 +93,4 @@ jobs:
       if: github.ref == 'refs/heads/test'
       working-directory: ./deploy/kubernetes
       run: |-
-        helm upgrade nudgebee-doc -f docs/values-test.yaml  ./docs --install --set image.tag=$IMAGE_TAG  --timeout 3600s  --namespace nudgebee-test --kube-context 'arn:aws:eks:us-east-1:280501305789:cluster/nudgebee-dev'
+        helm upgrade nudgebee-doc -f docs/values-test.yaml  ./docs --install --set image.tag=$IMAGE_TAG  --timeout 3600s  --namespace nudgebee-test

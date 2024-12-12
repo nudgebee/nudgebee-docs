@@ -5,7 +5,7 @@ serverPort: 80
 
 image:
   # -- Name of the image repository to pull the container image from.
-  repository: 280501305789.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs-test
+  repository: registry.dev.nudgebee.pollux.in/nudgebee-docs-test
   # -- [Image pull policy](https://kubernetes.io/docs/concepts/containers/images/#updating-images) for updating already existing images on a node.
   pullPolicy: IfNotPresent
   # -- Overrides the image tag whose default is the chart appVersion.
@@ -56,27 +56,20 @@ service:
   annotations: {}
 
 ingress:
-  # -- Enable [ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/).
-  enabled: false
-  # -- Ingress [class name](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class).
-  className: ""
-  # -- Annotations to be added to the ingress.
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  # -- Ingress host configuration.
-  # @default -- See [values.yaml](values.yaml).
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/issuer: cert-letsencrypt-issuer
+    nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
   hosts:
-    - host: docs-example.local
+    - host: docs.test.nudgebee.pollux.in
       paths:
         - path: /
           pathType: ImplementationSpecific
-  # -- Ingress TLS configuration.
-  # @default -- See [values.yaml](values.yaml).
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - hasura-example.local
+  tls:
+    - secretName: nudgebee-test-docs-pollux-tls
+      hosts:
+        - docs.test.nudgebee.pollux.in
 
 # -- Container resource [requests and limits](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/).
 # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources) for details.
