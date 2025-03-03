@@ -4,15 +4,17 @@ sidebar_position: 2
 
 # Agent
 
+The Nudgebee agent is a software component that runs within a customer's Kubernetes cluster. It collects data about performance bottlenecks, and security, and sends it back to the Nudgebee server for analysis. This agent needs to be installed in every cluster that needs to be monitored.
+
 ## Architecture
 
-Nugdebee Agent runs on customer Kuberetes cluster. Main component is Runner which works as central controller which collects data from different components and communicates with Nudgebee Server over HTTP and Websocket
+The Nudgebee Agent runs within the customer's Kubernetes cluster. The main component is the Runner, which acts as a central controller, collecting data from various components and communicating with the Nudgebee Server over HTTP and Websocket.
 
 ![Agent Architecture](/img/nb_agent_architecture.png)
 
 ## Components
 
-### [Event Watcher](https://github.com/robusta-dev/kubewatch)​ - Watch for K8s events and Forward to Runner​
+### [Event Watcher (Forwarder)](https://github.com/robusta-dev/kubewatch) - Watch for K8s events and Forward to Runner
 - Monitors Kubernetes events using the Kubernetes API server.
 - Filters and processes events based on predefined criteria.
 - Forwards relevant events to the Runner component.
@@ -20,28 +22,28 @@ Nugdebee Agent runs on customer Kuberetes cluster. Main component is Runner whic
 ### [Node Agent](https://github.com/nudgebee/node-agent) - Network Metrics Collection using eBPF
 The Node Agent is responsible for collecting network metrics on each Kubernetes node using eBPF (Extended Berkeley Packet Filter) and publishing them to Prometheus for further analysis.
 
-*eBPF Probe​*
-- Attaches eBPF probes to key networking events, such as packet transmissions and receptions.
-- Captures relevant metrics, including latency, throughput, and error rates.
+- eBPF Probe
+  - Attaches eBPF probes to key networking events, such as packet transmissions and receptions.
+  - Captures relevant metrics, including latency, throughput, and error rates.
 
-*Metric Publisher​*
-- Aggregates collected metrics.
-- Publishes metrics to Prometheus for centralised monitoring.
-- Checks for Application Errors(Logs/Apis) and publishes to prometheus
+- Metric Publisher
+  - Aggregates collected metrics.
+  - Publishes metrics to Prometheus for centralized monitoring.
+  - Detects Application Errors (Logs and API Errors) and publishes these metrics to Prometheus.
 
-### [Runner](https://github.com/nudgebee/nudgebee-agent) - Discovery and Communication with Nudgebee Server​
-The Runner component facilitates the discovery of Kubernetes cluster workloads and communicates with the Nudgebee server for workload synchronisation.
+### [Runner](https://github.com/nudgebee/nudgebee-agent) - Discovery and Communication with Nudgebee Server
+The Runner component facilitates the discovery of Kubernetes cluster workloads and communicates with the Nudgebee server for workload synchronization.
 
-Workload Discovery​
-- Utilises Kubernetes API to discover running workloads within the cluster.
-- Periodically updates the list of workloads.
+- Workload Discovery
+  - Uses the Kubernetes API to discover running workloads within the cluster.
+  - Periodically updates the list of workloads.
 
-Communication with Nudgebee​
-- Establishes a secure connection with the Nudgebee server.
-- Sends information about discovered workloads to the Nudgebee server for further processing.
+- Communication with Nudgebee
+  - Establishes a secure connection with the Nudgebee server.
+  - Sends information about discovered workloads to the Nudgebee server for further processing.
 
 ### [CostModel](https://github.com/opencost/opencost) - Cost Collection
-Nudgebee Currently uses OpenCost for calculating cost metrics for Pods/Workloads etc.
+Nudgebee uses OpenCost for calculating cost metrics for Pods/Workloads etc.
 
 ### Recommendation Jobs
 Nudgebee runs the following container Images on a scheduled basis as K8s Jobs for generating specific recommendations.
@@ -50,15 +52,23 @@ Nudgebee runs the following container Images on a scheduled basis as K8s Jobs fo
 Nudgebee Currently uses Trivy for Generating Docker Image Vulnerability related security Recommendations
 
 [Usage Recommendation](https://github.com/robusta-dev/krr)
-Nudgebee Currently uses Krr for Generating Usage related recommendation
+Nudgebee Currently uses Krr for Generating Usage related Recommendations
 
 [Best Practices Recommendation](https://github.com/derailed/popeye)
-Nudgebee Currently uses Popeye for generating Best Practices related recommendation
+Nudgebee Currently uses Popeye for Generating Best Practices related Recommendations
 
 [Prometheus](https://github.com/prometheus/prometheus) (Or [VictoriaMetrics](https://victoriametrics.com/)) - Metrics Collection and alerting
 
+## Prerequisites
 
-## Network Requirements
-- Installer requires access to `registry.nudgebee.com` and `https://nudgebee.github.io/k8s-agent/` to pull docker images
-- Agents connect to Collector/Relay Servers over Websockt and Http, so both the protocols should be allowed
-- Agent (OpenCost) collect pricing data from CloudProviders like AWS/Azure etc, so pricing endpoints should be enabled
+Before installing the Nudgebee Agent, ensure the following requirements are met:
+
+### Software
+- **Helm:** The Nudgebee Agent is deployed using [Helm](https://helm.sh/). Ensure that Helm is installed and configured on your system.
+- **Kubernetes:** The minimum supported Kubernetes version is 1.27. The agent has been tested on this version and newer versions.
+- **Linux Kernel:** Kubernetes cluster nodes must run at least Linux Kernel version 4.2 or later to ensure eBPF compatibility for the Node Agent.
+
+### Network
+- **Docker Registry Access:** The installer must be able to access `registry.nudgebee.com` and `https://nudgebee.github.io/k8s-agent/` to pull necessary Docker images.
+- **Collector/Relay Server Connectivity:** Agents must be able to connect to Collector/Relay Servers over both Websocket and HTTP. These protocols must be allowed.
+- **Cloud Provider Pricing Endpoints:** If using OpenCost, the agent must be able to collect pricing data from cloud providers such as AWS and Azure. The relevant pricing endpoints must be accessible.
