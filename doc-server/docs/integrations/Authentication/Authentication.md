@@ -37,7 +37,7 @@ To set up Google authentication, you need to configure the following environment
 ### Notes
 
 -   This integration allows users to link multiple accounts with the same email address.
-- When redirecting user to google login page, system will request for consent, offline access.
+- When redirecting users to the Google login page, the system will request consent for offline access.
 
 ## Okta
 
