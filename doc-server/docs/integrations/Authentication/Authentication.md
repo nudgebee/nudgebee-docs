@@ -204,7 +204,7 @@ To set up LDAP authentication, you need to configure the following environment v
 
 -   LDAP configuration requires knowledge of your LDAP server's schema.
 - LDAP support only for onPrem license type.
-- By default, system will look for user email from `mail` attribute, for group `memberOf`, for user name `name`, for firstName `gn`, for lastName `sn`.
+- By default, the system will look for the user's email from the `mail` attribute, group from `memberOf`, user name from `name`, firstName from `gn`, and lastName from `sn`.
 - Group mappings will be used for assigning `hasura roles`.
 
 ## General Notes
