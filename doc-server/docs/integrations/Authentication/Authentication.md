@@ -56,7 +56,7 @@ To set up Okta authentication, you need to configure the following environment v
 ### Notes
 
 -   This integration allows users to link multiple accounts with the same email address.
-- `issuer`: Please provide full url as issuer of the okta org.
+- Issuer: Please provide the full URL as the issuer of the Okta organization.
 
 ## OneLogin
 
