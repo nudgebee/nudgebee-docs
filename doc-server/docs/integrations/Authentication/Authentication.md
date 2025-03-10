@@ -156,7 +156,7 @@ To set up email authentication, you need to configure the following environment 
 
 -   The email provider sends a verification token to the user's email.
 -   Correct email server configuration is essential for this provider to function.
--   **Login Process**: Users request signin, then will recieve an email. Email link will redirect to our system, here we verify the link and create/update the user and update user access time.
+- Login Process: Users request sign-in and will receive an email. The email link will redirect to our system, where we verify the link and create/update the user and update the user access time.
 
 ## Dummy Credentials (For On-Prem Admin)
 
