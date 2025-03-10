@@ -173,7 +173,7 @@ To set up dummy credentials, you need to configure the following environment var
 
 ### Notes
 
--   **Security**: This provider is primarily for on-premise admin user, first time setup or initial onboarding. It is strongly recommended to disable this provider in production environments.
+- Security: This provider is primarily for on-premise admin users during first-time setup or initial onboarding. It is strongly recommended to disable this provider in production environments.
 - Dummy credentials only supports username in email format.
 - Email field needs to match email provided in license file.
 
