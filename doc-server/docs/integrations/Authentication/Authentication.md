@@ -133,7 +133,7 @@ To set up Auth0 authentication, you need to configure the following environment 
 ### Notes
 
 -   This integration allows users to link multiple accounts with the same email address.
-- `issuer`: Please provide full url as issuer of the auth0 org.
+- Issuer: Please provide the full URL as the issuer of the Auth0 organization.
 
 ## Email (Magic Link)
 
