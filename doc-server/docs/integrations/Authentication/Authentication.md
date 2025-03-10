@@ -75,7 +75,7 @@ To set up OneLogin authentication, you need to configure the following environme
 ### Notes
 
 -   This integration allows users to link multiple accounts with the same email address.
-- `issuer`: Please provide full url as issuer of the onelogin org.
+- Issuer: Please provide the full URL as the issuer of the OneLogin organization.
 
 ## Azure Active Directory (Azure AD)
 
