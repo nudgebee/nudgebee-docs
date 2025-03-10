@@ -113,7 +113,7 @@ To set up Azure AD B2C authentication, you need to configure the following envir
 ### Notes
 
 -   This integration allows users to link multiple accounts with the same email address.
-- `primaryUserFlow`: Please provide the correct primary user flow name for authentication.
+- Primary User Flow: Please provide the correct primary user flow name for authentication.
 - System will request `offline_access openid` during auth.
 
 ## Auth0
