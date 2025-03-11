@@ -64,9 +64,9 @@ Update the environment variables in the Nudgebee RAG server to connect to the de
 
 ### **Environment Variables for RAG Server**
 
-- `OLLAMA_EMBEDDING_MODEL`: Ollama embedding model name.
-- `OLLAMA_API_BASE`: Base URL for the Ollama API.
-- `OLLAMA_EMBEDDING_ENDPOINT`: Endpoint for accessing the Ollama embedding model.
+- `EMBEDDINGS_PROVIDER`: `ollama`
+- `EMBEDDINGS_MODEL_NAME`: `<Model name in Ollama>`'
+- `EMBEDDINGS_PROVIDER_API_ENDPOINT`: `<Ollama embeddings endpoint URL>`
 
 Ensure the Nudgebee RAG server correctly sends embedding requests to this endpoint.
 
@@ -78,29 +78,11 @@ Nudgebee LLM server uses the OpenAI-compatible endpoint provided by Ollama and r
 ### **Environment Variables for LLM Server**
 
 - `LLM_PROVIDER`: `openai`
-- `OPENAI_API_KEY`: `<if Ollama is configured with security>`
-- `OPENAI_BASE_URL`: `<>`
+- `LLM_PROVIDER_MODEL_NAME`: `<Model name in Ollama>`
+- `LLM_PROVIDER_API_KEY`: `<if Ollama is configured with security>`
+- `LLM_PROVIDER_API_ENDPOINT`: `<Ollama model endpoint URL>`
 
 Ensure the Nudgebee LLM server is configured to send inference requests to the Ollama model.
-
-
-## **Step 6: Test the Integration**
-
-### **Test the RAG Server Embedding Generation**
-
-1. Send an embedding request via API:
-   ```bash
-   curl -X POST "http://localhost:11434/api/generate" -H "Content-Type: application/json" -d '{"model": "nudgebee-ai", "prompt": "Generate embeddings for: Kubernetes monitoring"}'
-   ```
-2. Verify the response contains the expected embeddings.
-
-### **Test the LLM Server Inference**
-
-1. Send an inference request:
-   ```bash
-   curl -X POST "http://localhost:11434/api/chat/completions" -H "Content-Type: application/json" -d '{"model": "nudgebee-ai", "messages": [{"role": "user", "content": "Explain Kubernetes monitoring"}]}'
-   ```
-2. Verify that the response contains a valid reply from the model.
 
 
 ## **Conclusion**
