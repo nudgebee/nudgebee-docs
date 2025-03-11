@@ -56,7 +56,9 @@ Update the environment variables in the RAG server to connect to the deployed mo
 
 ### **Environment Variables for RAG Server**
 
-- `SAGEMAKER_EMBEDDING_ENDPOINT`: `<endpoint>`
+- `EMBEDDINGS_PROVIDER`: `sagemaker`
+- `EMBEDDINGS_PROVIDER_REGION`: `<AWS SagwMaker region>`
+- `EMBEDDINGS_PROVIDER_API_ENDPOINT`: `<SageMaker endpoint URL>`
 
 Ensure the application correctly sends embedding requests to this endpoint.
 
@@ -68,8 +70,8 @@ To enable the LLM server to interact with the SageMaker-hosted model, update the
 ### **Environment Variables for LLM Server**
 
 - `LLM_PROVIDER`: `sagemaker`
-- `SAGEMAKER_ENDPOINT_NAME`: `<endpoint>`
-- `SAGEMAKER_REGION`: `<AWS region>`
+- `LLM_PROVIDER_API_ENDPOINT`: `<SageMaker endpoint URL>`
+- `LLM_PROVIDER_REGION`: `<AWS SageMaker region>`
 
 Ensure that the LLM server correctly forwards chat completion requests to this endpoint.
 

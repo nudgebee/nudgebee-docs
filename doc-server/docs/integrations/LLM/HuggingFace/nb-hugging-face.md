@@ -1,7 +1,7 @@
 # Deploying Nudgebee AI on Hugging Face
 
 ## Overview
-This guide provides detailed steps to deploy the Nudgebee AI model on Hugging Face using the UI, including configuration for the RAG server to use the deployed model for embedding generation.
+This guide provides detailed steps to deploy the Nudgebee AI model on Hugging Face using the UI, including configuration for both the RAG server and LLM server to use the deployed model.
 
 
 ## **Prerequisites**
@@ -37,8 +37,9 @@ Update the environment variables in the RAG server to connect to the deployed mo
 
 ### **Environment Variables for RAG Server**
 
-- `HUGGINGFACE_API_KEY`: `<API key for Hugging Face>`
-- `HUGGINGFACE_EMBEDDINGS_ENDPOINT`: `<Hugging Face embeddings endpoint>`
+- `EMBEDDINGS_PROVIDER`: `huggingface`
+- `EMBEDDINGS_PROVIDER_API_KEY`: `<API key for Hugging Face>`
+- `EMBEDDINGS_PROVIDER_API_ENDPOINT`: `<Hugging Face embeddings endpoint>`
 
 Ensure the RAG application correctly sends embedding requests to this endpoint.
 
@@ -50,23 +51,11 @@ To enable the LLM server to interact with the Hugging Face-hosted model, update 
 ### **Environment Variables for LLM Server**
 
 - `LLM_PROVIDER`: `huggingface`
-- `HUGGINGFACE_TOKEN`: `<Hugging Face API token>`
-- `HUGGINGFACE_ENDPOINT`: `<Hugging Face model endpoint>`
+- `LLM_PROVIDER_MODEL_NAME`: `<Model name in Hugging Face>`
+- `LLM_PROVIDER_API_KEY`: `<Hugging Face API token>`
+- `LLM_PROVIDER_API_ENDPOINT`: `<Hugging Face model endpoint>`
 
 Ensure that the LLM server correctly forwards chat completion requests to this endpoint.
-
-
-## **Step 5: Test the Deployment**
-
-1. Send an inference request via API:
-   ```bash
-   curl -X POST "https://api-inference.huggingface.co/models/YOUR_USERNAME/nudgebee-ai" \
-        -H "Authorization: Bearer your-huggingface-api-key" \
-        -H "Content-Type: application/json" \
-        -d '{"inputs": "Generate embeddings for: Kubernetes monitoring"}'
-   ```
-2. Verify the response contains the expected embeddings.
-
 
 ## **Conclusion**
 
