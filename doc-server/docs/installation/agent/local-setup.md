@@ -1,12 +1,16 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 ---
 
-# Try Locally ?
+# Try Locally
 
 ## Introduction
 
 This guide provides step-by-step instructions on how to install nudgebee agent with a Kubernetes cluster using KinD (Kubernetes in Docker) with multiple nodes.
+
+## Limitation
+
+- Nudgebee features like eBPF based tracing may not work using KiND.
 
 ## Prerequisites
 

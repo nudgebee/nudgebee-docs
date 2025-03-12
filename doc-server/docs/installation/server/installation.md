@@ -13,6 +13,10 @@ Before installing the nudgebee Server, make sure you have the following prerequi
 - Install [Helm](https://helm.sh/docs/intro/install/).
 - Nudgebee License Keys
 
+### Configurations
+For more details on other possible configurations, please refer [Configurations](./secret_configs.md).
+For list of full values of Helm chart, please refer [Helm Values](./helm_values.md).
+
 ### Installation Steps
 Follow these steps to install the nudgebee server using Helm:
 
@@ -32,11 +36,19 @@ If you want to install specific version of nudgebee then please use below helm c
 helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee --version $CHART_VERSION -f values.yaml  --install --namespace nudgebee --create-namespace --wait --kube-context $KUBE_CONTEXT
 ```
 
-##### Sample Values File
+### Sample Values File
+
+#### With Ingress
 
 Below values file is based on cert-manager managed SSL. These can be adjusted based on cluster specific implementation.
-For more details on other possible configurations, please refer values.yaml file
 
+Relay Server Url - wss://`relay-domain`
+Collector Server Url - https://`collector-domain`
+
+
+```yaml
+
+##### With SSL Ingress
 
 ```yaml
 global:
@@ -69,6 +81,8 @@ app:
     annotations: 
       cert-manager.io/issuer: cert-letsencrypt-issuer
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-buffer-size: '32k'
+      nginx.ingress.kubernetes.io/proxy-body-size: "10m"     
 k8s-collector:
   ingress:
     enabled: false
@@ -84,6 +98,7 @@ k8s-collector:
     annotations: 
       cert-manager.io/issuer: cert-letsencrypt-issuer
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "50m"
 relay-server:
   ingress:
     enabled: false
@@ -101,7 +116,42 @@ relay-server:
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 ```
 
-#### Uninstall Nudgebee
+
+##### Without Ingress
+
+Note that this will require user to do port-forwarding to access nudgebeee
+
+Relay Server Url - ws://relay-server.nudgebee.svc:8080
+Collector Server Url - http://k8s-collector.nudgebee.svc
+
+
+```yaml
+global:
+  image:
+    registry: "registry.nudgebee.com"
+  imagePullSecrets:
+    - name: nudgebee-registry-secret
+
+nudgebee_registry_secret:
+  enabled: true
+
+nudgebee_secret:
+  BASE_URL: "http://localhost:3000"
+  NUDGEBEE_LICENSE: <Nudgebee License Key>
+
+app:
+  ingress:
+    enabled: false
+k8s-collector:
+  ingress:
+    enabled: false
+relay-server:
+  ingress:
+    enabled: false
+```
+
+
+### Uninstall Nudgebee
 
 ```shell
 helm uninstall nudgebee  --namespace nudgebee --kube-context $KUBE_CONTEXT
