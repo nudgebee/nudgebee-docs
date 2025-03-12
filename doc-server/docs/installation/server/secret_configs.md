@@ -1,6 +1,7 @@
-# Nudgebee Secrets and Environment Variables Reference
+# Nudgebee Configurations
 
-This document provides a comprehensive reference for the various secrets and environment variables used by the Nudgebee application.
+This document provides a comprehensive reference for the various secrets and environment variables used by the Nudgebee application. These configurations can be set on Helm > nudgebee_secrets section.
+
 
 **Important Security Note:** This document outlines the *purpose* of the secrets and environment variables. **It does NOT contain the actual secret values.** The values are stored securely using encryption and managed separately.
 

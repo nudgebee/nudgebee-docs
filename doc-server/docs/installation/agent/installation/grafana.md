@@ -1,13 +1,15 @@
 ---
-sidebar_position: 3
+sidebar_position: 5
 ---
-# Grafana Integration
+# Grafana
 
-Nudgebee integrates with grafana to view existing dashboards 
+Nudgebee integrates with grafana to view existing dashboards within Nudgebee UI
 
 # Configuration
+
 1. Fetch grafana password 
     `kubectl get secret grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo`
+
 
 3. Update nudgebee configuration
     ```values.yaml
@@ -18,6 +20,7 @@ Nudgebee integrates with grafana to view existing dashboards
             password: ""
             url: "http://grafana.grafana.svc"
     ```
+
 4. Update nudgebee agent
     ```
     sh installation.sh -a <token> -f values.yaml

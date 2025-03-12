@@ -1,9 +1,15 @@
-# Configuring Prometheus Alertmanager for Nudgebee agent
+---
+sidebar_position: 5
+---
+
+# Alertmanager
 
 Prometheus Alertmanager is a component of the Prometheus monitoring and alerting toolkit. It handles alerts sent by client applications such as Prometheus server and deduplicates, groups.
 
 
 ## Configuration Steps
+
+If using existing Prometheus integration, then add following configurations for alertmanager integration.
 
 Modify the Helm values file to include a new webhook receiver configuration and update the route configuration to include the newly defined webhook receiver. Here's an example of how to configure it:
 
