@@ -6,12 +6,19 @@ sidebar_position: 2
 <div style={{position: "relative", paddingBottom: "64.86%", height: 0}}><iframe src="https://www.loom.com/embed/c163f9264c714f929ab04e82bf7e792d?sid=eaca9e5c-945c-4368-8564-e17b7baed5ee" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
 
 ### Requirements
-Before installing the nudgebee agent, make sure you have the following prerequisites:
 
-- Installed `kubectl` command-line tool.
-- Have a kubeconfig file (default location is `~/.kube/config`).
-- Have an active connection to the desired cluster.
-- Install [Helm](https://helm.sh/docs/intro/install/).
+Before installing the Nudgebee Agent, ensure the following requirements are met:
+
+#### Software
+- **Helm:** The Nudgebee Agent is deployed using [Helm](https://helm.sh/). Ensure that Helm is installed and configured on your system.
+- **Kubernetes:** The minimum supported Kubernetes version is 1.27. The agent has been tested on this version and newer versions.
+- **Linux Kernel:** Kubernetes cluster nodes must run at least Linux Kernel version 4.2 or later to ensure eBPF compatibility for the Node Agent.
+
+#### Network
+- **Docker Registry Access:** The installer must be able to access `registry.nudgebee.com` and `https://nudgebee.github.io/k8s-agent/` to pull necessary Docker images.
+- **Collector/Relay Server Connectivity:** Agents must be able to connect to Collector/Relay Servers over both Websocket and HTTP. These protocols must be allowed.
+- **Cloud Provider Pricing Endpoints:** If using OpenCost, the agent must be able to collect pricing data from cloud providers such as AWS and Azure. The relevant pricing endpoints must be accessible.
+
 
 ### Permissions
 The nudgebee agent uses the native RBAC model of Kubernetes. All the necessary permissions are listed in the [runner-service-account.yaml](https://raw.githubusercontent.com/nudgebee/k8s-agent/main/charts/nudgebee-agent/templates/runner-service-account.yaml) file.

@@ -58,17 +58,3 @@ Nudgebee Currently uses Krr for Generating Usage related Recommendations
 Nudgebee Currently uses Popeye for Generating Best Practices related Recommendations
 
 [Prometheus](https://github.com/prometheus/prometheus) (Or [VictoriaMetrics](https://victoriametrics.com/)) - Metrics Collection and alerting
-
-## Prerequisites
-
-Before installing the Nudgebee Agent, ensure the following requirements are met:
-
-### Software
-- **Helm:** The Nudgebee Agent is deployed using [Helm](https://helm.sh/). Ensure that Helm is installed and configured on your system.
-- **Kubernetes:** The minimum supported Kubernetes version is 1.27. The agent has been tested on this version and newer versions.
-- **Linux Kernel:** Kubernetes cluster nodes must run at least Linux Kernel version 4.2 or later to ensure eBPF compatibility for the Node Agent.
-
-### Network
-- **Docker Registry Access:** The installer must be able to access `registry.nudgebee.com` and `https://nudgebee.github.io/k8s-agent/` to pull necessary Docker images.
-- **Collector/Relay Server Connectivity:** Agents must be able to connect to Collector/Relay Servers over both Websocket and HTTP. These protocols must be allowed.
-- **Cloud Provider Pricing Endpoints:** If using OpenCost, the agent must be able to collect pricing data from cloud providers such as AWS and Azure. The relevant pricing endpoints must be accessible.
