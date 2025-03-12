@@ -6,10 +6,10 @@ Nudgebee integrates with a variety of AI model hosting platforms to provide you 
 
 Nudgebee supports multiple AI hosting platforms, allowing seamless integration with different environments:  
 
-* [Azure AI Foundry](./Azure/nb-azure-ai.md) - Leverage Azure AI to deploy, manage, and scale AI models while integrating them with Nudgebee.  
-* [Hugging Face](./HuggingFace/nb-hugging-face.md) - Utilize Hugging Face for hosting and managing AI models, enabling efficient integration with Nudgebee.  
+* [AzureAI Foundry](./Azure/nb-azure-ai.md) - Leverage Azure AI to deploy, manage, and scale AI models while integrating them with Nudgebee.  
+* [HuggingFace](./HuggingFace/nb-hugging-face.md) - Utilize Hugging Face for hosting and managing AI models, enabling efficient integration with Nudgebee.  
 * [Ollama](./Ollama/nb-ollama.md) - Deploy and manage AI models using the Ollama framework for optimized performance with Nudgebee.  
-* [AWS SageMaker](./SageMaker/nb-aws-sagemaker.md) - Use AWS SageMaker to build, train, and deploy AI models, ensuring scalability and integration with Nudgebee.  
+* [Aws](./Aws/nb-aws.md) - Use AWS SageMaker to build, train, and deploy AI models, ensuring scalability and integration with Nudgebee.  
 
 ## Downloadable Models  
 
@@ -36,8 +36,4 @@ The **LLM Server** powers intelligent agents that specialize in reasoning, plann
    - Handles complex query processing, decision-making, and response generation.  
 
 2. **nb-slm**  
-   - Designed for **task-specific agents**, improving modular AI functionality.  
-   - Variants include:  
-     - **nb-slm-promql** – Specializes in **PromQL** query generation for monitoring and observability.  
-     - **nb-slm-logql** – Optimized for **LogQL** query generation, aiding log analysis and troubleshooting.  
-
+   - Designed for **task-specific agents**, improving modular AI functionality.

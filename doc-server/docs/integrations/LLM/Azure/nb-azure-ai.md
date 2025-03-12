@@ -50,13 +50,13 @@ Update the environment variables in the RAG server to connect to the deployed mo
 
 ### **Environment Variables for RAG Server**
 
-- `EMBEDDINGS_PROVIDER`: `azure`
-- `EMBEDDINGS_MODEL_NAME`: `<Model name in Azure AI Foundry>`'
-- `EMBEDDINGS_PROVIDER_API_VERSION`: `<API version for Azure embeddings>`
-- `EMBEDDINGS_PROVIDER_API_ENDPOINT`: `<Azure embeddings endpoint URL>`
-- `EMBEDDINGS_PROVIDER_API_KEY`: `<Credential for accessing Azure embeddings>`
-
-Ensure the application correctly sends embedding requests to this endpoint.
+```bash
+EMBEDDINGS_PROVIDER=azure
+EMBEDDINGS_MODEL_NAME=<Model name in Azure AI Foundry>
+EMBEDDINGS_PROVIDER_API_VERSION=<API version for Azure embeddings>
+EMBEDDINGS_PROVIDER_API_ENDPOINT=<Azure embeddings endpoint URL>
+EMBEDDINGS_PROVIDER_API_KEY=<Credential for accessing Azure embeddings>
+```
 
 
 ## **Step 5: Configure LLM Server to Use Azure AI Foundry**
@@ -65,14 +65,13 @@ To enable the LLM server to interact with the Azure AI Foundry-hosted model, upd
 
 ### **Environment Variables for LLM Server**
 
-- `LLM_PROVIDER`: `azure`
-- `LLM_PROVIDER_MODEL_NAME`: `<Model name in Azure AI Foundry>`
-- `LLM_PROVIDER_API_KEY`: `<Azure authentication token>`
-- `LLM_PROVIDER_API_VERSION`: `<API version>`
-- `LLM_PROVIDER_API_ENDPOINT`: `<Base URL for Azure AI Foundry>`
-
-Ensure that the LLM server correctly forwards chat completion requests to this endpoint.
-
+```bash
+LLM_PROVIDER=azure
+LLM_PROVIDER_MODEL_NAME=<Model name in Azure AI Foundry>
+LLM_PROVIDER_API_KEY=<Azure authentication token>
+LLM_PROVIDER_API_VERSION=<API version>
+LLM_PROVIDER_API_ENDPOINT=<Base URL for Azure AI Foundry>
+```
 
 ## **Step 6: Test the Deployment**
 

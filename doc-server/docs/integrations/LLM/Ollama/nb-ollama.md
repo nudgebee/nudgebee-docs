@@ -64,12 +64,11 @@ Update the environment variables in the Nudgebee RAG server to connect to the de
 
 ### **Environment Variables for RAG Server**
 
-- `EMBEDDINGS_PROVIDER`: `ollama`
-- `EMBEDDINGS_MODEL_NAME`: `<Model name in Ollama>`'
-- `EMBEDDINGS_PROVIDER_API_ENDPOINT`: `<Ollama embeddings endpoint URL>`
-
-Ensure the Nudgebee RAG server correctly sends embedding requests to this endpoint.
-
+```bash
+EMBEDDINGS_PROVIDER=ollama
+EMBEDDINGS_MODEL_NAME=<Model name in Ollama>
+EMBEDDINGS_PROVIDER_API_ENDPOINT=<Ollama embeddings endpoint URL>
+```
 
 ## **Step 5: Configure Nudgebee LLM Server to Use Ollama**
 
@@ -77,13 +76,12 @@ Nudgebee LLM server uses the OpenAI-compatible endpoint provided by Ollama and r
 
 ### **Environment Variables for LLM Server**
 
-- `LLM_PROVIDER`: `openai`
-- `LLM_PROVIDER_MODEL_NAME`: `<Model name in Ollama>`
-- `LLM_PROVIDER_API_KEY`: `<if Ollama is configured with security>`
-- `LLM_PROVIDER_API_ENDPOINT`: `<Ollama model endpoint URL>`
-
-Ensure the Nudgebee LLM server is configured to send inference requests to the Ollama model.
-
+```bash
+LLM_PROVIDER=openai
+LLM_PROVIDER_MODEL_NAME=<Model name in Ollama>
+LLM_PROVIDER_API_KEY=<if Ollama is configured with security>
+LLM_PROVIDER_API_ENDPOINT=<Ollama model endpoint URL>
+```
 
 ## **Conclusion**
 
