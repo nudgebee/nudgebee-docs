@@ -119,7 +119,7 @@ relay-server:
 
 ##### Without Ingress
 
-Note that this will require user to do port-forwarding to access nudgebeee
+Note that this will require user to do port-forwarding to access nudgebee
 
 Relay Server Url - ws://relay-server.nudgebee.svc:8080
 Collector Server Url - http://k8s-collector.nudgebee.svc
