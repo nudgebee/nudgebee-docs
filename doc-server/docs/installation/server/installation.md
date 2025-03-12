@@ -1,17 +1,42 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 ---
 # Installation
 <div style={{position: "relative", paddingBottom: "64.86%", height: 0}}><iframe src="https://www.loom.com/embed/dee1ca6f7d294ef2b7f2746243e67e41?sid=256e5a97-215e-46fa-974e-69b329096273" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
 
-### Requirements
-Before installing the nudgebee Server, make sure you have the following prerequisites:
+### Prerequisites
 
-- Installed `kubectl` command-line tool.
-- Have a kubeconfig file (default location is `~/.kube/config`).
-- Have an active connection to the desired cluster.
-- Install [Helm](https://helm.sh/docs/intro/install/).
-- Nudgebee License Keys
+Before installing the Nudgebee Server, ensure the following requirements are met:
+
+#### Software
+
+- **Helm:** The Nudgebee Server is deployed using [Helm](https://helm.sh/). Ensure that Helm is installed and configured on your system.
+- **Kubernetes:** The minimum supported Kubernetes version is 1.27. The server has been tested on this version and newer versions.
+
+#### Network
+
+- **Docker Registry Access:** The installer must be able to access `registry.nudgebee.com` to pull necessary Docker images. Alternatively, user can pull all the required images to their local and push them to their internal docker registry.
+- **API Resolution:** Authentication uses the `BASE_URL` to resolve APIs. Therefore, pods must be able to resolve the `BASE_URL` DNS entry.
+- **External Integrations:** External integrations (such as Slack, Jira, MS Teams, GitHub Issues, and OpenAI) require network connectivity from the Nudgebee Server.
+- **Bidirectional Integrations:** If bidirectional integration is used (e.g., with Slack), then Slack must be able to access the Nudgebee Server's DNS.
+- **Ingress/DNS:** Nudgebee app can work without Ingress/DNS as well, though features which reply on external communication like Slack/GChat apps will not work correctly.
+
+### System Requirement
+
+- Minimum 2 Nodes Kubernetes cluster. With each node
+  - 16GB RAM
+  - 4 Cores
+  - 100 GB SSD
+- Persistent Volume, 200 GB
+  - 100 GB if External postgres is used
+- Postgres Database
+  - If not provided, nudgebee will by default install its own postgres database
+- LLMs
+  - Please refer [LLM Installation Guide](../../integrations/LLM)
+
+
+All Server components take around 12GB ram and 4 Core CPUs This includes running postgres/rabbitmq etc. If customer is managing these dependencies then it will take around 8GB RAM and 2 Core CPUS
+
 
 ### Configurations
 For more details on other possible configurations, please refer [Configurations](./secret_configs.md).

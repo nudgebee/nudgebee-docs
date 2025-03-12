@@ -1,3 +1,7 @@
+---
+sidebar_position: 4
+---
+
 # Nudgebee Configurations
 
 This document provides a comprehensive reference for the various secrets and environment variables used by the Nudgebee application. These configurations can be set on Helm > nudgebee_secrets section.
