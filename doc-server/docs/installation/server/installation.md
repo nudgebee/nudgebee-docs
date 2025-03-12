@@ -23,6 +23,9 @@ Before installing the Nudgebee Server, ensure the following requirements are met
 
 ### System Requirement
 
+Following is recommended configuration for Nudgebee Control plane.
+This configuration should be sufficient for upto 400 nodes cluster(or multiple clusters).
+
 - Minimum 2 Nodes Kubernetes cluster. With each node
   - 16GB RAM
   - 4 Cores
@@ -32,7 +35,12 @@ Before installing the Nudgebee Server, ensure the following requirements are met
 - Postgres Database
   - If not provided, nudgebee will by default install its own postgres database
 - LLMs
-  - Please refer [LLM Installation Guide](../../integrations/LLM)
+  - Please refer [LLM Installation Guide](../../../integrations/LLM/)
+- SSL/DNS
+  - Recommended, though Nudgebee server can be accessed without DNS using port-fortwarding
+- Email
+  - Daily Reports
+  - MagicLink based authentication 
 
 
 All Server components take around 12GB ram and 4 Core CPUs This includes running postgres/rabbitmq etc. If customer is managing these dependencies then it will take around 8GB RAM and 2 Core CPUS
