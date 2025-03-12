@@ -37,12 +37,11 @@ Update the environment variables in the RAG server to connect to the deployed mo
 
 ### **Environment Variables for RAG Server**
 
-- `EMBEDDINGS_PROVIDER`: `huggingface`
-- `EMBEDDINGS_PROVIDER_API_KEY`: `<API key for Hugging Face>`
-- `EMBEDDINGS_PROVIDER_API_ENDPOINT`: `<Hugging Face embeddings endpoint>`
-
-Ensure the RAG application correctly sends embedding requests to this endpoint.
-
+```bash
+EMBEDDINGS_PROVIDER=huggingface
+EMBEDDINGS_PROVIDER_API_KEY=<API key for Hugging Face>
+EMBEDDINGS_PROVIDER_API_ENDPOINT=<Hugging Face embeddings endpoint>
+```
 
 ## **Step 4: Configure LLM Server to Use Hugging Face**
 
@@ -50,12 +49,12 @@ To enable the LLM server to interact with the Hugging Face-hosted model, update 
 
 ### **Environment Variables for LLM Server**
 
-- `LLM_PROVIDER`: `huggingface`
-- `LLM_PROVIDER_MODEL_NAME`: `<Model name in Hugging Face>`
-- `LLM_PROVIDER_API_KEY`: `<Hugging Face API token>`
-- `LLM_PROVIDER_API_ENDPOINT`: `<Hugging Face model endpoint>`
-
-Ensure that the LLM server correctly forwards chat completion requests to this endpoint.
+```bash
+LLM_PROVIDER=huggingface
+LLM_PROVIDER_MODEL_NAME=<Model name in Hugging Face>
+LLM_PROVIDER_API_KEY=<Hugging Face API token>
+LLM_PROVIDER_API_ENDPOINT=<Hugging Face model endpoint>
+```
 
 ## **Conclusion**
 
