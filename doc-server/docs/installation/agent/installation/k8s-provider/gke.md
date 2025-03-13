@@ -1,7 +1,7 @@
 ---
-sidebar_position: 3
+sidebar_position: 1
 ---
-# GCP Integration
+# Google Kubernentes Engine
 
 To enable Nudgebee cost model to fetch pricing information from your GCP project, you must generate an API key to replace the default key in the CLOUD_PROVIDER_API_KEY environment variable. You will need to follow the instructions provided in Get Google Cloud pricing information:
 

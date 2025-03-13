@@ -1,6 +1,7 @@
 ---
-sidebar_position: 2
+sidebar_position: 6
 ---
+
 # Helm values
 
 ## Values

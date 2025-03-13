@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 # ELK stack
-## Overview
+
 If you have existing ELK stack you can integrate using below config
 
 ## Nudgebee Agent Configuration
