@@ -1,8 +1,8 @@
 ---
-sidebar_position: 2
+sidebar_position: 6
 ---
 
-# Values
+# Helm Chart Values
 
 Nudgebee Helm chart for Kubernetes
 

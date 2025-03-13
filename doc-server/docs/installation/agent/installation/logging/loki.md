@@ -4,7 +4,6 @@ sidebar_position: 2
 # Loki
 
 
-## Overview
 Grafana Loki is a set of components that can be composed into a fully featured logging stack.
 
 ## Install Loki

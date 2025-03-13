@@ -1,4 +1,8 @@
-# Add Prometheus ScrapeConfig and additional rules
+---
+sidebar_position: 6
+---
+
+# Prometheus Scrap Configs
 
 If Prometheus is already installed, add the scrapeConfig using the preferred means for your Prometheus installation. 
 
