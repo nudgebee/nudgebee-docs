@@ -34,9 +34,14 @@ To set up Google authentication, you need to configure the following environment
 -   `GOOGLE_CLIENT_ID`: Your Google OAuth Client ID.
 -   `GOOGLE_CLIENT_SECRET`: Your Google OAuth Client Secret.
 
-### Notes
+### Callbacks
+- `Sign in Redirect`: `Nudgebee Base`/api/auth/callback/google
+- `Sign Out Redirect`: `Nudgebee Base`/
 
--   This integration allows users to link multiple accounts with the same email address.
+
+### Notes
+- This integration doesn't allow onboarding, user first need to be created in Nudgebee, then only they can login.
+- This integration allows users to link multiple accounts with the same email address.
 - When redirecting users to the Google login page, the system will request consent for offline access.
 
 ## Okta
@@ -53,8 +58,13 @@ To set up Okta authentication, you need to configure the following environment v
 -   `OKTA_CLIENT_SECRET`: Your Okta application Client Secret.
 -   `OKTA_ISSUER`: Your Okta organization issuer URL (e.g., `https://dev-123456.okta.com`).
 
-### Notes
+### Callbacks
+- `Sign in Redirect`: `Nudgebee Base`/api/auth/callback/okta
+- `Sign Out Redirect`: `Nudgebee Base`/
 
+
+### Notes
+- This integration doesn't allow onboarding, user first need to be created in Nudgebee, then only they can login.
 -   This integration allows users to link multiple accounts with the same email address.
 - Issuer: Please provide the full URL as the issuer of the Okta organization.
 
@@ -72,8 +82,13 @@ To set up OneLogin authentication, you need to configure the following environme
 -   `ONELOGIN_CLIENT_SECRET`: Your OneLogin application Client Secret.
 -   `ONELOGIN_ISSUER`: Your OneLogin organization issuer URL.
 
-### Notes
+### Callbacks
+- `Sign in Redirect`: `Nudgebee Base`/api/auth/callback/onelogin
+- `Sign Out Redirect`: `Nudgebee Base`/
 
+
+### Notes
+- This integration doesn't allow onboarding, user first need to be created in Nudgebee, then only they can login.
 -   This integration allows users to link multiple accounts with the same email address.
 - Issuer: Please provide the full URL as the issuer of the OneLogin organization.
 
@@ -92,7 +107,6 @@ To set up Azure AD authentication, you need to configure the following environme
 -   `AZURE_AD_TENANT_ID`: Your Azure AD tenant ID.
 
 ### Notes
-
 -   This integration allows users to link multiple accounts with the same email address.
 
 ## Azure Active Directory B2C (Azure AD B2C)
@@ -111,7 +125,6 @@ To set up Azure AD B2C authentication, you need to configure the following envir
 -   `AZURE_AD_B2C_PRIMARY_USER_FLOW`: Your primary Azure AD B2C user flow.
 
 ### Notes
-
 -   This integration allows users to link multiple accounts with the same email address.
 - Primary User Flow: Please provide the correct primary user flow name for authentication.
 - System will request `offline_access openid` during auth.
@@ -130,8 +143,13 @@ To set up Auth0 authentication, you need to configure the following environment 
 -   `AUTH0_CLIENT_SECRET`: Your Auth0 application Client Secret.
 -   `AUTH0_ISSUER`: Your Auth0 domain issuer URL.
 
-### Notes
+### Callbacks
+- `Sign in Redirect`: `Nudgebee Base`/api/auth/callback/auth0
+- `Sign Out Redirect`: `Nudgebee Base`/
 
+
+### Notes
+- This integration doesn't allow onboarding, user first need to be created in Nudgebee, then only they can login.
 -   This integration allows users to link multiple accounts with the same email address.
 - Issuer: Please provide the full URL as the issuer of the Auth0 organization.
 
@@ -202,7 +220,7 @@ To set up LDAP authentication, you need to configure the following environment v
 
 ### Notes
 
--   LDAP configuration requires knowledge of your LDAP server's schema.
+- LDAP configuration requires knowledge of your LDAP server's schema.
 - LDAP support only for onPrem license type.
 - By default, the system will look for the user's email from the `mail` attribute, group from `memberOf`, user name from `name`, firstName from `gn`, and lastName from `sn`.
 - Group mappings will be used for assigning `hasura roles`.
