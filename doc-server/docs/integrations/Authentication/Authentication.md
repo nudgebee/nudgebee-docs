@@ -16,6 +16,7 @@ Nudgebee supports several authentication providers. Each provider requires speci
 -   [Azure Active Directory (Azure AD)](#azure-active-directory-azure-ad)
 -   [Azure Active Directory B2C (Azure AD B2C)](#azure-active-directory-b2c-azure-ad-b2c)
 -   [Auth0](#auth0)
+-   [Teleport](#teleport)
 -   [Email (Magic Link)](#email-magic-link)
 -   [Dummy Credentials (For On-Prem Admin)](#dummy-credentials-for-on-prem-admin)
 -   [LDAP](#ldap)
@@ -152,6 +153,33 @@ To set up Auth0 authentication, you need to configure the following environment 
 - This integration doesn't allow onboarding, user first need to be created in Nudgebee, then only they can login.
 -   This integration allows users to link multiple accounts with the same email address.
 - Issuer: Please provide the full URL as the issuer of the Auth0 organization.
+
+## Teleport
+
+### Description
+
+Integrate Nudgebee with Teleport as an identity provider. Note that user still need to update base-url to teleport dmain url
+
+### Configuration
+
+To set up Teleport authentication, you need to configure the following environment variables:
+
+- `TELEPORT_ENABLED`: Set to `true` to enable this provider.
+- `TELEPORT_ATTRIBUTE_USERNAME`: Teleport JWT attribute name for username field, defaults to `sub`
+- `TELEPORT_ATTRIBUTE_NAME`: Teleport attribute/trait name for displayname field, defaults to `sub`
+- `TELEPORT_ATTRIBUTE_GROUPS`: Teleport attribute/trait name for nudgebee-groups field, defaults to empty. Note that these groups needs to be available on nudgebee
+- `TELEPORT_SSO_ENABLED`: if enabled, nudgebee wont show signin screen, will try to login directly based on teelport headers
+
+### Callbacks (not required to configured)
+- `Sign in Redirect`: `Nudgebee Base`/api/auth/callback/teleport
+- `Sign Out Redirect`: `Nudgebee Base`/
+
+
+### Notes
+- This integration doesn't allow onboarding, user first need to be created in Nudgebee, then only they can login.
+-   This integration allows users to link multiple accounts with the same email address.
+- Issuer: Please provide the full URL as the issuer of the Auth0 organization.
+
 
 ## Email (Magic Link)
 
