@@ -168,7 +168,7 @@ To set up Teleport authentication, you need to configure the following environme
 - `TELEPORT_ATTRIBUTE_USERNAME`: Teleport JWT attribute name for username field, defaults to `sub`
 - `TELEPORT_ATTRIBUTE_NAME`: Teleport attribute/trait name for displayname field, defaults to `sub`
 - `TELEPORT_ATTRIBUTE_GROUPS`: Teleport attribute/trait name for nudgebee-groups field, defaults to empty. Note that these groups needs to be available on nudgebee
-- `TELEPORT_SSO_ENABLED`: if enabled, nudgebee wont show signin screen, will try to login directly based on teelport headers
+- `TELEPORT_SSO_ENABLED`: if enabled, nudgebee wont show signin screen, will try to login directly based on teleport headers
 
 ### Callbacks (not required to configured)
 - `Sign in Redirect`: `Nudgebee Base`/api/auth/callback/teleport
