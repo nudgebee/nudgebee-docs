@@ -53,11 +53,11 @@ Please refer [Authentication Integrations](../../../integrations/Authentication)
 - **`AUTH0_ISSUER`**: The issuer URL for the Auth0 domain.
 
 ### Teleport
-- `TELEPORT_ENABLED`: Set to `true` to enable this provider.
-- `TELEPORT_ATTRIBUTE_USERNAME`: Teleport JWT attribute name for username field, defaults to `sub`
-- `TELEPORT_ATTRIBUTE_NAME`: Teleport attribute/trait name for displayname field, defaults to `sub`
-- `TELEPORT_ATTRIBUTE_GROUPS`: Teleport attribute/trait name for nudgebee-groups field, defaults to empty. Note that these groups needs to be available on nudgebee
-- `TELEPORT_SSO_ENABLED`: if enabled, nudgebee wont show signin screen, will try to login directly based on teelport headers
+- **`TELEPORT_ENABLED`**: Set to `true` to enable this provider.
+- **`TELEPORT_ATTRIBUTE_USERNAME`**: Teleport JWT attribute name for username field, defaults to `sub`
+- **`TELEPORT_ATTRIBUTE_NAME`**: Teleport attribute/trait name for displayname field, defaults to `sub`
+- **`TELEPORT_ATTRIBUTE_GROUPS`**: Teleport attribute/trait name for nudgebee-groups field, defaults to empty. Note that these groups needs to be available on nudgebee
+- **`TELEPORT_SSO_ENABLED`**: if enabled, nudgebee wont show signin screen, will try to login directly based on teelport headers
 
 ### Azure AD
 - **`AZURE_AD_CLIENT_ID`**: The Client ID for the Azure Active Directory (AD) application.
