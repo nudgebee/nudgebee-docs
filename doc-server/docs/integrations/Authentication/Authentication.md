@@ -158,7 +158,7 @@ To set up Auth0 authentication, you need to configure the following environment 
 
 ### Description
 
-Integrate Nudgebee with Teleport as an identity provider. Note that user still need to update base-url to teleport dmain url
+Integrate Nudgebee with Teleport as an identity provider. Ensure the Nudgebee base URL is updated to your Teleport domain URL.
 
 ### Configuration
 
@@ -170,15 +170,8 @@ To set up Teleport authentication, you need to configure the following environme
 - `TELEPORT_ATTRIBUTE_GROUPS`: Teleport attribute/trait name for nudgebee-groups field, defaults to empty. Note that these groups needs to be available on nudgebee
 - `TELEPORT_SSO_ENABLED`: if enabled, nudgebee wont show signin screen, will try to login directly based on teleport headers
 
-### Callbacks (not required to configured)
-- `Sign in Redirect`: `Nudgebee Base`/api/auth/callback/teleport
-- `Sign Out Redirect`: `Nudgebee Base`/
-
-
 ### Notes
-- This integration doesn't allow onboarding, user first need to be created in Nudgebee, then only they can login.
--   This integration allows users to link multiple accounts with the same email address.
-- Issuer: Please provide the full URL as the issuer of the Auth0 organization.
+- This integration allows users to link multiple accounts with the same email address.
 
 
 ## Email (Magic Link)
