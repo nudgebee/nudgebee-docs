@@ -158,7 +158,7 @@ To set up Auth0 authentication, you need to configure the following environment 
 
 ### Description
 
-Integrate Nudgebee with Teleport as an identity provider. Ensure the Nudgebee base URL is updated to your Teleport domain URL.
+Integrate Nudgebee with Teleport as an identity provider. Ensure the Nudgebee `BASE_URL` to your Teleport domain URL.
 
 ### Configuration
 
@@ -168,7 +168,6 @@ To set up Teleport authentication, you need to configure the following environme
 - `TELEPORT_ATTRIBUTE_USERNAME`: Teleport JWT attribute name for username field, defaults to `sub`
 - `TELEPORT_ATTRIBUTE_NAME`: Teleport attribute/trait name for displayname field, defaults to `sub`
 - `TELEPORT_ATTRIBUTE_GROUPS`: Teleport attribute/trait name for nudgebee-groups field, defaults to empty. Note that these groups needs to be available on nudgebee
-- `TELEPORT_SSO_ENABLED`: if enabled, nudgebee wont show signin screen, will try to login directly based on teleport headers
 
 ### Notes
 - This integration allows users to link multiple accounts with the same email address.
