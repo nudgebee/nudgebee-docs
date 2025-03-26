@@ -35,7 +35,7 @@ Navigate to OAuth & Permissions under Features to configure the Redirect URLs.
 
 Click Add New Redirect URL, enter the URL, and click Add. The URL will look like:
 
-```Callback URL: https://www.your-nudgebee-server.com/slack/oauth_redirect```
+```Callback URL: https://www.your-nudgebee-server.com/api/slack/oauth_redirect```
 
 ![img.png](../../../static/img/slack_callback.png)
 
