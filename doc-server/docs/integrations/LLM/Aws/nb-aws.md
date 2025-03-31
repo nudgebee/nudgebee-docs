@@ -113,7 +113,7 @@ For Bedrock (Custom Model):
 ```sh
 LLM_PROVIDER=bedrock  
 LLM_PROVIDER_REGION=<AWS_Region>  
-LLM_PROVIDER_CUSTOM_MODEL_ID=<Custom_Bedrock_Model_ID>  
+LLM_MODEL_NAME=<Custom_Bedrock_Model_ID>  
 ```
 
 ## **Testing the Deployment**  

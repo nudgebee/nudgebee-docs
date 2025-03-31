@@ -13,10 +13,19 @@ Nudgebee supports multiple AI hosting platforms, allowing seamless integration w
 
 ## Downloadable Models  
 
-Nudgebee provides pre-trained AI models that can be downloaded and deployed on supported platforms:  
+Nudgebee provides pre-trained AI models that can be downloaded and deployed on supported platforms (applicable for on-premises or self-hosted environments):
 
  **Nudgebee AI/LLM Models**  
-   - Available for direct download from the Nudgebee, Please contact us for more information.  
+   - Download pre-trained AI models from the Nudgebee platform using the following commands:
+
+     ##### SLM
+      ```bash
+        curl --location 'https://registry.nudgebee.com/downloads/models/nb-slm' --header 'Authorization: Bearer <license_key>'
+      ```
+     ##### LLM
+      ```bash
+        curl --location 'https://registry.nudgebee.com/downloads/models/nb-llm' --header 'Authorization: Bearer <license_key>'
+      ```
    - Optimized for high-performance inference in various AI-driven applications.
 
 ## Models Used for Retrieval-Augmented Generation (RAG)  

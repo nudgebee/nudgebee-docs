@@ -67,7 +67,7 @@ To enable the LLM server to interact with the Azure AI Foundry-hosted model, upd
 
 ```bash
 LLM_PROVIDER=azure
-LLM_PROVIDER_MODEL_NAME=<Model name in Azure AI Foundry>
+LLM_MODEL_NAME=<Model name in Azure AI Foundry>
 LLM_PROVIDER_API_KEY=<Azure authentication token>
 LLM_PROVIDER_API_VERSION=<API version>
 LLM_PROVIDER_API_ENDPOINT=<Base URL for Azure AI Foundry>
