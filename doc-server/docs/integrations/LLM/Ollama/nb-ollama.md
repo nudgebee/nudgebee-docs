@@ -78,7 +78,7 @@ Nudgebee LLM server uses the OpenAI-compatible endpoint provided by Ollama and r
 
 ```bash
 LLM_PROVIDER=openai
-LLM_PROVIDER_MODEL_NAME=<Model name in Ollama>
+LLM_MODEL_NAME=<Model name in Ollama>
 LLM_PROVIDER_API_KEY=<if Ollama is configured with security>
 LLM_PROVIDER_API_ENDPOINT=<Ollama model endpoint URL>
 ```

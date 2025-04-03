@@ -51,7 +51,7 @@ To enable the LLM server to interact with the Hugging Face-hosted model, update 
 
 ```bash
 LLM_PROVIDER=huggingface
-LLM_PROVIDER_MODEL_NAME=<Model name in Hugging Face>
+LLM_MODEL_NAME=<Model name in Hugging Face>
 LLM_PROVIDER_API_KEY=<Hugging Face API token>
 LLM_PROVIDER_API_ENDPOINT=<Hugging Face model endpoint>
 ```
