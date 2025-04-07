@@ -1,4 +1,4 @@
-# REST API Action in Runbook
+# Action: REST API Action in Runbook
 
 The **REST API Action** in Runbook allows users to interact with external APIs by sending HTTP requests directly from the Runbook workflow. This action is highly configurable, enabling users to define request parameters, payloads, and execution behavior.
 
