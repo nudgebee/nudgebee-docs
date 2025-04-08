@@ -9,7 +9,8 @@ Nudgebee supports multiple AI hosting platforms, allowing seamless integration w
 * [AzureAI Foundry](./Azure/nb-azure-ai.md) - Leverage Azure AI to deploy, manage, and scale AI models while integrating them with Nudgebee.  
 * [HuggingFace](./HuggingFace/nb-hugging-face.md) - Utilize Hugging Face for hosting and managing AI models, enabling efficient integration with Nudgebee.  
 * [Ollama](./Ollama/nb-ollama.md) - Deploy and manage AI models using the Ollama framework for optimized performance with Nudgebee.  
-* [Aws](./Aws/nb-aws.md) - Use AWS SageMaker to build, train, and deploy AI models, ensuring scalability and integration with Nudgebee.  
+* [Aws](./Aws/nb-aws.md) - Use AWS SageMaker to build, train, and deploy AI models, ensuring scalability and integration with Nudgebee.
+* [Google](./Google/nb-google.md) - Integrate with Google Cloud AI for hosting and managing AI models, enhancing Nudgebee's capabilities.
 
 ## Downloadable Models  
 
