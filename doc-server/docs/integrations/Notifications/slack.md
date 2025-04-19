@@ -13,7 +13,8 @@ sidebar_position: 1
 
 ## How to configure Slack in your on-prem Nudgebee
 
-To use Slack integration in your on-prem nudgebee, you’ll need to create an app in the Slack bot app. Navigate to Your Apps on https://api.slack.com/apps and click Create new App.
+To use Slack integration in your on-prem nudgebee, you’ll need to create a Slack app. 
+To create a new Slack app, navigate to Your Apps on https://api.slack.com/apps and click Create new App.
 
 ![img.png](../../../static/img/slack_newapp.png)
 
@@ -51,3 +52,17 @@ mpim:read
 ```
 
 Click on **Allow** to authorize and install the Nudgebee Slack app to your workspace.
+
+Once You’ve installed the app, you’ll need to add client/signin secrets. Copy this token and paste it into your Nudgebee secrets.
+
+Navigate to your Nudgebee secrets and add the following:
+
+```
+SLACK_CLIENT_SECRET: The Client Secret for the Slack application integration.
+SLACK_SIGNING_SECRET: The Signing Secret for the Slack application.
+SLACK_CLIENT_ID: The Client ID for the slack app.
+```
+
+You can see the in basic information of your Slack app.
+
+![img.png](../../../static/img/slack_secrets.png)
