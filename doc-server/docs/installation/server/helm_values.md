@@ -29,7 +29,7 @@ sidebar_position: 6
 | etl.fullnameOverride | string | `"etl-server"` |  |
 | etl.image.repository | string | `"nudgebee-etl-server"` |  |
 | etl.image.tag | string | `"2024-02-20T15-17-36_c46f481cbd2c016acb34245a725e57999e4c3378_amd64"` |  |
-| global.image.imagePullSecrets[0].name | string | `"nudgebee-registry-secret"` |  |
+| global.imagePullSecrets[0].name | string | `"nudgebee-registry-secret"` |  |
 | global.image.registry | string | `"registry.nudgebee.com"` |  |
 | hasura.fullnameOverride | string | `"hasura"` |  |
 | hasura.image.repository | string | `"hasura/graphql-engine"` |  |
