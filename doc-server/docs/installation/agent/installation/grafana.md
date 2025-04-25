@@ -1,33 +1,44 @@
 ---
 sidebar_position: 5
 ---
-# Grafana
 
-Nudgebee integrates with grafana to view existing dashboards within Nudgebee UI
+# Grafana Integration
 
-# Configuration
+Nudgebee can integrate with Grafana to surface dashboards directly in the Nudgebee UI.
 
-1. Fetch grafana password 
-    `kubectl get secret grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo`
+## Configuration
 
+1. **Fetch Grafana admin password**  
+   ```bash
+   kubectl get secret grafana \
+     -n <grafana-namespace> \
+     -o jsonpath="{.data.admin-password}" \
+     | base64 --decode && echo
+   ```
 
-3. Update nudgebee configuration
-    ```values.yaml
-    runner:
-        grafana:
-            enabled: true
-            username: "admin"
-            password: ""
-            url: "http://grafana.grafana.svc"
-    ```
+2. **Create or update your `values.yaml`**  
+   ```yaml
+   runner:
+     grafana:
+       enabled: true
+       username: "admin"
+       password: "<GRAFANA_PASSWORD>"
+       url: "http://grafana.grafana.svc"
+   ```
 
-4. Update nudgebee agent
-    ```
-    sh installation.sh -a <token> -f values.yaml
-    ```
-    or using helm 
-    ```
-    helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
-    helm repo update 
-    helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent --namespace nudgebee-agent -f values.yaml 
-    ```
+3. **Apply configuration and upgrade the agent**  
+   - **Using shell script**:  
+     ```bash
+     sh installation.sh -a <NUDBGEE_AUTH_KEY> -f values.yaml
+     ```
+   - **Using Helm**:  
+     ```bash
+     helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
+     helm repo update
+     helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
+       --namespace nudgebee-agent \
+       --create-namespace \
+       -f values.yaml
+     ```
+
+> Replace `<GRAFANA_PASSWORD>` and `<NUDBGEE_AUTH_KEY>` with your actual values, and adjust the Grafana namespace if it differs from `grafana`.  
