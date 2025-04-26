@@ -73,15 +73,5 @@ LLM_PROVIDER_API_VERSION=<API version>
 LLM_PROVIDER_API_ENDPOINT=<Base URL for Azure AI Foundry>
 ```
 
-## **Step 6: Test the Deployment**
-
-1. Navigate to **Deployments** in Azure AI Foundry.
-2. Select the deployed model.
-3. Click **Test Deployment**.
-4. Upload a JSON request with text data for AI processing.
-5. Click **Run Test** and verify the response.
 
 
-## **Conclusion**
-
-You have successfully deployed the Nudgebee AI model on Azure AI Foundry and configured both the RAG server and LLM server to use the deployed model.

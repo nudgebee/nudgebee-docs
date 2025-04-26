@@ -1,18 +1,23 @@
-# AI Module Integration  
+# LLM Provider Integrations
 
-Nudgebee integrates with a variety of AI model hosting platforms to provide you with the flexibility to choose the platform that best suits your needs. This section provides an overview of our AI model integrations and will be updated as more integrations become available.  
+This documentation guides you through integrating various LLM providers with Nudgebee's LLM Server and RAG Server applications. Our platform supports multiple LLM providers, allowing you to leverage foundation models or deploy custom models based on your specific needs.
 
-## Available AI Model Integrations  
+## Supported LLM Providers
 
-Nudgebee supports multiple AI hosting platforms, allowing seamless integration with different environments:  
+* [AWS Bedrock](./Aws/bedrock.md) is the default provider for LLM Server and RAG Server applications.
 
-* [AzureAI Foundry](./Azure/nb-azure-ai.md) - Leverage Azure AI to deploy, manage, and scale AI models while integrating them with Nudgebee.  
-* [HuggingFace](./HuggingFace/nb-hugging-face.md) - Utilize Hugging Face for hosting and managing AI models, enabling efficient integration with Nudgebee.  
-* [Ollama](./Ollama/nb-ollama.md) - Deploy and manage AI models using the Ollama framework for optimized performance with Nudgebee.  
-* [Aws](./Aws/nb-aws.md) - Use AWS SageMaker to build, train, and deploy AI models, ensuring scalability and integration with Nudgebee.
-* [Google](./Google/nb-google.md) - Integrate with Google Cloud AI for hosting and managing AI models, enhancing Nudgebee's capabilities.
+Choose from the following LLM providers to integrate with your Nudgebee applications:
 
-## Downloadable Models  
+### Cloud Provider Services
+- [AWS](./Aws/aws.md) - Amazon Web Services integration options including Bedrock and SageMaker
+- [Azure](./Azure/azure.md) - Microsoft Azure integration options including Azure OpenAI Service
+- [Google](./Google/google.md) - Google Cloud Platform integration options including Gemini and VertexAI
+
+### Open Source & Self-Hosted Options
+- [Hugging Face](./HuggingFace/nb-hugging-face.md) - Integration with Hugging Face's model repository and inference APIs
+- [Ollama](./Ollama/nb-ollama.md) - Integration with self-hosted Ollama deployments
+
+### Nudgebee Models  
 
 Nudgebee provides pre-trained AI models that can be downloaded and deployed on supported platforms (applicable for on-premises or self-hosted environments):
 
