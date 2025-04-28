@@ -77,15 +77,15 @@ jobs:
     - name: Authorize AWS to Docker Push
       if: github.ref == 'refs/heads/main'
       run: |
-        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 280501305789.dkr.ecr.us-east-1.amazonaws.com
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 864186153326.dkr.ecr.us-east-1.amazonaws.com
       
     - name: Build And Tag Docker Image
       if: github.ref == 'refs/heads/main'
       working-directory: ./doc-server
       run: |-
         IMAGE_TAG=$(date +'%Y-%m-%dT%H-%M-%S')_$GITHUB_SHA
-        docker build -t 280501305789.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs:$IMAGE_TAG .
-        docker push 280501305789.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs:$IMAGE_TAG
+        docker build -t 864186153326.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs:$IMAGE_TAG .
+        docker push 864186153326.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs:$IMAGE_TAG
         echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
 
