@@ -5,7 +5,7 @@ serverPort: 80
 
 image:
   # -- Name of the image repository to pull the container image from.
-  repository: 280501305789.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs
+  repository: 864186153326.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs
   # -- [Image pull policy](https://kubernetes.io/docs/concepts/containers/images/#updating-images) for updating already existing images on a node.
   pullPolicy: IfNotPresent
   # -- Overrides the image tag whose default is the chart appVersion.
