@@ -12,7 +12,7 @@ Following is example configuration for using Nudgebee-agent with On-Prem Server
 - Onprem Collector-Server Url
 - Onprem Relay-Server Url
 - Agent Keys
-- Review [Metrics Provider](../installation/metrices/)
+- Review [Metrics Provider](../installation/metrics/)
 - Review [Loggin Providers](../installation/logging/)
 
 

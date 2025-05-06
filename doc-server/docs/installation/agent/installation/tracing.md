@@ -38,16 +38,16 @@ ClickHouse serves as the storage backend for the collected tracing data. It is a
 4. **ClickHouse**: Tracing data is forwarded to ClickHouse by the OpenTelemetry collector for storage and analysis.
 
 ## Installation
-By default tracing is disabled, To enable traces collection add below config in values.yaml
+By default tracing is enabled, To disable traces collection add below config in values.yaml
 ```yaml
 runner:
-  clickhouse_enabled: true
+  clickhouse_enabled: false
 
 nodeAgent:
-    enabled: true
+    enabled: false
 
 opentelemetry-collector:
-  enabled: true
+  enabled: false
 ```
 
 ## Conclusion
