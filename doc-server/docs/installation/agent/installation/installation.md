@@ -1,125 +1,142 @@
 ---
-sidebar_position: 2
+sidebar_position: 1
 ---
 
 # Installation
-<div style={{position: "relative", paddingBottom: "64.86%", height: 0}}><iframe src="https://www.loom.com/embed/c163f9264c714f929ab04e82bf7e792d?sid=eaca9e5c-945c-4368-8564-e17b7baed5ee" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
+
+<div style={{ position: "relative", paddingBottom: "64.86%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/c163f9264c714f929ab04e82bf7e792d?sid=eaca9e5c-945c-4368-8564-e17b7baed5ee"
+    frameBorder="0"
+    webkitAllowFullScreen
+    mozAllowFullScreen
+    allowFullScreen
+    style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+  />
+</div>
+
 
 ### Prerequisites
 
-Before installing the Nudgebee Agent, ensure the following requirements are met:
+Before installing the Nudgebee Agent, ensure you have:
 
 #### Software
-- **Helm:** The Nudgebee Agent is deployed using [Helm](https://helm.sh/). Ensure that Helm is installed and configured on your system.
-- **Kubernetes:** The minimum supported Kubernetes version is 1.27. The agent has been tested on this version and newer versions.
-- **Linux Kernel:** Kubernetes cluster nodes must run at least Linux Kernel version 4.2 or later to ensure eBPF compatibility for the Node Agent.
+- **Helm**: [Helm](https://helm.sh/) installed and configured.
+- **Kubernetes**: A cluster running **v1.27** or newer.
+- **Linux Kernel**: Nodes must run **4.2+** for eBPF support (required by the Node Agent).
 
 #### Network
-- **Docker Registry Access:** The installer must be able to access `registry.nudgebee.com` and `https://nudgebee.github.io/k8s-agent/` to pull necessary Docker images.
-- **Collector/Relay Server Connectivity:** Agents must be able to connect to Collector/Relay Servers over both Websocket and HTTP. These protocols must be allowed.
-- **Cloud Provider Pricing Endpoints:** If using OpenCost, the agent must be able to collect pricing data from cloud providers such as AWS and Azure. The relevant pricing endpoints must be accessible.
+- **Docker registry access**:  
+  - `registry.nudgebee.com`  
+  - `https://nudgebee.github.io/k8s-agent/`  
+- **Collector/Relay connectivity**: WebSocket and HTTP outbound allowed.
+- **Cloud pricing endpoints** (for OpenCost): AWS, Azure, etc., must be reachable.
 
-### System Requirement
+---
 
-Agent requires considers only core nudgebee components (runner/node-agents/tracing), assuming Prometheus/Logs are already available. These configurations are recommended configurations and may require changes (refer helm chart) based on cluster size. We have tested these configruations with upto 100 node cluster
+### System Requirements
 
-- **Node Agents:** For each node
-  - Limits - 1GB RAM (Limit), .5 Core CPU
-  - Requests - 100MB RAM (Limit), .1 Core CPU
-- **Runner:**
-  - Limits - 2GB RAM (Limit), .5 Core CPU
-  - Requests - 500MB RAM (Limit), .1 Core CPU
-- **Event Watcher:**
-  - Limits - 1GB RAM (Limit), .5 Core CPU
-  - Requests - 200MB RAM (Limit), .1 Core CPU
-- **Tracing:**
-  - Limits - 2GB RAM (Limit), .5 Core CPU
-  - Requests - 1GB RAM (Limit), .1 Core CPU
-  - PVC - 50GB
-- **Prometheus:** Depends on Prometheus provider
-- **Logs:** Depends on logs provider
+These recommendations target clusters up to **100 nodes** and assume you already have Prometheus & logging in place. Adjust via the Helm chart as needed.
+
+| Component        | Requests                  | Limits                  | Additional  |
+| ---------------- | ------------------------- | ----------------------- | ----------- |
+| **Node Agent**   | 100 MiB RAM, 0.1 CPU core | 1 GiB RAM, 0.5 CPU core | –           |
+| **Runner**       | 500 MiB RAM, 0.1 CPU core | 2 GiB RAM, 0.5 CPU core | –           |
+| **Event Watcher**| 200 MiB RAM, 0.1 CPU core | 1 GiB RAM, 0.5 CPU core | –           |
+| **Tracing**      | 1 GiB RAM, 0.1 CPU core   | 2 GiB RAM, 0.5 CPU core | PVC: 50 GiB |
+| **Prometheus**   | Depends on your provider  | –                       | –           |
+| **Logging**      | Depends on your provider  | –                       | –           |
+
+---
 
 ### Permissions
-The nudgebee agent uses the native RBAC model of Kubernetes. All the necessary permissions are listed in the [runner-service-account.yaml](https://raw.githubusercontent.com/nudgebee/k8s-agent/main/charts/nudgebee-agent/templates/runner-service-account.yaml) file.
 
+The Nudgebee Agent relies on Kubernetes RBAC. All required roles and bindings are defined in the [runner-service-account.yaml](https://raw.githubusercontent.com/nudgebee/k8s-agent/main/charts/nudgebee-agent/templates/runner-service-account.yaml).
 
-### Installation Steps
-Follow these steps to install the nudgebee agent:
+---
 
-#### Generate nudgebee Agent Keys
+## Installation Steps
 
-Log in to [nudgebee](https://app.nudgebee.com), click on kubernetes option on left side menu, and then click "Connect cluster.". Provide name for cluster which can be idetified Use the generated keys in the commands below.
+### 1. Generate Agent Keys
 
-#### Installation using shell script 
-Use below command to install agent with dependent installation. Below script will auto detect  
+1. Log in to [app.nudgebee.com](https://app.nudgebee.com).  
+2. Go to **Kubernetes** → **Connect Cluster**.  
+3. Give your cluster a name and copy the **Auth Key**.
 
-Install agent using below steps
-```shell
- wget https://raw.githubusercontent.com/nudgebee/k8s-agent/main/installation.sh 
- sh installation.sh -a <NUDBGEE_AUTH_KEY>
+### 2. Quick Install (Shell Script)
+
+```bash
+wget https://raw.githubusercontent.com/nudgebee/k8s-agent/main/installation.sh
+chmod +x installation.sh
+./installation.sh -a <NUDBGEE_AUTH_KEY>
 ```
 
-#### Install Manually 
-##### 1. Install Prometheus
-Use the following command to install Prometheus:
+> The script will detect your environment and install dependencies automatically.
 
-```shell
-helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-stack -n nudgebee-agent --create-namespace --set nodeExporter.enabled=false --set pushgateway.enabled=false --set alertmanager.enabled=true --set kubeStateMetrics.enabled=true -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
+---
+
+### 3. Manual Installation
+
+#### a. Install Prometheus (if not present)
+
+```bash
+helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-stack \
+  --namespace nudgebee-agent --create-namespace \
+  --set nodeExporter.enabled=false \
+  --set pushgateway.enabled=false \
+  --set alertmanager.enabled=true \
+  --set kubeStateMetrics.enabled=true \
+  -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
 ```
 
-##### 2. Add Prometheus ScrapeConfig (if not already installed)
-If Prometheus is already installed, add the scrapeConfig using the preferred means for your Prometheus installation. You can use this command:
+#### c. Install Nudgebee Agent
 
-```shell
-kubectl apply -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
-```
+1. Add & update the Helm repo:
 
-##### 3. Install the nudgebee Agent using Helm
+   ```bash
+   helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
+   helm repo update
+   ```
 
-First, add the nudgebee Agent Helm repository and update it:
+2. Install:
 
-```shell
-helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
-helm repo update
-```
+   ```bash
+   helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
+     --namespace nudgebee-agent --create-namespace \
+     --set runner.nudgebee.auth_secret_key="<NUDBGEE_AUTH_KEY>" \
+     --set globalConfig.prometheus_url="<PROMETHEUS_URL>" \
+     --set opencost.opencost.prometheus.external.url="<PROMETHEUS_URL>"
+   ```
 
-Then, install the nudgebee Agent:
+> Replace `<NUDBGEE_AUTH_KEY>` and `<PROMETHEUS_URL>` with your values.
 
-```shell
-helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent  --namespace nudgebee-agent --create-namespace --set runner.nudgebee.auth_secret_key="<NUDBGEE_AUTH_KEY>" -set existingPrometheus.url="<prometheus_url>" --set opencost.opencost.prometheus.external.url="<prometheus_url>"
-```
+---
 
-Make sure to replace `<NUDBGEE_AUTH_KEY>` and `<prometheus_url>` with the appropriate values.
+## Agent Installation for self hosted Nudgebee
 
+If you’re running a self-hosted Nudgebee instance, use a custom `values.yaml`:
 
-### Install Agent on premise instance
-
- If you are using nudgebee on-premise instance then you will need to update url params of agent, Please refer to below sample values file. 
-
- ```yaml
+```yaml
 runner:
-  relay_address: "wss://{relay-server-url}/register"
-  clickhouse_enabled: true
-  nudgebee: 
-    auth_secret_key: "{agent_keys}"
-    endpoint: "https://{collector-server-url}/"
+  relay_address: "wss://<RELAY_SERVER_URL>/register"
+  nudgebee:
+    auth_secret_key: "<NUDBGEE_AUTH_KEY>"
+    endpoint: "https://<COLLECTOR_SERVER_URL>/"
 
-existingPrometheus:
-  url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+globalConfig:
+  prometheus_url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
 
 opencost:
   opencost:
     prometheus:
       external:
         url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+```
 
-nodeAgent:
-  enabled: true
+Then install with:
 
-opentelemetry-collector:
-  enabled: true
- ```
-
- ```shell
- helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent  --namespace nudgebee-agent --create-namespace -f values.yaml
- ```
+```bash
+helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
+  --namespace nudgebee-agent --create-namespace \
+  -f values.yaml
+```
