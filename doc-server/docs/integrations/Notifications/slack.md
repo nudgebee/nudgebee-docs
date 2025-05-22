@@ -51,16 +51,6 @@ groups:read
 mpim:read
 ```
 
-Below are few additional scopes that you will need to enable AI conversations on slack:
-
-```
-app_mentions:read
-channels:history
-groups:history
-users:read
-users:read.email
-```
-
 Click on **Allow** to authorize and install the Nudgebee Slack app to your workspace.
 
 Once You’ve installed the app, you’ll need to add client/signin secrets. Copy this token and paste it into your Nudgebee secrets.
@@ -76,11 +66,3 @@ SLACK_CLIENT_ID: The Client ID for the slack app.
 You can see the in basic information of your Slack app.
 
 ![img.png](../../../static/img/slack_secrets.png)
-
-If your on-prem has no public access, and can not do OAuth, add following to your secrets:
-
-```
-SLACK_AUTH_TYPE: "token"  #should always be 'token' for non-public setups only
-SLACK_BOT_TOKEN: The bot token for the slack app. Can be found in Oauth & Permissions.
-SLACK_CHANNEL_ID: The Slack channel ID to send notifications to.
-```
