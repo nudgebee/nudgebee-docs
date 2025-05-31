@@ -18,7 +18,7 @@ Before upgrading, ensure:
 - You have a backup of your current configuration.
 
 You can always upgrade to the latest version of Nudgebee Server. You dont need to do incremental upgrades.
-If you want to upgrade to a specific version, please ensure that the version is compatible with your current setup. Nudgebee does not support downgrades.
+If you want to upgrade to a specific version, please ensure that the version is compatible with your current setup (e.g., by consulting the official release notes or compatibility guide). Nudgebee does not support downgrades.
 - You have the latest `values.yaml` file from the Nudgebee repository or your custom configuration.
 - You have the Nudgebee license key available as an environment variable `NUDGEBEE_LICENSE_KEY`.
 - You have the `KUBE_CONTEXT` environment variable set to the context of your Kubernetes cluster.
