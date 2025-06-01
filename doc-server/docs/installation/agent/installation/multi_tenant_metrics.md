@@ -127,5 +127,3 @@ Then point each tenant’s Nudgebee instance (or configuration) to the correct p
 
 * [prom-label-proxy GitHub](https://github.com/prometheus-community/prom-label-proxy)
 * [Nudgebee Docs: Prometheus Integrations](../metrics)
-
-Want me to generate Helm `values.yaml` templates or ready-made Kubernetes YAMLs for Services and Ingress? Ping me! 🚀

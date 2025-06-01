@@ -127,7 +127,3 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   -f values.yaml
 ```
-
-✅ This command will configure the Node Agent with the provided custom flags and deploy or upgrade the Helm release under the `nudgebee-agent` namespace.
-
-If you want, I can prepare a production-tuned `values.yaml` template or a minimal quick-start example! Just let me know. 🚀
