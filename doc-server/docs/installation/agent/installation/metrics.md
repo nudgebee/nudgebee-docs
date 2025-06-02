@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# 🎯 Prometheus Metrics Integrations
+# Prometheus Metrics Integrations
 
 Nudgebee speaks “Prometheus” out of the box, but you can also wire it up to Last9, VictoriaMetrics (single-node or clustered), or Chronosphere with zero fuss. During installation we auto-detect any in-cluster Prometheus. If none is found, you’ll be prompted to install one—or simply point Nudgebee at your existing endpoint using one of these supported providers!
 
@@ -55,24 +55,12 @@ globalConfig:
     X-Api-Key: ${PROM_API_KEY}
     X-Custom-Header: hello-world
 
-  # ——————————————————————
-  # Label injection
-  # ——————————————————————
-
-  # 5️⃣ Map of extra labels to inject into every query
-  prometheus_additional_labels:
-    cluster: "prod"
-    region:  "us-east-1"
-
-  # 6️⃣ Toggle whether to actually apply those extra labels
-  add_additional_labels: true
-
 
 opencost:
   opencost:
     prometheus:
       external:
-        url: "{{ .Values.globalConfig.prometheus_url }}"
+        url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
         # Optional for Chronosphere:
       #bearerToken: "{{ .Values.globalConfig.prometheus_bearer_token }}"
 ```
