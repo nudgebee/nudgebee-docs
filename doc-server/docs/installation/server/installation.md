@@ -71,12 +71,50 @@ helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee --version $CHART_VERS
 
 ### Sample Values File
 
+##### Without Ingress
+
+This will require user to do port-forwarding to access nudgebee.
+```shell
+kubectl port-forward svc/app 3000:80 -n nudgebee --kube-context $KUBE_CONTEXT
+```
+
+**Relay Server Url** - ws://relay-server.nudgebee.svc:8080
+
+**Collector Server Url** - http://k8s-collector.nudgebee.svc
+
+
+```yaml
+global:
+  image:
+    registry: "registry.nudgebee.com"
+  imagePullSecrets:
+    - name: nudgebee-registry-secret
+
+nudgebee_registry_secret:
+  enabled: true
+
+nudgebee_secret:
+  BASE_URL: "http://localhost:3000"
+  NUDGEBEE_LICENSE: <Nudgebee License Key>
+
+app:
+  ingress:
+    enabled: false
+k8s-collector:
+  ingress:
+    enabled: false
+relay-server:
+  ingress:
+    enabled: false
+```
+
 #### With Ingress
 
 Below values file is based on cert-manager managed SSL. These can be adjusted based on cluster specific implementation.
 
-Relay Server Url - wss://`relay-domain`
-Collector Server Url - https://`collector-domain`
+**Relay Server Url** - wss://`relay-domain`
+
+**Collector Server Url** - https://`collector-domain`
 
 
 ```yaml
@@ -118,7 +156,7 @@ app:
       nginx.ingress.kubernetes.io/proxy-body-size: "10m"     
 k8s-collector:
   ingress:
-    enabled: false
+    enabled: true
     hosts:
       - host: "<Nudgebee collector Base Domain>"
         paths:
@@ -134,7 +172,7 @@ k8s-collector:
       nginx.ingress.kubernetes.io/proxy-body-size: "50m"
 relay-server:
   ingress:
-    enabled: false
+    enabled: true
     hosts:
       - host: "<Nudgebee relay Base Domain>"
         paths:
@@ -147,40 +185,6 @@ relay-server:
     annotations: 
       cert-manager.io/issuer: cert-letsencrypt-issuer
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-```
-
-
-##### Without Ingress
-
-Note that this will require user to do port-forwarding to access nudgebee
-
-Relay Server Url - ws://relay-server.nudgebee.svc:8080
-Collector Server Url - http://k8s-collector.nudgebee.svc
-
-
-```yaml
-global:
-  image:
-    registry: "registry.nudgebee.com"
-  imagePullSecrets:
-    - name: nudgebee-registry-secret
-
-nudgebee_registry_secret:
-  enabled: true
-
-nudgebee_secret:
-  BASE_URL: "http://localhost:3000"
-  NUDGEBEE_LICENSE: <Nudgebee License Key>
-
-app:
-  ingress:
-    enabled: false
-k8s-collector:
-  ingress:
-    enabled: false
-relay-server:
-  ingress:
-    enabled: false
 ```
 
 
