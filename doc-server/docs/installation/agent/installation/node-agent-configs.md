@@ -2,7 +2,7 @@
 sidebar_position: 8
 ---
 
-# ⚙️ Node Agent Configuration
+# Node Agent Configuration
 
 The Nudgebee **Node Agent** can be finely tuned using a set of environment variables that control its behavior. These are exposed as flags internally but can be set through the Helm `values.yaml` under the `nodeAgent.env` section.
 
@@ -41,7 +41,7 @@ This document lists the **relevant** configuration flags, what they do, and how 
 | ------------------------------- | ------------------------------------------------------------ | --------------------------------------- |
 | `SANITIZE_HEADERS`              | Enable header sanitization                                   | `true`                                  |
 | `SENSITIVE_HEADERS`             | List of sensitive header names to sanitize (comma-separated) | `Authorization, Cookie, X-Action-Token` |
-| `DISABLE_SENSITIVE_LOG_PARSING` | Disable sensitive log parsing                                | `false`                                 |
+| `DISABLE_SENSITIVE_LOG_PARSING` | Disable sensitive log parsing, default is disabled                                | `true`                                 |
 
 ---
 
