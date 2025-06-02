@@ -41,7 +41,7 @@ This document lists the **relevant** configuration flags, what they do, and how 
 | ------------------------------- | ------------------------------------------------------------ | --------------------------------------- |
 | `SANITIZE_HEADERS`              | Enable header sanitization                                   | `true`                                  |
 | `SENSITIVE_HEADERS`             | List of sensitive header names to sanitize (comma-separated) | `Authorization, Cookie, X-Action-Token` |
-| `DISABLE_SENSITIVE_LOG_PARSING` | Disable sensitive log parsing                                | `false`                                 |
+| `DISABLE_SENSITIVE_LOG_PARSING` | Disable sensitive log parsing, default is disabled                                | `true`                                 |
 
 ---
 
