@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# 🏷️ Label-based Multitenant Prometheus Setup
+# Label-based Multitenant Prometheus Setup
 
 To enable **multi-tenant Prometheus access** for Nudgebee, we recommend using the open-source [prom-label-proxy](https://github.com/prometheus-community/prom-label-proxy). This acts as a secure gatekeeper, ensuring that tenants only see the metrics matching their allowed labels.
 
@@ -78,6 +78,11 @@ Once installed, update Nudgebee’s `prometheus_url` to point to the proxy:
 ```yaml
 globalConfig:
   prometheus_url: "http://label-proxy.prometheus.svc:8080"
+opencost:
+  opencost:
+    prometheus:
+      external:
+        url: "http://label-proxy.prometheus.svc:8080"
 ```
 
 This ensures all metric queries pass through the label-enforced proxy, isolating tenant access by `vm_account_id` or your chosen label.
@@ -117,9 +122,9 @@ Then point each tenant’s Nudgebee instance (or configuration) to the correct p
 
 ## 🧩 Benefits
 
-✅ Secure label-based isolation without needing separate Prometheus setups
-✅ Lightweight and easy to deploy
-✅ Compatible with Prometheus, VictoriaMetrics, and other backends Nudgebee supports
+- ✅ Secure label-based isolation without needing separate Prometheus setups
+- ✅ Lightweight and easy to deploy
+- ✅ Compatible with Prometheus, VictoriaMetrics, and other backends Nudgebee supports
 
 ---
 

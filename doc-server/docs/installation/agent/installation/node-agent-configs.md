@@ -2,7 +2,7 @@
 sidebar_position: 8
 ---
 
-# ⚙️ Node Agent Configuration
+# Node Agent Configuration
 
 The Nudgebee **Node Agent** can be finely tuned using a set of environment variables that control its behavior. These are exposed as flags internally but can be set through the Helm `values.yaml` under the `nodeAgent.env` section.
 
