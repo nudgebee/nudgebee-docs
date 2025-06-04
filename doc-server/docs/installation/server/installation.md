@@ -195,3 +195,33 @@ helm uninstall nudgebee  --namespace nudgebee --kube-context $KUBE_CONTEXT
 ```
 
 
+### Troubleshooting Installation Failures
+
+A common reason for installation failures or timeouts, particularly during initial setup, is the **post-installation migration job** not completing successfully. This often occurs if dependent services (like the database) were not fully ready when the Helm chart initiated this job. If you suspect this specific scenario is affecting your installation, the following steps can help:
+
+#### 🔁 Re-run Helm Upgrade
+
+To retry the installation and ensure the migration job is executed again, simply re-run the Helm upgrade command:
+
+```shell
+helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee -f values.yaml --install --namespace nudgebee --wait --kube-context $KUBE_CONTEXT
+```
+
+> **Note**: If you were installing a specific version, include the `--version` flag as well.
+
+This will re-trigger the post-install hook (e.g., database migration) and complete any pending setup steps.
+
+If this specific fix doesn't resolve the issue, or if you suspect a different cause for the installation failure, consider these general troubleshooting steps:
+*   **Check Pod Logs**: Examine logs from pods in the `nudgebee` namespace, particularly those related to migrations (e.g., `postgres-migrations`) or any pods in an error or crashloopbackoff state.
+    ```shell
+    kubectl logs <pod-name> -n nudgebee
+    ```
+*   **Inspect Pod Status and Events**: Get detailed information about failing or pending pods.
+    ```shell
+    kubectl get pods -n nudgebee -o wide
+    kubectl describe pod <failing-pod-name> -n nudgebee
+    ```
+*   **Review Kubernetes Events**: Look for relevant events in the namespace that might indicate underlying problems (e.g., image pull errors, resource issues, volume mounting problems).
+    ```shell
+    kubectl get events -n nudgebee --sort-by=.lastTimestamp
+    ```
