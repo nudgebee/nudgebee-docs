@@ -197,7 +197,7 @@ helm uninstall nudgebee  --namespace nudgebee --kube-context $KUBE_CONTEXT
 
 ### Troubleshooting Installation Failures
 
-If the installation fails or times out, especially during the initial setup, it may be due to the **post-installation migration job** not completing successfully. This is common if the database or other dependent services were not ready when the job was first triggered.
+A common reason for installation failures or timeouts, particularly during initial setup, is the **post-installation migration job** not completing successfully. This often occurs if dependent services (like the database) were not fully ready when the Helm chart initiated this job. If you suspect this specific scenario is affecting your installation, the following steps can help:
 
 #### 🔁 Re-run Helm Upgrade
 
