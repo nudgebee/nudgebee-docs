@@ -195,3 +195,18 @@ helm uninstall nudgebee  --namespace nudgebee --kube-context $KUBE_CONTEXT
 ```
 
 
+### Troubleshooting Installation Failures
+
+If the installation fails or times out, especially during the initial setup, it may be due to the **post-installation migration job** not completing successfully. This is common if the database or other dependent services were not ready when the job was first triggered.
+
+#### 🔁 Re-run Helm Upgrade
+
+To retry the installation and ensure the migration job is executed again, simply re-run the Helm upgrade command:
+
+```shell
+helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee -f values.yaml --install --namespace nudgebee --wait --kube-context $KUBE_CONTEXT
+```
+
+> **Note**: If you were installing a specific version, include the `--version` flag as well.
+
+This will re-trigger the post-install hook (e.g., database migration) and complete any pending setup steps.
