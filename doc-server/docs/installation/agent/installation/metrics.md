@@ -16,7 +16,7 @@ Nudgebee speaks “Prometheus” out of the box, but you can also wire it up to 
 | **Last9**                        | `https://<user>:<password>@read-app-tsdb.last9.io/hot/v1/metrics/<PID>/sender/<account>`         |
 | **VictoriaMetrics (single-node)**| `http://<vmsingle-service>.<namespace>.svc.cluster.local:8429`                                   |
 | **VictoriaMetrics (cluster-mode)**| `http://<vmselect-service>.<namespace>.svc.cluster.local:8481`                                   |
-| **Chronosphere**                 | `https://<your-org>.chronosphere.io/data/metrics/api/v1/read`                        |
+| **Chronosphere**                 | `https://<your-org>.chronosphere.io/data/metrics`                        |
 
 ---
 
@@ -39,21 +39,15 @@ globalConfig:
   # prometheus_url: "http://vmselect-victoria-metrics-cluster.victoria.svc.cluster.local:8481"
 
   # 5️⃣ Chronosphere (hosted Prometheus API)
-  # prometheus_url: "https://<your-org>.chronosphere.io/data/metrics/api/v1/prom/remote/read"
+  # prometheus_url: "https://<your-org>.chronosphere.io/data/metrics"
   
-  # 2️⃣ Optional HTTP Basic / Bearer auth
-  #    SecretStr allows something like "user:pass" or "Bearer <TOKEN>"
-  prometheus_auth: "${PROM_AUTH_SECRET}"        # e.g. "username:password" or "Bearer eyJ…"
+  # Additional query-string parameters appended to every PromQL request
+  # e.g. “?timeout=30s&dedup=true”
+  # prometheus_url_query_string: "timeout=30s"
 
-  # 3️⃣ Additional query-string parameters appended to every PromQL request
-  #    e.g. “?timeout=30s&dedup=true”
-  prometheus_url_query_string: "timeout=30s"
-
-  # 4️⃣ Custom headers for all API requests (raw JSON or YAML block)
-  #    You might send JSON, an API key, tracing headers, etc.
-  prometheus_headers: |
-    X-Api-Key: ${PROM_API_KEY}
-    X-Custom-Header: hello-world
+  # Custom headers for all API requests (semicolon-separated string)
+  # Format: "Key1: Value1;Key2: Value2"
+  # prometheus_headers: "Authorization: Bearer ${CHRONOSPHERE_API_TOKEN};X-Custom-Header: hello-world"
 
 
 opencost:
@@ -61,8 +55,8 @@ opencost:
     prometheus:
       external:
         url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
-        # Optional for Chronosphere:
-      #bearerToken: "{{ .Values.globalConfig.prometheus_bearer_token }}"
+      #bearer_token: ""
+      #bearer_token_key: DB_BEARER_TOKEN
 ```
 
 ---
