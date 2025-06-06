@@ -11,7 +11,7 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Nudgebee',
+    title: 'NudgeBee',
     Svg: undraw_docusaurus_mountain,
     description: (
       <>

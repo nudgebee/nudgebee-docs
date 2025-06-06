@@ -1,7 +1,7 @@
 # Cluster Autoscaler
 
-Nudgebee supports [Karpenter](https://karpenter.sh/) out of the box for managing cluster-nodes scaling.
-Nudgebee automatically detects existing Karpenter instance in the cluster.
+NudgeBee supports [Karpenter](https://karpenter.sh/) out of the box for managing cluster-nodes scaling.
+NudgeBee automatically detects existing Karpenter instance in the cluster.
 
 ## Karpenter Installation Guide
 

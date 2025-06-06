@@ -1,13 +1,13 @@
-# Deploying Nudgebee AI on AWS Bedrock (Custom Model)
+# Deploying NudgeBee AI on AWS Bedrock (Custom Model)
 
 ## Overview
 
-This guide details the deployment of Nudgebee AI using AWS Bedrock's custom model hosting feature.
+This guide details the deployment of NudgeBee AI using AWS Bedrock's custom model hosting feature.
 
 ## Prerequisites
 
 - AWS account with access to Bedrock and S3
-- Trained Nudgebee model in `.tar.gz`
+- Trained NudgeBee model in `.tar.gz`
 - Model uploaded to an S3 bucket
 - IAM role with required access
 

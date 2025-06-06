@@ -10,7 +10,7 @@ This guide provides step-by-step instructions on how to install nudgebee agent w
 
 ## Limitation
 
-- Nudgebee features like eBPF based tracing may not work using KiND.
+- NudgeBee features like eBPF based tracing may not work using KiND.
 
 ## Prerequisites
 

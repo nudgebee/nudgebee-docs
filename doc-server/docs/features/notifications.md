@@ -12,7 +12,7 @@ Cluster/namespace/workload to,
 1. To any channel in configured messaging tool
 2. Disable notification for that specific rule
 
-creating rules allow you to suppress notifications from unwanted namespaces/workload or route them to any channel you want.
+Creating rules allows you to suppress notifications from unwanted namespaces/workloads or route them to any channel you want.
 
 
 ## How to create a notification rule

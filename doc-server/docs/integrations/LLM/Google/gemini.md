@@ -1,6 +1,6 @@
 # Google Gemini Integration
 
-This guide provides detailed instructions for integrating Google Gemini with Nudgebee's LLM Server and RAG Server applications.
+This guide provides detailed instructions for integrating Google Gemini with NudgeBee's LLM Server and RAG Server applications.
 
 ## Overview
 

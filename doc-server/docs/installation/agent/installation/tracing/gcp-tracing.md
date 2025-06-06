@@ -1,4 +1,4 @@
-# Nudgebee Google Traces Integration
+# NudgeBee Google Traces Integration
 
 ## Approach
 
@@ -8,10 +8,10 @@ We will reconfigure OTEL collector to export data to google traces
 
 ### Data Read
 Currently, nudgebee uses Clickhouse to query Traces data. 
-To read data from Google traces we are proposing data export from Traces to BigQuery and then accessing Big Query Dataset from Nudgebee.
+To read data from Google traces we are proposing data export from Traces to BigQuery and then accessing Big Query Dataset from NudgeBee.
 
 ```
-Google Traces  -> Google BigQuery <- Nudgebee-Cluster-Agent
+Google Traces  -> Google BigQuery <- NudgeBee-Cluster-Agent
 ```
 
 ## Setup

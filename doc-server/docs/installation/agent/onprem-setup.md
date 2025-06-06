@@ -6,7 +6,7 @@ sidebar_position: 2
 
 ## Introduction
 
-Following is example configuration for using Nudgebee-agent with On-Prem Server
+Following is example configuration for using NudgeBee-agent with On-Prem Server
 
 ## Prerequisute
 - Onprem Collector-Server Url

@@ -3,7 +3,7 @@ sidebar_position: 3
 ---
 # Google Chat
 
-## How to configure Google Chat in your Nudgebee Account 
+## How to configure Google Chat in your NudgeBee Account 
 
 - This loom below shows how to configure Google Chat in your account for notifications.
 

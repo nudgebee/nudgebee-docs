@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Prometheus Metrics Integrations
 
-Nudgebee speaks “Prometheus” out of the box, but you can also wire it up to Last9, VictoriaMetrics (single-node or clustered), or Chronosphere with zero fuss. During installation we auto-detect any in-cluster Prometheus. If none is found, you’ll be prompted to install one—or simply point Nudgebee at your existing endpoint using one of these supported providers!
+NudgeBee speaks “Prometheus” out of the box, but you can also wire it up to Last9, VictoriaMetrics (single-node or clustered), or Chronosphere with zero fuss. During installation we auto-detect any in-cluster Prometheus. If none is found, you’ll be prompted to install one—or simply point NudgeBee at your existing endpoint using one of these supported providers!
 
 ---
 
@@ -68,6 +68,6 @@ opencost:
 2. **Manual Override**  
    Uncomment the block for your chosen backend and paste in your real endpoint (and token).  
 3. **Deploy & Go!**  
-   Run your Helm install/upgrade and watch Nudgebee start pulling metrics—and surfacing insights—instantly!
+   Run your Helm install/upgrade and watch NudgeBee start pulling metrics—and surfacing insights—instantly!
 
-Enjoy metrics without the headaches—Nudgebee has you covered. 🚀
+Enjoy metrics without the headaches—NudgeBee has you covered. 🚀

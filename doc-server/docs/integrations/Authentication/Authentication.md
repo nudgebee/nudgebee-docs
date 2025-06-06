@@ -1,12 +1,12 @@
 # Authentication
 
-This document explains how to integrate various authentication systems with your Nudgebee application. Nudgebee utilizes a flexible authentication system that supports a wide array of identity providers, allowing you to choose the method that best suits your organization's needs.
+This document explains how to integrate various authentication systems with your NudgeBee application. NudgeBee utilizes a flexible authentication system that supports a wide array of identity providers, allowing you to choose the method that best suits your organization's needs.
 
 Note - This guide is only applicable to On-Prem license.
 
 ## Authentication Providers
 
-Nudgebee supports several authentication providers. Each provider requires specific configuration to work properly.
+NudgeBee supports several authentication providers. Each provider requires specific configuration to work properly.
 
 ### Table of Contents
 
@@ -26,7 +26,7 @@ Nudgebee supports several authentication providers. Each provider requires speci
 
 ### Description
 
-Integrate Nudgebee with Google to allow users to sign in using their existing Google accounts.
+Integrate NudgeBee with Google to allow users to sign in using their existing Google accounts.
 
 ### Configuration
 
@@ -36,12 +36,12 @@ To set up Google authentication, you need to configure the following environment
 -   `GOOGLE_CLIENT_SECRET`: Your Google OAuth Client Secret.
 
 ### Callbacks
-- `Sign in Redirect`: `Nudgebee Base`/api/auth/callback/google
-- `Sign Out Redirect`: `Nudgebee Base`/
+- `Sign in Redirect`: `NudgeBee Base`/api/auth/callback/google
+- `Sign Out Redirect`: `NudgeBee Base`/
 
 
 ### Notes
-- This integration doesn't allow onboarding, user first need to be created in Nudgebee, then only they can login.
+- This integration doesn't allow onboarding, user first need to be created in NudgeBee, then only they can login.
 - This integration allows users to link multiple accounts with the same email address.
 - When redirecting users to the Google login page, the system will request consent for offline access.
 
@@ -49,7 +49,7 @@ To set up Google authentication, you need to configure the following environment
 
 ### Description
 
-Integrate Nudgebee with Okta to enable users to sign in using their Okta credentials.
+Integrate NudgeBee with Okta to enable users to sign in using their Okta credentials.
 
 ### Configuration
 
@@ -60,12 +60,12 @@ To set up Okta authentication, you need to configure the following environment v
 -   `OKTA_ISSUER`: Your Okta organization issuer URL (e.g., `https://dev-123456.okta.com`).
 
 ### Callbacks
-- `Sign in Redirect`: `Nudgebee Base`/api/auth/callback/okta
-- `Sign Out Redirect`: `Nudgebee Base`/
+- `Sign in Redirect`: `NudgeBee Base`/api/auth/callback/okta
+- `Sign Out Redirect`: `NudgeBee Base`/
 
 
 ### Notes
-- This integration doesn't allow onboarding, user first need to be created in Nudgebee, then only they can login.
+- This integration doesn't allow onboarding, user first need to be created in NudgeBee, then only they can login.
 -   This integration allows users to link multiple accounts with the same email address.
 - Issuer: Please provide the full URL as the issuer of the Okta organization.
 
@@ -73,7 +73,7 @@ To set up Okta authentication, you need to configure the following environment v
 
 ### Description
 
-Integrate Nudgebee with OneLogin as an identity provider.
+Integrate NudgeBee with OneLogin as an identity provider.
 
 ### Configuration
 
@@ -84,12 +84,12 @@ To set up OneLogin authentication, you need to configure the following environme
 -   `ONELOGIN_ISSUER`: Your OneLogin organization issuer URL.
 
 ### Callbacks
-- `Sign in Redirect`: `Nudgebee Base`/api/auth/callback/onelogin
-- `Sign Out Redirect`: `Nudgebee Base`/
+- `Sign in Redirect`: `NudgeBee Base`/api/auth/callback/onelogin
+- `Sign Out Redirect`: `NudgeBee Base`/
 
 
 ### Notes
-- This integration doesn't allow onboarding, user first need to be created in Nudgebee, then only they can login.
+- This integration doesn't allow onboarding, user first need to be created in NudgeBee, then only they can login.
 -   This integration allows users to link multiple accounts with the same email address.
 - Issuer: Please provide the full URL as the issuer of the OneLogin organization.
 
@@ -97,7 +97,7 @@ To set up OneLogin authentication, you need to configure the following environme
 
 ### Description
 
-Integrate Nudgebee with Azure AD to allow users to sign in using their Azure AD accounts.
+Integrate NudgeBee with Azure AD to allow users to sign in using their Azure AD accounts.
 
 ### Configuration
 
@@ -114,7 +114,7 @@ To set up Azure AD authentication, you need to configure the following environme
 
 ### Description
 
-Integrate Nudgebee with Azure AD B2C for customer identity and access management.
+Integrate NudgeBee with Azure AD B2C for customer identity and access management.
 
 ### Configuration
 
@@ -134,7 +134,7 @@ To set up Azure AD B2C authentication, you need to configure the following envir
 
 ### Description
 
-Integrate Nudgebee with Auth0 as an identity provider.
+Integrate NudgeBee with Auth0 as an identity provider.
 
 ### Configuration
 
@@ -145,12 +145,12 @@ To set up Auth0 authentication, you need to configure the following environment 
 -   `AUTH0_ISSUER`: Your Auth0 domain issuer URL.
 
 ### Callbacks
-- `Sign in Redirect`: `Nudgebee Base`/api/auth/callback/auth0
-- `Sign Out Redirect`: `Nudgebee Base`/
+- `Sign in Redirect`: `NudgeBee Base`/api/auth/callback/auth0
+- `Sign Out Redirect`: `NudgeBee Base`/
 
 
 ### Notes
-- This integration doesn't allow onboarding, user first need to be created in Nudgebee, then only they can login.
+- This integration doesn't allow onboarding, user first need to be created in NudgeBee, then only they can login.
 -   This integration allows users to link multiple accounts with the same email address.
 - Issuer: Please provide the full URL as the issuer of the Auth0 organization.
 
@@ -158,7 +158,7 @@ To set up Auth0 authentication, you need to configure the following environment 
 
 ### Description
 
-Integrate Nudgebee with Teleport as an identity provider. Ensure the Nudgebee `BASE_URL` to your Teleport domain URL.
+Integrate NudgeBee with Teleport as an identity provider. Ensure the NudgeBee `BASE_URL` to your Teleport domain URL.
 
 ### Configuration
 
@@ -219,7 +219,7 @@ To set up dummy credentials, you need to configure the following environment var
 
 ### Description
 
-Integrate Nudgebee with an LDAP server to authenticate users against your existing directory.
+Integrate NudgeBee with an LDAP server to authenticate users against your existing directory.
 
 ### Configuration
 

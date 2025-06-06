@@ -6,24 +6,24 @@ sidebar_position: 3
 
 ### Prerequisites
 
-Before installing the Nudgebee Server, ensure the following requirements are met:
+Before installing the NudgeBee Server, ensure the following requirements are met:
 
 #### Software
 
-- **Helm:** The Nudgebee Server is deployed using [Helm](https://helm.sh/). Ensure that Helm is installed and configured on your system.
+- **Helm:** The NudgeBee Server is deployed using [Helm](https://helm.sh/). Ensure that Helm is installed and configured on your system.
 - **Kubernetes:** The minimum supported Kubernetes version is 1.27. The server has been tested on this version and newer versions.
 
 #### Network
 
 - **Docker Registry Access:** The installer must be able to access `registry.nudgebee.com` to pull necessary Docker images. Alternatively, user can pull all the required images to their local and push them to their internal docker registry.
 - **API Resolution:** Authentication uses the `BASE_URL` to resolve APIs. Therefore, pods must be able to resolve the `BASE_URL` DNS entry.
-- **External Integrations:** External integrations (such as Slack, Jira, MS Teams, GitHub Issues, and OpenAI) require network connectivity from the Nudgebee Server.
-- **Bidirectional Integrations:** If bidirectional integration is used (e.g., with Slack), then Slack must be able to access the Nudgebee Server's DNS.
-- **Ingress/DNS:** Nudgebee app can work without Ingress/DNS as well, though features which reply on external communication like Slack/GChat apps will not work correctly.
+- **External Integrations:** External integrations (such as Slack, Jira, MS Teams, GitHub Issues, and OpenAI) require network connectivity from the NudgeBee Server.
+- **Bidirectional Integrations:** If bidirectional integration is used (e.g., with Slack), then Slack must be able to access the NudgeBee Server's DNS.
+- **Ingress/DNS:** NudgeBee app can work without Ingress/DNS as well, though features which reply on external communication like Slack/GChat apps will not work correctly.
 
 ### System Requirement
 
-Following is recommended configuration for Nudgebee Control plane.
+Following is recommended configuration for NudgeBee Control plane.
 This configuration should be sufficient for upto 400 nodes cluster(or multiple clusters).
 
 - Minimum 2 Nodes Kubernetes cluster. With each node
@@ -37,7 +37,7 @@ This configuration should be sufficient for upto 400 nodes cluster(or multiple c
 - LLMs
   - Please refer [LLM Installation Guide](../../../integrations/LLM/)
 - SSL/DNS
-  - Recommended, though Nudgebee server can be accessed without DNS using port-fortwarding
+  - Recommended, though NudgeBee server can be accessed without DNS using port-fortwarding
 - Email
   - Daily Reports
   - MagicLink based authentication 
@@ -58,7 +58,7 @@ Follow these steps to install the nudgebee server using Helm:
 helm registry login https://registry.nudgebee.com --username nudgebee --password $NUDGEBEE_LICENSE_KEY
 ```
 
-#### Install Nudgebee
+#### Install NudgeBee
 To install latest nudgebee version 
 ```shell
 helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee -f values.yaml  --install --namespace nudgebee --create-namespace --wait --kube-context $KUBE_CONTEXT
@@ -95,7 +95,7 @@ nudgebee_registry_secret:
 
 nudgebee_secret:
   BASE_URL: "http://localhost:3000"
-  NUDGEBEE_LICENSE: <Nudgebee License Key>
+  NUDGEBEE_LICENSE: <NudgeBee License Key>
 
 app:
   ingress:
@@ -133,7 +133,7 @@ nudgebee_registry_secret:
 
 
 nudgebee_secret:
-  BASE_URL: "<Nudgebee Server Https Url>"
+  BASE_URL: "<NudgeBee Server Https Url>"
   NUDGEBEE_LICENSE: <UR License Key>
   NEXTAUTH_DUMMY_CREDS_ENABLED: true
 
@@ -141,14 +141,14 @@ app:
   ingress:
     enabled: true
     hosts:
-      - host: "<Nudgebee Base Domain>"
+      - host: "<NudgeBee Base Domain>"
         paths:
           - path: /
             pathType: ImplementationSpecific
     tls:
       - secretName: nudgebee-tls
         hosts:
-        - "<Nudgebee Base Domain>"
+        - "<NudgeBee Base Domain>"
     annotations: 
       cert-manager.io/issuer: cert-letsencrypt-issuer
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
@@ -158,14 +158,14 @@ k8s-collector:
   ingress:
     enabled: true
     hosts:
-      - host: "<Nudgebee collector Base Domain>"
+      - host: "<NudgeBee collector Base Domain>"
         paths:
           - path: /
             pathType: ImplementationSpecific
     tls:
       - secretName: nudgebee-tls
         hosts:
-        - "<Nudgebee Base Domain>"
+        - "<NudgeBee Base Domain>"
     annotations: 
       cert-manager.io/issuer: cert-letsencrypt-issuer
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
@@ -174,21 +174,21 @@ relay-server:
   ingress:
     enabled: true
     hosts:
-      - host: "<Nudgebee relay Base Domain>"
+      - host: "<NudgeBee relay Base Domain>"
         paths:
           - path: /
             pathType: ImplementationSpecific
     tls:
       - secretName: nudgebee-tls
         hosts:
-        - "<Nudgebee Base Domain>"
+        - "<NudgeBee Base Domain>"
     annotations: 
       cert-manager.io/issuer: cert-letsencrypt-issuer
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 ```
 
 
-### Uninstall Nudgebee
+### Uninstall NudgeBee
 
 ```shell
 helm uninstall nudgebee  --namespace nudgebee --kube-context $KUBE_CONTEXT

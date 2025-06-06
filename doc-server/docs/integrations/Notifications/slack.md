@@ -3,7 +3,7 @@ sidebar_position: 1
 ---
 # Slack
 
-## How to configure Slack in your Nudgebee Account 
+## How to configure Slack in your NudgeBee Account 
 
 - This loom below shows how to configure Slack in your account for notifications.
 
@@ -11,7 +11,7 @@ sidebar_position: 1
     <iframe src="https://www.loom.com/embed/60bc60343e574abc879ee67ba0795bda?sid=1dc122fc-6d91-447b-bae2-cee012dd6e41" frameborder="0" allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe>
 </div>
 
-## How to configure Slack in your on-prem Nudgebee
+## How to configure Slack in your on-prem NudgeBee
 
 To use Slack integration in your on-prem nudgebee, you’ll need to create a Slack app. 
 To create a new Slack app, navigate to Your Apps on https://api.slack.com/apps and click Create new App.
@@ -20,11 +20,11 @@ To create a new Slack app, navigate to Your Apps on https://api.slack.com/apps a
 
 After naming your app and connecting your workspace, navigate to Basic Information. Here you’ll find your Client ID, Client Secret, and Signing Secret that lets your app access the Slack API.
 
-Here’s where you’ll connect your on-premise Nudgebee instance to your newly created Slack app. Copy your Client ID, Client Secret, and Signing Secret to your secrets in your nudgebee server.
+Here’s where you’ll connect your on-premise NudgeBee instance to your newly created Slack app. Copy your Client ID, Client Secret, and Signing Secret to your secrets in your nudgebee server.
 
-Now that you’ve created your app and updated your Nudgebee config, you can navigate to Interactivity & Components under Features.
+Now that you’ve created your app and updated your NudgeBee config, you can navigate to Interactivity & Components under Features.
 
-Click Enable Interactive Components, and you’ll be able to enter your Request URL (this is the location of your on-premise Nudgebee) and Options Load URL:
+Click Enable Interactive Components, and you’ll be able to enter your Request URL (this is the location of your on-premise NudgeBee) and Options Load URL:
 
 ```Request URL: https://www.your-nudgebee-server.com/api/webhooks/slack/interactive```
 
@@ -51,11 +51,11 @@ groups:read
 mpim:read
 ```
 
-Click on **Allow** to authorize and install the Nudgebee Slack app to your workspace.
+Click on **Allow** to authorize and install the NudgeBee Slack app to your workspace.
 
-Once You’ve installed the app, you’ll need to add client/signin secrets. Copy this token and paste it into your Nudgebee secrets.
+Once You’ve installed the app, you’ll need to add client/signin secrets. Copy this token and paste it into your NudgeBee secrets.
 
-Navigate to your Nudgebee secrets and add the following:
+Navigate to your NudgeBee secrets and add the following:
 
 ```
 SLACK_CLIENT_SECRET: The Client Secret for the Slack application integration.
