@@ -22,7 +22,7 @@ sidebar_position: 4
 #### For Agent:
 - Helm chart for installation
 - Prometheus, if already configured, else Nudgebee agent installs it
-- Currently, Nudgebee uses Loki for log queries. For log-specific features, we will require Loki running on the cluster. We don't provide Loki as part of the Agent Installer.
+- Currently, NudgeBee uses Loki for log queries. For log-specific features, we will require Loki running on the cluster. We don't provide Loki as part of the Agent Installer.
 - Permissions as specified in Helm charts
 
 ### What is the typical system requirement for running NB on my cluster? What is the expected cost of operations for running the base NudgeBee
