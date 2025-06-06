@@ -59,7 +59,7 @@ No, Nudgebee uses Alpine-based images to reduce overall size and security issues
 ### Does Nudgebee have VAPT reports?
 Yes, we use ZAP/manual pen testing for our security testing and can share reports based on request.
 
-### Can I configure multiple clusters within a single Nudgebee server?
+### Can I configure multiple clusters within a single NudgeBee server?
 Yes, configure agents on each targeted cluster.
 
 ### What are different NudgeBee distributions?
