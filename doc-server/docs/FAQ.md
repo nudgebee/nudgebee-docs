@@ -50,7 +50,7 @@ Nudgebee Autopilot Reconciliation
 GitOps Way Of Configuring Nudgebee Optimizations -
 - We want to provide this as an option using CRDs, though it's part of the roadmap.
 
-### Can Nudgebee work on K3s/Kind/Minikube?
+### Can NudgeBee work on K3s/Kind/Minikube?
 Yes, please refer to the Installation Guide for local testing.
 
 ### Does Nudgebee Docker images have any security vulnerabilities?
