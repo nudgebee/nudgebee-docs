@@ -11,4 +11,4 @@ Nudgebee integrates with a variety of tools and platforms to enhance your workfl
 * [Authentication](./Authentication/) - Integrate Nudgebee with an existing authentication system. Only applicable for on-prem.
 * [Notifications](./Notifications) - Configure and manage the various notification channels that Nudgebee can use.
 * [Tickets](./Tickets/) - Manage support and feedback tickets directly within Nudgebee.
-* [Nudgebee AI](./LLM/) - Integrate LLM models into your Nudgebee instance. Only applicable for on-prem.
+* [Nudgebee AI](./LLM/) - Integrate LLM models into your NudgeBee instance. Only applicable for on-prem.
