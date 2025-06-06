@@ -56,7 +56,7 @@ Yes, please refer to the Installation Guide for local testing.
 ### Does Nudgebee Docker images have any security vulnerabilities?
 No, NudgeBee uses Alpine-based images to reduce overall size and security issues. We use AWS ECR and NudgeBee for scanning images maintained by us. We can share a security report for that as per request.
 
-### Does Nudgebee have VAPT reports?
+### Does NudgeBee have VAPT reports?
 Yes, we use ZAP/manual pen testing for our security testing and can share reports based on request.
 
 ### Can I configure multiple clusters within a single NudgeBee server?
