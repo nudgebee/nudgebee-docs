@@ -48,7 +48,7 @@ Nudgebee Autopilot Reconciliation
 - Nudgebee provides annotations which can be used to ignore specific resources.
 
 GitOps Way Of Configuring Nudgebee Optimizations -
-- We want to provide this as an option using CRDs, though it's part of RoadMap.
+- We want to provide this as an option using CRDs, though it's part of the roadmap.
 
 ### Can Nudgebee work on K3s/Kind/Minikube?
 Yes, please refer to the Installation Guide for local testing.
