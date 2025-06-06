@@ -88,5 +88,5 @@ Deleted Pods/Workloads etc. - We store deleted workloads/pods etc. No retention 
 ### Does Nudgebee support Anomaly Detection?
 No, this is part of RoadMap.
 
-### Does Nudgebee support Predictive Analysis?
+### Does NudgeBee support Predictive Analysis?
 Yes, NudgeBee uses predictive analytics for replica rightsizing and continuous rightsizing.
