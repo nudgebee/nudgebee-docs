@@ -86,7 +86,7 @@ Events - Troubleshooting pages. Current retention is 60 days. You can make it co
 Deleted Pods/Workloads etc. - We store deleted workloads/pods etc. No retention policy yet. Will share once that is there, maybe by next week.
 
 ### Does Nudgebee support Anomaly Detection?
-No, this is part of RoadMap.
+No, this is part of the roadmap.
 
 ### Does NudgeBee support Predictive Analysis?
 Yes, NudgeBee uses predictive analytics for replica rightsizing and continuous rightsizing.
