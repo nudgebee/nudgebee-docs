@@ -1,6 +1,6 @@
 # Amazon Bedrock Integration
 
-This guide walks you through integrating Amazon Bedrock with Nudgebee's LLM Server and RAG Server applications.
+This guide walks you through integrating Amazon Bedrock with NudgeBee's LLM Server and RAG Server applications.
 
 ## Overview
 
@@ -56,4 +56,4 @@ EMBEDDINGS_PROVIDER_REGION=<AWS_Region> # e.g., us-west-2
 EMBEDDINGS_MODEL_NAME=<Custom_Bedrock_Model_ID> # e.g., amazon.titan-embed-text-v1
 ```
 
-#### To deploy Nudgebee AI models on AWS Bedrock and integrate [Nudgebee Model Deployment](./aws_bedrock_custom_model.md) 
+#### To deploy NudgeBee AI models on AWS Bedrock and integrate [NudgeBee Model Deployment](./aws_bedrock_custom_model.md) 

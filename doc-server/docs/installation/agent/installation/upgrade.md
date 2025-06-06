@@ -6,7 +6,7 @@ sidebar_position: 3
 
 ### Prerequisites
 
-Before upgrading your Nudgebee Agent, ensure the following:
+Before upgrading your NudgeBee Agent, ensure the following:
 
 #### Software
 - **Helm** installed and configured.

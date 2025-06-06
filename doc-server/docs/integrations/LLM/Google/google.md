@@ -1,10 +1,10 @@
 # Google Cloud Integration Options
 
-This guide covers the integration options available for connecting your Nudgebee applications with Google Cloud AI services.
+This guide covers the integration options available for connecting your NudgeBee applications with Google Cloud AI services.
 
 ## Available Google Cloud Integration Options
 
-Nudgebee supports the following Google Cloud services for LLM integration:
+NudgeBee supports the following Google Cloud services for LLM integration:
 
 1. [Google Gemini](./gemini.md) - Integrate with Google's Gemini multimodal models
 2. [Vertex AI](./vertex-ai.md) - Deploy and manage both foundation and custom models on Google's ML platform

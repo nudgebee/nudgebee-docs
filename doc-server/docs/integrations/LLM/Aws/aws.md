@@ -1,10 +1,10 @@
 # AWS Integration Options
 
-This guide covers the integration options available for connecting your Nudgebee applications with AWS AI/ML services.
+This guide covers the integration options available for connecting your NudgeBee applications with AWS AI/ML services.
 
 ## Available AWS Integration Options
 
-Nudgebee supports the following AWS services for LLM integration:
+NudgeBee supports the following AWS services for LLM integration:
 
 1. [Amazon Bedrock](./bedrock.md) - Access foundation models from Amazon and third-party providers through a unified API
 2. [Amazon SageMaker](./sagemaker.md) - Deploy and manage both foundation and custom models with scalable infrastructure

@@ -6,7 +6,7 @@ sidebar_position: 4
 
 ## Overview
 
-The Nudgebee Node Agent is a component designed to collect tracing data from HTTP requests and PostgreSQL queries within Kubernetes clusters. It utilizes eBPF (extended Berkeley Packet Filter) probes to capture low-level data directly from the kernel, ensuring minimal overhead and high performance. The collected data, including status, duration, request, and response information, is then sent to an OpenTelemetry collector. From there, the collector writes the data to ClickHouse for storage and analysis.
+The NudgeBee Node Agent is a component designed to collect tracing data from HTTP requests and PostgreSQL queries within Kubernetes clusters. It utilizes eBPF (extended Berkeley Packet Filter) probes to capture low-level data directly from the kernel, ensuring minimal overhead and high performance. The collected data, including status, duration, request, and response information, is then sent to an OpenTelemetry collector. From there, the collector writes the data to ClickHouse for storage and analysis.
 
 ## Architecture Diagram
 

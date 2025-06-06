@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Grafana Integration
 
-Nudgebee can integrate with Grafana to surface dashboards directly in the Nudgebee UI.
+NudgeBee can integrate with Grafana to surface dashboards directly in the NudgeBee UI.
 
 ## Configuration
 

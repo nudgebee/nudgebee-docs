@@ -8,7 +8,7 @@ sidebar_position: 11
 - Credentials specific to external integrations are stored as encrypted using AES with GCM.
 
 ## Authorization
-- Currently, Nudgebee supports tenant level authorization with 2 roles(admin, readonly)
+- Currently, NudgeBee supports tenant level authorization with 2 roles(admin, readonly)
 
 ## Audit
 - User operations are tracked and can be viewed on the UI.

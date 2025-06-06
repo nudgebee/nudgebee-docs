@@ -1,15 +1,15 @@
-# Deploying Nudgebee AI on AWS SageMaker and Bedrock  
+# Deploying NudgeBee AI on AWS SageMaker and Bedrock  
 
 ## Overview  
 
-This guide provides detailed steps to deploy the Nudgebee AI model on **AWS SageMaker** and **AWS Bedrock (Custom Model)**, including configuration for both the **RAG server** and **LLM server** to use the deployed model.  
+This guide provides detailed steps to deploy the NudgeBee AI model on **AWS SageMaker** and **AWS Bedrock (Custom Model)**, including configuration for both the **RAG server** and **LLM server** to use the deployed model.  
 
 ## **Prerequisites**  
 
 Before proceeding, ensure you have:  
 
 - An AWS account with permissions for SageMaker, Bedrock, S3, IAM, and ECR.  
-- A trained Nudgebee AI model in a supported format (`.tar.gz`).  
+- A trained NudgeBee AI model in a supported format (`.tar.gz`).  
 - The model file uploaded to an Amazon S3 bucket.  
 - An IAM role with the necessary permissions.  
 - The RAG and LLM servers properly configured to interact with the deployed model.
@@ -140,5 +140,5 @@ LLM_MODEL_NAME=<Custom_Bedrock_Model_ID>
 
 ## **Conclusion**  
 
-You have successfully deployed the Nudgebee AI model on **AWS SageMaker** and **AWS Bedrock (Custom Model)**, configuring both the **RAG server** and **LLM server** to interact with the selected platform.  
+You have successfully deployed the NudgeBee AI model on **AWS SageMaker** and **AWS Bedrock (Custom Model)**, configuring both the **RAG server** and **LLM server** to interact with the selected platform.  
 

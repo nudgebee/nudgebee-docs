@@ -21,7 +21,7 @@ sidebar_position: 4
 
 #### For Agent:
 - Helm chart for installation
-- Prometheus, if already configured, else Nudgebee agent installs it
+- Prometheus, if already configured, else NudgeBee agent installs it
 - Currently, NudgeBee uses Loki for log queries. For log-specific features, we will require Loki running on the cluster. We don't provide Loki as part of the Agent Installer.
 - Permissions as specified in Helm charts
 
@@ -36,24 +36,24 @@ If we remove Prometheus components, then it takes around 3GB and 2 cores
 All server components take around 12GB RAM and 4 core CPUs
 This includes running postgres/rabbitmq etc. If the customer is managing these dependencies, then it will take around 8GB RAM and 2 core CPUs
 
-### How Nudgebee Optimizations Work with GitOps
+### How NudgeBee Optimizations Work with GitOps
 
-Raise PRs from Nudgebee
-- We have added support for raising PRs from specific optimization screens in Nudgebee.
+Raise PRs from NudgeBee
+- We have added support for raising PRs from specific optimization screens in NudgeBee.
 
 GitOps(Flux/Argo) Reconciliation
 - Disable reconciliation for given resources.
 
-Nudgebee Autopilot Reconciliation
+NudgeBee Autopilot Reconciliation
 - NudgeBee provides annotations which can be used to ignore specific resources.
 
-GitOps Way Of Configuring Nudgebee Optimizations -
+GitOps Way Of Configuring NudgeBee Optimizations -
 - We want to provide this as an option using CRDs, though it's part of the roadmap.
 
 ### Can NudgeBee work on K3s/Kind/Minikube?
 Yes, please refer to the Installation Guide for local testing.
 
-### Does Nudgebee Docker images have any security vulnerabilities?
+### Does NudgeBee Docker images have any security vulnerabilities?
 No, NudgeBee uses Alpine-based images to reduce overall size and security issues. We use AWS ECR and NudgeBee for scanning images maintained by us. We can share a security report for that as per request.
 
 ### Does NudgeBee have VAPT reports?
@@ -65,12 +65,12 @@ Yes, configure agents on each targeted cluster.
 ### What are different NudgeBee distributions?
 NudgeBee has both SaaS and self-hosted solutions. As an end-user, you can use the SaaS solution to quickly validate/test the product and the self-hosted solution for long-term deployment (if there are compliance constraints which don't allow any kind of data movement).
 
-### What is the Nudgebee release cycle?
+### What is the NudgeBee release cycle?
 We target to have a weekly release cycle with hotfixes as per requirements. We follow SemVer for our versioning.
 
 ### Can you provide more details on Data Retention Policies?
 
-Currently, Nudgebee stores most of the data in Agents which get deployed on the cluster, so data remains within the cluster. Data retention for Agent components (traces/metrics/logs) is configurable and can be managed by the customer.
+Currently, NudgeBee stores most of the data in Agents which get deployed on the cluster, so data remains within the cluster. Data retention for Agent components (traces/metrics/logs) is configurable and can be managed by the customer.
 
 #### Agents store the following data:
 
@@ -85,7 +85,7 @@ Aggregated Metrics - We do aggregation on a daily basis. No retention policy yet
 Events - Troubleshooting pages. Current retention is 60 days. You can make it configurable.
 Deleted Pods/Workloads etc. - We store deleted workloads/pods etc. No retention policy yet. Will share once that is there, maybe by next week.
 
-### Does Nudgebee support Anomaly Detection?
+### Does NudgeBee support Anomaly Detection?
 No, this is part of the roadmap.
 
 ### Does NudgeBee support Predictive Analysis?
