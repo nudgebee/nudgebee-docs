@@ -45,7 +45,7 @@ GitOps(Flux/Argo) Reconciliation
 - Disable reconciliation for given resources.
 
 Nudgebee Autopilot Reconciliation
-- Nudgebee provides annotations which can be used to ignore specific resources.
+- NudgeBee provides annotations which can be used to ignore specific resources.
 
 GitOps Way Of Configuring Nudgebee Optimizations -
 - We want to provide this as an option using CRDs, though it's part of the roadmap.
