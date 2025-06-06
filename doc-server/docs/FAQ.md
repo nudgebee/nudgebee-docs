@@ -62,7 +62,7 @@ Yes, we use ZAP/manual pen testing for our security testing and can share report
 ### Can I configure multiple clusters within a single Nudgebee server?
 Yes, configure agents on each targeted cluster.
 
-### What are different Nudgebee distributions?
+### What are different NudgeBee distributions?
 Nudgebee has both SaaS and self-hosted solutions. As an end-user, you can use the SaaS solution to quickly validate/test the product and the self-hosted solution for long-term deployment (if there are compliance constraints which don't allow any kind of data movement).
 
 ### What is the Nudgebee release cycle?
