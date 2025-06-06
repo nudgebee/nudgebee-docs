@@ -7,86 +7,86 @@ sidebar_position: 4
 ### What are the open-source tools that NudgeBee uses?
 
 #### Agent
-- Prometheus(Or VictoriaMetrics) - Metrics Collection and alerting
+- Prometheus (or VictoriaMetrics) - Metrics Collection and alerting
 - OpenCost for calculating cost metrics for Pods/Workloads etc.
-- Trivy for Generating Docker Image Vulnerability related security Recommendations
-- Popeye for generating Best Practices related recommendation
-- Kubewatch For K8s Events Collection
+- Trivy for generating Docker image vulnerability related security recommendations
+- Popeye for generating best practices related recommendations
+- Kubewatch for K8s events collection
 
 ### What are the ML libraries that NudgeBee uses? What are the dependencies?
-- Tensorflow for Recommendation for replicas
-- AWS BedRock Using LLAMA(Optional) for AI based recommendation on Logs/Errors
+- TensorFlow for recommendations for replicas
+- AWS Bedrock using LLAMA (optional) for AI-based recommendations on logs/errors
 
 ### What are the pre-conditions(software/hardware) for installing NudgeBee on my cluster?
 
 #### For Agent:
-- Helm Chart for Installation
-- Prometheus, if already configured else Nudgebee agent install it
-- Currently Nudgebee uses loki for Log queries, for Log specific features we will require Loki running on the cluster. We don't provide loki as part of Agent Installer.
+- Helm chart for installation
+- Prometheus, if already configured, else Nudgebee agent installs it
+- Currently, Nudgebee uses Loki for log queries. For log-specific features, we will require Loki running on the cluster. We don't provide Loki as part of the Agent Installer.
 - Permissions as specified in Helm charts
 
 ### What is the typical system requirement for running NB on my cluster? What is the expected cost of operations for running the base NudgeBee
 
 #### For Agent:
-Agent Has multiple components, All of them combined take around 6GB memory and 3 Core CPUs
+Agent has multiple components. All of them combined take around 6GB memory and 3 core CPUs
 This also includes Prometheus(Alertmanager/KubestateMetrics)
-If We remove Prometheus components then it takes around 3GB and 2 Core
+If we remove Prometheus components, then it takes around 3GB and 2 cores
 
 #### For Server:
-All Server components take around 12GB ram and 4 Core CPUs
-This includes running postgres/rabbitmq etc. If customer is managing these dependencies then it will take around 8GB RAM and 2 Core CPUS
+All server components take around 12GB RAM and 4 core CPUs
+This includes running postgres/rabbitmq etc. If the customer is managing these dependencies, then it will take around 8GB RAM and 2 core CPUs
 
 ### How Nudgebee Optimizations Work with GitOps
 
-Raise PRs From Nudgebee
-- We have added support for Raising PRs from specific optimization screens in Nudgebee. 
+Raise PRs from Nudgebee
+- We have added support for raising PRs from specific optimization screens in Nudgebee.
 
 GitOps(Flux/Argo) Reconciliation
-- Disable reconciliation for given resources
+- Disable reconciliation for given resources.
 
 Nudgebee Autopilot Reconciliation
-- Nudgebee provides annotations, which can be used to ignore specific resources
+- Nudgebee provides annotations which can be used to ignore specific resources.
 
 GitOps Way Of Configuring Nudgebee Optimizations -
-- We want to provide this as an option using CRDs, Though its part of RoadMap
+- We want to provide this as an option using CRDs, though it's part of RoadMap.
 
-### Can Nudgebee Work on K3S/Kind/MiniKube ?
-Yes, Please refer to the Installation Guide for Local Testing.
+### Can Nudgebee work on K3s/Kind/Minikube?
+Yes, please refer to the Installation Guide for local testing.
 
-### Does Nudgebee Docker Images have any security vulnerabilities ?
-No, Nudgebee uses alpine based images to reduce overall size and security issues. We use AWS ECR & Nudgebee for scanning images maintained by us. We can share a security report for that as per request.
+### Does Nudgebee Docker images have any security vulnerabilities?
+No, Nudgebee uses Alpine-based images to reduce overall size and security issues. We use AWS ECR and Nudgebee for scanning images maintained by us. We can share a security report for that as per request.
 
-### Does Nudgebee Have VAPT Reports ?
-Yes, we use ZAP/Manual PenTesting for our security testing, and can share reports based on request.
+### Does Nudgebee have VAPT reports?
+Yes, we use ZAP/manual pen testing for our security testing and can share reports based on request.
 
-### Can I configure Multiple Clusters Within Single Nudgebee Server ?
+### Can I configure multiple clusters within a single Nudgebee server?
 Yes, configure agents on each targeted cluster.
 
-### What are different Nudgebee Distributions ?
-NudgeBee has both SaaS and Self-Hosted Solutions. As an end-user you can use SaaS solution to quickly validate/test product and Self-Hosted solution for long-term deployment (if there are compliance constraints which don't allow any kind of data movement)
+### What are different Nudgebee distributions?
+Nudgebee has both SaaS and self-hosted solutions. As an end-user, you can use the SaaS solution to quickly validate/test the product and the self-hosted solution for long-term deployment (if there are compliance constraints which don't allow any kind of data movement).
 
-### What is Nudgebee Release Cycle ?
-We target to have a weekly release cycle with Hotfixes as per requirements. We follow SemVer for our versioning.
+### What is the Nudgebee release cycle?
+We target to have a weekly release cycle with hotfixes as per requirements. We follow SemVer for our versioning.
 
-### Can your provide more details on Data Retention Policies ?
+### Can you provide more details on Data Retention Policies?
 
-Currently, Nudgebee stores most of the data in Agents which get deployed on cluster. so data remains within Cluster. Data Retention for Agent Components (Traces/Metrices/Logs) is configurable and can be managed by Customer
+Currently, Nudgebee stores most of the data in Agents which get deployed on the cluster, so data remains within the cluster. Data retention for Agent components (traces/metrics/logs) is configurable and can be managed by the customer.
 
-#### Agents store following data -
+#### Agents store the following data:
 
-Traces - using clickhouse, you can adjust how long you want to retain clickhouse data, default is 7 days
-Metrices - using prometehus, you can adjust prometheus data rentention
-Logs - We integrate with existing log services like Loki/ELK, so again depends on their data retention
+Traces - Using ClickHouse, you can adjust how long you want to retain ClickHouse data. The default is 7 days.
+Metrics - Using Prometheus, you can adjust Prometheus data retention.
+Logs - We integrate with existing log services like Loki/ELK, so again, it depends on their data retention.
 
 
-#### Servers store following data -
+#### Servers store the following data:
 
-Aggregated Metrices - We do aggregattion on daily basis, no rention policy yet, would like to understand usecase
-Events - Troubleshooting pages, current retention is 60 days, you can make it configurable
-Deleted Pods/Workloads etc - We store deleted workloads/pods etc, no rention policy yet, will share once that is there.. may be by next week
+Aggregated Metrics - We do aggregation on a daily basis. No retention policy yet. Would like to understand the use case.
+Events - Troubleshooting pages. Current retention is 60 days. You can make it configurable.
+Deleted Pods/Workloads etc. - We store deleted workloads/pods etc. No retention policy yet. Will share once that is there, maybe by next week.
 
-### Does Nudgebee Supports Anomaly Detection ?
-No, This is part of RoadMap
+### Does Nudgebee support Anomaly Detection?
+No, this is part of RoadMap.
 
-### Does Nudgebee Supports Predictive Analysis?
- yes, nudgbee uses predictive analytics for replica rightsizing, & continuous rightsizing
+### Does Nudgebee support Predictive Analysis?
+Yes, Nudgebee uses predictive analytics for replica rightsizing and continuous rightsizing.
