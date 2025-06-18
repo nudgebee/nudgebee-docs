@@ -50,6 +50,16 @@ All Server components take around 12GB ram and 4 Core CPUs This includes running
 For more details on other possible configurations, please refer [Configurations](./secret_configs.md).
 For list of full values of Helm chart, please refer [Helm Values](./helm_values.md).
 
+#### Using `existingSecret`
+
+You can manage secrets outside of Helm by creating them manually and referencing them via the `existingSecret` or `existingSecretName` fields.
+
+* `nudgebee_secret.existingSecretName`: If set, this disables creation of the default secret and uses the specified one instead. Keys inside the secret must match the expected field names (e.g., `BASE_URL`, `JWT_PRIVATE_KEY`).
+* `nudgebee_registry_secret.existingSecretName`: Use this if the registry credentials are stored in a pre-created Kubernetes secret.
+* `postgresql.auth.existingSecret`: Used to inject an existing Kubernetes secret that contains the Postgres password.
+* `clickhouse.auth.existingSecret`: Same usage as above for ClickHouse.
+* `rabbitmq.auth.existingPasswordSecret`, `existingErlangSecret`: Same usage for RabbitMQ passwords and Erlang cookie.
+
 ### Installation Steps
 Follow these steps to install the nudgebee server using Helm:
 
