@@ -29,6 +29,7 @@ sidebar_position: 7
 | etl.image.tag | string | `""` |  |
 | global.image.registry | string | `"registry.nudgebee.com"` |  |
 | global.imagePullSecrets[0].name | string | `"nudgebee-registry-secret"` |  |
+| global.existingNudgebeeSecretName | string | `""` | Name of an existing Kubernetes secret to use for Nudgebee configurations (e.g., NUDGEBEE_LICENSE, BASE_URL). When set, these configurations are managed within this secret. |
 | hasura.fullnameOverride | string | `"hasura"` |  |
 | hasura.image.repository | string | `"hasura/graphql-engine"` |  |
 | hasura.image.tag | string | `"v2.36.1-ce"` |  |
@@ -63,7 +64,6 @@ sidebar_position: 7
 | nudgebee_secret.NUDGEBEE_ENCRYPTION_KEY | string | `""` |  |
 | nudgebee_secret.NUDGEBEE_LICENSE | string | `""` |  |
 | nudgebee_secret.RELAY_SERVER_SECRET_KEY | string | `""` |  |
-| nudgebee_secret.existingSecretName | string | `""` |  |
 | postgres_migrations.fullnameOverride | string | `"postgres_migrations"` |  |
 | postgres_migrations.image.repository | string | `"nudgebee-hasura-migrations"` |  |
 | postgres_migrations.image.tag | string | `""` |  |
