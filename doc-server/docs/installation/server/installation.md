@@ -61,30 +61,10 @@ You can manage secrets outside of Helm by creating them manually and referencing
   global:
     existingNudgebeeSecretName: 'nudgebee-v2'
 
-  # Ensure other nudgebee_secret configurations within the Helm values are removed or commented out,
-  # as these settings will be managed in the 'nudgebee-v2' Kubernetes secret.
-  # Example:
-  # nudgebee_secret:
-  #   NUDGEBEE_LICENSE: YOUR_LICENSE_KEY_HERE
-  #   BASE_URL: http://your-nudgebee-url.com
-  ```
-
-  **Kubernetes Secret Manifest Example:**
-  ```yaml
-  apiVersion: v1
-  kind: Secret
-  metadata:
-    name: nudgebee-v2 # This should match global.existingNudgebeeSecretName
-    namespace: nudgebee # Or your target namespace
-  type: Opaque
-  data:
-    # All Nudgebee configuration keys should be base64 encoded.
-    # These keys would otherwise be defined under the 'nudgebee_secret' block in your Helm values.
-    # Example for NUDGEBEE_LICENSE:
-    NUDGEBEE_LICENSE: PGxpY2VuY2Vfa2V5X3RvX2JlX3Byb3ZpZGVkPg== # echo -n '<licence_key_to_be_provided>' | base64
-    # Example for BASE_URL:
-    # BASE_URL: aHR0cDovL3lvdXItbnVkZ2ViZWUtdXJsLmNvbQ== # echo -n 'http://your-nudgebee-url.com' | base64
-    # Add other required Nudgebee secret keys here as needed.
+  Ensure other nudgebee_secret configurations within the Helm values are removed or commented out,
+  as these settings will be managed in the 'nudgebee-v2' Kubernetes secret.
+  nudgebee_secret:
+     NUDGEBEE_LICENSE: YOUR_LICENSE_KEY_HERE
   ```
 * `nudgebee_registry_secret.existingSecretName`: Use this if the registry credentials are stored in a pre-created Kubernetes secret.
 * `postgresql.auth.existingSecret`: Used to inject an existing Kubernetes secret that contains the Postgres password.
