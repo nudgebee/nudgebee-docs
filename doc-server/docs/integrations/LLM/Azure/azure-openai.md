@@ -1,6 +1,6 @@
 # Azure OpenAI Service Integration
 
-This guide provides detailed instructions for integrating Azure OpenAI Service with Nudgebee's LLM Server and RAG Server applications.
+This guide provides detailed instructions for integrating Azure OpenAI Service with NudgeBee's LLM Server and RAG Server applications.
 
 ## Overview
 
@@ -73,4 +73,4 @@ EMBEDDINGS_PROVIDER_API_ENDPOINT=<Azure embeddings endpoint URL> # e.g., "https:
 EMBEDDINGS_PROVIDER_API_KEY=<Credential for accessing Azure embeddings>
 ```
 
-#### To deploy Nudgebee AI models on Azure OpenAI and integrate [Nudgebee Model Deployment](./nb-azure-ai.md)
+#### To deploy NudgeBee AI models on Azure OpenAI and integrate [NudgeBee Model Deployment](./nb-azure-ai.md)

@@ -1,7 +1,7 @@
-# Deploying Nudgebee AI on Ollama (GPU Machine)
+# Deploying NudgeBee AI on Ollama (GPU Machine)
 
 ## Overview
-This guide provides detailed steps to deploy the Nudgebee AI model on a GPU machine using Ollama, including configuration for both the Nudgebee RAG server and LLM server to use the deployed model for embedding generation and inference.
+This guide provides detailed steps to deploy the NudgeBee AI model on a GPU machine using Ollama, including configuration for both the NudgeBee RAG server and LLM server to use the deployed model for embedding generation and inference.
 
 
 ## **Prerequisites**
@@ -9,9 +9,9 @@ This guide provides detailed steps to deploy the Nudgebee AI model on a GPU mach
 Before proceeding, ensure you have:
 - A machine with a compatible NVIDIA GPU (CUDA enabled)
 - Installed **Ollama** with GPU support
-- A trained Nudgebee AI model in a compatible format
+- A trained NudgeBee AI model in a compatible format
 - Docker installed (if using a containerized setup)
-- The Nudgebee RAG server and LLM server properly configured to interact with the deployed model
+- The NudgeBee RAG server and LLM server properly configured to interact with the deployed model
 
 
 ## **Step 1: Install Ollama with GPU Support**
@@ -33,8 +33,8 @@ Before proceeding, ensure you have:
 
 ## **Step 2: Download and Load the Model into Ollama**
 
-1. Download the Nudgebee model from the Nudgebee store.
-2. Place the Nudgebee model file in an accessible directory.
+1. Download the NudgeBee model from the NudgeBee store.
+2. Place the NudgeBee model file in an accessible directory.
 3. Import the model into Ollama:
    ```bash
    ollama create nudgebee-ai --from nudgebee_model
@@ -58,9 +58,9 @@ Before proceeding, ensure you have:
    ```
 
 
-## **Step 4: Configure Nudgebee RAG Server to Use Ollama**
+## **Step 4: Configure NudgeBee RAG Server to Use Ollama**
 
-Update the environment variables in the Nudgebee RAG server to connect to the deployed model:
+Update the environment variables in the NudgeBee RAG server to connect to the deployed model:
 
 ### **Environment Variables for RAG Server**
 
@@ -70,9 +70,9 @@ EMBEDDINGS_MODEL_NAME=<Model name in Ollama>
 EMBEDDINGS_PROVIDER_API_ENDPOINT=<Ollama embeddings endpoint URL>
 ```
 
-## **Step 5: Configure Nudgebee LLM Server to Use Ollama**
+## **Step 5: Configure NudgeBee LLM Server to Use Ollama**
 
-Nudgebee LLM server uses the OpenAI-compatible endpoint provided by Ollama and requires the following configuration:
+NudgeBee LLM server uses the OpenAI-compatible endpoint provided by Ollama and requires the following configuration:
 
 ### **Environment Variables for LLM Server**
 
@@ -85,4 +85,4 @@ LLM_PROVIDER_API_ENDPOINT=<Ollama model endpoint URL>
 
 ## **Conclusion**
 
-You have successfully deployed the Nudgebee AI model on an Ollama-supported GPU machine and configured both the Nudgebee RAG server and LLM server to use the deployed model for embedding generation and inference.
+You have successfully deployed the NudgeBee AI model on an Ollama-supported GPU machine and configured both the NudgeBee RAG server and LLM server to use the deployed model for embedding generation and inference.

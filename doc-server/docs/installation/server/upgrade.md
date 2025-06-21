@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Upgrade
 
-Upgrading your Nudgebee Server ensures you benefit from the latest features, security updates, and bug fixes.
+Upgrading your NudgeBee Server ensures you benefit from the latest features, security updates, and bug fixes.
 
 ---
 
@@ -17,12 +17,12 @@ Before upgrading, ensure:
 - **kubectl** is configured for your target cluster.
 - You have a backup of your current configuration.
 
-You can always upgrade to the latest version of Nudgebee Server. You dont need to do incremental upgrades.
-If you want to upgrade to a specific version, please ensure that the version is compatible with your current setup (e.g., by consulting the official release notes or compatibility guide). Nudgebee does not support downgrades.
-- You have the latest `values.yaml` file from the Nudgebee repository or your custom configuration.
-- You have the Nudgebee license key available as an environment variable `NUDGEBEE_LICENSE_KEY`.
+You can always upgrade to the latest version of NudgeBee Server. You dont need to do incremental upgrades.
+If you want to upgrade to a specific version, please ensure that the version is compatible with your current setup (e.g., by consulting the official release notes or compatibility guide). NudgeBee does not support downgrades.
+- You have the latest `values.yaml` file from the NudgeBee repository or your custom configuration.
+- You have the NudgeBee license key available as an environment variable `NUDGEBEE_LICENSE_KEY`.
 - You have the `KUBE_CONTEXT` environment variable set to the context of your Kubernetes cluster.
-- You have the `CHART_VERSION` environment variable set to the version of Nudgebee you want to upgrade to (if not using the latest version).
+- You have the `CHART_VERSION` environment variable set to the version of NudgeBee you want to upgrade to (if not using the latest version).
 - You have the `nudgebee` namespace created in your Kubernetes cluster. If not, it will be created during the upgrade process.
 
 ---
@@ -44,7 +44,7 @@ helm registry login https://registry.nudgebee.com --username nudgebee --password
 ```
 
 ---
-## 3. Upgrade Nudgebee
+## 3. Upgrade NudgeBee
 
 ```shell
 helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee -f values.yaml  --install --namespace nudgebee --create-namespace --wait --kube-context $KUBE_CONTEXT

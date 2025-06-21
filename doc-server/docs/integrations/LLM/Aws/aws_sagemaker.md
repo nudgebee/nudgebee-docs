@@ -1,13 +1,13 @@
-# Deploying Nudgebee AI on AWS SageMaker
+# Deploying NudgeBee AI on AWS SageMaker
 
 ## Overview
 
-This guide walks you through deploying the Nudgebee AI model on AWS SageMaker.
+This guide walks you through deploying the NudgeBee AI model on AWS SageMaker.
 
 ## Prerequisites
 
 - AWS account with access to SageMaker, S3, IAM, and ECR
-- Trained Nudgebee model (`.tar.gz`)
+- Trained NudgeBee model (`.tar.gz`)
 - Model uploaded to an S3 bucket
 - IAM role with required permissions
 

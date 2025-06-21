@@ -22,7 +22,7 @@ import  { Redirect } from 'react-router-dom';
 //           <Link
 //             className="button button--secondary button--lg"
 //             to="/docs/datasource-connection/">
-//             Nudgebee Tutorial - 5min ⏱️
+//             NudgeBee Tutorial - 5min ⏱️
 //           </Link>
 //         </div>
 //       </div>
@@ -34,7 +34,7 @@ import  { Redirect } from 'react-router-dom';
 //   const {siteConfig} = useDocusaurusContext();
 //   return (
 //     <Layout
-//       title={`Nudgebee Docs`}
+//       title={`NudgeBee Docs`}
 //       description="Cost Optimization and Monitoring">
 //       <HomepageHeader />
 //       <main>

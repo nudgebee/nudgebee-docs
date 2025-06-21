@@ -6,7 +6,7 @@ sidebar_position: 4
 
 Last9 exposes Loki apis and can be configured using Loki integrations.
 
-## Nudgebee Agent Configuration
+## NudgeBee Agent Configuration
 
 ```yaml
 runner:

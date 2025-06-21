@@ -4,9 +4,9 @@ sidebar_position: 3
 
 # Label-based Multitenant Prometheus Setup
 
-To enable **multi-tenant Prometheus access** for Nudgebee, we recommend using the open-source [prom-label-proxy](https://github.com/prometheus-community/prom-label-proxy). This acts as a secure gatekeeper, ensuring that tenants only see the metrics matching their allowed labels.
+To enable **multi-tenant Prometheus access** for NudgeBee, we recommend using the open-source [prom-label-proxy](https://github.com/prometheus-community/prom-label-proxy). This acts as a secure gatekeeper, ensuring that tenants only see the metrics matching their allowed labels.
 
-This guide walks you through setting it up in your Kubernetes cluster and wiring it into Nudgebee.
+This guide walks you through setting it up in your Kubernetes cluster and wiring it into NudgeBee.
 
 ---
 
@@ -26,7 +26,7 @@ We recommend installing prom-label-proxy using Helm. Here’s how.
 
 * A running Prometheus or VictoriaMetrics cluster
 * Helm installed on your machine
-* Access to the Kubernetes cluster where Nudgebee runs
+* Access to the Kubernetes cluster where NudgeBee runs
 
 ### ✨ Installation Steps
 
@@ -71,7 +71,7 @@ Create a Kubernetes `Service` or `Ingress` if you need external access.
 
 ---
 
-## 🔌 Wire into Nudgebee
+## 🔌 Wire into NudgeBee
 
 Once installed, update Nudgebee’s `prometheus_url` to point to the proxy:
 
@@ -116,7 +116,7 @@ helm upgrade --install label-proxy-test prometheus-community/prom-label-proxy \
   --set config.extraArgs[0]=--label-value=test
 ```
 
-Then point each tenant’s Nudgebee instance (or configuration) to the correct proxy endpoint.
+Then point each tenant’s NudgeBee instance (or configuration) to the correct proxy endpoint.
 
 ---
 
@@ -124,11 +124,11 @@ Then point each tenant’s Nudgebee instance (or configuration) to the correct p
 
 - ✅ Secure label-based isolation without needing separate Prometheus setups
 - ✅ Lightweight and easy to deploy
-- ✅ Compatible with Prometheus, VictoriaMetrics, and other backends Nudgebee supports
+- ✅ Compatible with Prometheus, VictoriaMetrics, and other backends NudgeBee supports
 
 ---
 
 ## 📚 Additional Resources
 
 * [prom-label-proxy GitHub](https://github.com/prometheus-community/prom-label-proxy)
-* [Nudgebee Docs: Prometheus Integrations](../metrics)
+* [NudgeBee Docs: Prometheus Integrations](../metrics)

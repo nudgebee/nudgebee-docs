@@ -6,7 +6,7 @@ sidebar_position: 3
 
 You can integrate logz.io using ES integration as logz.io exposes Opensearch Apis
 
-## Nudgebee Agent Configuration
+## NudgeBee Agent Configuration
 
 ```yaml
 runner:

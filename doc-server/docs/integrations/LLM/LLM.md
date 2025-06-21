@@ -1,12 +1,12 @@
 # LLM Provider Integrations
 
-This documentation guides you through integrating various LLM providers with Nudgebee's LLM Server and RAG Server applications. Our platform supports multiple LLM providers, allowing you to leverage foundation models or deploy custom models based on your specific needs.
+This documentation guides you through integrating various LLM providers with NudgeBee's LLM Server and RAG Server applications. Our platform supports multiple LLM providers, allowing you to leverage foundation models or deploy custom models based on your specific needs.
 
 ## Supported LLM Providers
 
 * [AWS Bedrock](./Aws/bedrock.md) is the default provider for LLM Server and RAG Server applications.
 
-Choose from the following LLM providers to integrate with your Nudgebee applications:
+Choose from the following LLM providers to integrate with your NudgeBee applications:
 
 ### Cloud Provider Services
 - [AWS](./Aws/aws.md) - Amazon Web Services integration options including Bedrock and SageMaker
@@ -17,12 +17,12 @@ Choose from the following LLM providers to integrate with your Nudgebee applicat
 - [Hugging Face](./HuggingFace/nb-hugging-face.md) - Integration with Hugging Face's model repository and inference APIs
 - [Ollama](./Ollama/nb-ollama.md) - Integration with self-hosted Ollama deployments
 
-### Nudgebee Models  
+### NudgeBee Models  
 
-Nudgebee provides pre-trained AI models that can be downloaded and deployed on supported platforms (applicable for on-premises or self-hosted environments):
+NudgeBee provides pre-trained AI models that can be downloaded and deployed on supported platforms (applicable for on-premises or self-hosted environments):
 
- **Nudgebee AI/LLM Models**  
-   - Download pre-trained AI models from the Nudgebee platform using the following commands:
+ **NudgeBee AI/LLM Models**  
+   - Download pre-trained AI models from the NudgeBee platform using the following commands:
 
      ##### SLM
       ```bash
