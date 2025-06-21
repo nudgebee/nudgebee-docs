@@ -1,10 +1,10 @@
 # Amazon SageMaker Integration
 
-This guide provides detailed instructions for integrating Amazon SageMaker with Nudgebee's LLM Server and RAG Server applications.
+This guide provides detailed instructions for integrating Amazon SageMaker with NudgeBee's LLM Server and RAG Server applications.
 
 ## Overview
 
-Amazon SageMaker is a fully managed machine learning service that enables data scientists and developers to build, train, and deploy machine learning models at scale. For Nudgebee applications, SageMaker provides a flexible platform to deploy both foundation models and custom-trained models.
+Amazon SageMaker is a fully managed machine learning service that enables data scientists and developers to build, train, and deploy machine learning models at scale. For NudgeBee applications, SageMaker provides a flexible platform to deploy both foundation models and custom-trained models.
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ Amazon SageMaker is a fully managed machine learning service that enables data s
 
 ## Deploying Foundation Models on SageMaker
 
-To deploy foundation models on SageMaker for use with Nudgebee applications:
+To deploy foundation models on SageMaker for use with NudgeBee applications:
 
 1. **Navigate to JumpStart in SageMaker Studio**:
    - Open SageMaker Studio
@@ -44,7 +44,7 @@ To deploy foundation models on SageMaker for use with Nudgebee applications:
 
 3. **Get the Endpoint Name**:
    - Once deployed, note the endpoint name
-   - Add this endpoint name to your Nudgebee configuration
+   - Add this endpoint name to your NudgeBee configuration
 
 ## Custom Model Deployment on SageMaker
 
@@ -106,4 +106,4 @@ EMBEDDINGS_MODEL_NAME=<Model_Name> # e.g., your-custom-model
 ```
 
 
-#### To deploy Nudgebee AI models on AWS SageMaker and integrate [Nudgebee Model Deployment](./aws_sagemaker.md)
+#### To deploy NudgeBee AI models on AWS SageMaker and integrate [NudgeBee Model Deployment](./aws_sagemaker.md)

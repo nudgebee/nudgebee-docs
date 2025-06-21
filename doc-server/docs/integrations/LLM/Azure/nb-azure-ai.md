@@ -1,14 +1,14 @@
-# Deploying Nudgebee AI on Azure AI Foundry
+# Deploying NudgeBee AI on Azure AI Foundry
 
 ## Overview
-This guide provides detailed steps to deploy the Nudgebee AI model on Azure AI Foundry, including configuration for both the RAG server and LLM server to use the deployed model.
+This guide provides detailed steps to deploy the NudgeBee AI model on Azure AI Foundry, including configuration for both the RAG server and LLM server to use the deployed model.
 
 
 ## **Prerequisites**
 
 Before proceeding, ensure you have:
 - An Azure account with permissions for AI Foundry, Storage, IAM, and Container Registry.
-- A trained Nudgebee AI model in a supported format (`.tar.gz`).
+- A trained NudgeBee AI model in a supported format (`.tar.gz`).
 - The model file uploaded to Azure Blob Storage.
 - An Azure AI Foundry workspace set up for model deployment.
 - The RAG and LLM servers properly configured to interact with the deployed model.

@@ -4,7 +4,7 @@ sidebar_position: 6
 
 # Helm Chart Values
 
-Nudgebee Helm chart for Kubernetes
+NudgeBee Helm chart for Kubernetes
 
 ## Requirements
 

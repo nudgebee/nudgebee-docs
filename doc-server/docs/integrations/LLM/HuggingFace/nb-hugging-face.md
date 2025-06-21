@@ -1,14 +1,14 @@
-# Deploying Nudgebee AI on Hugging Face
+# Deploying NudgeBee AI on Hugging Face
 
 ## Overview
-This guide provides detailed steps to deploy the Nudgebee AI model on Hugging Face using the UI, including configuration for both the RAG server and LLM server to use the deployed model.
+This guide provides detailed steps to deploy the NudgeBee AI model on Hugging Face using the UI, including configuration for both the RAG server and LLM server to use the deployed model.
 
 
 ## **Prerequisites**
 
 Before proceeding, ensure you have:
 - A **Hugging Face** account.
-- A trained Nudgebee AI model in a compatible format (`.bin`, `.pt`, `.gguf`).
+- A trained NudgeBee AI model in a compatible format (`.bin`, `.pt`, `.gguf`).
 - The model files ready for upload.
 - The RAG server properly configured to interact with the deployed model.
 
@@ -58,4 +58,4 @@ LLM_PROVIDER_API_ENDPOINT=<Hugging Face model endpoint>
 
 ## **Conclusion**
 
-You have successfully deployed the Nudgebee AI model on Hugging Face using the UI and configured both the RAG server and LLM server to use the deployed model.
+You have successfully deployed the NudgeBee AI model on Hugging Face using the UI and configured both the RAG server and LLM server to use the deployed model.

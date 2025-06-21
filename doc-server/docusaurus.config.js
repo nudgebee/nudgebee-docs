@@ -6,7 +6,7 @@ const darkCodeTheme = require('prism-react-renderer').themes.dracula;;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Nudgebee',
+  title: 'NudgeBee',
   tagline: '',
   favicon: 'img/favicon.ico',
 
@@ -19,8 +19,8 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'Nudgebee', // Usually your GitHub org/user name.
-  projectName: 'Nudgebee', // Usually your repo name.
+  organizationName: 'NudgeBee', // Usually your GitHub org/user name.
+  projectName: 'NudgeBee', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -53,11 +53,11 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/Nudgebee.png',
+      image: 'img/NudgeBee.png',
       navbar: {
-        title: 'Nudgebee',
+        title: 'NudgeBee',
         logo: {
-          alt: 'Nudgebee Logo',
+          alt: 'NudgeBee Logo',
           src: 'img/logo.svg',
         },
         items: [
@@ -65,7 +65,7 @@ const config = {
       },
       footer: {
         style: 'dark',
-        copyright: `Copyright © ${new Date().getFullYear()} Nudgebee Inc.`,
+        copyright: `Copyright © ${new Date().getFullYear()} NudgeBee Inc.`,
       },
       prism: {
         theme: lightCodeTheme,
