@@ -1,6 +1,6 @@
 # Google Vertex AI Integration
 
-This guide provides detailed instructions for integrating Google Vertex AI with Nudgebee's LLM Server and RAG Server applications.
+This guide provides detailed instructions for integrating Google Vertex AI with NudgeBee's LLM Server and RAG Server applications.
 
 ## Overview
 

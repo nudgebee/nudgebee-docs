@@ -3,7 +3,7 @@ sidebar_position: 2
 ---
 # Server
 
-The Nudgebee Server is the central component of the Nudgebee platform. It receives data from Nudgebee Agents, performs analysis, and handles user authentication and integrates with external services.
+The NudgeBee Server is the central component of the NudgeBee platform. It receives data from NudgeBee Agents, performs analysis, and handles user authentication and integrates with external services.
 
 
 ## Architecture

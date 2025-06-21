@@ -3,7 +3,7 @@ sidebar_position: 1
 ---
 # Slack
 
-## How to configure Slack in your Nudgebee Account 
+## How to configure Slack in your NudgeBee Account 
 
 - This loom below shows how to configure Slack in your account for notifications.
 
@@ -11,7 +11,7 @@ sidebar_position: 1
     <iframe src="https://www.loom.com/embed/60bc60343e574abc879ee67ba0795bda?sid=1dc122fc-6d91-447b-bae2-cee012dd6e41" frameborder="0" allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe>
 </div>
 
-## How to configure Slack in your on-prem Nudgebee
+## How to configure Slack in your on-prem NudgeBee
 
 To use Slack integration in your on-prem nudgebee, you’ll need to create a Slack app.
 
@@ -21,7 +21,7 @@ To use Slack integration in your on-prem nudgebee, you’ll need to create a Sla
 
 After naming your app and connecting your workspace, navigate to Basic Information. Here you’ll find your Client ID, Client Secret, and Signing Secret that lets your app access the Slack API.
 
-Here’s where you’ll connect your on-premise Nudgebee instance to your newly created Slack app. Copy your Client ID, Client Secret, and Signing Secret to your secrets in your nudgebee server.
+Here’s where you’ll connect your on-premise NudgeBee instance to your newly created Slack app. Copy your Client ID, Client Secret, and Signing Secret to your secrets in your nudgebee server.
 
 **Step 2.** Now that you’ve created your app and updated your Nudgebee config, you’ll need to set up the OAuth Redirect URL.
 
@@ -58,7 +58,7 @@ Click Save Changes and Slack will confirm if the HTTP request to the URL you ent
 
 **Step 6.** Once you’ve installed the app, you’ll need to add your Slack app's credentials (Client ID, Client Secret, and Signing Secret, typically found on its 'Basic Information' page) to your Nudgebee secrets.
 
-Navigate to your Nudgebee secrets and add the following:
+Navigate to your NudgeBee secrets and add the following:
 
 ```
 SLACK_CLIENT_SECRET: The Client Secret for the Slack application integration.

@@ -1,10 +1,10 @@
 # Azure Integration Options
 
-This guide covers the integration options available for connecting your Nudgebee applications with Microsoft Azure AI services.
+This guide covers the integration options available for connecting your NudgeBee applications with Microsoft Azure AI services.
 
 ## Available Azure Integration Options
 
-Nudgebee supports the following Azure services for LLM integration:
+NudgeBee supports the following Azure services for LLM integration:
 
 1. [Azure OpenAI Service](./azure-openai.md) - Access state-of-the-art language models with enterprise-level security and compliance
 2. [Azure AI Custom Models](./nb-azure-ai.md) - Deploy and manage your custom models on Azure infrastructure

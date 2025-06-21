@@ -18,7 +18,7 @@ sidebar_position: 1
 
 ### Prerequisites
 
-Before installing the Nudgebee Agent, ensure you have:
+Before installing the NudgeBee Agent, ensure you have:
 
 #### Software
 - **Helm**: [Helm](https://helm.sh/) installed and configured.
@@ -51,7 +51,7 @@ These recommendations target clusters up to **100 nodes** and assume you already
 
 ### Permissions
 
-The Nudgebee Agent relies on Kubernetes RBAC. All required roles and bindings are defined in the [runner-service-account.yaml](https://raw.githubusercontent.com/nudgebee/k8s-agent/main/charts/nudgebee-agent/templates/runner-service-account.yaml).
+The NudgeBee Agent relies on Kubernetes RBAC. All required roles and bindings are defined in the [runner-service-account.yaml](https://raw.githubusercontent.com/nudgebee/k8s-agent/main/charts/nudgebee-agent/templates/runner-service-account.yaml).
 
 ---
 
@@ -89,7 +89,7 @@ helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-
   -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
 ```
 
-#### c. Install Nudgebee Agent
+#### c. Install NudgeBee Agent
 
 1. Add & update the Helm repo:
 
@@ -112,9 +112,9 @@ helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-
 
 ---
 
-## Agent Installation for self hosted Nudgebee
+## Agent Installation for self hosted NudgeBee
 
-If you’re running a self-hosted Nudgebee instance, use a custom `values.yaml`:
+If you’re running a self-hosted NudgeBee instance, use a custom `values.yaml`:
 
 ```yaml
 runner:
