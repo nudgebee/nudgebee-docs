@@ -142,3 +142,27 @@ NudgeBee Helm chart for Kubernetes
 | runner.tolerations | list | `[]` |  |
 | runner.victoria_metrics_enabled | bool | `false` |  |
 | runnerServiceAccount.imagePullSecrets | list | `[]` |  |
+
+## WebSocket vs HTTP Configuration
+
+The runner supports both WebSocket and HTTP connections to the relay server. By default, WebSocket is enabled.
+
+### Common Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `WS_ENABLED` | `true` | Enable/disable WebSocket connections |
+| `AGENT_HTTP_URL` | `"http://localhost:5000"` | HTTP endpoint for agent when WebSocket is disabled |
+
+### Example Configuration
+
+To disable WebSocket and use HTTP instead:
+
+```yaml
+runner:
+  additional_env_vars:
+    - name: WS_ENABLED
+      value: "false"
+    - name: AGENT_HTTP_URL
+      value: "http://localhost:5000"
+```
