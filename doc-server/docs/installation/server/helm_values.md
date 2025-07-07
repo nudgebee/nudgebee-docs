@@ -29,6 +29,7 @@ sidebar_position: 7
 | etl.image.tag | string | `""` |  |
 | global.image.registry | string | `"registry.nudgebee.com"` |  |
 | global.imagePullSecrets[0].name | string | `"nudgebee-registry-secret"` |  |
+| global.existingNudgebeeSecretName | string | `""` | Name of an existing Kubernetes secret to use for Nudgebee configurations (e.g., NUDGEBEE_LICENSE, BASE_URL). When set, these configurations are managed within this secret. |
 | hasura.fullnameOverride | string | `"hasura"` |  |
 | hasura.image.repository | string | `"hasura/graphql-engine"` |  |
 | hasura.image.tag | string | `"v2.36.1-ce"` |  |
@@ -62,6 +63,7 @@ sidebar_position: 7
 | nudgebee_secret.JWT_PUBLIC_KEY | string | `""` |  |
 | nudgebee_secret.NUDGEBEE_ENCRYPTION_KEY | string | `""` |  |
 | nudgebee_secret.NUDGEBEE_LICENSE | string | `""` |  |
+| nudgebee_secret.AUTH_DEFAULT_ROLE | string | `"tenant_admin_readonly"` | Sets the default role for new users during self-onboarding. Valid options are `tenant_admin_readonly` and `tenant_admin`. |
 | nudgebee_secret.RELAY_SERVER_SECRET_KEY | string | `""` |  |
 | nudgebee_secret.existingSecretName | string | `""` |  |
 | postgres_migrations.fullnameOverride | string | `"postgres_migrations"` |  |
