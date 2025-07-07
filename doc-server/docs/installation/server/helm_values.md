@@ -65,6 +65,7 @@ sidebar_position: 7
 | nudgebee_secret.NUDGEBEE_LICENSE | string | `""` |  |
 | nudgebee_secret.AUTH_DEFAULT_ROLE | string | `"tenant_admin_readonly"` | Sets the default role for new users during self-onboarding. Valid options are `tenant_admin_readonly` and `tenant_admin`. |
 | nudgebee_secret.RELAY_SERVER_SECRET_KEY | string | `""` |  |
+| nudgebee_secret.existingSecretName | string | `""` |  |
 | postgres_migrations.fullnameOverride | string | `"postgres_migrations"` |  |
 | postgres_migrations.image.repository | string | `"nudgebee-hasura-migrations"` |  |
 | postgres_migrations.image.tag | string | `""` |  |
