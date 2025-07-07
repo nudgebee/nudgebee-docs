@@ -140,3 +140,33 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   -f values.yaml
 ```
+
+### Using HTTP Instead of WebSocket (Agent Publicly Available)
+
+If your agent is publicly available and you want the relay to connect to the agent over HTTP instead of WebSocket:
+
+```yaml
+runner:
+  additional_env_vars:
+    - name: WS_ENABLED
+      value: "false"
+    - name: AGENT_HTTP_URL
+      value: "http://localhost:5000"  # Agent HTTP endpoint
+  nudgebee:
+    auth_secret_key: "<NUDBGEE_AUTH_KEY>"
+    endpoint: "https://<COLLECTOR_SERVER_URL>/"
+
+globalConfig:
+  prometheus_url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+
+opencost:
+  opencost:
+    prometheus:
+      external:
+        url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+```
+
+This configuration:
+- Disables WebSocket connections by setting `WS_ENABLED=false`
+- Configures the agent to listen on HTTP endpoint via `AGENT_HTTP_URL`
+- Allows the relay to connect to the agent over HTTP instead of WebSocket

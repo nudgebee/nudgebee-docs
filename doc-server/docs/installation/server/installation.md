@@ -54,7 +54,18 @@ For list of full values of Helm chart, please refer [Helm Values](./helm_values.
 
 You can manage secrets outside of Helm by creating them manually and referencing them via the `existingSecret` or `existingSecretName` fields.
 
-* `nudgebee_secret.existingSecretName`: If set, this disables creation of the default secret and uses the specified one instead. Keys inside the secret must match the expected field names (e.g., `BASE_URL`, `JWT_PRIVATE_KEY`).
+* `global.existingNudgebeeSecretName`: Use this to specify an existing Kubernetes secret that holds the primary Nudgebee application configurations (e.g., `NUDGEBEE_LICENSE`, `BASE_URL`). When this is set, the Helm chart will use this secret for Nudgebee's core settings, and you should manage these key-value pairs directly within this referenced secret. Keys inside the secret must match the expected field names.
+
+  **Helm Values Example:**
+  ```yaml
+  global:
+    existingNudgebeeSecretName: 'nudgebee-v2'
+
+  Ensure other nudgebee_secret configurations within the Helm values are removed or commented out,
+  as these settings will be managed in the 'nudgebee-v2' Kubernetes secret.
+  nudgebee_secret:
+     NUDGEBEE_LICENSE: YOUR_LICENSE_KEY_HERE
+  ```
 * `nudgebee_registry_secret.existingSecretName`: Use this if the registry credentials are stored in a pre-created Kubernetes secret.
 * `postgresql.auth.existingSecret`: Used to inject an existing Kubernetes secret that contains the Postgres password.
 * `clickhouse.auth.existingSecret`: Same usage as above for ClickHouse.
