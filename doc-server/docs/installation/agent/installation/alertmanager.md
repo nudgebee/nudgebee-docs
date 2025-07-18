@@ -66,7 +66,7 @@ helm repo add vm https://victoriametrics.github.io/helm-charts/
 ### 3. Install CRDs
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/VictoriaMetrics/helm-charts/refs/heads/master/charts/victoria-metrics-operator/charts/crds/crds/crd.yaml
+kubectl apply -f https://raw.githubusercontent.com/VictoriaMetrics/helm-charts/refs/tags/victoria-metrics-single-0.23.0/charts/victoria-metrics-operator/charts/crds/crds/crd.yaml
 ```
 
 ### 4. Configure Values File
@@ -76,7 +76,7 @@ Create `vm-operator.yaml` with your specific configuration (see below), replacin
 ### 5. Install or Upgrade VMAlert
 
 ```bash
-helm upgrade --install vma vm/victoria-metrics-k8s-stack -f vm-operator.yaml -n nudgebee-agent
+helm upgrade --install vma vm/victoria-metrics-k8s-stack --version 0.57.0 -f vm-operator.yaml -n nudgebee-agent
 ```
 
 ## Configuration
