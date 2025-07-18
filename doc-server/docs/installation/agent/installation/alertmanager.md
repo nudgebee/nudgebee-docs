@@ -47,19 +47,33 @@ This setup is ideal when:
 
 ## Installation
 
-### 1. Add Victoria Metrics Helm Repository
+### 1. Create Secret for API Token
+
+First, create a Kubernetes secret for your Chronosphere API token:
+
+```bash
+kubectl create secret generic chronosphere-secret \
+  --from-literal=api-token=YOUR_CHRONOSPHERE_API_TOKEN \
+  -n nudgebee-agent
+```
+
+### 2. Add Victoria Metrics Helm Repository
 
 ```bash
 helm repo add vm https://victoriametrics.github.io/helm-charts/
 ```
 
-### 2. Install CRDs
+### 3. Install CRDs
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/VictoriaMetrics/helm-charts/refs/heads/master/charts/victoria-metrics-operator/charts/crds/crds/crd.yaml
 ```
 
-### 3. Install or Upgrade VMAlert
+### 4. Configure Values File
+
+Create `vm-operator.yaml` with your specific configuration (see below), replacing `YOUR_CHRONOSPHERE_DOMAIN` with your actual domain.
+
+### 5. Install or Upgrade VMAlert
 
 ```bash
 helm upgrade --install vma vm/victoria-metrics-k8s-stack -f vm-operator.yaml -n nudgebee-agent
@@ -114,17 +128,24 @@ vmalert:
   enabled: true
   spec:
     datasource:
-      url: "https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/data/metrics"
+      url: "https://YOUR_CHRONOSPHERE_DOMAIN.chronosphere.io/data/metrics"
     notifiers:
     - url: http://vmalertmanager-vma-victoria-metrics-k8s-stack.svc:9093
     remoteRead:
-      url: "https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/data/metrics/api/v1/prom/remote/read"
+      url: "https://YOUR_CHRONOSPHERE_DOMAIN.chronosphere.io/data/metrics/api/v1/prom/remote/read"
     remoteWrite:
-      url: "https://${CHRONOSPHERE_DOMAIN}.chronosphere.io/data/metrics/api/v1/prom/remote/write"
+      url: "https://YOUR_CHRONOSPHERE_DOMAIN.chronosphere.io/data/metrics/api/v1/prom/remote/write"
     selectAllByDefault: true
     evaluationInterval: 20s
     extraArgs:
-      datasource.bearerToken: "${CHRONOSPHERE_API_TOKEN}"
+      envflag.enable: "true"
+      envflag.prefix: "VM_"
+    env:
+      - name: VM_datasource_bearerToken
+        valueFrom:
+          secretKeyRef:
+            name: chronosphere-secret
+            key: api-token
 
 vmauth:
   enabled: false
@@ -154,10 +175,14 @@ kubeProxy:
   enabled: false
 ```
 
-### Environment Variables Required
+### Manual Configuration Required
 
-- `CHRONOSPHERE_DOMAIN`: Your Chronosphere domain
-- `CHRONOSPHERE_API_TOKEN`: API token for authentication
+**Before deploying, you must update the values file:**
+
+1. Replace `YOUR_CHRONOSPHERE_DOMAIN` with your actual Chronosphere domain in all URL fields
+2. Replace `YOUR_CHRONOSPHERE_API_TOKEN` with your actual API token when creating the secret
+
+**Note:** The API token is securely mounted as an environment variable `VM_datasource_bearerToken` from the Kubernetes secret. VictoriaMetrics uses the `-envflag.enable` flag to read configuration from environment variables, and `-envflag.prefix=VM_` to prefix all environment variables with `VM_`.
 
 ## Verification
 
