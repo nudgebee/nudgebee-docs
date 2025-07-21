@@ -23,7 +23,7 @@ After naming your app and connecting your workspace, navigate to Basic Informati
 
 Here’s where you’ll connect your on-premise NudgeBee instance to your newly created Slack app. Copy your Client ID, Client Secret, and Signing Secret to your secrets in your nudgebee server.
 
-**Step 2.** Now that you’ve created your app and updated your Nudgebee config, you’ll need to set up the OAuth Redirect URL.
+**Step 2.** Now that you’ve created your app and updated your NudgeBee config, you’ll need to set up the OAuth Redirect URL.
 
 Navigate to OAuth & Permissions under Features to configure the Redirect URLs.
 
