@@ -70,4 +70,10 @@ opencost:
 3. **Deploy & Go!**  
    Run your Helm install/upgrade and watch NudgeBee start pulling metrics—and surfacing insights—instantly!
 
+---
+
+## 🚨 Need Alerting?
+
+If your setup doesn't have Prometheus Alertmanager installed, you'll need it for alert handling. Check out our [VMAlert and VMAlertmanager Setup guide](./alertmanager.md) for a lightweight alternative that works great with managed Prometheus services like Chronosphere.
+
 Enjoy metrics without the headaches—NudgeBee has you covered. 🚀
