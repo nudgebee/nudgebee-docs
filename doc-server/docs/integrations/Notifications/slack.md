@@ -56,7 +56,7 @@ Click Save Changes and Slack will confirm if the HTTP request to the URL you ent
 
 **Step 5.** Save changes and click on **Allow** to authorize and install the NudgeBee Slack app to your workspace.
 
-**Step 6.** Once you’ve installed the app, you’ll need to add your Slack app's credentials (Client ID, Client Secret, and Signing Secret, typically found on its 'Basic Information' page) to your Nudgebee secrets.
+**Step 6.** Once you’ve installed the app, you’ll need to add your Slack app's credentials (Client ID, Client Secret, and Signing Secret, typically found on its 'Basic Information' page) to your NudgeBee secrets.
 
 Navigate to your NudgeBee secrets and add the following:
 
