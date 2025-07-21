@@ -13,7 +13,7 @@ sidebar_position: 1
 
 ## How to configure Slack in your on-prem NudgeBee
 
-To use Slack integration in your on-prem nudgebee, you’ll need to create a Slack app.
+To use Slack integration in your on-prem NudgeBee, you’ll need to create a Slack app.
 
 **Step 1.** To create a new Slack app, navigate to Your Apps on https://api.slack.com/apps and click Create new App.
 
