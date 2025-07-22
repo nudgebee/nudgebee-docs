@@ -13,7 +13,7 @@ sidebar_position: 1
 
 ## How to configure Slack in your on-prem NudgeBee
 
-To use Slack integration in your on-prem nudgebee, you’ll need to create a Slack app.
+To use Slack integration in your on-prem NudgeBee, you’ll need to create a Slack app.
 
 **Step 1.** To create a new Slack app, navigate to Your Apps on https://api.slack.com/apps and click Create new App.
 
@@ -23,7 +23,7 @@ After naming your app and connecting your workspace, navigate to Basic Informati
 
 Here’s where you’ll connect your on-premise NudgeBee instance to your newly created Slack app. Copy your Client ID, Client Secret, and Signing Secret to your secrets in your nudgebee server.
 
-**Step 2.** Now that you’ve created your app and updated your Nudgebee config, you’ll need to set up the OAuth Redirect URL.
+**Step 2.** Now that you’ve created your app and updated your NudgeBee config, you’ll need to set up the OAuth Redirect URL.
 
 Navigate to OAuth & Permissions under Features to configure the Redirect URLs.
 
@@ -54,9 +54,9 @@ Click Enable Interactive Components, and you’ll be able to enter your Request 
 
 Click Save Changes and Slack will confirm if the HTTP request to the URL you entered succeeds or fails.
 
-**Step 5.** Save changes and click on **Allow** to authorize and install the Nudgebee Slack app to your workspace.
+**Step 5.** Save changes and click on **Allow** to authorize and install the NudgeBee Slack app to your workspace.
 
-**Step 6.** Once you’ve installed the app, you’ll need to add your Slack app's credentials (Client ID, Client Secret, and Signing Secret, typically found on its 'Basic Information' page) to your Nudgebee secrets.
+**Step 6.** Once you’ve installed the app, you’ll need to add your Slack app's credentials (Client ID, Client Secret, and Signing Secret, typically found on its 'Basic Information' page) to your NudgeBee secrets.
 
 Navigate to your NudgeBee secrets and add the following:
 
