@@ -8,7 +8,7 @@ Signoz is an open-source observability platform.
 ## NudgeBee Agent Configuration
 If Signoz is deployed as external service then need to provide external Signoz URL as below in values
 
-Note:- for authorization either provide api key or user_email and password.
+**Note:** For authorization, provide either an API key or a user email and password.
 
 
 ```yaml
