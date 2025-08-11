@@ -19,4 +19,5 @@ runner:
     user_email: "xxx.yyy@nudgebee.com"
     user_password: "xxxx"
     apiKey: ""
+    global_filter: '[{"key": {"key": "service.name"},"op": "=","value": "currency"}]'
 ```
