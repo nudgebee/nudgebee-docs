@@ -15,3 +15,4 @@ NudgeBee supports integration with loki/open-search compatible logging providers
 *   **Grafana Loki:** [Integrate with Grafana Loki](./loki)
 *   **Logz.io:** [Integrate with Logz.io](./logz.io)
 *   **Last9:** [Integrate with Last9](./last9)
+*   **Signoz:** [Integrate with Signoz](./signoz)
