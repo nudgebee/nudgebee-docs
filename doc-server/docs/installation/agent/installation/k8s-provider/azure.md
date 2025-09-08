@@ -13,6 +13,18 @@ This guide explains how to integrate **Azure Monitor** with **Nudgebee** to coll
 
 ---
 
+## Enable Azure Monitor APIs for Pod Monitor
+
+Azure managed prometheus scares metrics based on azure monitor APIs to enable that please update below flag in values file.
+
+```yaml
+nodeAgent:
+  enabled: true
+  podmonitor:
+    enabled: true
+    azuremanaged: true
+```
+
 ## Required Permissions for the Azure AD App (Service Principal)
 
 The Nudgebee integration requires the Azure AD App to have the correct **role assignments** in Azure so it can query **Application Insights (traces)** and **Azure Monitor (Prometheus metrics)**.
