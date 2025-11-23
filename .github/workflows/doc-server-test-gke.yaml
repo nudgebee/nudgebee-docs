@@ -68,14 +68,14 @@ jobs:
       uses: azure/setup-helm@v3
 
     - id: 'auth'
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/test'
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v2'
       with:
         credentials_json: '${{ secrets.GCP_DEV_CI_SERVICE_ACCOUNT }}'
 
     - id: 'get-credentials'
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/test'
       name: 'Get GKE Credentials'
       uses: 'google-github-actions/get-gke-credentials@v2'
       with:
