@@ -67,12 +67,22 @@ jobs:
       if: github.ref == 'refs/heads/main'
       uses: azure/setup-helm@v3
 
-    - name: Setup Kubectl Context
+
+    - id: 'auth'
       if: github.ref == 'refs/heads/main'
-      run: |
-        mkdir ${HOME}/.kube
-        echo ${{ secrets.CIVO_KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
-        chmod 400 ${HOME}/.kube/config
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_DEV_CI_SERVICE_ACCOUNT }}'
+
+    - id: 'get-credentials'
+      if: github.ref == 'refs/heads/main'
+      name: 'Get GKE Credentials'
+      uses: 'google-github-actions/get-gke-credentials@v2'
+      with:
+        cluster_name: '${{ secrets.GKE_CLUSTER_NAME }}'
+        location: '${{ secrets.GKE_CLUSTER_ZONE }}'
+
 
     - name: Authorize AWS to Docker Push
       if: github.ref == 'refs/heads/main'
