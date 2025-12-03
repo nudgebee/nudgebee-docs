@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Docs-Test CI
+name: Docs-Test-GKE CI
 
 on:
   # Allows you to run this workflow manually from the Docs tab
@@ -14,7 +14,7 @@ on:
     branches: [ "test" ]
     paths: 
     - doc-server/**
-    - .github/workflows/doc-server-test.yaml
+    - .github/workflows/doc-server-test-gke.yaml
 
 
 jobs:
@@ -67,12 +67,21 @@ jobs:
       if: github.ref == 'refs/heads/test'        
       uses: azure/setup-helm@v3
 
-    - name: Setup Kubectl Context
+    - id: 'auth'
       if: github.ref == 'refs/heads/test'
-      run: |
-        mkdir ${HOME}/.kube
-        echo ${{ secrets.CIVO_KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
-        chmod 400 ${HOME}/.kube/config
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_DEV_CI_SERVICE_ACCOUNT }}'
+
+    - id: 'get-credentials'
+      if: github.ref == 'refs/heads/test'
+      name: 'Get GKE Credentials'
+      uses: 'google-github-actions/get-gke-credentials@v2'
+      with:
+        cluster_name: '${{ secrets.GKE_CLUSTER_NAME }}'
+        location: '${{ secrets.GKE_CLUSTER_ZONE }}'
+
 
     - name: Authorize AWS to Docker Push
       if: github.ref == 'refs/heads/test'

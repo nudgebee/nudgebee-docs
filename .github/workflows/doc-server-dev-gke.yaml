@@ -1,0 +1,106 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Docs-Dev CI
+
+on:
+  # Allows you to run this workflow manually from the Docs tab
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths: 
+    - doc-server/**
+  pull_request:
+    branches: [ "main" ]
+    paths: 
+    - doc-server/**
+    - .github/workflows/doc-server-dev-gke.yaml
+
+
+jobs:
+  docs-build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+        cache-dependency-path: ./doc-server/package-lock.json
+
+    - name: Run NPM install
+      working-directory: ./doc-server
+      run: |
+        npm install --legacy-peer-deps
+
+    - name: Run NPM build
+      working-directory: ./doc-server
+      run: |
+        npm run build --legacy-peer-deps
+
+    - name: Run NPM lint
+      working-directory: ./doc-server
+      run: |
+        npm run lint
+
+    - name: Install AWS cli
+      if: github.ref == 'refs/heads/main'
+      uses: unfor19/install-aws-cli-action@master                          
+
+    - name: Configure AWS Credentials
+      if: github.ref == 'refs/heads/main'
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Setup kubectl
+      if: github.ref == 'refs/heads/main'
+      uses: azure/setup-kubectl@v3
+
+    - name: Setup helm
+      if: github.ref == 'refs/heads/main'
+      uses: azure/setup-helm@v3
+
+
+    - id: 'auth'
+      if: github.ref == 'refs/heads/main'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_DEV_CI_SERVICE_ACCOUNT }}'
+
+    - id: 'get-credentials'
+      if: github.ref == 'refs/heads/main'
+      name: 'Get GKE Credentials'
+      uses: 'google-github-actions/get-gke-credentials@v2'
+      with:
+        cluster_name: '${{ secrets.GKE_CLUSTER_NAME }}'
+        location: '${{ secrets.GKE_CLUSTER_ZONE }}'
+
+
+    - name: Authorize AWS to Docker Push
+      if: github.ref == 'refs/heads/main'
+      run: |
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 864186153326.dkr.ecr.us-east-1.amazonaws.com
+      
+    - name: Build And Tag Docker Image
+      if: github.ref == 'refs/heads/main'
+      working-directory: ./doc-server
+      run: |-
+        IMAGE_TAG=$(date +'%Y-%m-%dT%H-%M-%S')_$GITHUB_SHA
+        docker build -t 864186153326.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs:$IMAGE_TAG .
+        docker push 864186153326.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs:$IMAGE_TAG
+        echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+
+    - name: Deploy Latest Version to K8s
+      if: github.ref == 'refs/heads/main'
+      working-directory: ./deploy/kubernetes
+      run: |-
+        helm upgrade nudgebee-doc -f docs/values-dev.yaml  ./docs --install --set image.tag=$IMAGE_TAG  --timeout 3600s  --namespace nudgebee
