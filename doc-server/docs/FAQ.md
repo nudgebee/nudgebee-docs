@@ -90,3 +90,49 @@ No, this is part of the roadmap.
 
 ### Does NudgeBee support Predictive Analysis?
 Yes, NudgeBee uses predictive analytics for replica rightsizing and continuous rightsizing.
+
+### How does NudgeBee discover cloud resources across AWS, Azure, and GCP?
+NudgeBee automatically discovers cloud resources when you onboard an account. It searches for common services like VMs, load balancers, databases, and storage. The platform syncs with daily billing data and performs periodic updates for continuous resource tracking. For AWS specifically, NudgeBee uses EventBridge to receive real-time notifications for resource updates, creation, and deletion events.​
+
+### Does NudgeBee support Kubernetes resource discovery?
+Yes, NudgeBee agents automatically discover all Kubernetes resources across all namespaces in your cluster. The agent runs within your Kubernetes environment and uses the Kubernetes API to continuously track workloads.​
+
+### What observability tools does NudgeBee integrate with?
+NudgeBee provides prebuilt, out-of-the-box connectors for major observability platforms. These include Datadog, Prometheus (and all variations), Chronosphere, Signoz, OpenObserve, ELK, AWS CloudWatch, Azure Monitor, and Google Cloud Monitoring. The integrations work seamlessly with your existing stack without requiring replacements.​
+
+### Can I deploy NudgeBee with its own observability stack?
+Yes, for new deployments or greenfield environments, NudgeBee ships with a complete observability stack. This includes VictoriaMetrics for metrics collection, ClickHouse with OpenTelemetry for distributed traces, and Loki for log aggregation.​
+
+### How does NudgeBee integrate with existing knowledge base systems?
+NudgeBee natively integrates with Atlassian Confluence and ServiceNow knowledge bases. You can also define custom knowledge base sources including Google Docs, Notion, and SharePoint. These sources are used by NudgeBee's AI agents during troubleshooting workflows.​
+
+### Does NudgeBee learn from resolved incidents automatically?
+Yes, NudgeBee automatically learns from issues it has resolved. User feedback can be configured to flow directly into the knowledge base, continuously improving the AI agent's troubleshooting capabilities over time.​
+
+### How does NudgeBee handle event deduplication and aggregation?
+NudgeBee generates unique fingerprints for each event it receives. These fingerprints form the foundation for intelligent aggregation and deduplication within the platform. This prevents alert fatigue by consolidating related events into single actionable incidents.​
+
+### What is NudgeBee's Knowledge Graph and how does it correlate events?
+NudgeBee uses a Knowledge Graph to establish linkages between entities like configurations, logs, metrics, traces, cloud bills, SLO/SLAs, tickets, code, and secrets. When an event occurs, the system searches for related entities and identifies recent events that may have caused the new issue. It then builds a comprehensive event timeline based on these correlations.​
+
+### What event sources can NudgeBee consume for incident management?
+NudgeBee consumes events from Prometheus Alertmanager, Kubernetes, Datadog, PagerDuty, and ServiceNow. Users can also send custom events to NudgeBee's webhook endpoints for proprietary or internal monitoring systems.​
+
+### How does NudgeBee's SRE Agent prioritize and analyze incidents?
+For each incoming event, NudgeBee's SRE Agent performs deduplication and urgency assessment based on historical incident data. Events are then automatically analyzed for root cause using an AI-based workflow system. Users can extend the analysis by providing custom instructions tailored to their environment.​
+
+### Where can I access NudgeBee's SRE Agent (NuBi)?
+NuBi, NudgeBee's SRE agent, is accessible through communication channels like Slack and Microsoft Teams, or directly through the NudgeBee UI. This enables ChatOps workflows where team members can ask questions about infrastructure, logs, and metrics.​
+
+### What are the primary capabilities of NuBi for SRE teams?
+NuBi handles ChatOps by responding to user questions about infrastructure, logs, and metrics. It performs live debugging of active incidents and conducts root cause analysis using AI-driven workflows. Teams can create custom agents based on specific requirements, extend existing agent instructions, and provide global context for tenant or account-level behaviors.​
+
+### What types of automated resolutions does NudgeBee support?
+NudgeBee generates automated pull requests for code and CI/CD issues. For lower environments, it can automate configuration changes with approval workflows. The platform also handles quick fixes like pod restarts and memory/CPU adjustments automatically.​
+
+### Can I customize NudgeBee's automation workflows?
+Yes, users can create custom resolution workflows using NudgeBee's AI-Ops Workflow Builder. You can customize existing workflows or extend them with additional components, APIs, and integrations tailored to your infrastructure.​
+
+### What ITSM and ticketing systems does NudgeBee integrate with?
+NudgeBee provides out-of-the-box integration with GitHub Issues, Jira, and ServiceNow (available in the December 2025 release). These integrations support automated ticketing, incident management system integration for listening and responding to incidents, and CMDB/KB integration (Planned for future releases).​
+
