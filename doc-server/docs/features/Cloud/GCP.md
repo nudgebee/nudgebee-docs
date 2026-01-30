@@ -6,7 +6,7 @@ To connect your GCP account, you must first create a **Service Account** in Goog
 
 Before filling out this form, you must:
 1. **Create a Service Account** in the Google Cloud Console.
-2. **Assign the required IAM roles** to this Service Account at the project level. The required roles are:
+2. **[Assign the required IAM roles](https://console.cloud.google.com/iam-admin/iam)** to this Service Account at the project level. The required roles are:
    * **Viewer** (`roles/viewer`) - for accessing general resource information
    * **Monitoring Viewer** (`roles/monitoring.viewer`) - for accessing monitoring metrics
    * **Logs Viewer** (`roles/logging.viewer`) - for accessing logs
