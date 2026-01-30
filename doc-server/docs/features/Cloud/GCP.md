@@ -34,7 +34,7 @@ Here is a guide to finding the values for each required field.
 * **Service Account Key (JSON) \*** (Required)
    * **What it is:** A JSON credential file for your service account. **Treat this value like a password and store it securely.**
    * **Where to find it:**
-      1. In the Google Cloud Console, navigate to **IAM & Admin → Service Accounts**.
+      1. In the Google Cloud Console, navigate to [**IAM & Admin → Service Accounts**](https://console.cloud.google.com/iam-admin/serviceaccounts).
       2. Click on the service account you created for this integration.
       3. Go to the **Keys** tab.
       4. Click **Add Key → Create new key**.
