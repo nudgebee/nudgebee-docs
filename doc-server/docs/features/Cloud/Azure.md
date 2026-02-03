@@ -50,3 +50,123 @@ Here is a guide to finding the values for each required field.
 ---
 
 After entering all the details, click **Save** to complete the integration.
+
+---
+
+## Cost Management Query Schema
+
+When querying Azure Cost Management API, the `dataset.grouping` field specifies how cost data should be aggregated. Using an invalid dimension name will result in a `400 Bad Request` error, even when permissions are correctly configured.
+
+### Valid Grouping Dimensions
+
+The following are **valid** values for `dataset.grouping[].name`:
+
+- `ServiceName` (recommended replacement for deprecated `ConsumedService`)
+- `ResourceType`
+- `ResourceGroupName`
+- `ResourceGroup`
+- `ResourceId`
+- `ResourceLocation`
+- `SubscriptionId`
+- `SubscriptionName`
+- `MeterCategory`
+- `MeterSubcategory`
+- `Meter`
+- `ServiceFamily`
+- `UnitOfMeasure`
+- `PartNumber`
+- `BillingAccountName`
+- `BillingProfileId`
+- `BillingProfileName`
+- `InvoiceSection`
+- `InvoiceSectionId`
+- `InvoiceSectionName`
+- `Product`
+- `ResourceGuid`
+- `ChargeType`
+- `ProductOrderId`
+- `ProductOrderName`
+- `PublisherType`
+- `ReservationId`
+- `ReservationName`
+- `Frequency`
+- `InvoiceId`
+- `PricingModel`
+- `CostAllocationRuleName`
+- `MarkupRuleName`
+- `BillingMonth`
+- `Provider`
+- `BenefitId`
+- `BenefitName`
+
+**Note:** `ConsumedService` is **NOT** a valid grouping dimension in the current Azure Cost Management API.
+
+### Common Errors & Fixes
+
+#### Invalid Dataset Grouping Error
+
+**Symptom:**
+
+```json
+{
+  "error": {
+    "code": "BadRequest",
+    "message": "Invalid query definition: Invalid dataset grouping: 'ConsumedService'; valid values: 'ResourceGroup','ResourceGroupName','ResourceType',..."
+  }
+}
+```
+
+**Cause:**
+
+The query uses `ConsumedService` (or another invalid dimension) in the `dataset.grouping` field.
+
+**Solution:**
+
+**Step 1: Correct the query grouping**
+
+Update your Cost Management query definition:
+
+**Before:**
+```json
+"grouping": [
+    {
+        "type": "Dimension",
+        "name": "ConsumedService"
+    }
+]
+```
+
+**After:** Use a valid grouping field like `ServiceName` or `ResourceType`:
+
+```json
+"grouping": [
+    {
+        "type": "Dimension",
+        "name": "ServiceName"
+    }
+]
+```
+
+or
+
+```json
+"grouping": [
+    {
+        "type": "Dimension",
+        "name": "ResourceType"
+    }
+]
+```
+
+**Note:** Check your actual data to decide which grouping fits your needs. `ServiceName` is usually the closest equivalent to the deprecated `ConsumedService`.
+
+**Step 2: Verify service principal permissions**
+
+Even though this is a schema error, the error message may suggest missing permissions. Ensure the following:
+
+1. Go to **Azure Portal** → **Subscriptions** → **Your Subscription** → **Access control (IAM)**.
+2. Ensure the service principal has **Cost Management Reader** at subscription scope.
+3. If missing:
+   - Click **Add role assignment** → **Cost Management Reader** → select your service principal → **Save**.
+
+**Important:** The `Invalid dataset grouping` error occurs **independently of permissions**. Even with correct IAM roles, using an invalid dimension like `ConsumedService` will cause this error. Always validate your query schema first before investigating permissions.
