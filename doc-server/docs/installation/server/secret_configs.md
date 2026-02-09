@@ -182,6 +182,7 @@ These are optional configurations for nudgebee ML-Server to manage/store models
 Optional configuration for connecting AWS cloud accounts and enabling AWS Organization onboarding. For infrastructure setup instructions, see [AWS Infrastructure Setup](./aws_infra_setup.md).
 
 ### AWS Account Integration
+- **`NUDGEBEE_INSTANCE_ROLE`**: IAM role ARN in the NudgeBee AWS account. Used to assume cross-account roles in customer accounts. Required for AWS integration.
 - **`AWS_TEMPLATE_URL`**: CloudFormation template URL used during single AWS account onboarding. Defaults to Nudgebee-hosted template.
 
 ### AWS Organization Onboarding
