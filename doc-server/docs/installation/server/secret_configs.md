@@ -21,6 +21,7 @@ This document provides a comprehensive reference for the various secrets and env
 - [Cache Configuration](#cache-configuration)
 - [Observability](#observability)
 - [ML Configuration](#ml-configuration)
+- [Cloud Integration](#cloud-integration)
 - [AWS Auth](#aws-auth)
 
 ## License
@@ -175,6 +176,23 @@ These are optional configurations for nudgebee ML-Server to manage/store models
 
 - **`ML_MODEL_STORE_PROVIDER`**: Provider for model store. Currentlly only s3/file supported. default is file
 - **`ML_MODEL_STORE_BUCKET`**: Bucket name where ML model will be stored. if s3 is enabled
+
+## Cloud Integration
+
+Optional configuration for connecting AWS cloud accounts and enabling AWS Organization onboarding. For infrastructure setup instructions, see [AWS Infrastructure Setup](./aws_infra_setup.md).
+
+### AWS Account Integration
+- **`AWS_TEMPLATE_URL`**: CloudFormation template URL used during single AWS account onboarding. Defaults to Nudgebee-hosted template.
+
+### AWS Organization Onboarding
+These configs enable automatic registration of AWS Organization member accounts via CloudFormation StackSets and SNS/SQS messaging.
+
+- **`AWS_ORG_TEMPLATE_URL`**: CloudFormation StackSet template URL deployed to organization member accounts.
+- **`AWS_ORG_SNS_TOPIC_ARN`**: ARN of the SNS topic that receives CloudFormation Custom Resource callbacks from member accounts.
+- **`CLOUD_COLLECTOR_ORG_REGISTRATION_SQS`**: SQS queue URL polled by the cloud-collector service for organization registration events. The SNS topic forwards messages to this queue.
+
+### AWS EventBridge Events
+- **`CLOUD_COLLECTOR_AWS_EVENTBRIDGE_SQS`**: SQS queue URL for ingesting real-time AWS resource events via EventBridge (e.g., CloudTrail, CloudWatch Alarms).
 
 ## AWS Auth
 If App is deployed Outside EKS and want to access AWS specific services, then add following configs for accessing AWS Services
