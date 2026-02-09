@@ -89,6 +89,8 @@ If `AWS_TEMPLATE_URL` is not set, NudgeBee defaults to the Nudgebee-hosted templ
 
 Enables real-time AWS resource event ingestion from customer accounts via EventBridge. This is **optional** - only required if you want real-time event monitoring.
 
+**Download:** [nudgebee-eventbridge-infrastructure.yaml](/cloudformation/nudgebee-eventbridge-infrastructure.yaml)
+
 ### What It Creates
 
 - **SQS Queue** (`nudgebee-eventbridge-queue`) - Receives EventBridge events from customer AWS accounts
@@ -133,6 +135,8 @@ nudgebee_secret:
 ## Organization Registration Infrastructure
 
 Enables bulk onboarding of AWS Organization member accounts via CloudFormation StackSets. This is **optional** - only required if you want to use AWS Organization onboarding.
+
+**Download:** [nudgebee-org-registration-infrastructure.yaml](/cloudformation/nudgebee-org-registration-infrastructure.yaml)
 
 ### What It Creates
 
