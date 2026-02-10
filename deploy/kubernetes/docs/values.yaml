@@ -10,6 +10,26 @@ image:
   pullPolicy: IfNotPresent
   # -- Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
+
+authProxy:
+  enabled: false
+  image:
+    repository: auth-proxy
+    tag: latest
+    pullPolicy: IfNotPresent
+  port: 8080
+  authUrl: "http://example.com/api/auth/session"
+  loginUrl: "https://example.com/login"
+  upstreamUrl: "http://localhost:80"
+  authCacheValid: "5m"
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+
 # -- Reference to one or more secrets to be used when [pulling images](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-pod-that-uses-your-secret) (from private registries).
 imagePullSecrets: []
 # -- A name in place of the chart name for `app:` labels.

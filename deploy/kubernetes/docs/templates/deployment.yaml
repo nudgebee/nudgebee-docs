@@ -49,6 +49,30 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        {{- if .Values.authProxy.enabled }}
+        - name: auth-proxy
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.authProxy.image.repository }}:{{ .Values.authProxy.image.tag }}"
+          imagePullPolicy: {{ .Values.authProxy.image.pullPolicy }}
+          env:
+            - name: PORT
+              value: "{{ .Values.authProxy.port }}"
+            - name: UPSTREAM_URL
+              value: "{{ .Values.authProxy.upstreamUrl }}"
+            - name: AUTH_URL
+              value: "{{ .Values.authProxy.authUrl }}"
+            - name: LOGIN_URL
+              value: "{{ .Values.authProxy.loginUrl }}"
+            - name: AUTH_CACHE_VALID
+              value: "{{ .Values.authProxy.authCacheValid }}"
+          ports:
+            - name: proxy-http
+              containerPort: {{ .Values.authProxy.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.authProxy.resources | nindent 12 }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

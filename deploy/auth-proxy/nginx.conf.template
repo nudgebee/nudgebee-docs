@@ -1,0 +1,80 @@
+user  nginx;
+worker_processes  auto;
+
+error_log  /var/log/nginx/error.log notice;
+pid        /var/run/nginx.pid;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    # Cache storage for auth requests
+    # 10MB keys zone, max 100MB cache, inactive 60m
+    proxy_cache_path /var/cache/nginx/auth_cache levels=1:2 keys_zone=auth_cache:10m max_size=100m inactive=60m use_temp_path=off;
+
+    server {
+        listen ${PORT};
+        server_name localhost;
+
+        # Health check endpoint (bypass auth)
+        location /healthz {
+            return 200 'OK';
+        }
+
+        location / {
+            auth_request /_auth;
+
+            # If 401 (Unauthorized) from auth_request, redirect to login
+            error_page 401 = @error401;
+
+            proxy_pass ${UPSTREAM_URL};
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location @error401 {
+            # Redirect to login page with the current URL as the 'next' parameter
+            return 302 ${LOGIN_URL}?next=$scheme://$http_host$request_uri;
+        }
+
+        location = /_auth {
+            internal;
+            proxy_pass ${AUTH_URL};
+
+            # Do not send the request body to the auth service
+            proxy_pass_request_body off;
+            proxy_set_header Content-Length "";
+            proxy_set_header X-Original-URI $request_uri;
+
+            # Forward necessary headers for authentication
+            proxy_set_header Authorization $http_authorization;
+            proxy_set_header Cookie $http_cookie;
+
+            # Caching configuration
+            proxy_cache auth_cache;
+            # Key the cache by the Auth header and Cookie header
+            proxy_cache_key "$http_authorization$http_cookie";
+
+            # Cache valid responses (200) for the configured duration
+            proxy_cache_valid 200 ${AUTH_CACHE_VALID};
+
+            # Ignore headers that might prevent caching from the auth service side
+            proxy_ignore_headers Cache-Control Expires Set-Cookie;
+        }
+    }
+}
