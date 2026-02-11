@@ -11,4 +11,6 @@ NudgeBee integrates with a variety of tools and platforms to enhance your workfl
 * [Authentication](./Authentication/) - Integrate NudgeBee with an existing authentication system. Only applicable for on-prem.
 * [Notifications](./Notifications) - Configure and manage the various notification channels that NudgeBee can use.
 * [Tickets](./Tickets/) - Manage support and feedback tickets directly within NudgeBee.
+* [GitLab](./GitLab/gitlab-integration.md) - Connect GitLab for issue tracking and automated merge requests.
+* [GitHub](./GitHub/github-integration.md) - Connect GitHub for code analysis and automated pull requests.
 * [NudgeBee AI](./LLM/) - Integrate LLM models into your NudgeBee instance. Only applicable for on-prem.
