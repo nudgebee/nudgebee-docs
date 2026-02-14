@@ -14,7 +14,8 @@
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .tsx",
-    "lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .tsx --fix"
+    "lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .tsx --fix",
+    "docs": "node api-docs/scripts/generate-md-docs.js"
   },
   "dependencies": {
     "@docusaurus/core": "3.8.1",
@@ -33,7 +34,11 @@
     "@typescript-eslint/parser": "^8.46.2",
     "concurrently": "^9.2.1",
     "eslint": "^9.39.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "@graphql-tools/utils": "^11.0.0",
+    "graphql": "^16.12.0",
+    "graphql-markdown": "^7.3.0",
+    "node-fetch": "^2.7.0"
   },
   "browserslist": {
     "production": [
