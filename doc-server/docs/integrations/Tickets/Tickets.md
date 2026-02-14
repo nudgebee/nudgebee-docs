@@ -6,5 +6,6 @@ NudgeBee can send notifications through a variety of channels to keep you inform
 
 NudgeBee currently supports the following ticketing systems:
 
-*   **[Jira](./jira.md)**: 
-*   **[Github Issues](./github_issues.md)**:
+*   **[Jira](./jira.md)**
+*   **[Github Issues](./github_issues.md)**
+*   **[GitLab Issues](./gitlab.md)**

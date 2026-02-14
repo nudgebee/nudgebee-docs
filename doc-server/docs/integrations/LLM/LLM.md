@@ -12,6 +12,7 @@ Choose from the following LLM providers to integrate with your NudgeBee applicat
 - [AWS](./Aws/aws.md) - Amazon Web Services integration options including Bedrock and SageMaker
 - [Azure](./Azure/azure.md) - Microsoft Azure integration options including Azure OpenAI Service
 - [Google](./Google/google.md) - Google Cloud Platform integration options including Gemini and VertexAI
+- [OpenAI](./OpenAI/openai.md) - OpenAI API integration for GPT-5, GPT-4o, GPT-4, and Embeddings models
 
 ### Open Source & Self-Hosted Options
 - [Hugging Face](./HuggingFace/nb-hugging-face.md) - Integration with Hugging Face's model repository and inference APIs
