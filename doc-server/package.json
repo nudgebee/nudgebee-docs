@@ -15,7 +15,7 @@
     "typecheck": "tsc",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .tsx",
     "lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .tsx --fix",
-    "docs": "node api-docs/scripts/generate-md-docs.js"
+    "docs": "HASURA_ADMIN_SECRET=xxx HASURA_GRAPHQL_ENDPOINT=xxx node api-docs/scripts/generate-md-docs.js"
   },
   "dependencies": {
     "@docusaurus/core": "3.8.1",
