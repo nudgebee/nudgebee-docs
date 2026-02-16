@@ -184,9 +184,7 @@ function renderTOC(groups, classifiedQueries, classifiedMutations, classifiedSub
 
   md += '- [Getting Started](#getting-started)\n';
   md += '  - [Authentication](#authentication)\n';
-  md += '  - [Base URL](#base-url)\n';
-  md += '  - [Roles & Permissions](#roles--permissions)\n';
-  md += '  - [Hello World Example](#hello-world-example)\n';
+  md += '  - [List Cloud Accounts Example](#list-cloud-accounts-example)\n';
   md += '- [Common Examples](#common-examples)\n';
 
   // Queries TOC
