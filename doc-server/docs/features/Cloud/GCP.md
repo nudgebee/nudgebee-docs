@@ -12,6 +12,7 @@ Before filling out this form, you must:
    * **Logs Viewer** (`roles/logging.viewer`) - for accessing logs
    * **BigQuery Data Viewer** (`roles/bigquery.dataViewer`) - for accessing billing data
    * **BigQuery Job User** (`roles/bigquery.jobUser`) - for running billing queries
+   * **Recommender Viewer** (`roles/recommender.viewer`) - for accessing cost and performance recommendations
 3. **Create a JSON key** for that Service Account.
 4. **Enable BigQuery Billing Export** in your GCP project:
    * Navigate to [Billing → Billing Export](https://console.cloud.google.com/billing/export) in the GCP Console
