@@ -34,11 +34,58 @@ NudgeBee uses a central IAM role to assume cross-account roles in customer AWS a
 1. Go to **IAM > Roles > Create Role** in the NudgeBee AWS account
 2. Select **AWS Service** as trusted entity type, choose **EC2** (or the appropriate service for your deployment)
 3. Name the role (e.g., `NudgebeeInstanceRole`)
-4. Attach the following **minimum permissions**:
-   - `sts:AssumeRole` - To assume cross-account roles in customer accounts
-   - `sqs:ReceiveMessage`, `sqs:DeleteMessage`, `sqs:GetQueueAttributes` - To poll SQS queues (EventBridge events and org registration)
-   - `sns:Publish` - If using SNS for org registration callbacks
-   - `cloudformation:CreateStackSet`, `cloudformation:CreateStackInstances` - If using AWS Organization onboarding
+4. Attach the following IAM policy:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AssumeCustomerRoles",
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "*"
+    },
+    {
+      "Sid": "SQSEventProcessing",
+      "Effect": "Allow",
+      "Action": [
+        "sqs:GetQueueUrl",
+        "sqs:GetQueueAttributes",
+        "sqs:ReceiveMessage",
+        "sqs:DeleteMessage"
+      ],
+      "Resource": [
+        "arn:aws:sqs:<region>:<account-id>:<eventbridge-queue-name>",
+        "arn:aws:sqs:<region>:<account-id>:<org-registration-queue-name>"
+      ]
+    },
+    {
+      "Sid": "SNSOrgRegistration",
+      "Effect": "Allow",
+      "Action": "sns:Publish",
+      "Resource": "arn:aws:sns:<region>:<account-id>:<org-registration-topic-name>"
+    }
+  ]
+}
+```
+
+**Optional:** If using AWS Organization onboarding via StackSets, add:
+
+```json
+{
+  "Sid": "CloudFormationStackSets",
+  "Effect": "Allow",
+  "Action": [
+    "cloudformation:CreateStackSet",
+    "cloudformation:CreateStackInstances",
+    "cloudformation:DescribeStackSet",
+    "cloudformation:DescribeStackSetOperation",
+    "cloudformation:ListStackInstances"
+  ],
+  "Resource": "*"
+}
+```
 
 :::tip
 If using IRSA or Pod Identity, create the role with the appropriate trust policy for your EKS cluster instead of EC2.
