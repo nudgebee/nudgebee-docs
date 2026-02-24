@@ -57,30 +57,28 @@ This role ARN is used by NudgeBee to:
 - Extract the NudgeBee AWS account ID for cross-account trust policies
 - Pass as a parameter to CloudFormation templates so customer cross-account roles trust this role
 
-### 3. Host CloudFormation Templates
+### 3. CloudFormation Templates
 
-For on-prem deployments, you need to host the CloudFormation templates that get deployed in customer AWS accounts. These templates are available in the NudgeBee installation package.
+The CloudFormation templates are hosted by NudgeBee and available at the following URLs:
 
 #### Single Account Template
 
-Upload the single-account CloudFormation template (`nudgebee-aws-cloud-formation.json`) to an S3 bucket or any HTTPS-accessible location, then set:
-
 ```yaml
 nudgebee_secret:
-  AWS_TEMPLATE_URL: "https://<your-bucket>.s3.<region>.amazonaws.com/nudgebee-aws-cloud-formation.json"
+  AWS_TEMPLATE_URL: "https://nudgebee-prod-documents.s3.amazonaws.com/nudgebee-aws-cloud-formation.json"
 ```
 
 #### Organization Member Template (Optional)
 
-If using AWS Organization onboarding, also upload the org member template (`nudgebee-aws-org-member-template.json`):
+If using AWS Organization onboarding:
 
 ```yaml
 nudgebee_secret:
-  AWS_ORG_TEMPLATE_URL: "https://<your-bucket>.s3.<region>.amazonaws.com/nudgebee-aws-org-member-template.json"
+  AWS_ORG_TEMPLATE_URL: "https://nudgebee-prod-documents.s3.us-east-1.amazonaws.com/nudgebee-aws-org-member-template.json"
 ```
 
 :::note
-If `AWS_TEMPLATE_URL` is not set, NudgeBee defaults to the Nudgebee-hosted template.
+For self-hosted deployments, you can upload these templates to your own S3 bucket and set the URLs accordingly. AWS CloudFormation requires S3-hosted templates.
 :::
 
 ---
@@ -207,8 +205,8 @@ nudgebee_secret:
   NUDGEBEE_INSTANCE_ROLE: "arn:aws:iam::<nudgebee-account-id>:role/NudgebeeInstanceRole"
 
   # CloudFormation templates
-  AWS_TEMPLATE_URL: "<url-to-single-account-cloudformation-template>"
-  AWS_ORG_TEMPLATE_URL: "<url-to-org-member-cloudformation-template>"
+  AWS_TEMPLATE_URL: "https://nudgebee-prod-documents.s3.amazonaws.com/nudgebee-aws-cloud-formation.json"
+  AWS_ORG_TEMPLATE_URL: "https://nudgebee-prod-documents.s3.us-east-1.amazonaws.com/nudgebee-aws-org-member-template.json"
 
   # EventBridge events (optional)
   CLOUD_COLLECTOR_AWS_EVENTBRIDGE_SQS: "<SQSQueueUrl from eventbridge stack>"
