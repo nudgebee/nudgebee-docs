@@ -12,7 +12,7 @@ NudgeBee supports integration with a wide range of observability tools across lo
 You can connect any combination of the following platforms:
 
 ### 📊 **Metrics Integrations**
-- Prometheus
+- [Prometheus](./prometheus.md)
 - Grafana Cloud
 - [Datadog Metrics](./datadog.md)
 - Azure Monitor
@@ -20,15 +20,15 @@ You can connect any combination of the following platforms:
 - [New Relic Metrics](./newrelic.md)
 
 ### 🪵 **Logs Integrations**
-- Elastic / ELK Stack
-- Grafana Loki
+- [Elasticsearch / ELK Stack](./elasticsearch.md)
+- [Grafana Loki](./loki.md)
 - AWS CloudWatch Logs
 - Azure Log Analytics
 - Google Cloud Logging
 - [New Relic Logs](./newrelic.md)
 
 ### 🔍 **Traces Integrations**
-- Jaeger
+- [Jaeger](./jaeger.md)
 - Tempo
 - OpenTelemetry
 - [Datadog APM](./datadog.md)
