@@ -4,17 +4,48 @@ To connect your GCP account, you must first create a **Service Account** in Goog
 
 ### Prerequisites
 
-Before filling out this form, you must:
-1. **Create a Service Account** in the Google Cloud Console.
-2. **[Assign the required IAM roles](https://console.cloud.google.com/iam-admin/iam)** to this Service Account at the project level. The required roles are:
+Before filling out this form, you must create a Service Account with the required roles and a JSON key.
+
+#### Option A: Using `gcloud` CLI
+
+```bash
+# Set your project
+export PROJECT_ID="your-project-id"
+gcloud config set project $PROJECT_ID
+
+# Create a service account
+gcloud iam service-accounts create nudgebee-sa \
+  --display-name="NudgeBee Service Account"
+
+# Assign required roles
+for ROLE in roles/viewer roles/monitoring.viewer roles/logging.viewer \
+  roles/bigquery.dataViewer roles/bigquery.jobUser roles/recommender.viewer; do
+  gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member="serviceAccount:nudgebee-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+    --role="$ROLE"
+done
+
+# Create and download JSON key
+gcloud iam service-accounts keys create nudgebee-sa-key.json \
+  --iam-account="nudgebee-sa@${PROJECT_ID}.iam.gserviceaccount.com"
+```
+
+#### Option B: Using Google Cloud Console
+
+1. **Create a Service Account** in the [Google Cloud Console](https://console.cloud.google.com/iam-admin/serviceaccounts).
+2. **[Assign the required IAM roles](https://console.cloud.google.com/iam-admin/iam)** to this Service Account at the project level:
    * **Viewer** (`roles/viewer`) - for accessing general resource information
    * **Monitoring Viewer** (`roles/monitoring.viewer`) - for accessing monitoring metrics
    * **Logs Viewer** (`roles/logging.viewer`) - for accessing logs
    * **BigQuery Data Viewer** (`roles/bigquery.dataViewer`) - for accessing billing data
    * **BigQuery Job User** (`roles/bigquery.jobUser`) - for running billing queries
-3. **Create a JSON key** for that Service Account.
-4. **Enable BigQuery Billing Export** in your GCP project:
-   * Navigate to [Billing → Billing Export](https://console.cloud.google.com/billing/export) in the GCP Console
+   * **Recommender Viewer** (`roles/recommender.viewer`) - for accessing cost and performance recommendations
+3. **Create a JSON key** for that Service Account (IAM & Admin → Service Accounts → Keys → Add Key → JSON).
+
+#### Enable BigQuery Billing Export
+
+This is required for cost data. Enable it in the GCP Console:
+   * Navigate to [Billing → Billing Export](https://console.cloud.google.com/billing/export)
    * Enable **BigQuery Export** and note the dataset and table name
 
 ### Configuration Fields

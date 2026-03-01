@@ -4,7 +4,31 @@ To connect your Azure account, you must first create an **App Registration** in 
 
 ### Prerequisites
 
-Before filling out this form, you must:
+Before filling out this form, you must create an App Registration (Service Principal), assign roles, and create a client secret.
+
+#### Option A: Using `az` CLI
+
+```bash
+# Set your subscription
+export SUBSCRIPTION_ID="your-subscription-id"
+az account set --subscription $SUBSCRIPTION_ID
+
+# Create an App Registration
+APP=$(az ad app create --display-name "NudgeBee Integration" --query appId -o tsv)
+
+# Create a Service Principal for the app
+SP_ID=$(az ad sp create --id $APP --query id -o tsv)
+
+# Assign required roles at subscription scope
+az role assignment create --assignee $SP_ID --role "Reader" --scope "/subscriptions/$SUBSCRIPTION_ID"
+az role assignment create --assignee $SP_ID --role "Cost Management Reader" --scope "/subscriptions/$SUBSCRIPTION_ID"
+
+# Create a client secret (save the output — it's shown only once)
+az ad app credential reset --id $APP --display-name "nudgebee-secret" --query password -o tsv
+```
+
+#### Option B: Using Azure Portal
+
 1.  **[Create an App Registration](https://learn.microsoft.com/en-us/entra/identity-platform/howto-create-service-principal-portal)** in the Azure Portal.
 2.  **Assign the required roles** to this App Registration (Service Principal) at the subscription level. You can find details on all built-in roles in the **[Azure built-in roles documentation](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles)**. The required roles are:
     * **Cost Management Reader** (for accessing billing and cost data)
