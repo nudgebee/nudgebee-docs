@@ -59,7 +59,7 @@ datasources:
     tls_enabled: true
     credentials:
       username: default
-      password: secret123
+      password: <YOUR_PASSWORD>
 ```
 
 ## Top-Level Fields
