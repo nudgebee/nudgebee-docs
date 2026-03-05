@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Proxy Agent (Forager)
 
-The NudgeBee Proxy Agent (Forager) monitors non-Kubernetes infrastructure — databases, HTTP services, SSH hosts, Redis, MongoDB, and Kafka. It runs as a single binary on a VM or container and connects to NudgeBee Server over a persistent WebSocket.
+The NudgeBee Proxy Agent (Forager) monitors non-Kubernetes infrastructure — databases and Redis. It runs as a single binary on a VM or container and connects to NudgeBee Server over a persistent WebSocket.
 
 ## Architecture
 
@@ -17,11 +17,8 @@ flowchart TB
         subgraph ds["Datasources"]
             PG["PostgreSQL"]
             MY["MySQL / MSSQL"]
-            MG["MongoDB"]
+            CH["ClickHouse"]
             RD["Redis"]
-            KF["Kafka"]
-            HTTP["HTTP / Prometheus"]
-            SSH["SSH"]
         end
 
         subgraph secrets["Secret Providers (optional)"]
@@ -39,11 +36,8 @@ flowchart TB
 
     F --- PG
     F --- MY
-    F --- MG
+    F --- CH
     F --- RD
-    F --- KF
-    F --- HTTP
-    F --- SSH
 
     secrets -.->|"Fetch credentials at startup"| F
 ```
@@ -65,12 +59,7 @@ flowchart TB
 | `mssql` | DB | Microsoft SQL Server |
 | `clickhouse` | DB | ClickHouse |
 | `oracle` | DB | Oracle Database |
-| `mongodb` | MongoDB | MongoDB 4.0+ |
 | `redis` | Redis | Redis 5+ |
-| `kafka` | Kafka | Apache Kafka |
-| `http` | HTTP | Any HTTP API |
-| `prometheus` | HTTP | Prometheus-compatible endpoints |
-| `ssh` | SSH | Remote hosts via SSH |
 
 ## Next Steps
 
