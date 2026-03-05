@@ -38,22 +38,28 @@ datasources:
     credential_source: aws_sm
     credential_ref: "prod/postgres"
 
+  - name: cloud-sql
+    type: postgresql
+    host: 10.0.1.60
+    port: 5432
+    database: appdb
+    ssl_mode: require
+    credential_source: gcp_sm
+    credential_ref: "projects/my-project/secrets/cloudsql-creds/versions/latest"
+
   - name: cache
     type: redis
     host: 10.0.1.51
     port: 6379
 
-  - name: internal-api
-    type: http
-    url: https://api.internal.example.com
+  - name: clickhouse
+    type: clickhouse
+    host: 10.0.1.70
+    port: 9000
+    tls_enabled: true
     credentials:
-      auth_type: bearer
-      token: my-api-token
-
-  - name: app-kafka
-    type: kafka
-    brokers: "broker1:9092,broker2:9092"
-    credential_source: cloud_push
+      username: default
+      password: secret123
 ```
 
 ## Top-Level Fields
@@ -83,11 +89,11 @@ datasources:
 |-------|----------|-------------|
 | `name` | Yes | Unique identifier |
 | `type` | Yes | Datasource type (see [supported types](./overview.md#supported-datasources)) |
-| `host` | Varies | Hostname (database, SSH, Redis, MongoDB) |
-| `port` | Varies | Port number |
+| `host` | Yes | Hostname or IP address |
+| `port` | Yes | Port number |
 | `database` | No | Database name (SQL datasources) |
-| `url` | Varies | Base URL (HTTP, Prometheus) |
-| `brokers` | Varies | Comma-separated broker list (Kafka) |
+| `ssl_mode` | No | PostgreSQL SSL mode: `disable`, `require`, `verify-ca`, `verify-full` |
+| `tls_enabled` | No | Enable TLS for MySQL, MSSQL, ClickHouse (`true`/`false`) |
 | `credential_source` | No | `local` (default), `cloud_push`, `aws_sm`, `gcp_sm`, `azure_kv` |
 | `credential_ref` | When using cloud source | Secret name/ARN/resource path |
 | `credentials` | When `local` | Inline credential key-value pairs |
@@ -99,8 +105,4 @@ These are the credential keys used by each datasource type:
 | Datasource | Keys |
 |------------|------|
 | `postgresql`, `mysql`, `mssql`, `clickhouse`, `oracle` | `username`, `password` |
-| `mongodb` | `username`, `password` |
 | `redis` | `password` (optional) |
-| `ssh` | `username`, `password` or `private_key` |
-| `http` | `auth_type`, `username`, `password`, `token`, `api_key` |
-| `kafka` | `username`, `password`, `mechanism` |
