@@ -9,6 +9,10 @@ const config = {
   title: 'NudgeBee',
   tagline: '',
   favicon: 'img/favicon.png',
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
 
   // Set the production url of your site here
   url: 'https://app.nudgebee.com/',
