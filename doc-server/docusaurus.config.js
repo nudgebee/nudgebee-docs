@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer').themes.dracula;;
 const config = {
   title: 'NudgeBee',
   tagline: '',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.png',
   markdown: {
     mermaid: true,
   },
@@ -59,10 +59,9 @@ const config = {
       // Replace with your project's social card
       image: 'img/NudgeBee.png',
       navbar: {
-        title: 'NudgeBee',
         logo: {
           alt: 'NudgeBee Logo',
-          src: 'img/logo.svg',
+          src: 'img/logo.png',
         },
         items: [
         ],
@@ -77,7 +76,8 @@ const config = {
       },
       colorMode: {
         defaultMode: 'light',
-        disableSwitch: true,        
+        disableSwitch: false,
+        respectPrefersColorScheme: true,
       }
     }),
 };
