@@ -80,8 +80,8 @@ Resources:
               - sqs:SendMessage
             Resource: !GetAtt EventBridgeQueue.Arn
             Condition:
-              StringEquals:
-                aws:PrincipalServiceName: events.amazonaws.com
+              ArnLike:
+                aws:SourceArn: 'arn:aws:events:*:*:rule/*'
 
 Outputs:
   SQSQueueUrl:
