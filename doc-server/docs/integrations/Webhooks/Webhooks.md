@@ -13,6 +13,7 @@ NudgeBee supports **inbound webhooks** that allow external monitoring and alerti
 |-------------|-------------|
 | [Datadog Webhook](./datadog_webhook.md) | Receive Datadog monitor alert notifications enriched with related telemetry data. |
 | [New Relic Webhook](./newrelic_webhook.md) | Receive New Relic alert notifications enriched with logs, traces, and entity details. |
+| [PagerDuty Webhook](./pagerduty_webhook.md) | Receive PagerDuty incident notifications and trigger NudgeBee troubleshooting workflows. |
 | [ServiceNow Webhook](./servicenow_webhook.md) | Receive ServiceNow incident notifications into NudgeBee. |
 
 ---
