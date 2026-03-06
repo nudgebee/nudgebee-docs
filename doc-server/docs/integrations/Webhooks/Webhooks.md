@@ -3,7 +3,7 @@ sidebar_position: 1
 ---
 # Webhooks
 
-NudgeBee supports **inbound webhooks** that allow external monitoring and alerting tools to push events directly into NudgeBee. When an alert fires in your external tool, it sends a webhook payload to NudgeBee, which automatically creates an enriched event.
+NudgeBee supports **inbound webhooks** that allow external monitoring and alerting tools to push events directly into NudgeBee. When an alert fires, NudgeBee automatically creates an enriched event.
 
 ---
 
@@ -11,11 +11,7 @@ NudgeBee supports **inbound webhooks** that allow external monitoring and alerti
 
 | Integration | Description |
 |-------------|-------------|
-| [Azure Monitor Webhook](./azure_monitor_webhook.md) | Receive Azure Monitor alert notifications via Action Groups. |
-| [Datadog Webhook](./datadog_webhook.md) | Receive Datadog monitor alert notifications. |
 | [New Relic Webhook](./newrelic_webhook.md) | Receive New Relic alert notifications enriched with logs, traces, and entity details. |
-| [PagerDuty Webhook](./pagerduty_webhook.md) | Receive PagerDuty incident events for triggering NudgeBee troubleshooting. |
-| [ServiceNow Webhook](./servicenow_webhook.md) | Receive ServiceNow incident notifications. |
 
 ---
 
