@@ -8,7 +8,7 @@ sidebar_position: 3
 
 - Network access to `relay.nudgebee.com` on port 443
 - Network access from the agent to each datasource you want to monitor
-- Access key and secret from the NudgeBee UI (Settings > Integrations)
+- Access key and secret from the NudgeBee UI (Admin → Integrations → Servers → Proxy Agent)
 
 Replace `<ACCESS_KEY>` and `<ACCESS_SECRET>` in the commands below with the values from the UI.
 

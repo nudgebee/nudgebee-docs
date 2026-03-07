@@ -14,20 +14,19 @@ Connect your first database to NudgeBee in 5 minutes using the Proxy Agent.
 
 ## Step 1: Create a Proxy Agent in NudgeBee
 
-1. Go to **Settings → Agents** in the NudgeBee UI.
+1. Go to **Admin → Integrations → Servers** in the NudgeBee UI.
 
-<!-- TODO: Add screenshot of the Agents page -->
-<!-- ![Agents page](../../../../static/img/proxy-agent/agents_page.png) -->
+![Integrations Servers tab](/img/proxy-agent/integrations_servers_tab.gif)
 
-2. Click **Add Agent** and select **Proxy Agent**.
+2. Click the **Proxy Agent** card to open the Proxy Agent accounts page.
 
-<!-- TODO: Add screenshot of Add Agent dialog -->
-<!-- ![Add Agent dialog](../../../../static/img/proxy-agent/add_agent_dialog.png) -->
+![Proxy Agent accounts list](/img/proxy-agent/proxy_agent_list.gif)
 
-3. Copy the **Access Key** and **Access Secret**. You'll need these to start the agent.
+3. Click **Add Proxy Agent Account**. Enter a **name** for the agent and select the **account**, then click **Save**.
 
-<!-- TODO: Add screenshot showing access key and secret -->
-<!-- ![Access key and secret](../../../../static/img/proxy-agent/agent_credentials.png) -->
+![Add Proxy Agent Account dialog](/img/proxy-agent/add_proxy_agent_dialog.gif)
+
+4. Copy the **Access Key** and **Access Secret** shown after creation. You'll need these to start the agent.
 
 ## Step 2: Install the Agent
 
@@ -82,36 +81,32 @@ Check the agent logs:
 {"level":"INFO","msg":"connected to relay, greeting sent"}
 ```
 
-In the NudgeBee UI, the agent status should show as **Connected** on the Agents page.
-
-<!-- TODO: Add screenshot of connected agent status -->
-<!-- ![Agent connected](../../../../static/img/proxy-agent/agent_connected.png) -->
+In the NudgeBee UI, the agent should appear on the Proxy Agent accounts page.
 
 ## Step 4: Add a Datasource
 
-1. Go to **Settings → Integrations** in the NudgeBee UI.
+1. Go to **Admin → Integrations → Databases** in the NudgeBee UI.
 
-<!-- TODO: Add screenshot of Integrations page -->
-<!-- ![Integrations page](../../../../static/img/proxy-agent/integrations_page.png) -->
+![Databases tab](/img/proxy-agent/databases_tab.gif)
 
-2. Click **Add Integration** and select your database type (e.g., **PostgreSQL**).
+2. Click the database type you want to connect (e.g., **PostgreSQL**). Then click **Add Postgres Account** (or the equivalent button for your database type).
 
-<!-- TODO: Add screenshot of integration type selection -->
-<!-- ![Select integration type](../../../../static/img/proxy-agent/select_integration_type.png) -->
+3. In the **Connection Mode** dropdown, select **Proxy Agent**.
 
-3. Select **VM Agent** as the connection mode.
-
-<!-- TODO: Add screenshot showing connection mode selection -->
-<!-- ![Connection mode selection](../../../../static/img/proxy-agent/connection_mode.png) -->
+![Connection mode dropdown](/img/proxy-agent/connection_mode_dropdown.gif)
 
 4. Enter the connection details:
-   - **Host** — hostname or IP of your database (as reachable from the agent)
-   - **Port** — database port (e.g., 5432 for PostgreSQL)
-   - **Database** — database name
-   - **Username** and **Password** — database credentials
+   - **Integration name** — a descriptive name for this datasource
+   - **Select Account** — choose the account to associate this datasource with
+   - **Host** — hostname or IP of your database (as reachable from the agent, e.g., `db.example.com` or `10.0.1.5`)
+   - **Database** — database name to connect to
+   - **SSL Mode** — SSL mode for the connection (optional)
+   - **Credential Source** — where database credentials are stored (see [Credential Sources](./credential-sources.md))
+   - **Read Only** — optionally restrict to read-only queries
 
-<!-- TODO: Add screenshot of filled-in form -->
-<!-- ![Database connection form](../../../../static/img/proxy-agent/db_connection_form.png) -->
+![Database connection form (top)](/img/proxy-agent/vm_agent_form_top.gif)
+
+![Database connection form (bottom)](/img/proxy-agent/vm_agent_form_bottom.gif)
 
 5. Click **Save**. NudgeBee pushes the configuration to your agent automatically.
 
@@ -126,9 +121,6 @@ Check the agent logs for confirmation:
 ```
 
 The datasource should now appear as **Healthy** in the NudgeBee Integrations page.
-
-<!-- TODO: Add screenshot of healthy datasource -->
-<!-- ![Healthy datasource](../../../../static/img/proxy-agent/datasource_healthy.png) -->
 
 ## What's Next
 

@@ -29,7 +29,7 @@ sidebar_position: 6
 
 **Possible causes:**
 
-- **No integrations configured** — Go to Settings → Integrations and add a datasource with connection mode "VM Agent".
+- **No integrations configured** — Go to Admin → Integrations → Databases and add a datasource with connection mode "Proxy Agent".
 - **Wrong account** — The agent's access key is tied to a specific account. Make sure the integration is created in the same account.
 - **Relay not updated** — If running a self-hosted relay, ensure it's on the latest version that supports config sync on connect.
 
