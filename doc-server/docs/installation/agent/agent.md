@@ -1,10 +1,11 @@
 ---
 sidebar_position: 2
+sidebar_label: K8s Agent
 ---
 
-# Agent
+# K8s Agent
 
-The NudgeBee agent is a software component that runs within a customer's Kubernetes cluster. It collects data about performance bottlenecks, and security, and sends it back to the NudgeBee server for analysis. This agent needs to be installed in every cluster that needs to be monitored.
+The NudgeBee K8s agent is a software component that runs within a customer's Kubernetes cluster. It collects data about performance bottlenecks, and security, and sends it back to the NudgeBee server for analysis. This agent needs to be installed in every cluster that needs to be monitored.
 
 ## Architecture
 
