@@ -1904,7 +1904,7 @@
     tslib "^2.6.0"
     utility-types "^3.10.0"
 
-"@docusaurus/theme-mermaid@^3.9.2":
+"@docusaurus/theme-mermaid@3.9.2":
   version "3.9.2"
   resolved "https://registry.npmjs.org/@docusaurus/theme-mermaid/-/theme-mermaid-3.9.2.tgz"
   integrity sha512-5vhShRDq/ntLzdInsQkTdoKWSzw8d1jB17sNPYhA/KvYYFXfuVEGHLM6nrf8MFbV8TruAHDG21Fn3W4lO8GaDw==
@@ -3820,7 +3820,7 @@ autoprefixer@^10.4.19, autoprefixer@^10.4.23:
     picocolors "^1.1.1"
     postcss-value-parser "^4.2.0"
 
-axios@^1.13.6:
+axios@^1.13.5:
   version "1.13.6"
   resolved "https://registry.npmjs.org/axios/-/axios-1.13.6.tgz"
   integrity sha512-ChTCHMouEe2kn713WHbQGcuYrr6fXTBiu460OTwWrWob16g1bXn4vtz07Ope7ewMozJAnEquLk5lWQWtBig9DQ==
