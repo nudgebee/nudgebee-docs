@@ -9,7 +9,7 @@ Forager is configured via a YAML file passed with `--config`. All fields can als
 ## Full Example
 
 ```yaml
-relay_url: "wss://relay.nudgebee.com/register"
+relay_url: "wss://<RELAY_HOST>/register"   # provided in the NudgeBee UI
 access_key: "your-access-key"
 access_secret: "your-access-secret"
 data_dir: "/data"
