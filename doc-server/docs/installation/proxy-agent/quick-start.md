@@ -26,7 +26,7 @@ Connect your first database to NudgeBee in 5 minutes using the Proxy Agent.
 
 ![Add Proxy Agent Account dialog](/img/proxy-agent/add_proxy_agent_dialog.gif)
 
-4. Copy the **Access Key** and **Access Secret** shown after creation. You'll need these to start the agent.
+4. Copy the **Relay URL**, **Access Key**, and **Access Secret** shown after creation. You'll need these to start the agent.
 
 ## Step 2: Install the Agent
 
