@@ -18,9 +18,9 @@
     "docs": "HASURA_ADMIN_SECRET=xxx HASURA_GRAPHQL_ENDPOINT=xxx node api-docs/scripts/generate-md-docs.js"
   },
   "dependencies": {
-    "@docusaurus/core": "3.8.1",
-    "@docusaurus/preset-classic": "3.8.1",
-    "@docusaurus/theme-mermaid": "^3.8.1",
+    "@docusaurus/core": "3.9.2",
+    "@docusaurus/preset-classic": "3.9.2",
+    "@docusaurus/theme-mermaid": "^3.9.2",
     "@mdx-js/react": "^3.1.0",
     "axios": "^1.13.6",
     "clsx": "^2.1.1",
@@ -29,7 +29,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.8.1",
+    "@docusaurus/module-type-aliases": "3.9.2",
     "@tsconfig/docusaurus": "^2.0.3",
     "@typescript-eslint/eslint-plugin": "^8.34.0",
     "@typescript-eslint/parser": "^8.46.2",
@@ -55,5 +55,8 @@
   },
   "engines": {
     "node": ">=16.14"
+  },
+  "overrides": {
+    "serialize-javascript": "7.0.3"
   }
 }
