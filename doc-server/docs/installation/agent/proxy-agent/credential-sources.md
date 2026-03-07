@@ -18,7 +18,7 @@ datasources:
     port: 5432
     credentials:
       username: admin
-      password: secret123
+      password: <YOUR_PASSWORD>
 ```
 
 ## Cloud Push
@@ -58,7 +58,7 @@ datasources:
 ```json
 {
   "username": "admin",
-  "password": "secret123"
+  "password": "<YOUR_PASSWORD>"
 }
 ```
 

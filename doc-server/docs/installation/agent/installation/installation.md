@@ -66,7 +66,7 @@ The NudgeBee Agent relies on Kubernetes RBAC. All required roles and bindings ar
 ### 2. Quick Install (Shell Script)
 
 ```bash
-wget https://raw.githubusercontent.com/nudgebee/k8s-agent/main/installation.sh
+wget https://raw.githubusercontent.com/nudgebee/k8s-agent/refs/heads/prod/installation.sh
 chmod +x installation.sh
 ./installation.sh -a <NUDBGEE_AUTH_KEY>
 ```
