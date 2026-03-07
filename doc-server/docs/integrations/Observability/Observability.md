@@ -41,6 +41,7 @@ You can connect any combination of the following platforms:
 - Opsgenie
 - [Slack](../Notifications/slack.md)
 - [Microsoft Teams](../Notifications/msteams.md)
+- [Datadog Webhook](./datadog_webhook.md)
 - [New Relic Webhook](./newrelic_webhook.md)
 
 ---
