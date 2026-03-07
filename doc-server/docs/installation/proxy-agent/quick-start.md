@@ -40,6 +40,7 @@ import TabItem from '@theme/TabItem';
 
 ```bash
 curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
+  NB_RELAY_URL=<RELAY_URL> \
   NB_ACCESS_KEY=<ACCESS_KEY> \
   NB_ACCESS_SECRET=<ACCESS_SECRET> \
   bash
@@ -50,6 +51,7 @@ curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
 
 ```bash
 docker run -d --name nudgebee-forager \
+  -e NB_RELAY_URL=<RELAY_URL> \
   -e NB_ACCESS_KEY=<ACCESS_KEY> \
   -e NB_ACCESS_SECRET=<ACCESS_SECRET> \
   -v forager-data:/data \
@@ -63,6 +65,7 @@ docker run -d --name nudgebee-forager \
 ```bash
 helm install nudgebee-forager \
   oci://registry.nudgebee.com/nudgebee-forager-chart \
+  --set forager.relayURL=<RELAY_URL> \
   --set forager.accessKey=<ACCESS_KEY> \
   --set forager.accessSecret=<ACCESS_SECRET>
 ```
@@ -70,7 +73,7 @@ helm install nudgebee-forager \
 </TabItem>
 </Tabs>
 
-Replace `<ACCESS_KEY>` and `<ACCESS_SECRET>` with the values from Step 1.
+Replace `<RELAY_URL>`, `<ACCESS_KEY>`, and `<ACCESS_SECRET>` with the values from Step 1.
 
 ## Step 3: Verify the Agent is Connected
 
@@ -104,9 +107,9 @@ In the NudgeBee UI, the agent should appear on the Proxy Agent accounts page.
    - **Credential Source** — where database credentials are stored (see [Credential Sources](./credential-sources.md))
    - **Read Only** — optionally restrict to read-only queries
 
-![Database connection form (top)](/img/proxy-agent/vm_agent_form_top.gif)
+![Database connection form (top)](/img/proxy-agent/proxy_agent_form_top.gif)
 
-![Database connection form (bottom)](/img/proxy-agent/vm_agent_form_bottom.gif)
+![Database connection form (bottom)](/img/proxy-agent/proxy_agent_form_bottom.gif)
 
 5. Click **Save**. NudgeBee pushes the configuration to your agent automatically.
 

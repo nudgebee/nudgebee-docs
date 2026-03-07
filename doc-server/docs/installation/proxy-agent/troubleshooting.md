@@ -10,11 +10,11 @@ sidebar_position: 6
 
 **Check these:**
 
-1. **Network access** — The agent needs outbound HTTPS (port 443) to `relay.nudgebee.com`. Test with:
+1. **Network access** — The agent needs outbound HTTPS (port 443) to your NudgeBee Relay Server. Test with:
    ```bash
-   curl -I https://relay.nudgebee.com/status
+   curl -I https://<RELAY_HOST>/status
    ```
-   You should get `HTTP/2 200`.
+   Replace `<RELAY_HOST>` with your relay URL (provided in the NudgeBee UI). You should get `HTTP/2 200`.
 
 2. **Credentials** — Verify `NB_ACCESS_KEY` and `NB_ACCESS_SECRET` match what the NudgeBee UI shows. A wrong secret produces:
    ```

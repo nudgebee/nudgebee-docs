@@ -6,11 +6,11 @@ sidebar_position: 3
 
 ## Prerequisites
 
-- Network access to `relay.nudgebee.com` on port 443
+- Network access to your NudgeBee Relay Server on port 443 (the relay URL is provided in the NudgeBee UI when you create a Proxy Agent account)
 - Network access from the agent to each datasource you want to monitor
 - Access key and secret from the NudgeBee UI (Admin → Integrations → Servers → Proxy Agent)
 
-Replace `<ACCESS_KEY>` and `<ACCESS_SECRET>` in the commands below with the values from the UI.
+Replace `<RELAY_URL>`, `<ACCESS_KEY>`, and `<ACCESS_SECRET>` in the commands below with the values from the UI.
 
 ## Option 1: Install Script
 
@@ -18,6 +18,7 @@ The quickest way to get started. Downloads and installs Forager as a systemd ser
 
 ```bash
 curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
+  NB_RELAY_URL=<RELAY_URL> \
   NB_ACCESS_KEY=<ACCESS_KEY> \
   NB_ACCESS_SECRET=<ACCESS_SECRET> \
   bash
@@ -27,6 +28,7 @@ curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
 
 ```bash
 docker run -d --name nudgebee-forager \
+  -e NB_RELAY_URL=<RELAY_URL> \
   -e NB_ACCESS_KEY=<ACCESS_KEY> \
   -e NB_ACCESS_SECRET=<ACCESS_SECRET> \
   -v forager-data:/data \
@@ -43,6 +45,7 @@ services:
     image: registry.nudgebee.com/nudgebee-forager:latest
     restart: unless-stopped
     environment:
+      - NB_RELAY_URL=<RELAY_URL>
       - NB_ACCESS_KEY=<ACCESS_KEY>
       - NB_ACCESS_SECRET=<ACCESS_SECRET>
     volumes:
@@ -61,6 +64,7 @@ docker compose up -d
 ```bash
 helm install nudgebee-forager \
   oci://registry.nudgebee.com/nudgebee-forager-chart \
+  --set forager.relayURL=<RELAY_URL> \
   --set forager.accessKey=<ACCESS_KEY> \
   --set forager.accessSecret=<ACCESS_SECRET>
 ```
@@ -78,7 +82,7 @@ image:
   tag: "latest"
 
 forager:
-  relayURL: wss://relay.nudgebee.com/register
+  relayURL: wss://<RELAY_HOST>/register   # provided in the NudgeBee UI
   accessKey: ""
   accessSecret: ""
   dataDir: /data
