@@ -55,7 +55,7 @@ For self-hosted GitLab instances, you can also use **Project Access Tokens** or 
 1. In NudgeBee, navigate to **Settings** > **Integrations** > **Repos** tab.
 2. Click the **Gitlab** tile under the **Connected** or **Available** section.
 
-![NudgeBee Repos integration page showing GitLab tile](../../../static/img/gitlab_repos_tile.png)
+![NudgeBee Repos integration page showing GitLab tile](../../../../static/img/gitlab_repos_tile.png)
 
 3. Click **Add GitLab Account** in the top-right corner.
 
@@ -68,7 +68,7 @@ For self-hosted GitLab instances, you can also use **Project Access Tokens** or 
 | **Username** | Yes | Your GitLab username — not your email address |
 | **Personal Access Token** | Yes (on create) | The PAT generated in Step 1. On edit, leave empty to keep the existing token |
 
-![Add GitLab Account modal](../../../static/img/gitlab_account_modal.png)
+![Add GitLab Account modal](../../../../static/img/gitlab_account_modal.png)
 
 5. Click **Save**. NudgeBee validates the credentials by authenticating against the GitLab API and verifying the username matches.
 
@@ -78,7 +78,7 @@ For self-hosted GitLab instances, you can also use **Project Access Tokens** or 
 
 After saving, the GitLab account appears in the accounts table.
 
-![GitLab accounts table showing connected account](../../../static/img/gitlab_accounts_table.png)
+![GitLab accounts table showing connected account](../../../../static/img/gitlab_accounts_table.png)
 
 | Column | Description |
 |--------|-------------|
@@ -123,7 +123,7 @@ NudgeBee tracks issues by reference ID. If an issue already exists for the same 
 
 Below is a GitLab issue created by NudgeBee for a resource rightsizing recommendation. It includes workload details (namespace, container name), current resource values, recommended values, and estimated savings.
 
-<!-- ![GitLab issue created by NudgeBee with rightsizing details](../../../static/img/gitlab_issue_example.png) -->
+<!-- ![GitLab issue created by NudgeBee with rightsizing details](../../../../static/img/gitlab_issue_example.png) -->
 
 Key details visible in the issue:
 - **Labels**: `kubernetes` and `nudgebee` are automatically applied
@@ -199,7 +199,7 @@ spec:
 
 Below is a merge request created by NudgeBee's AI coding agent. It includes a changes summary, a before/after comparison table, and a motivation section explaining why the changes were recommended.
 
-<!-- ![GitLab Merge Request created by NudgeBee for rightsizing](../../../static/img/gitlab_mr_example.png) -->
+<!-- ![GitLab Merge Request created by NudgeBee for rightsizing](../../../../static/img/gitlab_mr_example.png) -->
 
 The MR contains:
 - **Title**: Describes the workload and type of change (e.g., `chore: rightsizing CPU/Memory for auto-pilot-worker deployment`)
