@@ -4,7 +4,19 @@ sidebar_position: 4
 
 # Configuration Reference
 
-Forager is configured via a YAML file passed with `--config`. All fields can also be set via environment variables with the `NB_` prefix.
+Forager is configured via a YAML config file. All fields can also be set via environment variables with the `NB_` prefix (env vars take precedence over the file).
+
+## Config File Location
+
+You can provide the config file in two ways:
+
+1. **Explicit path** — pass `--config /path/to/forager.yaml` when starting Forager
+2. **Default location** — if no `--config` flag is given, Forager looks for `forager.yaml` in:
+   - Linux: `/etc/nudgebee/` → current directory
+   - macOS: `/usr/local/etc/nudgebee/` → current directory
+   - Windows: `%ProgramData%\Nudgebee\` → current directory
+
+If no config file is found, Forager still starts using environment variables alone. See [Installation](./installation.md) for how to pass the config file in each deployment mode (Docker, Helm, systemd, etc.).
 
 ## Full Example
 
