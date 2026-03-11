@@ -1,10 +1,8 @@
 ## Add GCP Account Integration
 
-To connect your GCP account, you must first create a **Service Account** in Google Cloud, which is an identity for applications to access resources. You will then create a JSON key for this Service Account and grant it the necessary permissions.
+To connect your GCP account, you must first enable the required APIs, create a **Service Account** in Google Cloud, and grant it the necessary permissions.
 
 ### Prerequisites
-
-Before filling out this form, you must create a Service Account with the required roles and a JSON key.
 
 #### Option A: Using `gcloud` CLI
 
@@ -13,11 +11,26 @@ Before filling out this form, you must create a Service Account with the require
 export PROJECT_ID="your-project-id"
 gcloud config set project $PROJECT_ID
 
-# Create a service account
+# Step 1: Enable required GCP APIs
+gcloud services enable \
+  compute.googleapis.com \
+  storage.googleapis.com \
+  bigquery.googleapis.com \
+  monitoring.googleapis.com \
+  logging.googleapis.com \
+  recommender.googleapis.com \
+  sqladmin.googleapis.com \
+  container.googleapis.com \
+  cloudfunctions.googleapis.com \
+  run.googleapis.com \
+  pubsub.googleapis.com \
+  aiplatform.googleapis.com
+
+# Step 2: Create a service account
 gcloud iam service-accounts create nudgebee-sa \
   --display-name="NudgeBee Service Account"
 
-# Assign required roles
+# Step 3: Assign required roles
 for ROLE in roles/viewer roles/monitoring.viewer roles/logging.viewer \
   roles/bigquery.dataViewer roles/bigquery.jobUser roles/recommender.viewer; do
   gcloud projects add-iam-policy-binding $PROJECT_ID \
@@ -25,27 +38,61 @@ for ROLE in roles/viewer roles/monitoring.viewer roles/logging.viewer \
     --role="$ROLE"
 done
 
-# Create and download JSON key
+# Step 4: Create and download JSON key
 gcloud iam service-accounts keys create nudgebee-sa-key.json \
   --iam-account="nudgebee-sa@${PROJECT_ID}.iam.gserviceaccount.com"
 ```
 
 #### Option B: Using Google Cloud Console
 
-1. **Create a Service Account** in the [Google Cloud Console](https://console.cloud.google.com/iam-admin/serviceaccounts).
-2. **[Assign the required IAM roles](https://console.cloud.google.com/iam-admin/iam)** to this Service Account at the project level:
+##### 1. Enable Required GCP APIs
+
+NudgeBee needs certain GCP APIs enabled on your project to collect resource data, metrics, and recommendations. If an API is not enabled, NudgeBee will not be able to monitor the corresponding service.
+
+Go to [**APIs & Services > Enable APIs and Services**](https://console.cloud.google.com/apis/library) and enable the following:
+
+| API | What it's used for |
+|-----|-------------------|
+| **Compute Engine API** | Virtual machines, disks, networking |
+| **Cloud Storage API** | Storage buckets |
+| **BigQuery API** | Billing data queries |
+| **Cloud Monitoring API** | Resource metrics and alerts |
+| **Cloud Logging API** | Log data |
+| **Recommender API** | Cost and performance recommendations |
+| **Cloud SQL Admin API** | Cloud SQL instances |
+| **Kubernetes Engine API** | GKE clusters |
+| **Cloud Functions API** | Cloud Functions |
+| **Cloud Run Admin API** | Cloud Run services |
+| **Cloud Pub/Sub API** | Pub/Sub topics and subscriptions |
+| **Vertex AI API** | Vertex AI endpoints and models |
+
+:::tip
+You only need to enable APIs for GCP services you actually use. For example, if you don't use Cloud Run, you can skip the Cloud Run Admin API. However, skipping an API means NudgeBee won't be able to collect data for that service.
+:::
+
+##### 2. Create a Service Account
+
+Create a Service Account in the [Google Cloud Console](https://console.cloud.google.com/iam-admin/serviceaccounts).
+
+##### 3. Assign IAM Roles
+
+[Assign the required IAM roles](https://console.cloud.google.com/iam-admin/iam) to this Service Account at the project level:
+
    * **Viewer** (`roles/viewer`) - for accessing general resource information
    * **Monitoring Viewer** (`roles/monitoring.viewer`) - for accessing monitoring metrics
    * **Logs Viewer** (`roles/logging.viewer`) - for accessing logs
    * **BigQuery Data Viewer** (`roles/bigquery.dataViewer`) - for accessing billing data
    * **BigQuery Job User** (`roles/bigquery.jobUser`) - for running billing queries
    * **Recommender Viewer** (`roles/recommender.viewer`) - for accessing cost and performance recommendations
-3. **Create a JSON key** for that Service Account (IAM & Admin → Service Accounts → Keys → Add Key → JSON).
+
+##### 4. Create a JSON Key
+
+Create a JSON key for that Service Account (IAM & Admin > Service Accounts > Keys > Add Key > JSON).
 
 #### Enable BigQuery Billing Export
 
 This is required for cost data. Enable it in the GCP Console:
-   * Navigate to [Billing → Billing Export](https://console.cloud.google.com/billing/export)
+   * Navigate to [Billing > Billing Export](https://console.cloud.google.com/billing/export)
    * Enable **BigQuery Export** and note the dataset and table name
 
 ### Configuration Fields
@@ -65,10 +112,10 @@ Here is a guide to finding the values for each required field.
 * **Service Account Key (JSON) \*** (Required)
    * **What it is:** A JSON credential file for your service account. **Treat this value like a password and store it securely.**
    * **Where to find it:**
-      1. In the Google Cloud Console, navigate to [**IAM & Admin → Service Accounts**](https://console.cloud.google.com/iam-admin/serviceaccounts).
+      1. In the Google Cloud Console, navigate to [**IAM & Admin > Service Accounts**](https://console.cloud.google.com/iam-admin/serviceaccounts).
       2. Click on the service account you created for this integration.
       3. Go to the **Keys** tab.
-      4. Click **Add Key → Create new key**.
+      4. Click **Add Key > Create new key**.
       5. Select **JSON** as the key type and click **Create**.
       6. **Important:** The JSON key file will be downloaded to your computer *one time only*. You must save this file securely.
       7. Open the downloaded JSON file and copy its entire contents.
@@ -77,7 +124,7 @@ Here is a guide to finding the values for each required field.
 * **Billing Dataset Name \*** (Required)
    * **What it is:** The BigQuery dataset name where billing data is exported.
    * **Where to find it:**
-      1. In the Google Cloud Console, navigate to **Billing → Billing export**.
+      1. In the Google Cloud Console, navigate to **Billing > Billing export**.
       2. You will see the dataset name listed (e.g., `billing_export_dataset`).
       3. Copy this dataset name.
 
@@ -91,3 +138,17 @@ Here is a guide to finding the values for each required field.
 ---
 
 After entering all the details, click **Save** to complete the integration.
+
+### Troubleshooting
+
+#### Permission Errors After Setup
+
+If you see permission errors in NudgeBee for specific GCP services, the most common cause is that the required API is not enabled on your project. For example, an error like `recommender.serviceusage.services.use - PermissionDenied` means the **Recommender API** needs to be enabled.
+
+To fix, enable the missing API:
+
+```bash
+gcloud services enable recommender.googleapis.com --project=your-project-id
+```
+
+Or enable it from the [APIs & Services](https://console.cloud.google.com/apis/library) page in the GCP Console.

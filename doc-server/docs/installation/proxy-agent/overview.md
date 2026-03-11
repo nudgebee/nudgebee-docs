@@ -6,14 +6,15 @@ sidebar_position: 1
 
 ## When to Use
 
-Use the Proxy Agent when you need NudgeBee to query databases or services that are **not running inside Kubernetes**, or when your databases are in a private network that the NudgeBee K8s agent cannot reach.
+Use the Proxy Agent when you need NudgeBee to query databases, run SSH commands on servers, or access services that are **not running inside Kubernetes**, or when your infrastructure is in a private network that the NudgeBee K8s agent cannot reach.
 
 | Scenario | Use |
 |----------|-----|
-| Database running on a VM, bare metal, or managed service (RDS, Cloud SQL, etc.) | **Proxy Agent** |
+| Database on a VM, bare metal, or managed service (RDS, Cloud SQL, etc.) | **Proxy Agent** |
+| Run commands on Linux/Windows servers via SSH | **Proxy Agent** |
 | Database running inside your Kubernetes cluster | K8s Agent (default) |
-| Database in a private VPC with no K8s access | **Proxy Agent** |
-| You already have a K8s agent but want to add a non-K8s database | **Proxy Agent** (alongside your K8s agent) |
+| Database or server in a private VPC with no K8s access | **Proxy Agent** |
+| You already have a K8s agent but want to add non-K8s resources | **Proxy Agent** (alongside your K8s agent) |
 
 ## How It Works
 
@@ -30,6 +31,7 @@ flowchart TB
             MY["MySQL / MSSQL"]
             CH["ClickHouse"]
             RD["Redis"]
+            SSH["SSH Servers"]
         end
 
         subgraph secrets["Secret Providers (optional)"]
@@ -49,18 +51,19 @@ flowchart TB
     F --- MY
     F --- CH
     F --- RD
+    F --- SSH
 
     secrets -.->|"Fetch credentials at startup"| F
 ```
 
 1. **Connect** — Forager opens a WebSocket to the NudgeBee Relay Server using your access key.
 2. **Receive Config** — On connect, the relay pushes your datasource configurations to the agent automatically.
-3. **Proxy** — When you ask NudgeBee a question about your data, it sends the query through the WebSocket. Forager executes it against the target database and returns results.
+3. **Proxy** — When NudgeBee needs to query a database or run an SSH command, it sends the request through the WebSocket. Forager executes it against the target datasource and returns results.
 4. **Health Check** — Forager periodically checks each datasource and reports health status back to NudgeBee.
 
 ## Two Ways to Configure Datasources
 
-You can configure which databases the agent monitors in two ways:
+You can configure which datasources (databases, SSH servers, etc.) the agent connects to in two ways:
 
 ### Option A: From the NudgeBee UI (Recommended)
 
@@ -88,6 +91,7 @@ Best for: Self-hosted deployments, GitOps workflows, infrastructure-as-code setu
 | `clickhouse` | ClickHouse |
 | `oracle` | Oracle Database |
 | `redis` | Redis 5+ |
+| `ssh` | Linux / Windows servers via SSH (OpenSSH) |
 
 ## Next Steps
 
