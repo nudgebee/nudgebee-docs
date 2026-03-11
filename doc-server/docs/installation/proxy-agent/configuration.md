@@ -60,6 +60,24 @@ datasources:
     credentials:
       username: default
       password: <YOUR_PASSWORD>
+
+  # SSH — fixed host
+  - name: web-server
+    type: ssh
+    host: 10.0.1.80
+    port: 22
+    credential_source: aws_sm
+    credential_ref: "prod/ssh-web-server"
+
+  # SSH — dynamic mode (connect to any host in the allowed list)
+  - name: ssh-fleet
+    type: ssh
+    port: 22
+    allowed_hosts:
+      - "10.0.1.*"
+      - "10.0.2.*"
+    credential_source: gcp_sm
+    credential_ref: "projects/my-project/secrets/ssh-fleet-creds/versions/latest"
 ```
 
 ## Top-Level Fields
@@ -97,6 +115,7 @@ datasources:
 | `credential_source` | No | `local` (default), `cloud_push`, `aws_sm`, `gcp_sm`, `azure_kv` |
 | `credential_ref` | When using cloud source | Secret name/ARN/resource path |
 | `credentials` | When `local` | Inline credential key-value pairs |
+| `allowed_hosts` | No | List of glob patterns for SSH dynamic mode (omit `host` to enable) |
 
 ## Common Credential Keys
 
@@ -106,3 +125,26 @@ These are the credential keys used by each datasource type:
 |------------|------|
 | `postgresql`, `mysql`, `mssql`, `clickhouse`, `oracle` | `username`, `password` |
 | `redis` | `password` (optional) |
+| `ssh` | `username`, `private_key` (PEM format); optionally `password` or `passphrase` |
+
+## SSH Datasource Notes
+
+**Static mode** — Set `host` to a fixed server IP/hostname. All SSH commands go to that server.
+
+**Dynamic mode** — Omit `host` and set `allowed_hosts` with glob patterns. NudgeBee specifies the target host at request time, and Forager connects on demand. Connections are pooled and reused for 5 minutes.
+
+```yaml
+# Dynamic mode example — manages a fleet of servers
+- name: ssh-fleet
+  type: ssh
+  port: 22
+  allowed_hosts:
+    - "10.0.1.*"
+    - "10.0.2.*"
+  credential_source: gcp_sm
+  credential_ref: "projects/my-project/secrets/fleet-ssh-creds/versions/latest"
+```
+
+**Authentication** — SSH supports key-based and password-based auth. For key-based auth, store the private key in PEM format under the `private_key` credential key. If the key has a passphrase, include it as `passphrase`.
+
+**Windows support** — Forager works with Windows OpenSSH Server. Windows uses PowerShell as the default shell, so commands should use `;` instead of `&&` to chain operations.
