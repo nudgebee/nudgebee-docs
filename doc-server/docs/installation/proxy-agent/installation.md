@@ -24,6 +24,14 @@ curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
   bash
 ```
 
+**Using a local config file:** After installation, create `/etc/nudgebee/forager.yaml` with your datasource definitions. Forager picks up this file automatically on startup — no extra flags needed.
+
+```bash
+sudo nano /etc/nudgebee/forager.yaml
+# Add your config (see Configuration Reference), then restart:
+sudo systemctl restart nudgebee-forager
+```
+
 ## Option 2: Docker
 
 ```bash
@@ -35,6 +43,18 @@ docker run -d --name nudgebee-forager \
   --restart unless-stopped \
   registry.nudgebee.com/nudgebee-forager:latest
 ```
+
+**Using a local config file:** Mount your config file into the container at `/etc/nudgebee/forager.yaml`. Forager automatically looks for it there — no extra flags needed:
+
+```bash
+docker run -d --name nudgebee-forager \
+  -v /path/to/forager.yaml:/etc/nudgebee/forager.yaml:ro \
+  -v forager-data:/data \
+  --restart unless-stopped \
+  registry.nudgebee.com/nudgebee-forager:latest
+```
+
+When using a config file, you can put `relay_url`, `access_key`, and `access_secret` in the YAML instead of passing them as env vars.
 
 ## Option 3: Docker Compose
 
@@ -58,6 +78,24 @@ volumes:
 ```bash
 docker compose up -d
 ```
+
+**Using a local config file:** Mount the file at `/etc/nudgebee/forager.yaml`:
+
+```yaml
+# docker-compose.yaml
+services:
+  forager:
+    image: registry.nudgebee.com/nudgebee-forager:latest
+    restart: unless-stopped
+    volumes:
+      - ./forager.yaml:/etc/nudgebee/forager.yaml:ro
+      - forager-data:/data
+
+volumes:
+  forager-data:
+```
+
+Place your `forager.yaml` in the same directory as `docker-compose.yaml`, then run `docker compose up -d`.
 
 ## Option 4: Helm
 
@@ -145,6 +183,8 @@ extraVolumeMounts: []
 # Additional volumes for the pod
 extraVolumes: []
 ```
+
+Datasources listed under `forager.datasources` are rendered into a ConfigMap and mounted as `/etc/nudgebee/forager.yaml` inside the pod automatically — no extra volume setup needed.
 
 Then install with:
 
