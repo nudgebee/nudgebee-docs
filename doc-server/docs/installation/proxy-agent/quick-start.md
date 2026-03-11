@@ -129,7 +129,8 @@ The datasource should now appear as **Healthy** in the NudgeBee Integrations pag
 
 You're done! You can now ask NudgeBee questions about your database — it will query through the proxy agent automatically.
 
-- [Add more datasources](./configuration.md) using the UI or YAML config
+- [Add more datasources](./configuration.md) using the UI or a local YAML config file
 - [Use cloud secret managers](./credential-sources.md) instead of inline credentials
 - [Deploy on Kubernetes](./installation.md#option-4-helm) with Helm
+- Want to define datasources in a config file instead of the UI? See [Configuration Reference](./configuration.md) and [Installation — using a local config file](./installation.md)
 - Having issues? See [Troubleshooting](./troubleshooting.md)
