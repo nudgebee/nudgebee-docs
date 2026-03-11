@@ -86,8 +86,8 @@ datasources:
     type: ssh
     port: 22
     allowed_hosts:
-      - "10.0.1.*"
-      - "10.0.2.*"
+      - "10.0.1.0/24"
+      - "10.0.2.0/24"
     credential_source: gcp_sm
     credential_ref: "projects/my-project/secrets/ssh-fleet-creds/versions/latest"
 ```
@@ -99,7 +99,7 @@ datasources:
 | `relay_url` | `NB_RELAY_URL` | Yes | NudgeBee Relay Server WebSocket URL |
 | `access_key` | `NB_ACCESS_KEY` | Yes | Agent access key |
 | `access_secret` | `NB_ACCESS_SECRET` | Yes | Agent access secret |
-| `data_dir` | `NB_DATA_DIR` | No | Local storage directory (default: `/data`) |
+| `data_dir` | `NB_DATA_DIR` | No | Local storage directory (default: `/var/lib/nudgebee` on Linux, `/data` in Docker) |
 | `health_check_interval_min` | `NB_HEALTH_CHECK_INTERVAL_MIN` | No | Health check interval in minutes (default: `10`) |
 
 ## Cloud Provider Fields
@@ -119,7 +119,7 @@ datasources:
 |-------|----------|-------------|
 | `name` | Yes | Unique identifier |
 | `type` | Yes | Datasource type (see [supported types](./overview.md#supported-datasources)) |
-| `host` | Yes | Hostname or IP address |
+| `host` | Yes* | Hostname or IP address (*optional for SSH dynamic mode — see below) |
 | `port` | Yes | Port number |
 | `database` | No | Database name (SQL datasources) |
 | `ssl_mode` | No | PostgreSQL SSL mode: `disable`, `require`, `verify-ca`, `verify-full` |
@@ -127,7 +127,7 @@ datasources:
 | `credential_source` | No | `local` (default), `cloud_push`, `aws_sm`, `gcp_sm`, `azure_kv` |
 | `credential_ref` | When using cloud source | Secret name/ARN/resource path |
 | `credentials` | When `local` | Inline credential key-value pairs |
-| `allowed_hosts` | No | List of glob patterns for SSH dynamic mode (omit `host` to enable) |
+| `allowed_hosts` | No | List of CIDR ranges or hostnames for SSH dynamic mode (omit `host` to enable) |
 
 ## Common Credential Keys
 
@@ -143,7 +143,7 @@ These are the credential keys used by each datasource type:
 
 **Static mode** — Set `host` to a fixed server IP/hostname. All SSH commands go to that server.
 
-**Dynamic mode** — Omit `host` and set `allowed_hosts` with glob patterns. NudgeBee specifies the target host at request time, and Forager connects on demand. Connections are pooled and reused for 5 minutes.
+**Dynamic mode** — Omit `host` and set `allowed_hosts` with CIDR ranges or exact hostnames. NudgeBee specifies the target host at request time, and Forager connects on demand. Connections are pooled and reused for 10 minutes by default.
 
 ```yaml
 # Dynamic mode example — manages a fleet of servers
@@ -151,8 +151,9 @@ These are the credential keys used by each datasource type:
   type: ssh
   port: 22
   allowed_hosts:
-    - "10.0.1.*"
-    - "10.0.2.*"
+    - "10.0.1.0/24"
+    - "10.0.2.0/24"
+    - "bastion.example.com"    # exact hostnames also work
   credential_source: gcp_sm
   credential_ref: "projects/my-project/secrets/fleet-ssh-creds/versions/latest"
 ```

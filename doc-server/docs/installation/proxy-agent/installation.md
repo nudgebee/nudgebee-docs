@@ -44,15 +44,14 @@ docker run -d --name nudgebee-forager \
   registry.nudgebee.com/nudgebee-forager:latest
 ```
 
-**Using a local config file:** Mount your config file into the container and pass the `--config` flag:
+**Using a local config file:** Mount your config file into the container at `/etc/nudgebee/forager.yaml`. Forager automatically looks for it there — no extra flags needed:
 
 ```bash
 docker run -d --name nudgebee-forager \
   -v /path/to/forager.yaml:/etc/nudgebee/forager.yaml:ro \
   -v forager-data:/data \
   --restart unless-stopped \
-  registry.nudgebee.com/nudgebee-forager:latest \
-  ./nudgebee-forager --config /etc/nudgebee/forager.yaml
+  registry.nudgebee.com/nudgebee-forager:latest
 ```
 
 When using a config file, you can put `relay_url`, `access_key`, and `access_secret` in the YAML instead of passing them as env vars.
@@ -80,7 +79,7 @@ volumes:
 docker compose up -d
 ```
 
-**Using a local config file:** Mount the file and override the command:
+**Using a local config file:** Mount the file at `/etc/nudgebee/forager.yaml`:
 
 ```yaml
 # docker-compose.yaml
@@ -88,7 +87,6 @@ services:
   forager:
     image: registry.nudgebee.com/nudgebee-forager:latest
     restart: unless-stopped
-    command: ["./nudgebee-forager", "--config", "/etc/nudgebee/forager.yaml"]
     volumes:
       - ./forager.yaml:/etc/nudgebee/forager.yaml:ro
       - forager-data:/data
