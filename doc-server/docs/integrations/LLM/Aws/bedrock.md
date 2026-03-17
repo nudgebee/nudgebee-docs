@@ -56,4 +56,4 @@ EMBEDDINGS_PROVIDER_REGION=<AWS_Region> # e.g., us-west-2
 EMBEDDINGS_MODEL_NAME=<Custom_Bedrock_Model_ID> # e.g., amazon.titan-embed-text-v1
 ```
 
-#### To deploy NudgeBee AI models on AWS Bedrock and integrate [NudgeBee Model Deployment](./aws_bedrock_custom_model.md) 
+#### To deploy NudgeBee AI models on AWS Bedrock and integrate [NudgeBee Model Deployment](./aws_bedrock_custom_model) 

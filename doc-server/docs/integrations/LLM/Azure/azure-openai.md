@@ -73,4 +73,4 @@ EMBEDDINGS_PROVIDER_API_ENDPOINT=<Azure embeddings endpoint URL> # e.g., "https:
 EMBEDDINGS_PROVIDER_API_KEY=<Credential for accessing Azure embeddings>
 ```
 
-#### To deploy NudgeBee AI models on Azure OpenAI and integrate [NudgeBee Model Deployment](./nb-azure-ai.md)
+#### To deploy NudgeBee AI models on Azure OpenAI and integrate [NudgeBee Model Deployment](./nb-azure-ai)

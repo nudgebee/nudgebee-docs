@@ -14,10 +14,10 @@ You can connect any combination of the following platforms:
 ### 📊 **Metrics Integrations**
 - Prometheus
 - Grafana Cloud
-- [Datadog Metrics](./datadog.md)
+- [Datadog Metrics](./datadog)
 - Azure Monitor
 - Google Cloud Monitoring
-- [New Relic Metrics](./newrelic.md)
+- [New Relic Metrics](./newrelic)
 
 ### 🪵 **Logs Integrations**
 - Elastic / ELK Stack
@@ -25,24 +25,25 @@ You can connect any combination of the following platforms:
 - AWS CloudWatch Logs
 - Azure Log Analytics
 - Google Cloud Logging
-- [New Relic Logs](./newrelic.md)
+- [New Relic Logs](./newrelic)
 
 ### 🔍 **Traces Integrations**
 - Jaeger
 - Tempo
 - OpenTelemetry
-- [Datadog APM](./datadog.md)
-- [Azure Application Insights](./azure_app_insights.md)
-- [New Relic APM](./newrelic.md)
+- [Datadog APM](./datadog)
+- [Azure Application Insights](./azure_app_insights)
+- [New Relic APM](./newrelic)
 
 ### 🚨 **Alert & Incident Platforms**
-- [ServiceNow](../Tickets/servicenow.md)
-- [PagerDuty](../Tickets/pagerduty.md)
+- [ServiceNow](../Tickets/servicenow)
+- [PagerDuty](../Tickets/pagerduty)
 - Opsgenie
-- [Slack](../Notifications/slack.md)
-- [Microsoft Teams](../Notifications/msteams.md)
-- [Datadog Webhook](./datadog_webhook.md)
-- [New Relic Webhook](./newrelic_webhook.md)
+- [Slack](../Notifications/slack)
+- [Microsoft Teams](../Notifications/msteams)
+- [Datadog Webhook](../Webhooks/datadog_webhook)
+- [New Relic Webhook](../Webhooks/newrelic_webhook)
+- [ServiceNow Webhook](../Webhooks/servicenow_webhook)
 
 ---
 

@@ -125,7 +125,7 @@ When Datadog sends a webhook payload to NudgeBee, the following processing occur
 
 ### Automatic Evidence Collection
 
-If a [Datadog observability integration](./datadog.md) is also configured for the same account, NudgeBee automatically enriches each alert event with:
+If a [Datadog observability integration](../Observability/datadog) is also configured for the same account, NudgeBee automatically enriches each alert event with:
 
 1. **Related Logs** — fetched from Datadog for the impacted host or service, covering a 30-minute window before and after the alert trigger time.
 2. **Related Traces** — APM traces for the impacted service in the same time window.
@@ -155,6 +155,6 @@ Events are deduplicated using a fingerprint derived from the monitor ID and aggr
 | Issue | Resolution |
 |-------|------------|
 | Webhook URL returns 401 | Verify the `token` query parameter in the URL is correct. Regenerate the integration if needed. |
-| Events created but no logs/traces attached | Ensure a [Datadog observability integration](./datadog.md) is configured for the same NudgeBee account. |
+| Events created but no logs/traces attached | Ensure a [Datadog observability integration](../Observability/datadog) is configured for the same NudgeBee account. |
 | Events not appearing at all | Check that the Datadog monitor includes `@webhook-<name>` in its notification settings and that the webhook integration is active. |
 | Duplicate events | Expected behavior — NudgeBee deduplicates by `monitorId-aggregKey`. State updates (e.g., Triggered → Recovered) update the existing event. |

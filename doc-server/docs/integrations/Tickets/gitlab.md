@@ -8,7 +8,7 @@ sidebar_position: 3
 
 NudgeBee integrates with GitLab for issue tracking. Events, alerts, and autopilot actions can automatically create or update GitLab issues in your projects.
 
-For the full integration guide including merge request automation and repository setup, see the [GitLab Integration Guide](../GitLab/gitlab-integration.md).
+For the full integration guide including merge request automation and repository setup, see the [GitLab Integration Guide](../GitLab/gitlab-integration).
 
 ---
 

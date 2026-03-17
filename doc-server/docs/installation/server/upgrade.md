@@ -78,5 +78,5 @@ If upgrades failed ie. helm timeouts, then review the following steps and after 
 
 ---
 
-For more details, refer to the [Installation Guide](../installation).
+For more details, refer to the [Installation Guide](../).
 
