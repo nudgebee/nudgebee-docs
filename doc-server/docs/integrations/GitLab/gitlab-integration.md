@@ -356,4 +356,4 @@ ci.nudgebee.com/git.repo: "git@gitlab.com:group/project.git"
 - [Jira Integration](../Tickets/jira.md)
 - [GitHub Integration](../GitHub/github-integration.md)
 - [GitHub Issues](../Tickets/github_issues.md)
-- [Kubernetes Annotations Reference](../../installation/agent/installation/installation.md)
+- [Kubernetes Annotations Reference](../../installation/agent/installation/index.md)

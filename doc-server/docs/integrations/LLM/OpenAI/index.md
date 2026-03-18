@@ -1,3 +1,8 @@
+---
+sidebar_label: OpenAI
+sidebar_position: 1
+---
+
 # OpenAI Integration
 
 This guide provides detailed instructions for integrating OpenAI with NudgeBee's LLM Server and RAG Server applications.
