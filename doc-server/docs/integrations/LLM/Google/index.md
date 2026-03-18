@@ -6,8 +6,8 @@ This guide covers the integration options available for connecting your NudgeBee
 
 NudgeBee supports the following Google Cloud services for LLM integration:
 
-1. [Google Gemini](./gemini) - Integrate with Google's Gemini multimodal models
-2. [Vertex AI](./vertex-ai) - Deploy and manage both foundation and custom models on Google's ML platform
+1. [Google Gemini](./gemini.md) - Integrate with Google's Gemini multimodal models
+2. [Vertex AI](./vertex-ai.md) - Deploy and manage both foundation and custom models on Google's ML platform
 
 
 ## Getting Started

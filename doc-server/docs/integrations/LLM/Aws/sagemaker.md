@@ -106,4 +106,4 @@ EMBEDDINGS_MODEL_NAME=<Model_Name> # e.g., your-custom-model
 ```
 
 
-#### To deploy NudgeBee AI models on AWS SageMaker and integrate [NudgeBee Model Deployment](./aws_sagemaker)
+#### To deploy NudgeBee AI models on AWS SageMaker and integrate [NudgeBee Model Deployment](./aws_sagemaker.md)

@@ -6,4 +6,4 @@ NudgeBee automatically detects existing Karpenter instance in the cluster.
 ## Karpenter Installation Guide
 
 - [EKS Karpenter Integration](https://karpenter.sh/docs/)
-- [AKS Karpenter Integration](./aks_kaarpenter_installation)
+- [AKS Karpenter Integration](./aks_kaarpenter_installation.md)

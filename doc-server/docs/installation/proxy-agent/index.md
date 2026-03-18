@@ -96,7 +96,7 @@ Best for: Self-hosted deployments, GitOps workflows, infrastructure-as-code setu
 ## Next Steps
 
 1. [**Quick Start**](./quick-start.md) — Connect your first database in 5 minutes
-2. [Installation](./installation.md) — All deployment options (VM, Docker, Helm)
+2. [Installation](./) — All deployment options (VM, Docker, Helm)
 3. [Configuration Reference](./configuration.md) — Full YAML config reference
 4. [Credential Sources](./credential-sources.md) — Local, Cloud Push, AWS SM, GCP SM, Azure KV
-5. [Troubleshooting](./troubleshooting.md) — Common issues and fixes
+5. [Troubleshooting](./) — Common issues and fixes

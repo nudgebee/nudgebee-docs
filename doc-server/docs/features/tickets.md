@@ -8,5 +8,5 @@ Integrate with popular ticketing systems so that tickets can be created for erro
 
 Available ticketing systems for integration:
 
-1. [Jira](docs/integrations/Tickets/jira)
-2. [Github Issues](docs/integrations/Tickets/github_issues)
+1. [Jira](docs/integrations/Tickets/jira.md)
+2. [Github Issues](docs/integrations/Tickets/github_issues.md)

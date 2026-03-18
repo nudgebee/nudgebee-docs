@@ -14,18 +14,18 @@ By leveraging purpose-built AI assistants and a customizable workflow builder, N
 
 To get started with NudgeBee, follow our installation guide and explore key resources:
 
-* [Installation Guide](./installation/)
-* [Integrations](./integrations/)
-* [API Documentation](./api-docs/)
-* [Frequently Asked Questions (FAQ)](./FAQ)
+* [Installation Guide](./installation/index.md)
+* [Integrations](./integrations/index.md)
+* [API Documentation](./api-docs/index.md)
+* [Frequently Asked Questions (FAQ)](./FAQ.md)
 
 ## Features
 
 Learn more about NudgeBee features:
 
-* [Features](./features/)
-* [Knowledge Graph](./features/knowledge-graph/)
-* [Cost Optimization](./features/optimizations/)
+* [Features](./features/index.md)
+* [Knowledge Graph](./features/knowledge-graph.md)
+* [Cost Optimization](./features/optimizations.md)
 
 ## Video Overview
 

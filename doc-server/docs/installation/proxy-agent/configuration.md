@@ -118,7 +118,7 @@ datasources:
 | Field | Required | Description |
 |-------|----------|-------------|
 | `name` | Yes | Unique identifier |
-| `type` | Yes | Datasource type (see [supported types](./overview.md#supported-datasources)) |
+| `type` | Yes | Datasource type (see [supported types](./index.md#supported-datasources)) |
 | `host` | Yes* | Hostname or IP address (*optional for SSH dynamic mode — see below) |
 | `port` | Yes | Port number |
 | `database` | No | Database name (SQL datasources) |

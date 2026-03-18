@@ -43,7 +43,7 @@ This setup is ideal when:
 - Kubernetes cluster access
 - Helm 3.x installed
 - kubectl configured
-- Metrics backend configured (see [Prometheus Metrics Integrations](./metrics))
+- Metrics backend configured (see [Prometheus Metrics Integrations](./metrics.md))
 
 ## Installation
 

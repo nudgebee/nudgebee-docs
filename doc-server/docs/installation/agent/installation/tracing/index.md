@@ -2,5 +2,5 @@
 
 ## Integration Guide
 
-- [Google Cloud Trace Documentation](./gcp-tracing)
-- [OTel Clickhouse](./clickhouse-tracing)
+- [Google Cloud Trace Documentation](./gcp-tracing.md)
+- [OTel Clickhouse](./clickhouse-tracing.md)
