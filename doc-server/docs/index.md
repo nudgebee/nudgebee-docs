@@ -23,7 +23,9 @@ To get started with NudgeBee, follow our installation guide and explore key reso
 
 Learn more about NudgeBee features:
 
-* [Features](./features/index.md)
+* [Features Overview](./features/index.md)
+* [Troubleshooting & Playbooks](./features/troubleshooting/index.md)
+* [Workflow Builder](./features/workflow-builder.md)
 * [Knowledge Graph](./features/knowledge-graph.md)
 * [Cost Optimization](./features/optimizations.md)
 
