@@ -1,8 +1,13 @@
-# AWS Integration Options
+---
+sidebar_label: AWS
+sidebar_position: 1
+---
+
+# AWS Integration
 
 This guide covers the integration options available for connecting your NudgeBee applications with AWS AI/ML services.
 
-## Available AWS Integration Options
+## Available AWS Integrations
 
 NudgeBee supports the following AWS services for LLM integration:
 
