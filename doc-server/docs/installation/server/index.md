@@ -1,7 +1,8 @@
 ---
-sidebar_position: 3
+sidebar_position: 1
+sidebar_label: Server
 ---
-# Installation
+# Server Installation
 <div style={{position: "relative", paddingBottom: "64.86%", height: 0}}><iframe src="https://www.loom.com/embed/dee1ca6f7d294ef2b7f2746243e67e41?sid=256e5a97-215e-46fa-974e-69b329096273" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
 
 ### Prerequisites
