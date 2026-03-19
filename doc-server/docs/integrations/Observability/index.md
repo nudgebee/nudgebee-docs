@@ -43,6 +43,7 @@ You can connect any combination of the following platforms:
 - [Microsoft Teams](../Notifications/msteams.md)
 - [Datadog Webhook](../Webhooks/datadog_webhook.md)
 - [New Relic Webhook](../Webhooks/newrelic_webhook.md)
+- [ServiceNow Webhook](../Webhooks/servicenow_webhook.md)
 
 ---
 
@@ -80,3 +81,4 @@ You can connect any combination of the following platforms:
           │
           ▼
     [Troubleshooting & Insights UI]
+```
