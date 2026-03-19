@@ -109,7 +109,7 @@ When New Relic sends a webhook payload to NudgeBee, the following processing occ
 
 ### Automatic Evidence Collection
 
-If a [New Relic observability integration](./newrelic.md) is also configured for the same account, NudgeBee automatically enriches each alert event with:
+If a [New Relic observability integration](../Observability/newrelic.md) is also configured for the same account, NudgeBee automatically enriches each alert event with:
 
 1. **Related Logs** — fetched from New Relic for the impacted entity, covering a 30-minute window before and after the alert activation time.
 2. **Related Traces** — distributed traces for the impacted service in the same time window.
@@ -139,6 +139,6 @@ Events are deduplicated using a fingerprint derived from the condition ID and is
 | Issue | Resolution |
 |-------|------------|
 | Webhook URL returns 401 | Verify the `token` query parameter in the URL is correct. Regenerate the integration if needed. |
-| Events created but no logs/traces attached | Ensure a [New Relic observability integration](./newrelic.md) is configured for the same NudgeBee account. |
+| Events created but no logs/traces attached | Ensure a [New Relic observability integration](../Observability/newrelic.md) is configured for the same NudgeBee account. |
 | Events not appearing at all | Check that the New Relic Workflow is active and the filter matches your alert conditions. |
 | Duplicate events | Expected behavior — NudgeBee deduplicates by `conditionId-issueId`. State updates (e.g., ACTIVATED → CLOSED) update the existing event. |
