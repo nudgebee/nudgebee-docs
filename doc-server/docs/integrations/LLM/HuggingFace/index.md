@@ -1,3 +1,8 @@
+---
+sidebar_label: Hugging Face
+sidebar_position: 1
+---
+
 # Deploying NudgeBee AI on Hugging Face
 
 ## Overview

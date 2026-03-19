@@ -1,7 +1,17 @@
 ---
-sidebar_position: 3
+sidebar_position: 1
+sidebar_label: Server
 ---
-# Installation
+# Server Installation
+
+The NudgeBee Server is the central component of the NudgeBee platform. It receives data from NudgeBee Agents, performs analysis, and handles user authentication and integrates with external services.
+
+## Architecture
+
+![Server Architecture](/img/nb_server_architecture.png)
+
+---
+
 <div style={{position: "relative", paddingBottom: "64.86%", height: 0}}><iframe src="https://www.loom.com/embed/dee1ca6f7d294ef2b7f2746243e67e41?sid=256e5a97-215e-46fa-974e-69b329096273" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
 
 ### Prerequisites
@@ -35,7 +45,7 @@ This configuration should be sufficient for upto 400 nodes cluster(or multiple c
 - Postgres Database
   - If not provided, nudgebee will by default install its own postgres database
 - LLMs
-  - Please refer [LLM Installation Guide](../../../integrations/LLM/)
+  - Please refer [LLM Installation Guide](../../integrations/LLM/index.md)
 - SSL/DNS
   - Recommended, though NudgeBee server can be accessed without DNS using port-fortwarding
 - Email
@@ -246,3 +256,19 @@ If this specific fix doesn't resolve the issue, or if you suspect a different ca
     ```shell
     kubectl get events -n nudgebee --sort-by=.lastTimestamp
     ```
+---
+sidebar_position: 2
+---
+# Server
+
+The NudgeBee Server is the central component of the NudgeBee platform. It receives data from NudgeBee Agents, performs analysis, and handles user authentication and integrates with external services.
+
+
+## Architecture
+
+
+![Server Architecture](/img/nb_server_architecture.png)
+
+
+
+
