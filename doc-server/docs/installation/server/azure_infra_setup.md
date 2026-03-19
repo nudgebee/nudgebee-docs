@@ -21,7 +21,7 @@ Set the URL to the ARM template that will be deployed in customer Azure subscrip
 ```yaml
 nudgebee_secret:
   # URL to the ARM template deployed in customer subscriptions
-  AZURE_ARM_TEMPLATE_URL: "https://registry.nudgebee.com/downloads/templates/latest/nudgebee-azure-arm-template.json"
+  AZURE_ARM_TEMPLATE_URL: "https://nudgebee-documents-v2.s3.amazonaws.com/nudgebee-azure-arm-template.json"
 ```
 
 ### 3. (Optional) Service Bus for Backward Compatibility
@@ -130,7 +130,7 @@ After completing all setup steps, your Helm values should include:
 ```yaml
 nudgebee_secret:
   # ARM template URL (required for Azure Event Grid onboarding UI)
-  AZURE_ARM_TEMPLATE_URL: "https://registry.nudgebee.com/downloads/templates/latest/nudgebee-azure-arm-template.json"
+  AZURE_ARM_TEMPLATE_URL: "https://nudgebee-documents-v2.s3.amazonaws.com/nudgebee-azure-arm-template.json"
 
   # Optional: Service Bus connection (only for backward compatibility with existing accounts)
   # CLOUD_COLLECTOR_AZURE_SERVICE_BUS_CONNECTION_STRING: "<connection-string>"
