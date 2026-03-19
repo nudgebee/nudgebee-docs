@@ -1,8 +1,13 @@
-# Google Cloud Integration Options
+---
+sidebar_label: Google Cloud
+sidebar_position: 1
+---
+
+# Google Cloud Integration
 
 This guide covers the integration options available for connecting your NudgeBee applications with Google Cloud AI services.
 
-## Available Google Cloud Integration Options
+## Available Google Cloud Integrations
 
 NudgeBee supports the following Google Cloud services for LLM integration:
 

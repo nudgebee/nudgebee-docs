@@ -1,3 +1,8 @@
+---
+sidebar_label: Ollama
+sidebar_position: 1
+---
+
 # Deploying NudgeBee AI on Ollama (GPU Machine)
 
 ## Overview

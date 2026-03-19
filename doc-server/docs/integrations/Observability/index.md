@@ -81,3 +81,4 @@ You can connect any combination of the following platforms:
           │
           ▼
     [Troubleshooting & Insights UI]
+```

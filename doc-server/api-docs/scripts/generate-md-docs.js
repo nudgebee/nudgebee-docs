@@ -34,7 +34,7 @@ async function generateMarkdownDocs() {
     classifiedTypes,
   });
 
-  fs.writeFileSync('../docs/features/api.md', markdown);
+  fs.writeFileSync('./docs/api-docs/index.md', markdown);
 
   // Print summary
   const countAll = (classified) => Object.values(classified).reduce((sum, items) => sum + items.length, 0);
@@ -44,7 +44,7 @@ async function generateMarkdownDocs() {
   console.log(`  Subscriptions: ${countAll(classifiedSubscriptions)}`);
   console.log(`  Core Types:    ${countAll(classifiedTypes.core)}`);
   console.log(`  Helper Types:  ${countAll(classifiedTypes.helper)}`);
-  console.log(`\nOutput: ./docs/api.md`);
+  console.log(`\nOutput: ./docs/api-docs/index.md`);
 }
 
 generateMarkdownDocs().catch(console.error);

@@ -32,7 +32,8 @@ gcloud iam service-accounts create nudgebee-sa \
 
 # Step 3: Assign required roles
 for ROLE in roles/viewer roles/monitoring.viewer roles/logging.viewer \
-  roles/bigquery.dataViewer roles/bigquery.jobUser roles/recommender.viewer; do
+  roles/bigquery.dataViewer roles/bigquery.jobUser roles/recommender.viewer \
+  roles/serviceusage.serviceUsageConsumer; do
   gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:nudgebee-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
     --role="$ROLE"
@@ -84,6 +85,7 @@ Create a Service Account in the [Google Cloud Console](https://console.cloud.goo
    * **BigQuery Data Viewer** (`roles/bigquery.dataViewer`) - for accessing billing data
    * **BigQuery Job User** (`roles/bigquery.jobUser`) - for running billing queries
    * **Recommender Viewer** (`roles/recommender.viewer`) - for accessing cost and performance recommendations
+   * **Service Usage Consumer** (`roles/serviceusage.serviceUsageConsumer`) - required for API access across GCP services
 
 ##### 4. Create a JSON Key
 
@@ -143,7 +145,11 @@ After entering all the details, click **Save** to complete the integration.
 
 #### Permission Errors After Setup
 
-If you see permission errors in NudgeBee for specific GCP services, the most common cause is that the required API is not enabled on your project. For example, an error like `recommender.serviceusage.services.use - PermissionDenied` means the **Recommender API** needs to be enabled.
+If you see permission errors in NudgeBee for specific GCP services, there are two common causes:
+
+**1. Required API is not enabled**
+
+An error like `serviceusage.services.use - PermissionDenied` for a specific service (e.g., `recommender`) often means the corresponding API is not enabled on your project.
 
 To fix, enable the missing API:
 
@@ -152,3 +158,17 @@ gcloud services enable recommender.googleapis.com --project=your-project-id
 ```
 
 Or enable it from the [APIs & Services](https://console.cloud.google.com/apis/library) page in the GCP Console.
+
+**2. Missing Service Usage Consumer role**
+
+The `serviceusage.services.use` permission error can also occur when the service account is missing the **Service Usage Consumer** role, even if the API is enabled. This role is required for the service account to interact with enabled APIs.
+
+To fix, grant the role:
+
+```bash
+gcloud projects add-iam-policy-binding your-project-id \
+  --member="serviceAccount:your-sa@your-project-id.iam.gserviceaccount.com" \
+  --role="roles/serviceusage.serviceUsageConsumer"
+```
+
+Or add it from the [IAM](https://console.cloud.google.com/iam-admin/iam) page in the GCP Console.

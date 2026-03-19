@@ -9,14 +9,14 @@ This documentation guides you through integrating various LLM providers with Nud
 Choose from the following LLM providers to integrate with your NudgeBee applications:
 
 ### Cloud Provider Services
-- [AWS](./Aws/aws.md) - Amazon Web Services integration options including Bedrock and SageMaker
-- [Azure](./Azure/azure.md) - Microsoft Azure integration options including Azure OpenAI Service
-- [Google](./Google/google.md) - Google Cloud Platform integration options including Gemini and VertexAI
-- [OpenAI](./OpenAI/openai.md) - OpenAI API integration for GPT-5, GPT-4o, GPT-4, and Embeddings models
+- [AWS](./Aws/index.md) - Amazon Web Services integration options including Bedrock and SageMaker
+- [Azure](./Azure/index.md) - Microsoft Azure integration options including Azure OpenAI Service
+- [Google](./Google/index.md) - Google Cloud Platform integration options including Gemini and VertexAI
+- [OpenAI](./OpenAI/index.md) - OpenAI API integration for GPT-5, GPT-4o, GPT-4, and Embeddings models
 
 ### Open Source & Self-Hosted Options
-- [Hugging Face](./HuggingFace/nb-hugging-face.md) - Integration with Hugging Face's model repository and inference APIs
-- [Ollama](./Ollama/nb-ollama.md) - Integration with self-hosted Ollama deployments
+- [Hugging Face](./HuggingFace/index.md) - Integration with Hugging Face's model repository and inference APIs
+- [Ollama](./Ollama/index.md) - Integration with self-hosted Ollama deployments
 
 ### NudgeBee Models  
 

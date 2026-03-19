@@ -20,14 +20,15 @@ NudgeBee supports several authentication providers. Each provider requires speci
 -   [Email (Magic Link)](#email-magic-link)
 -   [Dummy Credentials (For On-Prem Admin)](#dummy-credentials-for-on-prem-admin)
 -   [LDAP](#ldap)
--   [SAML 2.0](./SAML.md) — For SAML-based SSO with automatic user provisioning and group mapping
+-   [SAML 2.0](#saml-20) — For SAML-based SSO with automatic user provisioning and group mapping
+
+## SAML 2.0 {#saml-20}
+
+NudgeBee supports SAML 2.0 for Single Sign-On (SSO). 
+
 - [General Notes](#general-notes)
 
 ## Google
-
-### Description
-
-Integrate NudgeBee with Google to allow users to sign in using their existing Google accounts.
 
 ### Configuration
 
