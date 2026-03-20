@@ -172,3 +172,21 @@ gcloud projects add-iam-policy-binding your-project-id \
 ```
 
 Or add it from the [IAM](https://console.cloud.google.com/iam-admin/iam) page in the GCP Console.
+
+---
+
+### Real-Time Alerts via Webhook
+
+NudgeBee can receive GCP Cloud Monitoring alerts in real-time via a webhook notification channel. When an alert policy fires, NudgeBee automatically creates an event enriched with metric details and resource information.
+
+**Additional permission required**: To enable auto-setup, grant the **Monitoring Editor** role (`roles/monitoring.editor`) to your service account. This allows NudgeBee to automatically create the webhook notification channel and attach it to your alert policies.
+
+```bash
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:nudgebee-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/monitoring.editor"
+```
+
+You can enable real-time alerts from the account's three-dots menu (**Enable Real-Time Alerts**), or during the final step of GCP account onboarding.
+
+For detailed setup instructions, see the [GCP Cloud Monitoring Webhook](../../integrations/Webhooks/gcp_monitoring_webhook.md) guide.

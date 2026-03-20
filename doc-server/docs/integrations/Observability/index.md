@@ -44,6 +44,7 @@ You can connect any combination of the following platforms:
 - [Datadog Webhook](../Webhooks/datadog_webhook.md)
 - [New Relic Webhook](../Webhooks/newrelic_webhook.md)
 - [ServiceNow Webhook](../Webhooks/servicenow_webhook.md)
+- [GCP Cloud Monitoring Webhook](../Webhooks/gcp_monitoring_webhook.md)
 
 ---
 
