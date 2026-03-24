@@ -43,24 +43,4 @@ Follow these steps to securely connect your AWS account. This process involves y
 
 ## CloudWatch Alarms Permissions
 
-NudgeBee can collect existing CloudWatch alarms and automatically create new alarms based on cost optimization and performance recommendations.
-
-### Supported CloudWatch Namespaces
-
-NudgeBee supports alarm creation for the following AWS services:
-
-- **Compute & Containers:** `AWS/EC2`, `AWS/Lambda`, `AWS/ECS`, `AWS/EKS`
-- **Databases:** `AWS/RDS`, `AWS/DynamoDB`, `AWS/Redshift`
-- **Storage:** `AWS/S3`, `AWS/EBS`, `AWS/EFS`
-- **Caching:** `AWS/ElastiCache`
-- **Networking:** `AWS/ELB`, `AWS/ApplicationELB`, `AWS/NetworkELB`, `AWS/VPN`, `AWS/NATGateway`
-- **Messaging:** `AWS/SNS`, `AWS/SQS`, `AWS/Kafka` (MSK)
-- **Other:** `AWS/Events` (EventBridge), `AWS/CloudFront`, `AWS/API Gateway`, and 20+ additional services
-
-### Alarm Features Supported
-
-- **Simple metric alarms** - Single metric threshold monitoring
-- **Metric math alarms** - Multiple metrics with mathematical expressions
-- **M-of-N datapoints** - Flexible evaluation windows (e.g., 3 out of 5 datapoints breaching)
-- **Custom dimensions** - Resource-specific alarm targeting
-- **Treat missing data policies** - `notBreaching`, `breaching`, `ignore`, `missing`
+NudgeBee collects existing CloudWatch alarms from your AWS account. The CloudFormation template includes the necessary permissions for alarm collection.
