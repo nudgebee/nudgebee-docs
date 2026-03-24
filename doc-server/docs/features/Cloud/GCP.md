@@ -190,3 +190,217 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 You can enable real-time alerts from the account's three-dots menu (**Enable Real-Time Alerts**), or during the final step of GCP account onboarding.
 
 For detailed setup instructions, see the [GCP Cloud Monitoring Webhook](../../integrations/Webhooks/gcp_monitoring_webhook.md) guide.
+
+---
+
+## Cloud Monitoring Alert Policies Permissions
+
+NudgeBee can collect existing Cloud Monitoring alert policies, active incidents, and automatically create new alert policies based on cost optimization and performance recommendations.
+
+### Required Permissions for Alert Collection (Read-Only)
+
+To collect existing alert policies and incidents from Cloud Monitoring:
+
+```bash
+# Alert Policies
+monitoring.alertPolicies.list
+monitoring.alertPolicies.get
+
+# Notification Channels (for webhook discovery)
+monitoring.notificationChannels.list
+monitoring.notificationChannels.get
+
+# Metrics (for threshold calculations)
+monitoring.timeSeries.list
+```
+
+**Recommended IAM Role:**
+- **Monitoring Viewer** (`roles/monitoring.viewer`)
+
+```bash
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:nudgebee-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/monitoring.viewer"
+```
+
+### Required Permissions for Alert Creation & Webhook Setup
+
+To enable NudgeBee to automatically create alert policies and set up webhook notification channels:
+
+```bash
+# Alert Policy Management
+monitoring.alertPolicies.create
+monitoring.alertPolicies.update
+monitoring.alertPolicies.delete
+
+# Notification Channel Management (for webhook auto-provisioning)
+monitoring.notificationChannels.create
+monitoring.notificationChannels.update
+monitoring.notificationChannels.delete
+
+# Permission Checking (for validating access)
+monitoring.alertPolicies.*
+monitoring.notificationChannels.*
+```
+
+**Recommended IAM Role:**
+- **Monitoring Editor** (`roles/monitoring.editor`)
+
+```bash
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:nudgebee-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/monitoring.editor"
+```
+
+### Alert Policy Features Supported
+
+#### 1. Simple Metric Threshold Conditions
+
+Monitor single metrics with threshold-based alerting:
+
+- **Aggregation aligners:** ALIGN_MEAN, ALIGN_SUM, ALIGN_MIN, ALIGN_MAX, ALIGN_COUNT, ALIGN_RATE
+- **Comparison types:** `>`, `>=`, `<`, `<=`
+- **Duration:** Minimum breach duration (e.g., 300s = 5 minutes)
+- **Filters:** Resource labels and metric labels
+
+#### 2. Metric Math (MQL - Monitoring Query Language)
+
+Advanced alerting using MQL expressions for complex calculations:
+
+- Multiple metric aggregations
+- Rate calculations
+- Ratio-based alerts (e.g., error rate = errors / total requests)
+
+#### 3. Notification Channels
+
+Supported notification channel types:
+
+- **Webhook** (auto-provisioned by NudgeBee)
+- Email
+- SMS
+- PagerDuty
+- Slack
+- Other third-party integrations
+
+#### 4. Alert Combiner
+
+Combine multiple conditions:
+
+- **OR** - Alert if any condition is met
+- **AND** - Alert only if all conditions are met
+
+### Webhook Auto-Provisioning
+
+When you enable real-time alerts, NudgeBee automatically:
+
+1. **Creates a webhook notification channel** at:
+   ```
+   {nudgebee-base-url}/api/webhooks/gcp-monitoring?token={auth-token}
+   ```
+
+2. **Attaches the webhook to all enabled alert policies** - Ensures all future alerts are sent to NudgeBee in real-time
+
+3. **Stores the channel reference** in the agent connection status (JSONB format)
+
+**Required Role:** `roles/monitoring.editor` (Monitoring Editor)
+
+**Manual Webhook Creation (if needed):**
+
+```bash
+gcloud alpha monitoring channels create \
+  --display-name="NudgeBee Webhook" \
+  --type=webhook_tokenauth \
+  --channel-labels=url="https://your-nudgebee-instance.com/api/webhooks/gcp-monitoring?token=YOUR_TOKEN"
+```
+
+### Supported GCP Services for Alert Creation
+
+NudgeBee can create alert policies for:
+
+- **Compute Engine** (`gce_instance`) - VM CPU, memory, disk metrics
+- **Cloud SQL** (`cloudsql_database`) - Database CPU, memory, connections
+- **Cloud Storage** (`gcs_bucket`) - Storage size, request counts
+- **GKE** (`k8s_container`, `k8s_pod`) - Container/pod resource usage
+- **Cloud Functions** (`cloud_function`) - Execution time, error rate
+- **Load Balancer** (`https_lb_rule`) - Request count, latency
+- **BigQuery** (`bigquery_project`) - Query execution time, slot usage
+- **Cloud Run** - Request latency, instance utilization
+- **Pub/Sub** - Message backlog, delivery latency
+
+### Example: Full Cloud Monitoring IAM Policy
+
+If you want to grant only the minimum necessary permissions without using a predefined role, create a custom role:
+
+```yaml
+title: "NudgeBee Alert Manager"
+description: "Custom role for NudgeBee to manage Cloud Monitoring alert policies"
+stage: "GA"
+includedPermissions:
+  # Alert Policies
+  - monitoring.alertPolicies.list
+  - monitoring.alertPolicies.get
+  - monitoring.alertPolicies.create
+  - monitoring.alertPolicies.update
+  - monitoring.alertPolicies.delete
+
+  # Notification Channels
+  - monitoring.notificationChannels.list
+  - monitoring.notificationChannels.get
+  - monitoring.notificationChannels.create
+  - monitoring.notificationChannels.update
+  - monitoring.notificationChannels.delete
+
+  # Metrics
+  - monitoring.timeSeries.list
+```
+
+Create the custom role:
+
+```bash
+gcloud iam roles create nudgebeeAlertManager \
+  --project=$PROJECT_ID \
+  --file=nudgebee-alert-role.yaml
+
+# Assign the custom role
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:nudgebee-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="projects/$PROJECT_ID/roles/nudgebeeAlertManager"
+```
+
+### Troubleshooting Alert Permissions
+
+#### Error: "Permission denied on monitoring.alertPolicies.list"
+
+**Cause:** Service account lacks the Monitoring Viewer or Monitoring Editor role.
+
+**Solution:**
+
+```bash
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:your-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/monitoring.viewer"
+```
+
+#### Error: "Permission denied on monitoring.notificationChannels.create"
+
+**Cause:** Service account lacks write permissions for notification channels.
+
+**Solution:** Grant Monitoring Editor role (required for webhook auto-provisioning):
+
+```bash
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:your-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/monitoring.editor"
+```
+
+#### Error: "API [monitoring.googleapis.com] not enabled"
+
+**Cause:** Cloud Monitoring API is not enabled on the project.
+
+**Solution:**
+
+```bash
+gcloud services enable monitoring.googleapis.com --project=$PROJECT_ID
+```
+
+**Note:** Alert policy collection operates at the project level. Ensure the service account has the necessary IAM roles assigned at the correct project scope.

@@ -194,3 +194,132 @@ Even though this is a schema error, the error message may suggest missing permis
    - Click **Add role assignment** → **Cost Management Reader** → select your service principal → **Save**.
 
 **Important:** The `Invalid dataset grouping` error occurs **independently of permissions**. Even with correct IAM roles, using an invalid dimension like `ConsumedService` will cause this error. Always validate your query schema first before investigating permissions.
+
+---
+
+## Azure Monitor Alerts Permissions
+
+NudgeBee can collect existing Azure Monitor alerts and automatically create new alerts based on cost optimization and performance recommendations.
+
+### Required Permissions for Alert Collection
+
+To collect existing metric alerts and activity log alerts:
+
+```bash
+# Metric Alerts
+microsoft.insights/metricalerts/read
+microsoft.insights/metricdefinitions/read
+microsoft.insights/metricnamespaces/read
+
+# Activity Log Alerts
+microsoft.insights/activitylogalerts/read
+microsoft.insights/eventcategories/read
+```
+
+### Required Permissions for Alert Creation
+
+To enable NudgeBee to automatically create, update, or delete Azure Monitor alerts based on recommendations:
+
+```bash
+# Metric Alerts (Microsoft.Insights/metricAlerts)
+microsoft.insights/metricalerts/write
+microsoft.insights/metricalerts/delete
+
+# Activity Log Alerts (Microsoft.Insights/activitylogalerts)
+microsoft.insights/activitylogalerts/write
+microsoft.insights/activitylogalerts/delete
+```
+
+### Recommended Azure Built-in Roles
+
+The following built-in roles grant the necessary permissions:
+
+| Role | Permissions | Use Case |
+|------|-------------|----------|
+| **Monitoring Reader** | Read-only access to all monitoring data, including alerts | Alert collection only |
+| **Monitoring Contributor** | Full monitoring permissions (read + write) | Alert collection + creation |
+| **Reader** | Basic resource access | Minimum for resource metadata |
+| **Cost Management Reader** | Billing and cost data access | Required for cost alerts |
+
+**Recommended setup for full alert functionality:**
+
+```bash
+# Assign Monitoring Contributor role
+az role assignment create \
+  --assignee <service-principal-id> \
+  --role "Monitoring Contributor" \
+  --scope "/subscriptions/<subscription-id>"
+
+# Also assign Cost Management Reader (for billing context)
+az role assignment create \
+  --assignee <service-principal-id> \
+  --role "Cost Management Reader" \
+  --scope "/subscriptions/<subscription-id>"
+```
+
+### Alert Types Supported
+
+#### 1. Metric Alerts (Resource-Scoped)
+
+Monitor metrics for specific Azure resources (VMs, databases, storage, etc.):
+
+- **Aggregation types:** Average, Total, Maximum, Minimum, Count
+- **Evaluation frequency:** ISO 8601 duration format (e.g., `PT1M` = 1 minute, `PT5M` = 5 minutes)
+- **Severity levels:**
+  - 0 = Critical
+  - 1 = Error
+  - 2 = Warning
+  - 3 = Informational
+  - 4 = Verbose
+- **Scope:** Regional (tied to resource location)
+
+#### 2. Activity Log Alerts (Subscription-Scoped)
+
+Monitor administrative operations and service health events:
+
+- **Event categories:** Administrative, ServiceHealth, Alert, Autoscale, Security
+- **Scope:** Global (subscription-level)
+
+### Supported Azure Services
+
+NudgeBee can create alerts for:
+
+- **Compute:** Virtual Machines, App Services, Container Instances, Kubernetes Service
+- **Databases:** SQL Database, Cosmos DB, PostgreSQL, MySQL
+- **Storage:** Storage Accounts, Blob Storage, File Storage
+- **Networking:** Load Balancers, Application Gateways, VPN Gateways
+- **Other:** Any Azure resource with available metrics
+
+### Example: Custom Role for Alert Management
+
+If you prefer a custom role instead of built-in roles, create one with these permissions:
+
+```json
+{
+  "Name": "NudgeBee Alert Manager",
+  "IsCustom": true,
+  "Description": "Custom role for NudgeBee to manage Azure Monitor alerts",
+  "Actions": [
+    "microsoft.insights/metricalerts/read",
+    "microsoft.insights/metricalerts/write",
+    "microsoft.insights/metricalerts/delete",
+    "microsoft.insights/activitylogalerts/read",
+    "microsoft.insights/activitylogalerts/write",
+    "microsoft.insights/activitylogalerts/delete",
+    "microsoft.insights/metricdefinitions/read",
+    "microsoft.insights/metricnamespaces/read",
+    "microsoft.insights/eventcategories/read"
+  ],
+  "AssignableScopes": [
+    "/subscriptions/<subscription-id>"
+  ]
+}
+```
+
+Create the role using Azure CLI:
+
+```bash
+az role definition create --role-definition nudgebee-alert-role.json
+```
+
+**Note:** Alert collection operates at the subscription level. Ensure the service principal has the necessary role assignments at the correct scope.
