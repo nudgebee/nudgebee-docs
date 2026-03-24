@@ -45,36 +45,6 @@ Follow these steps to securely connect your AWS account. This process involves y
 
 NudgeBee can collect existing CloudWatch alarms and automatically create new alarms based on cost optimization and performance recommendations.
 
-### Required Permissions for Alarm Collection
-
-To collect existing CloudWatch alarms across all regions:
-
-```json
-{
-  "Effect": "Allow",
-  "Action": [
-    "cloudwatch:DescribeAlarms",
-    "cloudwatch:DescribeAlarmsForMetric"
-  ],
-  "Resource": "*"
-}
-```
-
-### Required Permissions for Alarm Creation
-
-To enable NudgeBee to automatically create, update, or delete CloudWatch alarms based on recommendations:
-
-```json
-{
-  "Effect": "Allow",
-  "Action": [
-    "cloudwatch:PutMetricAlarm",
-    "cloudwatch:DeleteAlarms"
-  ],
-  "Resource": "*"
-}
-```
-
 ### Supported CloudWatch Namespaces
 
 NudgeBee supports alarm creation for the following AWS services:
@@ -94,27 +64,3 @@ NudgeBee supports alarm creation for the following AWS services:
 - **M-of-N datapoints** - Flexible evaluation windows (e.g., 3 out of 5 datapoints breaching)
 - **Custom dimensions** - Resource-specific alarm targeting
 - **Treat missing data policies** - `notBreaching`, `breaching`, `ignore`, `missing`
-
-### Example: Full CloudWatch Alarms IAM Policy
-
-If your CloudFormation template doesn't include alarm permissions, add this policy to your IAM role:
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "cloudwatch:DescribeAlarms",
-        "cloudwatch:DescribeAlarmsForMetric",
-        "cloudwatch:PutMetricAlarm",
-        "cloudwatch:DeleteAlarms"
-      ],
-      "Resource": "*"
-    }
-  ]
-}
-```
-
-**Note:** Alarm collection operates across all AWS regions automatically. Permission errors are logged at WARN level and won't block other data collection operations.
