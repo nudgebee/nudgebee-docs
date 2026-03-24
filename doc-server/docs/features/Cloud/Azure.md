@@ -199,12 +199,11 @@ Even though this is a schema error, the error message may suggest missing permis
 
 ## Azure Monitor Alerts Permissions
 
-NudgeBee collects existing Azure Monitor metric alerts and activity log alerts from your Azure subscription.
+NudgeBee collects existing Azure Monitor alerts from your Azure subscription and can create new alerts based on recommendations.
 
 ### Required Permissions
 
-The service principal requires the following permissions:
-
+**For reading existing alerts:**
 ```bash
 # Metric Alerts
 microsoft.insights/metricalerts/read
@@ -216,13 +215,29 @@ microsoft.insights/activitylogalerts/read
 microsoft.insights/eventcategories/read
 ```
 
-### Recommended Azure Role
+**For creating new alerts:**
+```bash
+# Metric Alerts
+microsoft.insights/metricalerts/write
 
-Assign the **Monitoring Reader** role to grant the necessary permissions:
+# Activity Log Alerts
+microsoft.insights/activitylogalerts/write
+```
 
+### Recommended Azure Roles
+
+**For read-only access:**
 ```bash
 az role assignment create \
   --assignee <service-principal-id> \
   --role "Monitoring Reader" \
+  --scope "/subscriptions/<subscription-id>"
+```
+
+**For read and write access (to create alerts):**
+```bash
+az role assignment create \
+  --assignee <service-principal-id> \
+  --role "Monitoring Contributor" \
   --scope "/subscriptions/<subscription-id>"
 ```

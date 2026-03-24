@@ -195,12 +195,11 @@ For detailed setup instructions, see the [GCP Cloud Monitoring Webhook](../../in
 
 ## Cloud Monitoring Alert Policies Permissions
 
-NudgeBee collects existing Cloud Monitoring alert policies and active incidents from your GCP project.
+NudgeBee collects existing Cloud Monitoring alert policies from your GCP project and can create new alert policies based on recommendations.
 
 ### Required Permissions
 
-The service account requires the following permissions:
-
+**For reading existing alert policies:**
 ```bash
 # Alert Policies
 monitoring.alertPolicies.list
@@ -214,26 +213,29 @@ monitoring.notificationChannels.get
 monitoring.timeSeries.list
 ```
 
-### Recommended IAM Role
+**For creating new alert policies:**
+```bash
+# Alert Policy Management
+monitoring.alertPolicies.create
+monitoring.alertPolicies.update
 
-Assign the **Monitoring Viewer** role to grant the necessary permissions:
+# Notification Channel Management
+monitoring.notificationChannels.create
+monitoring.notificationChannels.update
+```
 
+### Recommended IAM Roles
+
+**For read-only access:**
 ```bash
 gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member="serviceAccount:nudgebee-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/monitoring.viewer"
 ```
 
-### Webhook Setup for Real-Time Alerts
-
-To receive real-time alert notifications, NudgeBee requires additional permissions to create and manage webhook notification channels.
-
-**Required IAM Role:** **Monitoring Editor** (`roles/monitoring.editor`)
-
+**For read and write access (to create alert policies and webhook notifications):**
 ```bash
 gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member="serviceAccount:nudgebee-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/monitoring.editor"
 ```
-
-This allows NudgeBee to automatically create a webhook notification channel and attach it to your alert policies for real-time event delivery.

@@ -43,4 +43,21 @@ Follow these steps to securely connect your AWS account. This process involves y
 
 ## CloudWatch Alarms Permissions
 
-NudgeBee collects existing CloudWatch alarms from your AWS account. The CloudFormation template includes the necessary permissions for alarm collection.
+NudgeBee collects existing CloudWatch alarms from your AWS account and can create new alarms based on recommendations.
+
+### Permissions Included in CloudFormation Template
+
+The CloudFormation template includes:
+
+**Read permissions** (via `ReadOnlyAccess` managed policy):
+```
+cloudwatch:DescribeAlarms
+cloudwatch:DescribeAlarmsForMetric
+```
+
+**Write permissions** (included when `NudgebeeAccessMode` is set to `readwrite`):
+```
+cloudwatch:PutMetricAlarm
+```
+
+These permissions allow NudgeBee to both monitor existing alarms and create new ones for your resources.
