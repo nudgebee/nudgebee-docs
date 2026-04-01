@@ -28,17 +28,6 @@ Run a SQL query against a connected database.
 |:---|:---|:---|
 | `data` | array | Query result rows. |
 
-### Example
-
-```yaml
-- id: check_errors
-  type: dbms.query
-  params:
-    integration_id: "{{ Inputs.db_integration }}"
-    dbms_type: postgresql
-    command: "SELECT count(*) as error_count FROM logs WHERE level = 'ERROR' AND created_at > NOW() - INTERVAL '1 hour'"
-```
-
 ---
 
 ## `dbms.redis.cli`

@@ -54,22 +54,3 @@ Save an event to Nudgebee for later troubleshooting and analysis. Events can tri
 |:---|:---|:---|
 | `id` | string | Created event ID. |
 
-### Example
-
-```yaml
-- id: store_finding
-  type: events.store
-  params:
-    event:
-      title: "High error rate on {{ Inputs.service }}"
-      description: "Error rate exceeded 5% threshold: {{ Tasks['check_errors'].output.error_rate }}%"
-      aggregation_key: "high_error_rate"
-      finding_id: "{{ Inputs.workflow_execution_id }}"
-      finding_type: "workflow_alert"
-      subject_name: "{{ Inputs.service }}"
-      cluster: "{{ Inputs.cluster }}"
-      priority: "HIGH"
-      status: "FIRING"
-    evidence_tasks: ["check_errors", "fetch_logs"]
-    trigger_ai_analysis: true
-```

@@ -27,12 +27,3 @@ Run ArgoCD commands to manage application deployments (sync, rollback, status ch
 |:---|:---|:---|
 | `data` | string | Command response. |
 
-### Example
-
-```yaml
-- id: sync_app
-  type: cicd.argocd.cli
-  params:
-    integration_id: "{{ Inputs.argocd_integration }}"
-    command: "app sync {{ Inputs.app_name }} --prune"
-```

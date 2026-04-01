@@ -27,12 +27,3 @@ Run GitHub CLI commands for managing issues, PRs, releases, and more.
 |:---|:---|:---|
 | `data` | string | GitHub CLI response. |
 
-### Example
-
-```yaml
-- id: create_issue
-  type: scm.github.cli
-  params:
-    integration_id: "{{ Inputs.github_integration }}"
-    command: 'issue create --repo org/repo --title "Auto: {{ Inputs.alert_title }}" --body "{{ Tasks[''investigate''].output.data }}"'
-```

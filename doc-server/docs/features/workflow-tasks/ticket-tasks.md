@@ -40,25 +40,6 @@ Create a new ticket or incident in your ticketing platform.
 | `severity` | string | Ticket priority/severity. |
 | `reference_id` | string | Reference ID. |
 
-### Example
-
-```yaml
-- id: create_incident
-  type: tickets.create
-  params:
-    integration_id: "{{ Inputs.jira_integration }}"
-    project_key: "OPS"
-    title: "High CPU alert on {{ Inputs.workload }}"
-    description: |
-      Automated incident created by workflow.
-
-      **Workload:** {{ Inputs.workload }}
-      **CPU Usage:** {{ Tasks['check_cpu'].output.cpu_pct }}%
-      **Time:** {{ Inputs.workflow_execution_time }}
-    ticket_type: "Incident"
-    severity: "High"
-```
-
 ---
 
 ## `tickets.get`
@@ -90,16 +71,6 @@ Fetch the details of an existing ticket by its ID.
 | `url` | string | Direct URL to the ticket. |
 | `platform` | string | Platform name. |
 | `created_at` | string | Creation timestamp. |
-
-### Example
-
-```yaml
-- id: fetch_ticket
-  type: tickets.get
-  params:
-    ticket_id: "{{ Inputs.ticket_id }}"
-    integration_id: "{{ Inputs.jira_integration }}"
-```
 
 ---
 

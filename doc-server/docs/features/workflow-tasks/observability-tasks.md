@@ -36,18 +36,6 @@ Query logs from connected observability platforms (Loki, CloudWatch, DataDog, Sp
 | `logs` | array | Query results. |
 | `metadata` | object | Query metadata. |
 
-### Example
-
-```yaml
-- id: fetch_errors
-  type: observability.logs
-  params:
-    query: '{namespace="production", app="api-server"} |= "ERROR"'
-    log_provider: loki
-    start_time: "{{ Inputs.workflow_last_execution_time }}"
-    limit: 500
-```
-
 ---
 
 ## `observability.metrics`
@@ -80,18 +68,6 @@ Query metrics from connected monitoring platforms (Prometheus, CloudWatch, Chron
 |:---|:---|:---|
 | `metrics` | array | Query results. |
 | `metadata` | object | Query metadata. |
-
-### Example
-
-```yaml
-- id: check_cpu
-  type: observability.metrics
-  params:
-    queries:
-      cpu_usage: 'avg(rate(container_cpu_usage_seconds_total{namespace="production",pod=~"api-.*"}[5m])) * 100'
-    metric_provider: prometheus
-    start_time: "{{ Inputs.workflow_last_execution_time }}"
-```
 
 ---
 
@@ -128,22 +104,6 @@ Query distributed traces from connected tracing platforms (SignOz, Jaeger, Tempo
 |:---|:---|:---|
 | `traces` | array | Trace results. |
 | `metadata` | object | Query metadata. |
-
-### Example
-
-```yaml
-- id: find_slow_traces
-  type: observability.traces
-  params:
-    query_mode: simple
-    service_name: "payments-service"
-    status: "error"
-    min_duration_ms: 5000
-    duration: "1h"
-    sort_by: "duration_desc"
-    limit: 20
-    trace_provider: signoz
-```
 
 ---
 

@@ -29,32 +29,6 @@ Reshape or transform data using JSONata expressions or JavaScript. Parse JSON/YA
 |:---|:---|:---|
 | `data` | string | Transformed data in the specified output format. |
 
-### Example — JSONata
-
-```yaml
-- id: extract_names
-  type: data.transform
-  params:
-    input: "{{ Tasks['list_pods'].output.data }}"
-    expression: "items.metadata.name"
-    inputType: json
-    outputType: json
-    scriptType: jsonata
-```
-
-### Example — JavaScript
-
-```yaml
-- id: format_report
-  type: data.transform
-  params:
-    input: "{{ Tasks['get_metrics'].output.data }}"
-    expression: |
-      const data = JSON.parse(input);
-      return data.map(m => `${m.name}: ${m.value}`).join('\n');
-    scriptType: javascript
-```
-
 ---
 
 ## `data.filter`
@@ -76,13 +50,3 @@ Filter a list to keep only items matching a condition. Uses JSONata predicates.
 |:---|:---|:---|
 | `result` | array | Filtered list containing only matching items. |
 
-### Example
-
-```yaml
-- id: find_errors
-  type: data.filter
-  params:
-    list: "{{ Tasks['get_events'].output.events }}"
-    condition: "type = 'Error'"
-  next: handle_errors
-```

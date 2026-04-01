@@ -28,16 +28,6 @@ Send ICMP ping packets to check if a host is reachable and measure latency.
 | `packet_loss` | number | Percentage of packets lost. |
 | `avg_latency` | number | Average round-trip time in milliseconds. |
 
-### Example
-
-```yaml
-- id: check_reachability
-  type: network.ping
-  params:
-    host: "api.example.com"
-    count: 5
-```
-
 ---
 
 ## `network.dns`
@@ -112,16 +102,6 @@ Check SSL/TLS certificate validity and expiration for a host.
 | `issuer` | string | Certificate issuer (Common Name). |
 | `not_after` | string | Expiration date (RFC3339). |
 | `valid` | boolean | True if the certificate is currently valid. |
-
-### Example
-
-```yaml
-- id: check_cert
-  type: network.ssl
-  params:
-    host: "api.example.com"
-  next: alert_if_expiring
-```
 
 ---
 

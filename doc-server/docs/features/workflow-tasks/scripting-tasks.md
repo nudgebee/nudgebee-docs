@@ -38,31 +38,3 @@ Execute a custom script in Bash, Python, JavaScript, or PowerShell. Scripts can 
 |:---|:---|:---|
 | `data` | any | Script output. If `parser_type` is `json`, this is a parsed object; otherwise, raw string. |
 
-### Example — Bash on Kubernetes
-
-```yaml
-- id: check_disk
-  type: scripting.run_script
-  params:
-    script: |
-      df -h / | tail -1 | awk '{print $5}' | sed 's/%//'
-    language: bash
-    executor_type: kubernetes
-    parser_type: json
-```
-
-### Example — Python via AWS SSM
-
-```yaml
-- id: collect_metrics
-  type: scripting.run_script
-  params:
-    script: |
-      import json, psutil
-      print(json.dumps({"cpu": psutil.cpu_percent(), "memory": psutil.virtual_memory().percent}))
-    language: python
-    executor_type: aws_ssm
-    target_id: "i-0abc123def456"
-    region: "us-east-1"
-    parser_type: json
-```

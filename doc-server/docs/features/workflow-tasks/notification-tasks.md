@@ -29,19 +29,6 @@ Send an email to one or more recipients.
 | `success` | boolean | Whether the email was sent successfully. |
 | `sent_to` | array | List of recipients the email was delivered to. |
 
-### Example
-
-```yaml
-- id: send_report
-  type: notifications.email
-  params:
-    recipients: ["ops@example.com", "lead@example.com"]
-    subject: "Daily Cost Report — {{ Inputs.workflow_execution_time }}"
-    body: |
-      <h2>Cost Summary</h2>
-      <p>{{ Tasks['generate_report'].output.data }}</p>
-```
-
 ---
 
 ## `notifications.im`
@@ -69,17 +56,6 @@ Send a message to a Slack channel, MS Teams channel, or Google Chat space.
 | `team` | string | Team ID. |
 | `platform` | string | Platform used. |
 
-### Example
-
-```yaml
-- id: alert_team
-  type: notifications.im
-  params:
-    provider: slack
-    channel: "C0123ALERTS"
-    message: ":warning: High CPU on {{ Inputs.workload }} — {{ Tasks['check'].output.cpu_pct }}%"
-```
-
 ---
 
 ## `notifications.dm`
@@ -104,17 +80,6 @@ Send a direct message to a specific user.
 | `channel_id` | string | DM channel ID. |
 | `message_id` | string | Message ID. |
 | `provider` | string | Platform used. |
-
-### Example
-
-```yaml
-- id: notify_oncall
-  type: notifications.dm
-  params:
-    provider: slack
-    user_id: "U0123ONCALL"
-    message: "You have a pending approval: {{ Tasks['approval'].output.message }}"
-```
 
 ---
 
@@ -144,17 +109,6 @@ Fetch replies and reactions from a Slack thread. Useful for checking if someone 
 | `has_reactions` | boolean | True if the parent message has reactions. |
 | `has_more` | boolean | Whether there are more messages to fetch. |
 
-### Example
-
-```yaml
-- id: check_thread
-  type: notifications.read_thread
-  params:
-    provider: slack
-    channel_id: "C0123ALERTS"
-    thread_ts: "{{ Tasks['alert_team'].output.message_id }}"
-```
-
 ---
 
 ## `notifications.add_reaction`
@@ -178,18 +132,6 @@ Add an emoji reaction to a message on Slack, MS Teams, or Google Chat.
 | Name | Type | Description |
 |:---|:---|:---|
 | `success` | boolean | Whether the reaction was added. |
-
-### Example
-
-```yaml
-- id: ack_message
-  type: notifications.add_reaction
-  params:
-    provider: slack
-    channel_id: "C0123ALERTS"
-    message_id: "{{ Tasks['alert_team'].output.message_id }}"
-    emoji: "white_check_mark"
-```
 
 ---
 

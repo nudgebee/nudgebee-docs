@@ -25,15 +25,6 @@ Log a message to the workflow output. Useful for debugging templates and verifyi
 |:---|:---|:---|
 | `data` | string | The printed message. |
 
-### Example
-
-```yaml
-- id: debug_output
-  type: core.print
-  params:
-    message: "Cluster: {{ Inputs.cluster }}, Namespace: {{ Tasks['fetch'].output.namespace }}"
-```
-
 ---
 
 ## `core.wait`
@@ -54,16 +45,6 @@ Pause workflow execution for a specified duration before continuing to the next 
 |:---|:---|:---|
 | `message` | string | Confirmation message. |
 | `duration` | string | The duration that was waited. |
-
-### Example
-
-```yaml
-- id: cooldown
-  type: core.wait
-  params:
-    duration: "5m"
-  next: check_status
-```
 
 ---
 
@@ -92,31 +73,6 @@ Pause the workflow and wait for a human to approve or reject before continuing. 
 | `approver` | string | Identifier of the person who responded. |
 | `comments` | string | Optional comments left by the approver. |
 
-### Example
-
-```yaml
-- id: approve_deploy
-  type: core.approval
-  params:
-    message: "Deploy {{ Inputs.service }} to production?"
-    approval_type: instant_message
-    im_provider: slack
-    im_channel: "C0123DEPLOY"
-    approval_options: ["approve", "reject", "defer"]
-  next: check_approval
-
-- id: check_approval
-  type: core.switch
-  params:
-    expression: "{{ Tasks['approve_deploy'].output.status }}"
-    cases:
-      - value: "approve"
-        next: deploy
-      - value: "reject"
-        next: notify_rejected
-    default_next: notify_deferred
-```
-
 ---
 
 ## `core.switch`
@@ -138,21 +94,6 @@ Conditional branching — evaluate a template expression and route execution to 
 | Name | Type | Description |
 |:---|:---|:---|
 | `selected_case` | string | The matched case value, or `"default"` if no case matched. |
-
-### Example
-
-```yaml
-- id: route_env
-  type: core.switch
-  params:
-    expression: "{{ Inputs.environment }}"
-    cases:
-      - value: "production"
-        next: deploy_prod
-      - value: "staging"
-        next: deploy_staging
-    default_next: deploy_dev
-```
 
 ---
 
@@ -178,26 +119,6 @@ Iterate over a list and execute a set of tasks for each item. Supports parallel 
 |:---|:---|:---|
 | `results` | array | List of outputs from each iteration. |
 
-### Example
-
-```yaml
-- id: restart_all
-  type: core.foreach
-  params:
-    items: "{{ Tasks['list_pods'].output.pods }}"
-    item: "pod"
-    concurrency: 3
-    tasks:
-      - id: restart
-        type: k8s.workload_restart
-        params:
-          namespace: "{{ Vars.pod.namespace }}"
-          name: "{{ Vars.pod.name }}"
-          kind: "Deployment"
-    output:
-      restart_status: "{{ Tasks['restart'].output.status }}"
-```
-
 ---
 
 ## `core.group`
@@ -218,24 +139,6 @@ Execute multiple tasks together as a single logical step. Tasks within the group
 |:---|:---|:---|
 | `workflowId` | string | Child workflow ID. |
 | `runId` | string | Child workflow run ID. |
-
-### Example
-
-```yaml
-- id: setup
-  type: core.group
-  params:
-    tasks:
-      - id: check_health
-        type: network.ping
-        params:
-          host: "api.example.com"
-      - id: check_cert
-        type: network.ssl
-        params:
-          host: "api.example.com"
-  next: analyze
-```
 
 ---
 
@@ -260,15 +163,3 @@ Execute another workflow by name as a child workflow and return its result. Usef
 | `run_id` | string | Run ID of the child workflow execution. |
 | `output` | object | Final output of the child workflow. |
 
-### Example
-
-```yaml
-- id: run_healthcheck
-  type: core.call-workflow
-  params:
-    workflow_name: "cluster-healthcheck"
-    inputs:
-      cluster: "{{ Inputs.cluster }}"
-      namespace: "{{ Inputs.namespace }}"
-  next: evaluate_health
-```

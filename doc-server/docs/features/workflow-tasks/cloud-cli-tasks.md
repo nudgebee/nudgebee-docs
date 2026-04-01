@@ -26,16 +26,6 @@ Run AWS CLI commands against your AWS account. The command is executed in a secu
 |:---|:---|:---|
 | `data` | string | Command output (stdout). |
 
-### Example
-
-```yaml
-- id: list_instances
-  type: cloud.aws.cli
-  params:
-    command: "aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query 'Reservations[].Instances[].InstanceId' --output json"
-    account_id: "{{ Inputs.account }}"
-```
-
 ---
 
 ## `cloud.azure.cli` / `azure.cli`
@@ -100,13 +90,3 @@ Run kubectl commands against your Kubernetes cluster.
 | `data` | string | Command output (stdout). |
 | `stderr` | string | Error output (stderr), if any. |
 
-### Example
-
-```yaml
-- id: get_pods
-  type: cloud.k8s.cli
-  params:
-    command: "kubectl get pods -n {{ Inputs.namespace }} -o json"
-    account_id: "{{ Inputs.account }}"
-  next: parse_pods
-```

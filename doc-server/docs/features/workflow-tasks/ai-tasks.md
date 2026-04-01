@@ -27,15 +27,6 @@ Summarize text, logs, or data using AI. Pass any content and receive a concise s
 | `conversation_id` | string | NuBi conversation ID (for follow-up). |
 | `session_id` | string | NuBi session ID. |
 
-### Example
-
-```yaml
-- id: summarize_logs
-  type: llm.summary
-  params:
-    message: "Summarize these error logs:\n{{ Tasks['fetch_logs'].output.logs }}"
-```
-
 ---
 
 ## `llm.investigate`
@@ -57,18 +48,6 @@ Ask AI to analyze and investigate a problem. The AI will research the issue usin
 | `data` | string | Investigation findings and recommendations. |
 | `conversation_id` | string | NuBi conversation ID. |
 | `session_id` | string | NuBi session ID. |
-
-### Example
-
-```yaml
-- id: investigate_oom
-  type: llm.investigate
-  params:
-    message: |
-      Pod {{ Inputs.pod_name }} in namespace {{ Inputs.namespace }} was OOMKilled.
-      Current memory limit: {{ Tasks['get_pod'].output.memory_limit }}
-      Please investigate and recommend a fix.
-```
 
 ---
 
@@ -92,16 +71,6 @@ Ask AI to investigate a specific event or alert. Designed for event-triggered wo
 | `conversation_id` | string | NuBi conversation ID. |
 | `session_id` | string | NuBi session ID. |
 
-### Example
-
-```yaml
-- id: analyze_alert
-  type: llm.event_investigate
-  params:
-    message: "{{ event }}"
-  next: notify_findings
-```
-
 ---
 
 ## `llm.nubi`
@@ -124,15 +93,6 @@ Ask NuBi (Nudgebee's AI assistant) to investigate an issue or answer a question.
 | `conversation_id` | string | NuBi conversation ID. |
 | `session_id` | string | NuBi session ID. |
 
-### Example
-
-```yaml
-- id: ask_nubi
-  type: llm.nubi
-  params:
-    message: "What is the current health status of the payments service in the production cluster?"
-```
-
 ---
 
 ## `llm.classify`
@@ -154,23 +114,6 @@ Use AI to categorize input into one of several predefined options. Useful for ro
 |:---|:---|:---|
 | `selected_branch` | string | The `name` of the selected option. |
 
-### Example
-
-```yaml
-- id: classify_alert
-  type: llm.classify
-  params:
-    prompt: "{{ Inputs.alert_message }}"
-    options:
-      - name: "infrastructure"
-        description: "Hardware, network, or cloud infrastructure issues"
-      - name: "application"
-        description: "Application bugs, crashes, or performance problems"
-      - name: "security"
-        description: "Security incidents, unauthorized access, or vulnerabilities"
-  next: route_alert
-```
-
 ---
 
 ## `llm.router`
@@ -191,37 +134,6 @@ Use AI to classify input and automatically route to the correct branch of tasks.
 | Name | Type | Description |
 |:---|:---|:---|
 | `selected_branch` | string | Name of the branch that was selected and executed. |
-
-### Example
-
-```yaml
-- id: smart_route
-  type: llm.router
-  params:
-    prompt: "{{ Inputs.user_request }}"
-    branches:
-      - name: "scale_up"
-        description: "User wants to increase resources or replicas"
-        tasks:
-          - id: scale
-            type: k8s.horizontal_rightsize
-            params:
-              direction: "up"
-              kind: "Deployment"
-              namespace: "{{ Inputs.namespace }}"
-              name: "{{ Inputs.workload }}"
-              scaling_mode: "change_by"
-              change_by: 1
-      - name: "restart"
-        description: "User wants to restart a service"
-        tasks:
-          - id: restart
-            type: k8s.workload_restart
-            params:
-              namespace: "{{ Inputs.namespace }}"
-              name: "{{ Inputs.workload }}"
-              kind: "Deployment"
-```
 
 ---
 

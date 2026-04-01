@@ -34,28 +34,6 @@ Optimize CPU and memory requests/limits for a Kubernetes workload. Can apply cha
 | `patch` | object | The Kubernetes patch that was applied (or would be applied). |
 | `resolution_id` | string | Resolution tracking ID. |
 
-### Example
-
-```yaml
-- id: rightsize_api
-  type: k8s.vertical_rightsize
-  params:
-    namespace: "production"
-    name: "api-server"
-    kind: "Deployment"
-    direction: "up"
-    cpu:
-      change_pct: 20
-      max: "2"
-      min: "100m"
-    memory:
-      change_pct: 15
-      max: "4Gi"
-      min: "256Mi"
-    gitops_config:
-      enabled: true
-```
-
 ---
 
 ## `k8s.horizontal_rightsize`
@@ -89,21 +67,6 @@ Scale the number of replicas for a Kubernetes workload up or down.
 | `new_replicas` | number | New replica count. |
 | `patch` | object | The applied patch. |
 | `resolution_id` | string | Resolution tracking ID. |
-
-### Example
-
-```yaml
-- id: scale_up
-  type: k8s.horizontal_rightsize
-  params:
-    direction: "up"
-    kind: "Deployment"
-    namespace: "production"
-    name: "web-frontend"
-    scaling_mode: "change_by"
-    change_by: 2
-    max: 10
-```
 
 ---
 
@@ -184,17 +147,6 @@ Perform a rolling restart of a Kubernetes workload to apply configuration change
 | `restarted_kind` | string | Kind of the restarted resource. |
 | `restarted_name` | string | Name of the restarted resource. |
 
-### Example
-
-```yaml
-- id: restart_service
-  type: k8s.workload_restart
-  params:
-    namespace: "production"
-    name: "api-server"
-    kind: "Deployment"
-```
-
 ---
 
 ## `k8s.pod_delete`
@@ -221,19 +173,6 @@ Delete a Kubernetes pod to force a restart or clean up a stuck pod.
 | `status` | string | Operation result. |
 | `deleted_pod` | string | Name of the deleted pod. |
 | `namespace` | string | Namespace of the deleted pod. |
-
-### Example
-
-```yaml
-- id: kill_stuck_pod
-  type: k8s.pod_delete
-  params:
-    namespace: "production"
-    name: "api-server"
-    kind: "Deployment"
-    target_pod_name: "api-server-7d8f6c5b4-xk9z2"
-    force: true
-```
 
 ---
 

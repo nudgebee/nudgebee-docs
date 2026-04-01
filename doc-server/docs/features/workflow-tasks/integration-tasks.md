@@ -44,22 +44,6 @@ Make an HTTP request to any REST API or web endpoint. Supports multiple authenti
 | `headers` | object | Response headers. |
 | `body` | any | Parsed JSON body (if applicable) or raw string. |
 
-### Example
-
-```yaml
-- id: call_api
-  type: integrations.http
-  params:
-    url: "https://api.example.com/v1/status"
-    method: POST
-    headers:
-      Content-Type: "application/json"
-    body: '{"service": "{{ Inputs.service }}"}'
-    auth_type: bearer
-    bearer_token: "{{ Inputs.api_token }}"
-    timeout: "10s"
-```
-
 ---
 
 ## `integrations.ssh`
@@ -82,12 +66,3 @@ Run commands on a remote server via SSH using a configured integration.
 |:---|:---|:---|
 | `data` | string | Command output. |
 
-### Example
-
-```yaml
-- id: remote_check
-  type: integrations.ssh
-  params:
-    integration_id: "{{ Inputs.ssh_integration }}"
-    command: "systemctl status nginx"
-```
