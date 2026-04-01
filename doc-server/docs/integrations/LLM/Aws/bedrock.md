@@ -23,7 +23,39 @@ Amazon Bedrock is a fully managed service that offers a choice of high-performin
 2. **Create IAM User with Bedrock Permissions**:
    ```bash
    aws iam create-user --user-name bedrock-user
-   aws iam attach-user-policy --user-name bedrock-user --policy-arn arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+   ```
+
+   Attach one of the following policies to grant Bedrock access:
+
+   **Option A: Custom Inline Policy (Recommended — Least Privilege)**
+
+   Create a policy file `bedrock-policy.json`:
+   ```json
+   {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+               "Sid": "VisualEditor0",
+               "Effect": "Allow",
+               "Action": [
+                   "bedrock:InvokeModel",
+                   "bedrock:InvokeModelWithResponseStream"
+               ],
+               "Resource": "*"
+           }
+       ]
+   }
+   ```
+
+   Attach the inline policy:
+   ```bash
+   aws iam put-user-policy --user-name bedrock-user --policy-name BedrockInvokeAccess --policy-document file://bedrock-policy.json
+   ```
+
+   **Option B: AWS Managed Policy**
+
+   ```bash
+   aws iam attach-user-policy --user-name bedrock-user --policy-arn arn:aws:iam::aws:policy/AmazonBedrockLimitedAccess
    ```
 
 3. **Generate Access Keys**:
