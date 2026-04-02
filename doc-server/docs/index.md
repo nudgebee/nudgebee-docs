@@ -25,7 +25,7 @@ Learn more about NudgeBee features:
 
 * [Features Overview](/docs/features/index.md)
 * [Troubleshooting & Playbooks](./features/troubleshooting/index.md)
-* [Workflow Builder](./features/workflow-builder.md)
+* [Workflow Builder](./features/workflow-builder/index.md)
 * [Knowledge Graph](./features/knowledge-graph.md)
 * [Cost Optimization](./features/optimizations.md)
 
