@@ -27,8 +27,9 @@ Use template expressions to pass data between tasks:
 # Reference workflow inputs
 {{ Inputs.my_input }}
 
-# Reference workflow variables
-{{ Vars.my_variable }}
+# Reference shared configs and secrets
+{{ Configs.slack_channel_id }}
+{{ Secrets.github_token }}
 ```
 
 ### Automatic Context Variables
