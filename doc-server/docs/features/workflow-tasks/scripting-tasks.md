@@ -13,6 +13,10 @@ Execute custom scripts in multiple languages across different execution environm
 
 Execute a custom script in Bash, Python, JavaScript, or PowerShell. Scripts can run on Kubernetes, a local agent, or remotely via AWS SSM, Azure Run Command, GCP SSH, or SSH.
 
+![Run Script Task](./img/scripting-run-script.png)
+
+![Run Script Configuration](./img/scripting-run-script-config.png)
+
 ### Parameters
 
 | Name | Type | Required | Description |

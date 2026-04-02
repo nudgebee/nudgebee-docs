@@ -13,6 +13,8 @@ Leverage AI for summarization, investigation, classification, and routing.
 
 Summarize text, logs, or data using AI. Pass any content and receive a concise summary highlighting key points.
 
+![AI Summary Task](./img/llm-summary.png)
+
 ### Parameters
 
 | Name | Type | Required | Description |
@@ -34,6 +36,8 @@ Summarize text, logs, or data using AI. Pass any content and receive a concise s
 **Display Name:** AI Investigation
 
 Ask AI to analyze and investigate a problem. The AI will research the issue using available tools and context, returning detailed findings and recommendations.
+
+![AI Investigation Task](./img/llm-investigate.png)
 
 ### Parameters
 
@@ -78,6 +82,8 @@ Ask AI to investigate a specific event or alert. Designed for event-triggered wo
 **Display Name:** Ask NuBi
 
 Ask NuBi (Nudgebee's AI assistant) to investigate an issue or answer a question. NuBi has access to your infrastructure context including K8s clusters, services, and events.
+
+![Ask NuBi Task](./img/llm-nubi.png)
 
 ### Parameters
 
