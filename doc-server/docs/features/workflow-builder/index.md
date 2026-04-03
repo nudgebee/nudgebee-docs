@@ -10,7 +10,7 @@ The Workflow Builder lets you create, manage, and run automated multi-step proce
 
 <div style={{position: "relative", paddingBottom: "56.25%", height: 0}}>
   <video width="100%" controls style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}>
-    <source src={require("./video/NudgeBee Cloud AIOps Automation - Cluster Health Example.mp4").default} type="video/mp4" />
+    <source src={require("../video/NudgeBee Cloud AIOps Automation - Cluster Health Example.mp4").default} type="video/mp4" />
   </video>
 </div>
 
@@ -46,13 +46,13 @@ The Workflow Builder lets you create, manage, and run automated multi-step proce
 1. Click **Workflow** in the left navigation sidebar
 2. You arrive at the **Workflow listing page**, which shows all your workflows with their status, triggers, tags, and last execution details
 
-![Workflow Listing Page](./img/workflow-listing-page.png)
+![Workflow Listing Page](../img/workflow-listing-page.png)
 
 ### Creating Your First Workflow
 
 1. On the workflow listing page, click **Create Workflow** in the top-right corner
 
-![Create Workflow Modal](./img/create-workflow-modal.png)
+![Create Workflow Modal](../img/create-workflow-modal.png)
 
 2. In the modal that appears, click **Make a Workflow**
 3. The Workflow Editor opens with an empty canvas and a prompt: "Add Your Workflow Trigger Node"
@@ -77,7 +77,7 @@ You can also let AI build your workflow. Click **Create Workflow**, then choose 
 
 The editor is where you design and configure your workflows visually.
 
-![Workflow Editor Canvas](./img/workflow-editor-canvas.png)
+![Workflow Editor Canvas](../img/workflow-editor-canvas.png)
 
 **Header bar:**
 - **Back arrow** - Returns to the workflow listing page
@@ -101,13 +101,13 @@ The editor is where you design and configure your workflows visually.
 - **Settings** - Open workflow settings
 - **Status dropdown** - Set the workflow to Active, Inactive, Paused, or Draft
 
-![Bottom Toolbar](./img/bottom-toolbar.png)
+![Bottom Toolbar](../img/bottom-toolbar.png)
 
 **JSON panel:**
 - Click the **JSON** toggle on the right edge of the canvas to view and edit the workflow definition as raw JSON
 - Click **Apply** to sync your JSON changes back to the visual editor
 
-![JSON Panel](./img/json-panel.png)
+![JSON Panel](../img/json-panel.png)
 
 ### Adding Tasks
 
@@ -116,7 +116,7 @@ The editor is where you design and configure your workflows visually.
 3. Browse a category or type in the **Search actions** bar to find a task
 4. Click a task to add it to the canvas
 
-![Node Categories Sidebar](./img/node-categories-sidebar.png)
+![Node Categories Sidebar](../img/node-categories-sidebar.png)
 
 Tasks are organized into the following categories:
 
@@ -147,7 +147,7 @@ Tasks are organized into the following categories:
 3. Use the **Settings** tab for advanced options like conditional execution, timeouts, retry policies, and variables
 4. Task configuration saves automatically as you type - there is no separate save button for individual task settings
 
-![Action Details - Parameters Tab](./img/action-details-parameters.png)
+![Action Details - Parameters Tab](../img/action-details-parameters.png)
 
 :::tip
 You can reference outputs from earlier tasks in any text field using template expressions. The sidebar shows available outputs from previous tasks on the left, and you can drag them directly into fields.
@@ -172,7 +172,7 @@ The Workflow Builder prevents circular dependencies. If you try to create a conn
 
 Click a trigger node on the canvas to open the **Trigger Configuration** sidebar. Configuration options depend on the trigger type.
 
-![Trigger Configuration - Event Trigger](./img/trigger-config-event.png)
+![Trigger Configuration - Event Trigger](../img/trigger-config-event.png)
 
 #### Manual Trigger
 
@@ -199,7 +199,7 @@ Runs the workflow automatically on a recurring schedule.
 All scheduled times use the UTC timezone.
 :::
 
-![Trigger Configuration - Event Trigger](./img/trigger-config-schedule.png)
+![Trigger Configuration - Event Trigger](../img/trigger-config-schedule.png)
 
 **Common cron examples:**
 
@@ -288,7 +288,7 @@ Template expressions let you use dynamic values in task parameters. They use the
 - Click the three-dots menu on a workflow row and select **Pause** to suspend its triggers
 - Click the three-dots menu on a paused workflow and select **Resume** to reactivate its triggers
 
-![Three-Dots Context Menu](./img/three-dots-menu.png)
+![Three-Dots Context Menu](../img/three-dots-menu.png)
 
 :::note
 Pause and Resume are only available for workflows with Schedule, Webhook, or Event triggers.
@@ -339,7 +339,7 @@ Configurations are shared key-value pairs that can be referenced across all work
 3. Review or edit the input parameters JSON in the modal
 4. Click **Trigger Workflow**
 
-![Trigger Workflow Modal](./img/trigger-workflow-modal.png)
+![Trigger Workflow Modal](../img/trigger-workflow-modal.png)
 
 ### Using Dry Run
 
@@ -360,7 +360,7 @@ Configurations are shared key-value pairs that can be referenced across all work
 
 You can filter executions by status using the dropdown at the top of the execution list.
 
-![Workflow Executions View](./img/workflow-executions-view.png)
+![Workflow Executions View](../img/workflow-executions-view.png)
 
 ### Understanding Execution Status
 
@@ -385,7 +385,7 @@ Node colors on the execution canvas match these statuses: green for completed, r
 5. Expand the **Input** and **Output** sections to inspect the data that was passed to and from the task
 6. Check the **Logs** section for additional diagnostic information
 
-![Execution Task Details - Input and Output](./img/execution-task-details.png)
+![Execution Task Details - Input and Output](../img/execution-task-details.png)
 
 ### Retrying an Execution
 
@@ -399,7 +399,7 @@ Node colors on the execution canvas match these statuses: green for completed, r
 
 Access workflow-level settings by clicking the **Settings** icon in the bottom toolbar.
 
-![Workflow Settings Modal](./img/workflow-settings-modal.png)
+![Workflow Settings Modal](../img/workflow-settings-modal.png)
 
 **Execution Settings:**
 
@@ -416,7 +416,7 @@ Quick presets are available for timeout (1m, 5m, 15m, 30m, 1h) and max interval 
 - **Output Parameters** - Define output values using template expressions (e.g., `{"final_message": "Processed {{ Task.output.count }} items"}`)
 - **Tags** - Add labels to categorize and organize workflows. Tags support plain strings or `key:value` format
 
-![Workflow Settings - Input Parameters](./img/workflow-settings-parameters.png)
+![Workflow Settings - Input Parameters](../img/workflow-settings-parameters.png)
 
 ### Input Parameter Types
 
@@ -442,7 +442,7 @@ Each task has additional settings available in the **Settings** tab of the task 
 | Hooks | Pre- and post-execution hook configuration |
 | Failure Policy | What to do on failure, including retry configuration |
 
-![Action Details - Settings Tab](./img/action-details-settings.png)
+![Action Details - Settings Tab](../img/action-details-settings.png)
 
 ### Testing Individual Tasks
 
