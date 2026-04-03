@@ -39,7 +39,7 @@ When calling models on Amazon Bedrock, the model name you provide depends on you
 - **Inference Profile (default)**: If you have **not** purchased dedicated/provisioned throughput, you must use an **inference profile ID** as the model name. Inference profiles are prefixed with the region shorthand (e.g., `us.`, `eu.`).
   - Example LLM (Meta Llama): `us.meta.llama3-8b-instruct-v1:0`
   - Example LLM (Anthropic Claude): `us.anthropic.claude-sonnet-4-6-20250514-v1:0`
-  - Example Embeddings: `us.amazon.titan-embed-text-v1`
+  - Example Embeddings: `us.amazon.titan-embed-text-v2:0`
   - You can find available inference profile IDs in the Bedrock console under **Inference profiles**, or by running:
     ```bash
     aws bedrock list-inference-profiles --region <your-region>
@@ -48,7 +48,7 @@ When calling models on Amazon Bedrock, the model name you provide depends on you
 - **Dedicated/Provisioned Throughput**: If you have purchased provisioned throughput for a model, use the **provisioned model ARN** as the model name.
   - Example: `arn:aws:bedrock:<region>:<account-id>:provisioned-model/<model-name>`
 
-> **Important**: Using a bare model ID (e.g., `meta.llama3-8b-instruct-v1:0`) without provisioned throughput will result in an error. Most users should use the inference profile ID.
+> **Recommended**: While bare model IDs (e.g., `meta.llama3-8b-instruct-v1:0`) work for on-demand inference within the same region, using inference profile IDs is recommended for cross-region routing and better availability. Some newer models may require inference profiles.
 
 ## Integrating with LLM Server
 
@@ -71,7 +71,7 @@ LLM_MODEL_NAME=<Inference_Profile_ID_or_Provisioned_ARN> # e.g., us.meta.llama3-
 ```sh
 EMBEDDINGS_PROVIDER=bedrock
 EMBEDDINGS_PROVIDER_REGION=<AWS_Region> # e.g., us-west-2
-EMBEDDINGS_MODEL_NAME=<Inference_Profile_ID_or_Provisioned_ARN> # e.g., us.amazon.titan-embed-text-v1
+EMBEDDINGS_MODEL_NAME=<Inference_Profile_ID_or_Provisioned_ARN> # e.g., us.amazon.titan-embed-text-v2:0
 ```
 
 #### To deploy NudgeBee AI models on AWS Bedrock and integrate [NudgeBee Model Deployment](./aws_bedrock_custom_model.md) 
