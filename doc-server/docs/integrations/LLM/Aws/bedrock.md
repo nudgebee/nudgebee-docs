@@ -32,6 +32,23 @@ Amazon Bedrock is a fully managed service that offers a choice of high-performin
    ```
    Save the returned Access Key ID and Secret Access Key securely.
 
+## Model ID vs Inference Profile
+
+When calling models on Amazon Bedrock, the model name you provide depends on your throughput setup:
+
+- **Inference Profile (default)**: If you have **not** purchased dedicated/provisioned throughput, you must use an **inference profile ID** as the model name. Inference profiles are prefixed with the region shorthand (e.g., `us.`, `eu.`).
+  - Example LLM: `us.meta.llama3-8b-instruct-v1:0`
+  - Example Embeddings: `us.amazon.titan-embed-text-v1`
+  - You can find available inference profile IDs in the Bedrock console under **Inference profiles**, or by running:
+    ```bash
+    aws bedrock list-inference-profiles --region <your-region>
+    ```
+
+- **Dedicated/Provisioned Throughput**: If you have purchased provisioned throughput for a model, use the **provisioned model ARN** as the model name.
+  - Example: `arn:aws:bedrock:<region>:<account-id>:provisioned-model/<model-name>`
+
+> **Important**: Using a bare model ID (e.g., `meta.llama3-8b-instruct-v1:0`) without provisioned throughput will result in an error. Most users should use the inference profile ID.
+
 ## Integrating with LLM Server
 
 1. **Configure Bedrock in LLM Server**:
@@ -41,7 +58,7 @@ Amazon Bedrock is a fully managed service that offers a choice of high-performin
 ```sh
 LLM_PROVIDER=bedrock
 LLM_PROVIDER_REGION=<AWS_Region> # e.g., us-west-2
-LLM_MODEL_NAME=<Custom_Bedrock_Model_ID> # e.g., meta.llama3-8b-instruct-v1:0
+LLM_MODEL_NAME=<Inference_Profile_ID_or_Provisioned_ARN> # e.g., us.meta.llama3-8b-instruct-v1:0
 ```
 
 ## Integrating with RAG Server
@@ -53,7 +70,7 @@ LLM_MODEL_NAME=<Custom_Bedrock_Model_ID> # e.g., meta.llama3-8b-instruct-v1:0
 ```sh
 EMBEDDINGS_PROVIDER=bedrock
 EMBEDDINGS_PROVIDER_REGION=<AWS_Region> # e.g., us-west-2
-EMBEDDINGS_MODEL_NAME=<Custom_Bedrock_Model_ID> # e.g., amazon.titan-embed-text-v1
+EMBEDDINGS_MODEL_NAME=<Inference_Profile_ID_or_Provisioned_ARN> # e.g., us.amazon.titan-embed-text-v1
 ```
 
 #### To deploy NudgeBee AI models on AWS Bedrock and integrate [NudgeBee Model Deployment](./aws_bedrock_custom_model.md) 
