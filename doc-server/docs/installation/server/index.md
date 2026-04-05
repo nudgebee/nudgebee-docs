@@ -29,7 +29,8 @@ Before installing the NudgeBee Server, ensure the following requirements are met
 - **API Resolution:** Authentication uses the `BASE_URL` to resolve APIs. Therefore, pods must be able to resolve the `BASE_URL` DNS entry.
 - **External Integrations:** External integrations (such as Slack, Jira, MS Teams, GitHub Issues, and OpenAI) require network connectivity from the NudgeBee Server.
 - **Bidirectional Integrations:** If bidirectional integration is used (e.g., with Slack), then Slack must be able to access the NudgeBee Server's DNS.
-- **Ingress/DNS:** NudgeBee app can work without Ingress/DNS as well, though features which reply on external communication like Slack/GChat apps will not work correctly.
+- **Inbound Webhooks:** If you use inbound webhooks (e.g., from Datadog, New Relic, PagerDuty, ServiceNow, or GCP Cloud Monitoring), the cluster must be externally accessible so these services can send payloads to the NudgeBee webhook URL.
+- **Ingress/DNS:** NudgeBee app can work without Ingress/DNS as well, though features which rely on external communication like Slack/GChat apps and inbound webhooks will not work correctly.
 
 ### System Requirement
 
@@ -69,12 +70,15 @@ You can manage secrets outside of Helm by creating them manually and referencing
   **Helm Values Example:**
   ```yaml
   global:
-    existingNudgebeeSecretName: 'nudgebee-v2'
+    existingNudgebeeSecretName: 'nudgebee-secret'
+  ```
 
-  Ensure other nudgebee_secret configurations within the Helm values are removed or commented out,
-  as these settings will be managed in the 'nudgebee-v2' Kubernetes secret.
-  nudgebee_secret:
-     NUDGEBEE_LICENSE: YOUR_LICENSE_KEY_HERE
+  Ensure other `nudgebee_secret` configurations within the Helm values are removed or commented out,
+  as these settings will be managed in the referenced Kubernetes secret.
+  ```yaml
+  # Remove or comment out the following when using existingNudgebeeSecretName:
+  # nudgebee_secret:
+  #    NUDGEBEE_LICENSE: YOUR_LICENSE_KEY_HERE
   ```
 * `nudgebee_registry_secret.existingSecretName`: Use this if the registry credentials are stored in a pre-created Kubernetes secret.
 * `postgresql.auth.existingSecret`: Used to inject an existing Kubernetes secret that contains the Postgres password.
@@ -86,7 +90,7 @@ Follow these steps to install the nudgebee server using Helm:
 
 #### Helm Registry Login
 ```shell
-helm registry login https://registry.nudgebee.com --username nudgebee --password $NUDGEBEE_LICENSE_KEY
+helm registry login registry.nudgebee.com --username nudgebee --password $NUDGEBEE_LICENSE_KEY
 ```
 
 #### Install NudgeBee
