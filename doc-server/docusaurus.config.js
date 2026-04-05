@@ -12,7 +12,16 @@ const config = {
   markdown: {
     mermaid: true,
   },
-  themes: ['@docusaurus/theme-mermaid'],
+  themes: [
+    '@docusaurus/theme-mermaid',
+    [
+      require.resolve("@easyops-cn/docusaurus-search-local"),
+      /** @type {import("@easyops-cn/docusaurus-search-local").Options} */
+      ({
+        hashed: true,
+      }),
+    ],
+  ],
 
   // Set the production url of your site here
   url: process.env.SITE_URL || 'https://docs.nudgebee.com/',
@@ -64,6 +73,12 @@ const config = {
           src: 'img/logo.png',
         },
         items: [
+          {
+            type: 'docSidebar',
+            sidebarId: 'datasourceSidebar',
+            position: 'left',
+            label: 'Docs',
+          },
         ],
       },
       footer: {

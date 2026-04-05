@@ -17,7 +17,7 @@ Create a new ticket or incident in your ticketing platform.
 
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
-| `integration_id` | ticket | Yes | Ticket integration to use (Jira, GitHub, GitLab, PagerDuty, etc.). |
+| `integration_id` | integration | Yes | Ticket integration to use (Jira, GitHub, GitLab, PagerDuty, etc.). |
 | `project_key` | string | Yes | Project key. Jira: `PROJ`. GitHub/GitLab: `owner/repo`. Dynamic options loaded from integration. |
 | `title` | string | Yes | Ticket title/summary. |
 | `description` | string | Yes | Ticket description/body. |
@@ -53,7 +53,7 @@ Fetch the details of an existing ticket by its ID.
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `ticket_id` | string | Yes | Ticket ID to retrieve (e.g., `PROJ-123` for Jira, issue number for GitHub). |
-| `integration_id` | ticket | No | Ticket integration. Required if the ticket was not created via Nudgebee. |
+| `integration_id` | integration | No | Ticket integration. Required if the ticket was not created via Nudgebee. |
 | `project_key` | string | No | Project key. Required for GitHub/GitLab (`owner/repo` format). |
 | `account_id` | account | No | Account override. |
 
@@ -84,7 +84,7 @@ Update ticket fields such as status, severity, assignee, description, or labels.
 
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
-| `integration_id` | ticket | Yes | Ticket integration to use. |
+| `integration_id` | integration | Yes | Ticket integration to use. |
 | `ticket_id` | string | Yes | Ticket ID to update. |
 | `project_key` | string | No | Project key (required for GitHub/GitLab). |
 | `status` | string | No | New status. Triggers workflow transition for Jira/ServiceNow. GitHub/GitLab: `open`/`closed`. |
@@ -114,7 +114,7 @@ Move a ticket to a new status following workflow rules (e.g., Jira workflow tran
 
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
-| `integration_id` | ticket | Yes | Ticket integration. |
+| `integration_id` | integration | Yes | Ticket integration. |
 | `ticket_id` | string | Yes | Ticket ID to transition. |
 | `status` | string | Yes | Target status (e.g., `In Progress`, `Done` for Jira; `open`/`closed` for GitHub). |
 | `project_key` | string | No | Project key (required for GitHub/GitLab). |
@@ -140,7 +140,7 @@ Assign a ticket to a specific person.
 
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
-| `integration_id` | ticket | Yes | Ticket integration. |
+| `integration_id` | integration | Yes | Ticket integration. |
 | `ticket_id` | string | Yes | Ticket ID to assign. |
 | `assignee` | string | Yes | Assignee identifier. Jira: account ID or email. GitHub/GitLab: username. ServiceNow: sys_id or email. |
 | `project_key` | string | No | Project key (required for GitHub/GitLab). |
@@ -166,7 +166,7 @@ Post a comment on an existing ticket.
 
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
-| `integration_id` | ticket | Yes | Ticket integration. |
+| `integration_id` | integration | Yes | Ticket integration. |
 | `ticket_id` | string | Yes | Ticket ID to comment on. |
 | `comment` | string | Yes | Comment text. |
 | `project_key` | string | Yes | Project key (e.g., `PROJ` for Jira, `owner/repo` for GitHub). |
@@ -192,7 +192,7 @@ Fetch all comments from a ticket.
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `ticket_id` | string | Yes | Ticket ID. |
-| `integration_id` | ticket | No | Ticket integration (required if not created via Nudgebee). |
+| `integration_id` | integration | No | Ticket integration (required if not created via Nudgebee). |
 | `project_key` | string | No | Project key (required for GitHub/GitLab). |
 | `account_id` | account | No | Account override. |
 
@@ -216,7 +216,7 @@ Acknowledge an incident to stop further escalation. Only supported on PagerDuty 
 
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
-| `integration_id` | ticket | Yes | Incident management integration (PagerDuty or ZenDuty). |
+| `integration_id` | integration | Yes | Incident management integration (PagerDuty or ZenDuty). |
 | `ticket_id` | string | Yes | Incident/ticket ID to acknowledge. |
 | `account_id` | account | No | Account override. |
 
@@ -240,7 +240,7 @@ Escalate an incident to the next responder or escalation policy. Only supported 
 
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
-| `integration_id` | ticket | Yes | Incident management integration (PagerDuty or ZenDuty). |
+| `integration_id` | integration | Yes | Incident management integration (PagerDuty or ZenDuty). |
 | `ticket_id` | string | Yes | Incident/ticket ID to escalate. |
 | `escalation_policy` | string | No | Escalation policy ID (PagerDuty-specific). |
 | `account_id` | account | No | Account override. |
@@ -265,7 +265,7 @@ Mark an incident as resolved. Only supported on PagerDuty and ZenDuty.
 
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
-| `integration_id` | ticket | Yes | Incident management integration (PagerDuty or ZenDuty). |
+| `integration_id` | integration | Yes | Incident management integration (PagerDuty or ZenDuty). |
 | `ticket_id` | string | Yes | Incident/ticket ID to resolve. |
 | `resolution` | string | No | Resolution message or notes. |
 | `account_id` | account | No | Account override. |

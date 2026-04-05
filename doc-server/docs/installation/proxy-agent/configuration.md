@@ -158,6 +158,22 @@ These are the credential keys used by each datasource type:
   credential_ref: "projects/my-project/secrets/fleet-ssh-creds/versions/latest"
 ```
 
-**Authentication** — SSH supports key-based and password-based auth. For key-based auth, store the private key in PEM format under the `private_key` credential key. If the key has a passphrase, include it as `passphrase`.
+**Authentication** — SSH supports key-based and password-based auth. For key-based auth, the `private_key` credential must contain the **actual key contents** in PEM format (not a file path). If the key has a passphrase, include it as `passphrase`.
+
+```yaml
+# Static mode with local private key
+- name: web-server
+  type: ssh
+  host: 10.0.1.80
+  port: 22
+  credential_source: local
+  credentials:
+    username: ec2-user
+    private_key: |
+      -----BEGIN OPENSSH PRIVATE KEY-----
+      b3BlbnNzaC1rZXktdjEAAAAABG5vbmUA...
+      -----END OPENSSH PRIVATE KEY-----
+    passphrase: optional-if-key-is-encrypted
+```
 
 **Windows support** — Forager works with Windows OpenSSH Server. Windows uses PowerShell as the default shell, so commands should use `;` instead of `&&` to chain operations.
