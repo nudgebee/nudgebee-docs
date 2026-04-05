@@ -78,7 +78,7 @@ You can manage secrets outside of Helm by creating them manually and referencing
   ```yaml
   # Remove or comment out the following when using existingNudgebeeSecretName:
   # nudgebee_secret:
-  #    NUDGEBEE_LICENSE: YOUR_LICENSE_KEY_HERE
+  #   NUDGEBEE_LICENSE: YOUR_LICENSE_KEY_HERE
   ```
 * `nudgebee_registry_secret.existingSecretName`: Use this if the registry credentials are stored in a pre-created Kubernetes secret.
 * `postgresql.auth.existingSecret`: Used to inject an existing Kubernetes secret that contains the Postgres password.
