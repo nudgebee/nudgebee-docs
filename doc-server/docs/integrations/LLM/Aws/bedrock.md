@@ -68,7 +68,7 @@ Amazon Bedrock is a fully managed service that offers a choice of high-performin
 
 When calling models on Amazon Bedrock, the model name you provide depends on your throughput setup:
 
-- **Inference Profile (default)**: If you have **not** purchased dedicated/provisioned throughput, you must use an **inference profile ID** as the model name. Inference profiles are prefixed with the region shorthand (e.g., `us.`, `eu.`).
+- **Inference Profile (default)**: If you have **not** purchased dedicated/provisioned throughput, you can use an **inference profile ID** (recommended) or a bare model ID as the model name. Inference profiles are prefixed with the region shorthand (e.g., `us.`, `eu.`).
   - Example LLM (Meta Llama): `us.meta.llama3-8b-instruct-v1:0`
   - Example LLM (Anthropic Claude): `us.anthropic.claude-sonnet-4-6-20250514-v1:0`
   - Example Embeddings: `us.amazon.titan-embed-text-v2:0`
