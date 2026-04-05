@@ -70,7 +70,7 @@ You can manage secrets outside of Helm by creating them manually and referencing
   **Helm Values Example:**
   ```yaml
   global:
-    existingNudgebeeSecretName: 'nudgebee-secret'
+    existingNudgebeeSecretName: 'nudgebee'
   ```
 
   Ensure other `nudgebee_secret` configurations within the Helm values are removed or commented out,
