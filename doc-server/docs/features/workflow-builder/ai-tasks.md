@@ -133,7 +133,7 @@ Use AI to classify input and automatically route to the correct branch of tasks.
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `prompt` | string | Yes | The input to classify and route. |
-| `branches` | array | No | List of branches, each with `name`, `description`, and `tasks` (list of task definitions to execute). |
+| `branches` | array | Yes | List of branches, each with `name`, `description`, and `tasks` (list of task definitions to execute). |
 
 ### Output
 
@@ -196,4 +196,4 @@ Call a tool on an external MCP (Model Context Protocol) compatible server.
 | Name | Type | Description |
 |:---|:---|:---|
 | `content` | array | Content returned by the tool. |
-| `isError` | boolean | Whether the tool execution resulted in an error. |
+| `is_error` | boolean | Whether the tool execution resulted in an error. |

@@ -137,8 +137,8 @@ Execute multiple tasks together as a single logical step. Tasks within the group
 
 | Name | Type | Description |
 |:---|:---|:---|
-| `workflowId` | string | Child workflow ID. |
-| `runId` | string | Child workflow run ID. |
+| `workflow_id` | string | Child workflow ID. |
+| `run_id` | string | Child workflow run ID. |
 
 ---
 
