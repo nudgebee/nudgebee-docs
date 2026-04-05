@@ -194,3 +194,50 @@ Even though this is a schema error, the error message may suggest missing permis
    - Click **Add role assignment** → **Cost Management Reader** → select your service principal → **Save**.
 
 **Important:** The `Invalid dataset grouping` error occurs **independently of permissions**. Even with correct IAM roles, using an invalid dimension like `ConsumedService` will cause this error. Always validate your query schema first before investigating permissions.
+
+---
+
+## Azure Monitor Alerts Permissions
+
+NudgeBee collects existing Azure Monitor alerts from your Azure subscription and can create new alerts based on recommendations.
+
+### Required Permissions
+
+**For reading existing alerts:**
+```bash
+# Metric Alerts
+microsoft.insights/metricalerts/read
+microsoft.insights/metricdefinitions/read
+microsoft.insights/metricnamespaces/read
+
+# Activity Log Alerts
+microsoft.insights/activitylogalerts/read
+microsoft.insights/eventcategories/read
+```
+
+**For creating new alerts:**
+```bash
+# Metric Alerts
+microsoft.insights/metricalerts/write
+
+# Activity Log Alerts
+microsoft.insights/activitylogalerts/write
+```
+
+### Recommended Azure Roles
+
+**For read-only access:**
+```bash
+az role assignment create \
+  --assignee <service-principal-id> \
+  --role "Monitoring Reader" \
+  --scope "/subscriptions/<subscription-id>"
+```
+
+**For read and write access (to create alerts):**
+```bash
+az role assignment create \
+  --assignee <service-principal-id> \
+  --role "Monitoring Contributor" \
+  --scope "/subscriptions/<subscription-id>"
+```
