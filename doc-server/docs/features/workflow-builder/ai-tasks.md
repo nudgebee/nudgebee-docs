@@ -174,22 +174,52 @@ Call an external AI agent via JSON-RPC 2.0. Use this to integrate with third-par
 
 Call a tool on an external MCP (Model Context Protocol) compatible server.
 
+![MCP Call - Integration Mode](./img/llm-mcp-call-integration.png)
+![MCP Call - Direct Mode](./img/llm-mcp-call-direct.png)
+
 ### Parameters
 
-| Name | Type | Required | Description |
-|:---|:---|:---|:---|
-| `tool_name` | string | Yes | Name of the MCP tool to invoke. |
-| `integration_id` | integration | No | MCP integration ID. If provided, URL and auth are resolved from the integration config. |
-| `url` | string | No | MCP server URL (not needed if `integration_id` is provided). |
-| `arguments` | object | No | Arguments for the tool. |
-| `headers` | object | No | Optional HTTP headers. |
-| `auth_type` | string | No | Authentication type. Options: `""` (none), `oauth2`. For bearer/basic/api_key, use `headers` directly. |
-| `oauth_token_url` | string | No | OAuth 2.0 token endpoint. Visible when `auth_type` is `oauth2`. |
-| `oauth_client_id` | string | No | OAuth 2.0 client ID. Visible when `auth_type` is `oauth2`. |
-| `oauth_client_secret` | string | No | OAuth 2.0 client secret (encrypted). Visible when `auth_type` is `oauth2`. |
-| `oauth_scope` | string | No | OAuth 2.0 scope (space-separated). Visible when `auth_type` is `oauth2`. |
-| `oauth_audience` | string | No | OAuth 2.0 audience. Visible when `auth_type` is `oauth2`. |
-| `timeout` | string | No | Request timeout. Default: `60s`. |
+| Name | Type | Required | Default | Visibility | Description |
+|:---|:---|:---|:---|:---|:---|
+| `connection_mode` | string | Yes | `integration` | Always | How to connect to the MCP server. Options: `integration` (use a saved MCP integration) or `direct` (provide URL and auth inline). |
+| `integration_id` | integration | Conditional | — | `connection_mode` = `integration` | Select an MCP integration to use. Manage integrations under **Settings > Integrations**. |
+| `url` | string | Conditional | — | `connection_mode` = `direct` | The URL of the MCP server. **Tip:** Save connection details as an MCP integration under **Settings > Integrations** for reuse. |
+| `tool_name` | string | Yes | — | Always | The name of the tool to invoke. The tool name dropdown is dynamically populated — it connects to the MCP server (via integration or direct URL) and fetches available tools using the `tools/list` MCP method. |
+| `arguments` | object | No | `{}` | Always | Tool-specific input arguments. |
+| `headers` | object | No | — | `connection_mode` = `direct` | Custom HTTP headers to include in the request (e.g., `Authorization`). |
+| `auth_type` | string | No | `""` (none) | `connection_mode` = `direct` | Authentication type. Options: `""` (none) or `oauth2`. For bearer, basic, or API key authentication, use the `headers` parameter directly instead. |
+| `oauth_token_url` | string | Conditional | — | `auth_type` = `oauth2` AND `connection_mode` = `direct` | OAuth 2.0 token endpoint URL. |
+| `oauth_client_id` | string | Conditional | — | `auth_type` = `oauth2` AND `connection_mode` = `direct` | OAuth 2.0 client ID. |
+| `oauth_client_secret` | string | Conditional | — | `auth_type` = `oauth2` AND `connection_mode` = `direct` | OAuth 2.0 client secret. Encrypted at rest. |
+| `oauth_scope` | string | No | — | `auth_type` = `oauth2` AND `connection_mode` = `direct` | OAuth 2.0 scopes (space-separated). |
+| `oauth_audience` | string | No | — | `auth_type` = `oauth2` AND `connection_mode` = `direct` | OAuth 2.0 audience identifier. Required by some providers like Auth0. |
+| `timeout` | string | No | `60s` | Always | Request timeout (e.g., `30s`, `2m`). |
+
+### Connection Modes
+
+#### Integration Mode (Recommended)
+
+- Uses a pre-configured MCP integration from **Settings > Integrations**.
+- Connection details, authentication, and credentials are managed centrally.
+- Supports both **direct** HTTP connections and **vm_agent** connections (routed through forager agent for on-prem MCP servers).
+- All auth types supported: none, bearer, basic, API key/custom header, OAuth 2.0.
+
+#### Direct Mode
+
+- Provide the MCP server URL and authentication inline in the task configuration.
+- Useful for quick testing or one-off connections.
+- Supports custom headers and OAuth 2.0 authentication.
+
+### How It Works
+
+The task uses the MCP Streamable HTTP transport with JSON-RPC 2.0:
+
+1. Sends an `initialize` request to establish a session (protocol version `2024-11-05`).
+2. Sends an `initialized` notification.
+3. Sends a `tools/call` request with the selected tool name and arguments.
+4. Returns the tool's response (`content` array and `isError` flag).
+
+The task supports both immediate JSON responses and Server-Sent Events (SSE) streams from the MCP server.
 
 ### Output
 
