@@ -35,12 +35,24 @@ To successfully integrate Datadog, you will need to provide the following inform
 * **Site \*** (Required)
     * Specify your Datadog site/region. This determines which Datadog datacenter your data is sent to.
     * Common values are:
-        * `datadoghq.com` (US1 site)
-        * `datadoghq.eu` (EU1 site)
+        * `app.datadoghq.com` (US1 site)
+        * `app.datadoghq.eu` (EU1 site)
         * `us3.datadoghq.com` (US3 site)
         * `us5.datadoghq.com` (US5 site)
         * `ap1.datadoghq.com` (AP1 site)
     * Select the one that matches your organization's Datadog account.
+    * **Note:** Do not use the bare marketing domain (e.g., `datadoghq.com`). Use the `app.*` prefixed domain shown above.
+
+### Required Permissions
+
+The Datadog API Key and Application Key used for this integration require **at minimum Datadog Reader role** permissions. Admin access is not required.
+
+The integration reads the following data from Datadog:
+* Logs
+* Traces (APM)
+* Metrics
+* Monitors
+* Dashboards
 
 ---
 

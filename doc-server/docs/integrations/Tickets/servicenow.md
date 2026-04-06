@@ -3,9 +3,7 @@ sidebar_position: 4
 ---
 # ServiceNow
 
-## Overview
-
-NudgeBee integrates with ServiceNow for incident management. Events and alerts can automatically create ServiceNow incidents, and updates are synced as work notes.
+Integrate NudgeBee with ServiceNow for ticket management. Create ServiceNow incidents directly from NudgeBee events, and optionally sync your ServiceNow Knowledge Base articles for AI-assisted troubleshooting.
 
 ---
 
@@ -13,44 +11,52 @@ NudgeBee integrates with ServiceNow for incident management. Events and alerts c
 
 Before configuring the integration, ensure you have:
 
-- A **ServiceNow** instance (e.g., `yourinstance.service-now.com`)
+- A **ServiceNow** instance (e.g., `https://your-instance.service-now.com`)
 - A ServiceNow **username** and **password** with permissions to create incidents
 - Access to the **incident** table in your ServiceNow instance
 
 ---
 
-## ServiceNow Integration Configuration
+## Step 1: Add the ServiceNow Account in NudgeBee
 
-Navigate to **Settings** > **Integrations** > **Tickets** tab and select **ServiceNow** to open the configuration form.
+1. Navigate to **Settings** > **Integrations** > **Ticketing** tab.
+2. Click the **ServiceNow** card.
 
-<!-- ![ServiceNow in Tickets tab](../../../static/img/servicenow_card.png) -->
+![ServiceNow in Ticketing tab](../../../static/img/servicenow.png)
 
-### Configuration Fields
+3. Fill in the configuration:
 
-* **URL \*** (Required)
-    * Your ServiceNow instance URL (e.g., `yourinstance.service-now.com`).
-    * Do not include `https://` — just the hostname.
+![Add ServiceNow Account](../../../static/img/servicenow_form.png)
 
-* **Username \*** (Required)
-    * A ServiceNow user account with permissions to create and update incidents.
+   - **Name** — a unique name to identify this ServiceNow account configuration (e.g., `Production ServiceNow`).
+   - **Instance URL** — your ServiceNow instance URL (e.g., `https://your-instance.service-now.com`).
+   - **Username** — a ServiceNow user account with permissions to create and update incidents.
+   - **Password** — the password for the ServiceNow user account. This value is stored encrypted in NudgeBee.
+   - **Sync Knowledge Base** — enable this checkbox to sync your ServiceNow Knowledge Base articles into NudgeBee for AI-assisted troubleshooting.
 
-* **Password \*** (Required)
-    * The password for the ServiceNow user account.
-    * This value is stored encrypted in NudgeBee.
+4. Click **Save**.
 
-* **Authentication Type**
-    * The authentication method to use. Default: `token`.
-
-* **Sync Knowledge Base**
-    * Enable this to sync your ServiceNow knowledge base articles into NudgeBee for AI-assisted troubleshooting.
-
-<!-- ![ServiceNow configuration form](../../../static/img/servicenow_form.png) -->
-
-**Credential validation**: on save, NudgeBee tests the connection by querying the incident table. If authentication fails, verify your URL, username, and password are correct.
+**Credential validation**: on save, NudgeBee tests the connection by querying the incident table. If authentication fails, verify your instance URL, username, and password are correct.
 
 ---
 
-## Capabilities
+## Step 2: Create Incidents from NudgeBee
+
+Incidents can be created from NudgeBee in two ways:
+
+- **Automatically** — from events, alerts, or autopilot runbook actions.
+- **Manually** — from the NudgeBee event detail view by clicking the ticket icon and selecting **ServiceNow**.
+
+Each incident includes:
+- A **short description** derived from the event title.
+- A **detailed description** with full event context.
+- **Urgency** set based on the event priority.
+
+---
+
+## How It Works
+
+### Capabilities
 
 Once configured, NudgeBee can perform the following operations with ServiceNow:
 
@@ -75,25 +81,9 @@ Once configured, NudgeBee can perform the following operations with ServiceNow:
 | Medium | 2 - Medium |
 | Low | 3 - Low |
 
----
+### Knowledge Base Sync
 
-## Knowledge Base Sync
-
-When **Sync Knowledge Base** is enabled, NudgeBee imports your ServiceNow knowledge base articles. These articles are then used by the AI engine to provide context-aware troubleshooting recommendations based on your organization's documented procedures and solutions.
-
----
-
-## Creating Incidents
-
-Incidents can be created from NudgeBee in two ways:
-
-- **Automatically** — from events, alerts, or autopilot runbook actions
-- **Manually** — from the NudgeBee event detail view by clicking the ticket icon
-
-Each incident includes:
-- A short description derived from the event title
-- A detailed description with full event context
-- Urgency set based on the event priority
+When **Sync Knowledge Base** is enabled, NudgeBee imports your ServiceNow Knowledge Base articles. These articles are then used by the AI engine to provide context-aware troubleshooting recommendations based on your organization's documented procedures and solutions.
 
 ---
 
@@ -106,8 +96,11 @@ Each incident includes:
 
 ---
 
-## Notes
+## Troubleshooting
 
-- ServiceNow integration is focused on the **incident** table. Other ServiceNow tables (change requests, problems, etc.) are not currently supported.
-- Work notes are used for comments (internal notes visible to IT staff), not customer-facing comments.
-- The auto-generated incident URL uses the `sys_id` for direct linking back to ServiceNow.
+| Issue | Resolution |
+|-------|------------|
+| Authentication fails on save | Verify your instance URL, username, and password are correct. Ensure the user has permissions to query the incident table. |
+| Incidents not being created | Confirm the ServiceNow integration is active and the user account has `incident_create` permissions. |
+| Knowledge Base articles not syncing | Ensure the **Sync Knowledge Base** checkbox is enabled and the user has read access to the Knowledge Base tables. |
+| Work notes not appearing | Verify the user account has permissions to update incidents and add work notes. |

@@ -32,7 +32,7 @@ If you installed via the shell script, you can re-run it to upgrade to the lates
 
 ```bash
 wget -O installation.sh \
-  https://raw.githubusercontent.com/nudgebee/k8s-agent/main/installation.sh
+  https://raw.githubusercontent.com/nudgebee/k8s-agent/refs/heads/prod/installation.sh
 chmod +x installation.sh
 ./installation.sh -a <NUDBGEE_AUTH_KEY>
 ```

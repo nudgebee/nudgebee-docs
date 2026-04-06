@@ -40,7 +40,7 @@ Save any custom manifests or secrets you applied manually.
 ---
 ## 2. Helm Registry Login
 ```shell
-helm registry login https://registry.nudgebee.com --username nudgebee --password $NUDGEBEE_LICENSE_KEY
+helm registry login registry.nudgebee.com --username nudgebee --password $NUDGEBEE_LICENSE_KEY
 ```
 
 ---
@@ -78,5 +78,5 @@ If upgrades failed ie. helm timeouts, then review the following steps and after 
 
 ---
 
-For more details, refer to the [Installation Guide](../installation).
+For more details, refer to the [Installation Guide](../index.md).
 

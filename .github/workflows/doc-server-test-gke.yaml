@@ -28,7 +28,7 @@ jobs:
         fetch-depth: 0
     - uses: actions/setup-node@v3
       with:
-        node-version: 18
+        node-version: 22
         cache: 'npm'
         cache-dependency-path: ./doc-server/package-lock.json
 
@@ -93,7 +93,7 @@ jobs:
       working-directory: ./doc-server
       run: |-
         IMAGE_TAG=$(date +'%Y-%m-%dT%H-%M-%S')_$GITHUB_SHA
-        docker build -t 864186153326.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs-test:$IMAGE_TAG .
+        docker build --build-arg SITE_URL=https://docs.test.nudgebee.pollux.in/ -t 864186153326.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs-test:$IMAGE_TAG .
         docker push 864186153326.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs-test:$IMAGE_TAG
         echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 

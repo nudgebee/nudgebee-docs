@@ -29,6 +29,9 @@ CMD ["npm", "start"]
 FROM base as production
 WORKDIR /home/node/app
 COPY --from=development /home/node/app/node_modules /home/node/app/node_modules
+# Set the site URL for the Docusaurus build
+ARG SITE_URL=https://docs.nudgebee.com/
+ENV SITE_URL=$SITE_URL
 # Build the Docusaurus app
 RUN npm run build --legacy-peer-deps
 
