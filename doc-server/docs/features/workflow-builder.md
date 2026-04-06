@@ -6,7 +6,9 @@ sidebar_position: 6
 
 ## Overview
 
-The Workflow Builder lets you create, manage, and run automated multi-step processes using a visual drag-and-drop editor. You can chain together tasks like running scripts, querying cloud resources, sending notifications, and more - all without writing code. Workflows can be triggered manually, on a schedule, via webhook, or in response to events.
+The Workflow Builder — part of NudgeBee's **AI-Agentic Workflow Engine** — lets you create, manage, and run automated multi-step processes using a visual drag-and-drop editor. You can chain together tasks like running scripts, querying cloud resources, sending notifications, and more — all without writing code. Workflows can be triggered manually, on a schedule, via webhook, or in response to events.
+
+Choose between **rule-based workflows** for deterministic automation or **agentic modes** that leverage NudgeBee's [pre-built AI agents](./ai/AI.md) for intelligent, context-aware operations — with **human-in-loop approvals** as an enterprise guardrail to keep you in control.
 
 <div style={{position: "relative", paddingBottom: "56.25%", height: 0}}>
   <video width="100%" controls style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}>

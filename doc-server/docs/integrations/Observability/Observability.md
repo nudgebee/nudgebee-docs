@@ -1,8 +1,24 @@
 # Observability Platform
 
-NudgeBee's **Observability Platform** acts as a unified troubleshooting layer that connects to your existing observability tools — such as Prometheus, Grafana, Elastic, Datadog, New Relic, or Azure Monitor — to bring together **logs, metrics, and traces** for faster issue diagnosis and intelligent insights.
+NudgeBee's Observability Platform connects to your existing monitoring and observability tools — such as Prometheus, Grafana, Elastic, Datadog, New Relic, or Azure Monitor — to bring together logs, metrics, and traces for faster issue diagnosis and intelligent insights.
 
-Instead of replacing your current observability stack, NudgeBee integrates with it to **centralize context**, **automate analysis**, and **enhance incident response** using AI and LLM-powered reasoning.
+NudgeBee does not replace your current observability stack. Instead, it integrates with it to centralize context, automate analysis, and enhance incident response using AI and LLM-powered reasoning.
+
+:::caution
+Connecting at least one observability source is **required** for NudgeBee to function. Without this, core features like troubleshooting, SLO tracking, alerting, and AI-powered analysis will not work.
+:::
+
+### When Do You Need This?
+
+You need this integration as part of your initial NudgeBee setup. Connect your observability tools so NudgeBee can:
+
+- Pull metrics to power the [Knowledge Graph](../../features/knowledge-graph.md) and [Optimizations](../../features/optimizations.md).
+- Access logs and traces for [AI-powered troubleshooting](../../features/troubleshooting/troubleshooting.md).
+- Monitor [SLOs](../../features/slo.md) and trigger alerts when thresholds are breached.
+
+:::tip
+You can connect multiple observability tools simultaneously. For example, use Prometheus for metrics, ELK for logs, and Jaeger for traces.
+:::
 
 ---
 
