@@ -381,4 +381,4 @@ Your NudgeBee server is running. Here is what to do next:
 
 1. **[Install the NudgeBee Agent](/docs/installation/agent/installation/)** on each Kubernetes cluster you want to monitor — this is how NudgeBee gets visibility into your workloads.
 2. **[Configure Integrations](/docs/integrations/)** — connect your observability tools, notification channels, and LLM provider to unlock the full platform.
-3. **[Explore the Getting Started Guide](/docs/features/#quick-start-the-fastest-way-to-get-started)** — see the recommended setup order and what to do after your first login.
+3. **[Explore the Getting Started Guide](/docs/features/)** — see the recommended setup order and what to do after your first login.

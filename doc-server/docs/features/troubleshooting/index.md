@@ -8,13 +8,13 @@ NudgeBee's troubleshooting dashboard gives you a real-time view of events, error
 ### What You Can Do Here
 
 - **Monitor real-time events** — See pod crashes, OOM kills, deployment failures, and other Kubernetes events as they happen.
-- **AI-powered root cause analysis with NuBi** — When an [LLM is connected](../../integrations/LLM/), NuBi (the SRE AI Agent) and NudgeBee's [pre-built AI agents](../ai/AI.md) automatically analyze incidents, correlate signals across the Semantic Knowledge Graph, and suggest root causes in plain language.
+- **AI-powered root cause analysis with NuBi** — When an [LLM is connected](../../integrations/LLM/), NuBi (the SRE AI Agent) and NudgeBee's [pre-built AI agents](../ai/) automatically analyze incidents, correlate signals across the Semantic Knowledge Graph, and suggest root causes in plain language.
 - **Explore the Semantic Knowledge Graph** — Visualize your infrastructure dependencies and trace how issues propagate across services. See [Semantic Knowledge Graph](../knowledge-graph.md).
 - **Configure alerting rules** — Set up custom alerting rules to get notified when specific conditions are met. See [Alerting](./alerting.md).
 - **Use playbooks** — Apply predefined troubleshooting playbooks for common scenarios. See [Playbook Catalog](./playbook-catalog.md).
 
 :::info
-**Prerequisites**: To use troubleshooting features, you need at least one [Kubernetes cluster connected](../../installation/agent/installation/installation.md) and an [observability source integrated](../../integrations/Observability/). For AI-powered analysis, an [LLM connection](../../integrations/LLM/) is also needed.
+**Prerequisites**: To use troubleshooting features, you need at least one [Kubernetes cluster connected](../../installation/agent/installation/) and an [observability source integrated](../../integrations/Observability/). For AI-powered analysis, an [LLM connection](../../integrations/LLM/) is also needed.
 :::
 
 ### Watch a Walkthrough

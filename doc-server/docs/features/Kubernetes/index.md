@@ -6,7 +6,7 @@ sidebar_position: 1
 The Kubernetes section provides a centralized view of all your connected Kubernetes clusters, workloads, pods, and nodes. From here you can monitor cluster health, explore workload details, and connect new clusters.
 
 :::info
-**Prerequisite**: At least one Kubernetes cluster must be connected via the [NudgeBee Agent](../../installation/agent/installation/installation.md) or through a [cloud account](../Cloud/AWS.md).
+**Prerequisite**: At least one Kubernetes cluster must be connected via the [NudgeBee Agent](../../installation/agent/installation/) or through a [cloud account](../Cloud/AWS.md).
 :::
 
 ### Watch a Walkthrough

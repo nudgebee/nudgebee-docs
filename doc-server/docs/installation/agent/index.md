@@ -17,13 +17,13 @@ If you connected a cloud account (AWS, Azure, or GCP), NudgeBee can auto-discove
 
 ### What You Will Find in This Section
 
-- **[Installation](./installation/installation.md)** — Step-by-step guide to deploy the agent using Helm, including prerequisites and system requirements. Typically takes 5–10 minutes per cluster.
+- **[Installation](./installation/)** — Step-by-step guide to deploy the agent using Helm, including prerequisites and system requirements. Typically takes 5–10 minutes per cluster.
 - **[Helm Values](./installation/helm_values.md)** — Complete reference for agent Helm chart configuration values.
 - **[Upgrade](./installation/upgrade.md)** — How to upgrade an existing agent to a newer version.
-- **[Kubernetes Provider Setup](./installation/k8s-provider/k8s-provider.md)** — Provider-specific instructions for GKE, AKS, and other managed Kubernetes services.
-- **[Logging Integration](./installation/logging/logging.md)** — Connect log sources (ELK, Loki, SignalFx, etc.) to the agent.
-- **[Tracing Integration](./installation/tracing/tracing.md)** — Connect tracing backends (ClickHouse, GCP) for distributed tracing.
-- **[Proxy Agent](./proxy-agent/overview.md)** — Deploy agents through a proxy for restricted or air-gapped environments.
+- **[Kubernetes Provider Setup](./installation/k8s-provider/)** — Provider-specific instructions for GKE, AKS, and other managed Kubernetes services.
+- **[Logging Integration](./installation/logging/)** — Connect log sources (ELK, Loki, SignalFx, etc.) to the agent.
+- **[Tracing Integration](./installation/tracing/)** — Connect tracing backends (ClickHouse, GCP) for distributed tracing.
+- **[Proxy Agent](../proxy-agent/)** — Deploy agents through a proxy for restricted or air-gapped environments.
 - **[Local Setup](./local-setup.md)** — Run NudgeBee locally for development and testing.
 - **[On-Prem Setup](./onprem-setup.md)** — Additional configuration for air-gapped or on-premises environments.
 

@@ -25,7 +25,7 @@ NudgeBee includes four purpose-built AI assistants, each focused on a specific d
 
 ## Specialized Agents
 
-Under the hood, NudgeBee's AI assistants use a modular set of specialized agents that you can also invoke directly through the [Workflow Builder](../workflow-builder.md):
+Under the hood, NudgeBee's AI assistants use a modular set of specialized agents that you can also invoke directly through the [Workflow Builder](../workflow-builder/):
 
 - **Log Analysis Agent** — Analyzes application and infrastructure logs to identify errors, patterns, and anomalies.
 - **Kubectl Agent** — Executes and interprets Kubernetes commands for cluster inspection and management.

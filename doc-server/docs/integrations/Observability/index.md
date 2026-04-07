@@ -13,7 +13,7 @@ Connecting at least one observability source is **required** for NudgeBee to fun
 You need this integration as part of your initial NudgeBee setup. Connect your observability tools so NudgeBee can:
 
 - Pull metrics to power the [Knowledge Graph](../../features/knowledge-graph.md) and [Optimizations](../../features/optimizations.md).
-- Access logs and traces for [AI-powered troubleshooting](../../features/troubleshooting/troubleshooting.md).
+- Access logs and traces for [AI-powered troubleshooting](../../features/troubleshooting/).
 - Monitor [SLOs](../../features/slo.md) and trigger alerts when thresholds are breached.
 
 :::tip

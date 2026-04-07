@@ -14,7 +14,7 @@ The Semantic Knowledge Graph is NudgeBee's intelligence layer — it goes beyond
 - **Visualize dependencies** - See service-to-service communication and infrastructure topology at a glance
 - **Understand connections** - Trace how resources connect across different cloud accounts
 - **Impact analysis** - Identify what depends on a resource before making changes
-- **Power AI troubleshooting** - The Semantic Knowledge Graph feeds context to [NuBi and the pre-built AI agents](./ai/AI.md), enabling faster and more accurate root cause analysis
+- **Power AI troubleshooting** - The Semantic Knowledge Graph feeds context to [NuBi and the pre-built AI agents](../ai/), enabling faster and more accurate root cause analysis
 
 ## Getting Started
 

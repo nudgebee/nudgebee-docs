@@ -13,7 +13,7 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 :::info
 **Cloud SaaS users**: You only need to install the agent — the server is managed for you. Generate your agent auth key at [app.nudgebee.com](https://app.nudgebee.com) and skip straight to [Install the Agent](#2-install-the-agent).
 
-**Self-hosted users**: Make sure the [NudgeBee Server is installed](../../server/installation.md) first. You will need the Relay Server URL and Collector Server URL from your server setup — see [Self-Hosted Configuration](#4-for-self-hosted-nudgebee).
+**Self-hosted users**: Make sure the [NudgeBee Server is installed](../../server/) first. You will need the Relay Server URL and Collector Server URL from your server setup — see [Self-Hosted Configuration](#4-for-self-hosted-nudgebee).
 :::
 
 ### Watch the Walkthrough
@@ -179,7 +179,7 @@ kubectl logs -n nudgebee-agent -l app=nudgebee-runner
 If you are running a self-hosted NudgeBee instance, the agent needs to know where your server is. Instead of the `--set` flags in the SaaS installation, create a `values.yaml` file that points to your server's Relay and Collector URLs.
 
 :::info
-**Where do I find these URLs?** You configured them during [Server Installation](/docs/installation/server/installation/).
+**Where do I find these URLs?** You configured them during [Server Installation](/docs/installation/server/).
 - **Without Ingress**: `ws://relay-server.nudgebee.svc:8080` and `http://k8s-collector.nudgebee.svc`
 - **With Ingress**: `wss://relay.yourcompany.com` and `https://collector.yourcompany.com`
 :::
@@ -255,9 +255,9 @@ This disables WebSocket connections and configures the agent to accept HTTP conn
 
 - **[Helm Values Reference](./helm_values.md)** — Complete list of all configurable values for the agent Helm chart.
 - **[Node Agent Configuration](./node-agent-configs.md)** — Fine-tune the eBPF-based node agent.
-- **[Kubernetes Provider Setup](./k8s-provider/k8s-provider.md)** — Provider-specific instructions for GKE, AKS, and other managed Kubernetes services.
-- **[Logging Integration](./logging/logging.md)** — Connect log sources (ELK, Loki, etc.) to the agent.
-- **[Tracing Integration](./tracing/tracing.md)** — Connect tracing backends for distributed tracing.
+- **[Kubernetes Provider Setup](./k8s-provider/)** — Provider-specific instructions for GKE, AKS, and other managed Kubernetes services.
+- **[Logging Integration](./logging/)** — Connect log sources (ELK, Loki, etc.) to the agent.
+- **[Tracing Integration](./tracing/)** — Connect tracing backends for distributed tracing.
 - **[Upgrade Guide](./upgrade.md)** — How to upgrade an existing agent to a newer version.
 
 ---
@@ -269,4 +269,4 @@ Your agent is installed and sending data to NudgeBee. Here is what to do next:
 1. **[Connect an observability source](/docs/integrations/Observability/)** — Connect Prometheus, Datadog, New Relic, or other monitoring tools for metrics, logs, and traces.
 2. **[Set up notifications](/docs/integrations/Notifications/)** — Connect Slack, Teams, or Google Chat to receive alerts.
 3. **[Connect an LLM provider](/docs/integrations/LLM/)** — Enable NuBi and AI-powered troubleshooting (SaaS users already have this).
-4. **[Explore the Getting Started Guide](/docs/features/#quick-start-the-fastest-way-to-get-started)** — See what to do after your first login.
+4. **[Explore the Getting Started Guide](/docs/features/)** — See what to do after your first login.

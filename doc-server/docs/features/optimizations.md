@@ -6,11 +6,11 @@ sidebar_position: 5
 NudgeBee's **FinOps AI-Assistant** continuously analyzes your Kubernetes workloads to help you **lower cloud costs** and improve performance. It generates actionable recommendations including resource right-sizing (CPU and memory), scaling adjustments, security best practices, and infrastructure cleanup opportunities — purpose-built for Cloud Ops complexity, not generic cost analysis.
 
 :::info
-**Prerequisites**: At least one [Kubernetes cluster](../installation/agent/installation/installation.md) must be connected. Optimization recommendations are generated automatically based on observed resource utilization over time.
+**Prerequisites**: At least one [Kubernetes cluster](../../installation/agent/installation/) must be connected. Optimization recommendations are generated automatically based on observed resource utilization over time.
 :::
 
 :::tip
-To automatically apply optimization recommendations without manual approval, configure [Autopilot Auto-Optimize](./autopilot/auto_optimize/auto_optimize.md). To have NudgeBee raise pull requests with the recommended changes, connect a [GitHub](../integrations/GitHub/github-integration.md) or [GitLab](../integrations/GitLab/gitlab-integration.md) repository.
+To automatically apply optimization recommendations without manual approval, configure [Autopilot Auto-Optimize](../autopilot/auto_optimize/). To have NudgeBee raise pull requests with the recommended changes, connect a [GitHub](../integrations/Code%20Repository/GitHub/github-integration.md) or [GitLab](../integrations/Code%20Repository/GitLab/gitlab-integration.md) repository.
 :::
 
 ### Watch a Walkthrough

@@ -3,7 +3,7 @@ sidebar_position: 4
 ---
 # Autopilot
 
-Autopilot enables automated, self-healing operations for your Kubernetes clusters using NudgeBee's 30+ pre-built Cloud-Ops Agents. Instead of manually responding to every alert, you can configure automated runbooks that detect issues and take corrective action — like restarting a pod, scaling a workload, or creating a ticket — powered by [NuBi and the pre-built AI agents](../ai/AI.md) with human-in-loop approvals for safety.
+Autopilot enables automated, self-healing operations for your Kubernetes clusters using NudgeBee's 30+ pre-built Cloud-Ops Agents. Instead of manually responding to every alert, you can configure automated runbooks that detect issues and take corrective action — like restarting a pod, scaling a workload, or creating a ticket — powered by [NuBi and the pre-built AI agents](../ai/) with human-in-loop approvals for safety.
 
 ### Why Use Autopilot?
 
@@ -15,7 +15,7 @@ Autopilot enables automated, self-healing operations for your Kubernetes cluster
 
 Autopilot is **optional** but highly valuable once you have the basics set up. You should configure Autopilot after:
 
-1. Your Kubernetes clusters are [connected](../../installation/agent/installation/installation.md) and monitored.
+1. Your Kubernetes clusters are [connected](../../installation/agent/installation/) and monitored.
 2. An [observability source](../../integrations/Observability/) is integrated.
 3. An [LLM](../../integrations/LLM/) is connected (required for AI-driven runbooks).
 
@@ -25,8 +25,8 @@ Autopilot actions are fully auditable. Every automated action is logged with wha
 
 ### What You Will Find in This Section
 
-- **[Auto-Optimize](./auto_optimize/auto_optimize.md)** — Automatically apply optimization recommendations (resource right-sizing, scaling adjustments) without manual approval.
-- **[Auto-Runbook](./auto_runbook/auto_runbook.md)** — Create automated runbooks that trigger on specific events. Available runbook actions include:
+- **[Auto-Optimize](./auto_optimize/)** — Automatically apply optimization recommendations (resource right-sizing, scaling adjustments) without manual approval.
+- **[Auto-Runbook](./auto_runbook/)** — Create automated runbooks that trigger on specific events. Available runbook actions include:
   - [Create Ticket](./auto_runbook/create_ticket.md) — Automatically create tickets in your connected ticketing system.
   - [Delete Pod Gracefully](./auto_runbook/delete_pod_gracefully.md) — Safely terminate and restart problematic pods.
   - [Execute Bash Script](./auto_runbook/execute_bash.md) — Run custom shell scripts in response to events.
