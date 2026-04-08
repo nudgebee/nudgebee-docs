@@ -51,7 +51,7 @@ These are not required to get NudgeBee running, but they improve the production 
 | **SSL / DNS / Ingress** | Public URL access, Slack apps, webhook triggers, magic link login | Access via `kubectl port-forward` only |
 | **External Postgres** | Use your own managed database for easier backup and scaling | NudgeBee bundles its own Postgres automatically |
 | **Email (SMTP)** | Daily summary reports and magic link authentication | Users log in via SSO or admin invite only |
-| **LLM provider** | AI-powered troubleshooting, NuBi agent, automated runbooks | Configure after installation — see [LLM Integrations](../../../integrations/LLM/index.md) |
+| **LLM provider** | AI-powered troubleshooting, NuBi agent, automated runbooks | Configure after installation — see [LLM Integrations](../../integrations/LLM/index.md) |
 
 ### Network Requirements
 
@@ -380,5 +380,5 @@ This removes all NudgeBee components and data. Make sure to back up any data you
 Your NudgeBee server is running. Here is what to do next:
 
 1. **[Install the NudgeBee Agent](../agent/installation/index.md)** on each Kubernetes cluster you want to monitor — this is how NudgeBee gets visibility into your workloads.
-2. **[Configure Integrations](../../../integrations/index.md)** — connect your observability tools, notification channels, and LLM provider to unlock the full platform.
-3. **[Explore the Getting Started Guide](../../../features/index.md)** — see the recommended setup order and what to do after your first login.
+2. **[Configure Integrations](../../integrations/index.md)** — connect your observability tools, notification channels, and LLM provider to unlock the full platform.
+3. **[Explore the Getting Started Guide](../../features/index.md)** — see the recommended setup order and what to do after your first login.
