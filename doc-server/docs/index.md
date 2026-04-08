@@ -35,8 +35,8 @@ NudgeBee has two components, both packaged as Helm charts that deploy natively o
 
 | Component | What it does | Who installs it |
 |---|---|---|
-| **[NudgeBee Server](./installation/server/)** | The control plane — hosts the UI, Semantic Knowledge Graph, AI agents, and workflow engine. | **Self-hosted users only.** Cloud SaaS users skip this — NudgeBee hosts it for you. |
-| **[NudgeBee Agent](./installation/agent/installation/)** | Lightweight collector that runs inside each cluster you want to monitor. Collects workload data and sends it to the server. | **Everyone** — both SaaS and self-hosted users. |
+| **[NudgeBee Server](./installation/server/index.md)** | The control plane — hosts the UI, Semantic Knowledge Graph, AI agents, and workflow engine. | **Self-hosted users only.** Cloud SaaS users skip this — NudgeBee hosts it for you. |
+| **[NudgeBee Agent](./installation/agent/installation/index.md)** | Lightweight collector that runs inside each cluster you want to monitor. Collects workload data and sends it to the server. | **Everyone** — both SaaS and self-hosted users. |
 
 :::info
 **Self-hosted users**: You need a dedicated Kubernetes cluster (or namespace) to run the NudgeBee Server before connecting your monitored clusters. See the [Server Installation Guide](./installation/server/) for requirements — typically a 2-node cluster with 16 GB RAM and 4 cores per node is sufficient for up to 400 monitored nodes.
@@ -46,11 +46,11 @@ Once the server is running (or you have signed up for SaaS), there are two ways 
 
 ### Option 1: Connect a Cloud Account — Fastest Way to Start
 
-Connect your cloud account ([AWS](./features/Cloud/AWS.md), [Azure](./features/Cloud/Azure.md), or [GCP](./features/Cloud/GCP.md)) and NudgeBee automatically discovers all Kubernetes clusters mapped to that account. You get immediate visibility across your entire cloud infrastructure — no need to install anything on individual clusters upfront.
+Connect your cloud account ([AWS](./Cloud/AWS.md), [Azure](./Cloud/Azure.md), or [GCP](./Cloud/GCP.md)) and NudgeBee automatically discovers all Kubernetes clusters mapped to that account. You get immediate visibility across your entire cloud infrastructure — no need to install anything on individual clusters upfront.
 
 ### Option 2: Install the Agent Directly on a Cluster
 
-Install the [NudgeBee Agent](./installation/agent/installation/) directly into each Kubernetes cluster you want to monitor. The agent is a lightweight Helm chart that takes about 5 minutes to deploy. It collects detailed workload data and sends it to the NudgeBee server for deep monitoring, cost analysis, and AI-powered troubleshooting.
+Install the [NudgeBee Agent](./installation/agent/installation/index.md) directly into each Kubernetes cluster you want to monitor. The agent is a lightweight Helm chart that takes about 5 minutes to deploy. It collects detailed workload data and sends it to the NudgeBee server for deep monitoring, cost analysis, and AI-powered troubleshooting.
 
 :::tip
 **Not sure which to pick?** If you have multiple clusters across cloud accounts, start with the cloud account connection for instant discovery. You can always install agents on specific clusters later for deeper monitoring and automation capabilities.
@@ -80,15 +80,15 @@ NudgeBee ships with 30+ pre-built Cloud-Ops Agents and 30+ integrations. Capabil
 
 | Integration | What It Unlocks | Required? |
 |---|---|---|
-| **[Kubernetes cluster](./installation/agent/installation/)** or **[Cloud account](./features/Cloud/AWS.md)** | Core monitoring, [Semantic Knowledge Graph](./features/knowledge-graph.md), [cost optimizations](./features/optimizations.md) | **Required** (one of the two) |
-| **[Observability source](./integrations/Observability/)** (Prometheus, Datadog, New Relic, etc.) | Metrics, [SLOs](./features/slo.md), alerting, [troubleshooting](./features/troubleshooting/) | **Required** |
-| **[LLM connection](./integrations/LLM/)** | NuBi AI agent, AI-powered troubleshooting, pre-built agents, [auto-runbooks](./features/autopilot/auto_runbook/) | Recommended |
-| **[IM channel](./integrations/Notifications/)** (Slack, Teams, Google Chat) | [Notifications](./features/notifications.md), interactive alerts, ChatOps | Recommended |
+| **[Kubernetes cluster](./installation/agent/installation/index.md)** or **[Cloud account](./Cloud/index.md)** | Core monitoring, [Semantic Knowledge Graph](./knowledge-graph.md), [cost optimizations](./optimizations.md) | **Required** (one of the two) |
+| **[Observability source](../integrations/Observability/index.md)** (Prometheus, Datadog, New Relic, etc.) | Metrics, [SLOs](./slo.md), alerting, [troubleshooting](./troubleshooting/index.md) | **Required** |
+| **[LLM connection](../integrations/LLM/index.md)** | NuBi AI agent, AI-powered troubleshooting, pre-built agents, [auto-runbooks](./autopilot/auto_runbook.md) | Recommended |
+| **[IM channel](../integrations/Notifications/index.md)** (Slack, Teams, Google Chat) | [Notifications](./notifications.md), interactive alerts, ChatOps | Recommended |
 | **Email** | Email notifications and daily reports | Optional |
-| **[GitHub](./integrations/Code%20Repository/GitHub/github-integration.md)** / **[GitLab](./integrations/Code%20Repository/GitLab/gitlab-integration.md)** | Auto-PRs for optimization recommendations, code-level troubleshooting | Optional |
-| **[CI/CD system](./integrations/CICD/argocd-integration.md)** (ArgoCD) | Deployment change correlation, rollback insights | Optional |
-| **[Ticketing system](./integrations/Tickets/)** (Jira, ServiceNow, PagerDuty, GitHub Issues, GitLab Issues) | Ticket creation, auto-responses, similar-issue search, runbook references | Optional |
-| **[Authentication provider](./integrations/Authentication/)** | SSO / SAML integration (on-prem only) | Optional |
+| **[GitHub](../integrations/Code%20Repository/GitHub/github-integration.md)** / **[GitLab](../integrations/Code%20Repository/GitLab/gitlab-integration.md)** | Auto-PRs for optimization recommendations, code-level troubleshooting | Optional |
+| **[CI/CD system](../integrations/CICD/argocd-integration.md)** (ArgoCD) | Deployment change correlation, rollback insights | Optional |
+| **[Ticketing system](../integrations/Tickets/index.md)** (Jira, ServiceNow, PagerDuty, GitHub Issues, GitLab Issues) | Ticket creation, auto-responses, similar-issue search, runbook references | Optional |
+| **[Authentication provider](../integrations/Authentication/index.md)** | SSO / SAML integration (on-prem only) | Optional |
 
 ---
 
@@ -98,12 +98,12 @@ Follow these steps to go from zero to a working NudgeBee setup. The path differs
 
 | Step | Cloud SaaS | Self-Hosted |
 |---|---|---|
-| **1. Get access** | [Sign up at app.nudgebee.com](https://app.nudgebee.com) — no installation needed, you are ready in seconds. | [Install the NudgeBee Server](./installation/server/) on a Kubernetes cluster. Takes 15–30 minutes. |
-| **2. Connect your clusters** | [Install the Agent](./installation/agent/installation/) on each cluster, or [connect a cloud account](./features/Cloud/AWS.md) for auto-discovery. | Same — [install the Agent](./installation/agent/installation/) or [connect a cloud account](./features/Cloud/AWS.md). |
-| **3. Connect observability** | Connect your existing monitoring tools (Prometheus, Datadog, New Relic, etc.). See [Observability Integrations](./integrations/Observability/). | Same — connect your monitoring tools. |
-| **4. Enable AI** | Already included — a managed LLM is provided. Nothing to configure. | [Connect an LLM provider](./integrations/LLM/) (BYOM) to enable NuBi and AI-powered troubleshooting. |
-| **5. Set up notifications** | Connect [Slack](./integrations/Notifications/slack.md), [Teams](./integrations/Notifications/msteams.md), or [Google Chat](./integrations/Notifications/google_chat.md). | Same — connect your messaging tool. |
-| **6. Explore** | You are ready! Check [Optimizations](./features/optimizations.md), [Troubleshooting](./features/troubleshooting/), and the [Semantic Knowledge Graph](./features/knowledge-graph.md). | Same — start exploring the dashboard. |
+| **1. Get access** | [Sign up at app.nudgebee.com](https://app.nudgebee.com) — no installation needed, you are ready in seconds. | [Install the NudgeBee Server](./installation/server/index.md) on a Kubernetes cluster. Takes 15–30 minutes. |
+| **2. Connect your clusters** | [Install the Agent](./installation/agent/installation/index.md) on each cluster, or [connect a cloud account](./Cloud/index.md) for auto-discovery. | Same — [install the Agent](./installation/agent/installation/index.md) or [connect a cloud account](./Cloud/index.md). |
+| **3. Connect observability** | Connect your existing monitoring tools (Prometheus, Datadog, New Relic, etc.). See [Observability Integrations](../integrations/Observability/index.md). | Same — connect your monitoring tools. |
+| **4. Enable AI** | Already included — a managed LLM is provided. Nothing to configure. | [Connect an LLM provider](../integrations/LLM/index.md) (BYOM) to enable NuBi and AI-powered troubleshooting. |
+| **5. Set up notifications** | Connect [Slack](../integrations/Notifications/slack.md), [Teams](../integrations/Notifications/msteams.md), or [Google Chat](../integrations/Notifications/google_chat.md). | Same — connect your messaging tool. |
+| **6. Explore** | You are ready! Check [Optimizations](./optimizations.md), [Troubleshooting](./troubleshooting/index.md), and the [Semantic Knowledge Graph](./knowledge-graph.md). | Same — start exploring the dashboard. |
 
 :::tip
 Steps 3–5 can be done in any order. Each integration adds capabilities independently — you do not need to complete everything before you start seeing value.
@@ -145,9 +145,9 @@ Once you are logged in, here is what to explore first:
 
 2. **Resolve incidents faster with AI** — Navigate to **Troubleshoot** to see real-time events across your clusters. If an LLM is connected, NuBi (the SRE AI Agent) can analyze incidents and suggest root causes in plain language — reducing your MTTR from hours to minutes.
 
-3. **Get alerted on what matters** — Configure a [notification channel](./integrations/Notifications/) (Slack, Teams, or Google Chat) so your team receives alerts for critical events, anomalies, and optimization opportunities without needing to check the dashboard.
+3. **Get alerted on what matters** — Configure a [notification channel](../integrations/Notifications/index.md) (Slack, Teams, or Google Chat) so your team receives alerts for critical events, anomalies, and optimization opportunities without needing to check the dashboard.
 
-4. **Automate repetitive operations** — Use the [Workflow Builder](./features/workflow-builder/) (AI-Agentic Workflow Engine) to automate common tasks like health checks, scaling, or incident response in minutes. Choose from rule-based workflows or agentic modes with human-in-loop approvals — no coding required.
+4. **Automate repetitive operations** — Use the [Workflow Builder](./workflow-builder/index.md) (AI-Agentic Workflow Engine) to automate common tasks like health checks, scaling, or incident response in minutes. Choose from rule-based workflows or agentic modes with human-in-loop approvals — no coding required.
 
 5. **Understand your infrastructure at a glance** — Navigate to **Troubleshoot > Knowledge Graph** to see how all your services, workloads, and dependencies connect. The Semantic Knowledge Graph correlates logs, metrics, traces, and code into a single visual map — it populates automatically once a cluster or cloud account is connected.
 
