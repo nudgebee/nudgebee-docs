@@ -12,7 +12,7 @@ NudgeBee does not store passwords. All authentication is handled through SSO pro
 :::
 
 ## Authentication
-- Supports Google, Azure, Okta, and Auth0 for Single Sign-On (SSO). To configure SSO for on-prem, see [Authentication Integration](../../integrations/Authentication/index.md).
+- Supports Google, Azure, Okta, and Auth0 for Single Sign-On (SSO). To configure SSO for on-prem, see [Authentication Integration](../integrations/Authentication/index.md).
 - Users without SSO can use **magic email links** — enter your email and receive a one-time login link. No password required.
 - Credentials for external integrations are stored encrypted using AES with GCM.
 
