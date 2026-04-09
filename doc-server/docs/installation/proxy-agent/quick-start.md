@@ -94,21 +94,27 @@ Replace `<RELAY_URL>`, `<ACCESS_KEY>`, and `<ACCESS_SECRET>` with the values fro
 
 ## Step 3: Verify the Agent is Connected
 
-**Linux:**
+**Linux** — stream logs to confirm the agent connected:
 ```bash
 journalctl -u nudgebee-forager -f
 ```
-
-**Windows:**
-```powershell
-Get-Service NudgebeeForager
-```
-
-Either way, you should see the agent connect:
+You should see:
 ```
 {"level":"INFO","msg":"starting forager"}
 {"level":"INFO","msg":"connected to relay, greeting sent"}
 ```
+
+**Windows** — check the service is running:
+```powershell
+Get-Service NudgebeeForager
+```
+Expected output:
+```
+Status   Name               DisplayName
+------   ----               -----------
+Running  NudgebeeForager    Nudgebee Forager
+```
+To see the actual log output on Windows, run the binary directly in a PowerShell window — see [Troubleshooting: Windows Service](./troubleshooting.md#windows-service-issues).
 
 In the NudgeBee UI, the agent should appear on the Proxy Agent accounts page.
 

@@ -101,9 +101,10 @@ The agent can't reach the database. Check network connectivity from the agent ho
    ```bash
    journalctl -u nudgebee-forager --tail 50
    ```
-   **Windows:**
+   **Windows** — `Get-Service` only shows status, not logs. To see actual log output, stop the service and run the binary directly in a PowerShell window:
    ```powershell
-   Get-Service NudgebeeForager
+   Stop-Service NudgebeeForager
+   & "C:\Program Files\Nudgebee\nudgebee-forager.exe" --config C:\ProgramData\Nudgebee\forager.yaml
    ```
    **Docker:**
    ```bash

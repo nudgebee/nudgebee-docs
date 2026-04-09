@@ -316,19 +316,26 @@ systemctl status nudgebee-forager
 journalctl -u nudgebee-forager -f
 ```
 
-**Windows:**
+**Windows** — check service status:
 ```powershell
 Get-Service NudgebeeForager
 ```
+Expected output:
+```
+Status   Name               DisplayName
+------   ----               -----------
+Running  NudgebeeForager    Nudgebee Forager
+```
+To see the actual log output on Windows, run the binary directly in a PowerShell window — see [Troubleshooting: Windows Service](./troubleshooting.md#windows-service-issues).
 
-**Docker / Helm:**
+**Docker / Helm** — stream logs:
 ```bash
 docker logs nudgebee-forager --tail 50
 # or
 kubectl logs <forager-pod> --tail 50
 ```
 
-You should see:
+On Linux and Docker/Helm you should see:
 ```
 {"level":"INFO","msg":"starting forager"}
 {"level":"INFO","msg":"connected to relay, greeting sent"}
