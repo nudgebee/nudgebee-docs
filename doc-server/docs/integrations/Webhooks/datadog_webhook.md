@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 ---
+
 # Datadog Webhook
 
 Receive Datadog monitor alert notifications directly into NudgeBee. When a monitor triggers, NudgeBee automatically creates an event enriched with related logs, traces, and metric details from your Datadog account.
