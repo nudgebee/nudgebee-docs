@@ -15,6 +15,7 @@ You can connect any combination of the following platforms:
 - Prometheus
 - Grafana Cloud
 - [Datadog Metrics](./datadog.md)
+- [SolarWinds Metrics](./solarwinds.md)
 - Azure Monitor
 - Google Cloud Monitoring
 - [New Relic Metrics](./newrelic.md)
@@ -25,6 +26,7 @@ You can connect any combination of the following platforms:
 - AWS CloudWatch Logs
 - Azure Log Analytics
 - Google Cloud Logging
+- [SolarWinds Logs](./solarwinds.md)
 - [New Relic Logs](./newrelic.md)
 
 ### 🔍 **Traces Integrations**
@@ -32,6 +34,7 @@ You can connect any combination of the following platforms:
 - Tempo
 - OpenTelemetry
 - [Datadog APM](./datadog.md)
+- [SolarWinds APM](./solarwinds.md)
 - [Azure Application Insights](./azure_app_insights.md)
 - [New Relic APM](./newrelic.md)
 
@@ -42,6 +45,7 @@ You can connect any combination of the following platforms:
 - [Slack](../Notifications/slack.md)
 - [Microsoft Teams](../Notifications/msteams.md)
 - [Datadog Webhook](../Webhooks/datadog_webhook.md)
+- [SolarWinds Webhook](../Webhooks/solarwinds_webhook.md)
 - [New Relic Webhook](../Webhooks/newrelic_webhook.md)
 - [ServiceNow Webhook](../Webhooks/servicenow_webhook.md)
 - [GCP Cloud Monitoring Webhook](../Webhooks/gcp_monitoring_webhook.md)
