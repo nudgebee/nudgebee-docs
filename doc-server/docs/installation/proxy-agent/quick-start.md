@@ -36,7 +36,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 <Tabs>
-<TabItem value="script" label="Install Script" default>
+<TabItem value="script" label="Linux" default>
 
 ```bash
 curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
@@ -45,6 +45,23 @@ curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
   NB_ACCESS_SECRET=<ACCESS_SECRET> \
   bash
 ```
+
+Installs Forager as a systemd service. Requires root / sudo.
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+Open **PowerShell as Administrator** and run:
+
+```powershell
+$env:NB_RELAY_URL="<RELAY_URL>"
+$env:NB_ACCESS_KEY="<ACCESS_KEY>"
+$env:NB_ACCESS_SECRET="<ACCESS_SECRET>"
+Set-ExecutionPolicy Bypass -Scope Process -Force
+iwr -useb https://registry.nudgebee.com/downloads/forager/latest/install.ps1 | iex
+```
+
+Installs Forager as a Windows Service that starts automatically on boot.
 
 </TabItem>
 <TabItem value="docker" label="Docker">
@@ -77,8 +94,17 @@ Replace `<RELAY_URL>`, `<ACCESS_KEY>`, and `<ACCESS_SECRET>` with the values fro
 
 ## Step 3: Verify the Agent is Connected
 
-Check the agent logs:
+**Linux:**
+```bash
+journalctl -u nudgebee-forager -f
+```
 
+**Windows:**
+```powershell
+Get-Service NudgebeeForager
+```
+
+Either way, you should see the agent connect:
 ```
 {"level":"INFO","msg":"starting forager"}
 {"level":"INFO","msg":"connected to relay, greeting sent"}
@@ -131,6 +157,6 @@ You're done! You can now ask NudgeBee questions about your database — it will 
 
 - [Add more datasources](./configuration.md) using the UI or a local YAML config file
 - [Use cloud secret managers](./credential-sources.md) instead of inline credentials
-- [Deploy on Kubernetes](./installation.md#option-4-helm) with Helm
+- [Deploy on Kubernetes](./installation.md#option-5-helm) with Helm
 - Want to define datasources in a config file instead of the UI? See [Configuration Reference](./configuration.md) and [Installation — using a local config file](./installation.md)
 - Having issues? See [Troubleshooting](./troubleshooting.md)

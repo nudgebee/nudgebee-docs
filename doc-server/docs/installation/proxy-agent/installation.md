@@ -12,9 +12,9 @@ sidebar_position: 3
 
 Replace `<RELAY_URL>`, `<ACCESS_KEY>`, and `<ACCESS_SECRET>` in the commands below with the values from the UI.
 
-## Option 1: Install Script
+## Option 1: Linux Install Script
 
-The quickest way to get started. Downloads and installs Forager as a systemd service.
+Downloads and installs Forager as a **systemd** service on Linux. Requires root / sudo.
 
 ```bash
 curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
@@ -24,15 +24,69 @@ curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
   bash
 ```
 
-**Using a local config file:** After installation, create `/etc/nudgebee/forager.yaml` with your datasource definitions. Forager picks up this file automatically on startup — no extra flags needed.
+After installation:
+
+| Path | Description |
+|------|-------------|
+| `/usr/local/bin/nudgebee-forager` | Binary |
+| `/etc/nudgebee/forager.yaml` | Config file |
+| `/var/lib/nudgebee/` | Data directory |
+| `nudgebee-forager` | systemd service name |
+
+**Service management:**
+```bash
+systemctl status nudgebee-forager   # check status
+journalctl -u nudgebee-forager -f   # stream logs
+systemctl restart nudgebee-forager  # restart
+```
+
+**Using a local config file:** The installer creates `/etc/nudgebee/forager.yaml` with your access credentials. To add datasources, edit that file and restart:
 
 ```bash
 sudo nano /etc/nudgebee/forager.yaml
-# Add your config (see Configuration Reference), then restart:
+# Add your datasources (see Configuration Reference), then restart:
 sudo systemctl restart nudgebee-forager
 ```
 
-## Option 2: Docker
+## Option 2: Windows Install Script
+
+Downloads and installs Forager as a **Windows Service** that starts automatically on boot. Must be run in an **Administrator** PowerShell session.
+
+```powershell
+$env:NB_RELAY_URL="<RELAY_URL>"
+$env:NB_ACCESS_KEY="<ACCESS_KEY>"
+$env:NB_ACCESS_SECRET="<ACCESS_SECRET>"
+Set-ExecutionPolicy Bypass -Scope Process -Force
+iwr -useb https://registry.nudgebee.com/downloads/forager/latest/install.ps1 | iex
+```
+
+After installation:
+
+| Path | Description |
+|------|-------------|
+| `C:\Program Files\Nudgebee\nudgebee-forager.exe` | Binary |
+| `C:\ProgramData\Nudgebee\forager.yaml` | Config file |
+| `C:\ProgramData\Nudgebee\` | Data directory |
+| `NudgebeeForager` | Windows Service name |
+
+**Service management:**
+```powershell
+Get-Service NudgebeeForager                  # check status
+Restart-Service NudgebeeForager              # restart
+Stop-Service NudgebeeForager                 # stop
+```
+
+**Using a local config file:** The installer creates `C:\ProgramData\Nudgebee\forager.yaml` with your access credentials. To add datasources, edit that file and restart the service:
+
+```powershell
+notepad C:\ProgramData\Nudgebee\forager.yaml
+# Add your datasources (see Configuration Reference), then restart:
+Restart-Service NudgebeeForager
+```
+
+**Upgrading:** Re-run the install script. It stops the existing service, replaces the binary, and starts the service again. Your existing config file is preserved.
+
+## Option 3: Docker
 
 ```bash
 docker run -d --name nudgebee-forager \
@@ -56,7 +110,7 @@ docker run -d --name nudgebee-forager \
 
 When using a config file, you can put `relay_url`, `access_key`, and `access_secret` in the YAML instead of passing them as env vars.
 
-## Option 3: Docker Compose
+## Option 4: Docker Compose
 
 ```yaml
 # docker-compose.yaml
@@ -97,7 +151,7 @@ volumes:
 
 Place your `forager.yaml` in the same directory as `docker-compose.yaml`, then run `docker compose up -d`.
 
-## Option 4: Helm
+## Option 5: Helm
 
 ```bash
 helm install nudgebee-forager \
@@ -254,8 +308,27 @@ serviceAccount:
 
 ## Verify
 
-Once running, you should see in the logs:
+Check that the service is running:
 
+**Linux:**
+```bash
+systemctl status nudgebee-forager
+journalctl -u nudgebee-forager -f
+```
+
+**Windows:**
+```powershell
+Get-Service NudgebeeForager
+```
+
+**Docker / Helm:**
+```bash
+docker logs nudgebee-forager --tail 50
+# or
+kubectl logs <forager-pod> --tail 50
+```
+
+You should see:
 ```
 {"level":"INFO","msg":"starting forager"}
 {"level":"INFO","msg":"connected to relay, greeting sent"}
