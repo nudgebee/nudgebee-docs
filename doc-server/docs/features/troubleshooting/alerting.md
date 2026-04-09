@@ -1,8 +1,8 @@
 ---
-
 sidebar_position: 2
 ---
-#  Troubleshooting Action Customisation
+
+# Troubleshooting Action Customisation
 
 Nudgebee provides flexible options to define Prometheus alerts and attach automated troubleshooting actions using playbooks.
 

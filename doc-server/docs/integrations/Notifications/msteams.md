@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 ---
+
 # MS Teams
 
 <div style={{position: "relative", paddingBottom: "55.93750000000001%", height: 0}}>

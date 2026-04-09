@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 ---
+
 # Dynatrace
 
 NudgeBee integrates with **Dynatrace** as a full-stack observability platform, querying **logs**, **distributed traces**, and **metrics** directly from your Dynatrace Grail storage using DQL (Dynatrace Query Language). This enables NudgeBee to surface correlated telemetry signals during incident investigation — without moving data out of your Dynatrace environment.

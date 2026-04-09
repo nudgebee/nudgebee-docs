@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 ---
+
 # API Tokens
 
 API Tokens allow you to authenticate with Nudgebee APIs programmatically. You can use them to automate workflows, integrate with external tools, or build custom scripts that interact with Nudgebee.

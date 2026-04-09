@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 ---
+
 # ELK stack
 
 If you have existing ELK stack you can integrate using below config
