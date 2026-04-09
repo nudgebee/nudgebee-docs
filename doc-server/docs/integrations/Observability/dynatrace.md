@@ -33,7 +33,7 @@ NudgeBee uses a single Platform Bearer Token to query all three signal types (lo
 | `storage:logs:read` | Log queries via Grail DQL |
 | `storage:spans:read` | Distributed trace queries via Grail DQL |
 | `storage:metrics:read` | Metric queries via Grail DQL |
-| `environment-api:problems:read` | *(Optional)* Richer enrichment when using the [Dynatrace Webhook](./dynatrace_webhook.md) |
+| `environment-api:problems:read` | *(Optional)* Richer enrichment when using the [Dynatrace Webhook](../Webhooks/dynatrace_webhook.md) |
 
 5. Click **Generate token** and copy the value — you won't be able to see it again.
 
@@ -179,7 +179,7 @@ Dynatrace Grail  ←──  NudgeBee queries via DQL
 - **Query timeout**: DQL queries are async-polled for up to 120 seconds. Use filters to narrow time ranges and avoid timeouts.
 - **Trace IDs**: Grail stores trace IDs as a `uid` type. NudgeBee handles the `touid()` conversion automatically.
 - **Metric discovery**: available metrics and dimensions are discovered dynamically via the DQL autocomplete API — no static catalog required.
-- To receive **Dynatrace Problems as NudgeBee incidents**, see the [Dynatrace Webhook integration](./dynatrace_webhook.md).
+- To receive **Dynatrace Problems as NudgeBee incidents**, see the [Dynatrace Webhook integration](../Webhooks/dynatrace_webhook.md).
 
 ---
 

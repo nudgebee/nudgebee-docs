@@ -54,7 +54,7 @@ Log in to [nudgebee](https://app.nudgebee.com), go to kubernetes, and then click
 ### Step 4: Install nudgebee agent
 
 ```bash
-wget https://raw.githubusercontent.com/nudgebee/k8s-agent/main/installation.sh
+wget https://raw.githubusercontent.com/nudgebee/k8s-agent/refs/heads/prod/installation.sh
 sh installation.sh -a <agent-key> -d true
 ```
 

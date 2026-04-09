@@ -99,4 +99,17 @@ sidebar_position: 7
 | ticket-server.image.repository | string | `"nudgebee-ticket-server"` |  |
 | ticket-server.image.tag | string | `""` |  |
 
-----------------------------------------------
+---
+
+:::note ServiceMonitor & PrometheusRule CRDs
+`rabbitmq.metrics.serviceMonitor.enabled` and `rabbitmq.metrics.prometheusRule.enabled` are **enabled by default**. These require the **ServiceMonitor** and **PrometheusRule** CRDs to be present in your cluster (installed by [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) or the Prometheus Operator). If your cluster does not have these CRDs, set them to `false` to avoid installation errors:
+
+```yaml
+rabbitmq:
+  metrics:
+    serviceMonitor:
+      enabled: false
+    prometheusRule:
+      enabled: false
+```
+:::

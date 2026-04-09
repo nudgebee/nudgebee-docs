@@ -34,11 +34,58 @@ NudgeBee uses a central IAM role to assume cross-account roles in customer AWS a
 1. Go to **IAM > Roles > Create Role** in the NudgeBee AWS account
 2. Select **AWS Service** as trusted entity type, choose **EC2** (or the appropriate service for your deployment)
 3. Name the role (e.g., `NudgebeeInstanceRole`)
-4. Attach the following **minimum permissions**:
-   - `sts:AssumeRole` - To assume cross-account roles in customer accounts
-   - `sqs:ReceiveMessage`, `sqs:DeleteMessage`, `sqs:GetQueueAttributes` - To poll SQS queues (EventBridge events and org registration)
-   - `sns:Publish` - If using SNS for org registration callbacks
-   - `cloudformation:CreateStackSet`, `cloudformation:CreateStackInstances` - If using AWS Organization onboarding
+4. Attach the following IAM policy:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AssumeCustomerRoles",
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "*"
+    },
+    {
+      "Sid": "SQSEventProcessing",
+      "Effect": "Allow",
+      "Action": [
+        "sqs:GetQueueUrl",
+        "sqs:GetQueueAttributes",
+        "sqs:ReceiveMessage",
+        "sqs:DeleteMessage"
+      ],
+      "Resource": [
+        "arn:aws:sqs:<region>:<account-id>:<eventbridge-queue-name>",
+        "arn:aws:sqs:<region>:<account-id>:<org-registration-queue-name>"
+      ]
+    },
+    {
+      "Sid": "SNSOrgRegistration",
+      "Effect": "Allow",
+      "Action": "sns:Publish",
+      "Resource": "arn:aws:sns:<region>:<account-id>:<org-registration-topic-name>"
+    }
+  ]
+}
+```
+
+**Optional:** If using AWS Organization onboarding via StackSets, add:
+
+```json
+{
+  "Sid": "CloudFormationStackSets",
+  "Effect": "Allow",
+  "Action": [
+    "cloudformation:CreateStackSet",
+    "cloudformation:CreateStackInstances",
+    "cloudformation:DescribeStackSet",
+    "cloudformation:DescribeStackSetOperation",
+    "cloudformation:ListStackInstances"
+  ],
+  "Resource": "*"
+}
+```
 
 :::tip
 If using IRSA or Pod Identity, create the role with the appropriate trust policy for your EKS cluster instead of EC2.
@@ -57,30 +104,28 @@ This role ARN is used by NudgeBee to:
 - Extract the NudgeBee AWS account ID for cross-account trust policies
 - Pass as a parameter to CloudFormation templates so customer cross-account roles trust this role
 
-### 3. Host CloudFormation Templates
+### 3. CloudFormation Templates
 
-For on-prem deployments, you need to host the CloudFormation templates that get deployed in customer AWS accounts. These templates are available in the NudgeBee installation package.
+The CloudFormation templates are hosted by NudgeBee and available at the following URLs:
 
 #### Single Account Template
 
-Upload the single-account CloudFormation template (`nudgebee-aws-cloud-formation.json`) to an S3 bucket or any HTTPS-accessible location, then set:
-
 ```yaml
 nudgebee_secret:
-  AWS_TEMPLATE_URL: "https://<your-bucket>.s3.<region>.amazonaws.com/nudgebee-aws-cloud-formation.json"
+  AWS_TEMPLATE_URL: "https://nudgebee-prod-documents.s3.amazonaws.com/nudgebee-aws-cloud-formation.json"
 ```
 
 #### Organization Member Template (Optional)
 
-If using AWS Organization onboarding, also upload the org member template (`nudgebee-aws-org-member-template.json`):
+If using AWS Organization onboarding:
 
 ```yaml
 nudgebee_secret:
-  AWS_ORG_TEMPLATE_URL: "https://<your-bucket>.s3.<region>.amazonaws.com/nudgebee-aws-org-member-template.json"
+  AWS_ORG_TEMPLATE_URL: "https://nudgebee-prod-documents.s3.us-east-1.amazonaws.com/nudgebee-aws-org-member-template.json"
 ```
 
 :::note
-If `AWS_TEMPLATE_URL` is not set, NudgeBee defaults to the Nudgebee-hosted template.
+For self-hosted deployments, you can upload these templates to your own S3 bucket and set the URLs accordingly. AWS CloudFormation requires S3-hosted templates.
 :::
 
 ---
@@ -89,7 +134,7 @@ If `AWS_TEMPLATE_URL` is not set, NudgeBee defaults to the Nudgebee-hosted templ
 
 Enables real-time AWS resource event ingestion from customer accounts via EventBridge. This is **optional** - only required if you want real-time event monitoring.
 
-**Download:** [nudgebee-eventbridge-infrastructure.yaml](/cloudformation/nudgebee-eventbridge-infrastructure.yaml)
+**Download:** [nudgebee-eventbridge-infrastructure.yaml](pathname:///cloudformation/nudgebee-eventbridge-infrastructure.yaml)
 
 ### What It Creates
 
@@ -136,7 +181,7 @@ nudgebee_secret:
 
 Enables bulk onboarding of AWS Organization member accounts via CloudFormation StackSets. This is **optional** - only required if you want to use AWS Organization onboarding.
 
-**Download:** [nudgebee-org-registration-infrastructure.yaml](/cloudformation/nudgebee-org-registration-infrastructure.yaml)
+**Download:** [nudgebee-org-registration-infrastructure.yaml](pathname:///cloudformation/nudgebee-org-registration-infrastructure.yaml)
 
 ### What It Creates
 
@@ -207,8 +252,8 @@ nudgebee_secret:
   NUDGEBEE_INSTANCE_ROLE: "arn:aws:iam::<nudgebee-account-id>:role/NudgebeeInstanceRole"
 
   # CloudFormation templates
-  AWS_TEMPLATE_URL: "<url-to-single-account-cloudformation-template>"
-  AWS_ORG_TEMPLATE_URL: "<url-to-org-member-cloudformation-template>"
+  AWS_TEMPLATE_URL: "https://nudgebee-prod-documents.s3.amazonaws.com/nudgebee-aws-cloud-formation.json"
+  AWS_ORG_TEMPLATE_URL: "https://nudgebee-prod-documents.s3.us-east-1.amazonaws.com/nudgebee-aws-org-member-template.json"
 
   # EventBridge events (optional)
   CLOUD_COLLECTOR_AWS_EVENTBRIDGE_SQS: "<SQSQueueUrl from eventbridge stack>"

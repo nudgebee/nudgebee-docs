@@ -8,10 +8,23 @@ const darkCodeTheme = require('prism-react-renderer').themes.dracula;;
 const config = {
   title: 'NudgeBee',
   tagline: '',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.png',
+  markdown: {
+    mermaid: true,
+  },
+  themes: [
+    '@docusaurus/theme-mermaid',
+    [
+      require.resolve("@easyops-cn/docusaurus-search-local"),
+      /** @type {import("@easyops-cn/docusaurus-search-local").Options} */
+      ({
+        hashed: true,
+      }),
+    ],
+  ],
 
   // Set the production url of your site here
-  url: 'https://app.nudgebee.com/',
+  url: process.env.SITE_URL || 'https://docs.nudgebee.com/',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -55,12 +68,17 @@ const config = {
       // Replace with your project's social card
       image: 'img/NudgeBee.png',
       navbar: {
-        title: 'NudgeBee',
         logo: {
           alt: 'NudgeBee Logo',
-          src: 'img/logo.svg',
+          src: 'img/logo.png',
         },
         items: [
+          {
+            type: 'docSidebar',
+            sidebarId: 'datasourceSidebar',
+            position: 'left',
+            label: 'Docs',
+          },
         ],
       },
       footer: {
@@ -73,7 +91,8 @@ const config = {
       },
       colorMode: {
         defaultMode: 'light',
-        disableSwitch: true,        
+        disableSwitch: false,
+        respectPrefersColorScheme: true,
       }
     }),
 };
