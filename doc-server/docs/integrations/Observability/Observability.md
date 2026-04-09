@@ -15,6 +15,7 @@ You can connect any combination of the following platforms:
 - Prometheus
 - Grafana Cloud
 - [Datadog Metrics](./datadog.md)
+- [Dynatrace Metrics](./dynatrace.md)
 - Azure Monitor
 - Google Cloud Monitoring
 - [New Relic Metrics](./newrelic.md)
@@ -25,6 +26,7 @@ You can connect any combination of the following platforms:
 - AWS CloudWatch Logs
 - Azure Log Analytics
 - Google Cloud Logging
+- [Dynatrace Logs](./dynatrace.md)
 - [New Relic Logs](./newrelic.md)
 
 ### 🔍 **Traces Integrations**
@@ -32,6 +34,7 @@ You can connect any combination of the following platforms:
 - Tempo
 - OpenTelemetry
 - [Datadog APM](./datadog.md)
+- [Dynatrace APM](./dynatrace.md)
 - [Azure Application Insights](./azure_app_insights.md)
 - [New Relic APM](./newrelic.md)
 
@@ -41,6 +44,7 @@ You can connect any combination of the following platforms:
 - Opsgenie
 - [Slack](../Notifications/slack.md)
 - [Microsoft Teams](../Notifications/msteams.md)
+- [Dynatrace Webhook](./dynatrace_webhook.md)
 - [New Relic Webhook](./newrelic_webhook.md)
 
 ---
@@ -57,9 +61,9 @@ You can connect any combination of the following platforms:
    The platform automatically links related signals (e.g., high CPU → increased latency → service errors).
 
 4. **Troubleshoot with AI Assistance**  
-   Use NudgeBee’s conversational or visual interface to ask natural language questions like:  
-   > “Why did latency spike on checkout-service at 2:45 PM?”  
-   > “Show all errors correlated with high memory usage on auth-service.”
+   Use NudgeBee's conversational or visual interface to ask natural language questions like:  
+   > "Why did latency spike on checkout-service at 2:45 PM?"  
+   > "Show all errors correlated with high memory usage on auth-service."
 
 5. **Resolve & Learn**  
    Generate AI summaries, RCA reports, and recommended actions for future prevention.
@@ -79,3 +83,4 @@ You can connect any combination of the following platforms:
           │
           ▼
     [Troubleshooting & Insights UI]
+```
