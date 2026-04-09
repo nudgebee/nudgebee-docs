@@ -16,6 +16,7 @@ You can connect any combination of the following platforms:
 - Grafana Cloud
 - [Datadog Metrics](./datadog.md)
 - [SolarWinds Metrics](./solarwinds.md)
+- [Dynatrace Metrics](./dynatrace.md)
 - Azure Monitor
 - Google Cloud Monitoring
 - [New Relic Metrics](./newrelic.md)
@@ -27,6 +28,7 @@ You can connect any combination of the following platforms:
 - Azure Log Analytics
 - Google Cloud Logging
 - [SolarWinds Logs](./solarwinds.md)
+- [Dynatrace Logs](./dynatrace.md)
 - [New Relic Logs](./newrelic.md)
 
 ### 🔍 **Traces Integrations**
@@ -35,6 +37,7 @@ You can connect any combination of the following platforms:
 - OpenTelemetry
 - [Datadog APM](./datadog.md)
 - [SolarWinds APM](./solarwinds.md)
+- [Dynatrace APM](./dynatrace.md)
 - [Azure Application Insights](./azure_app_insights.md)
 - [New Relic APM](./newrelic.md)
 
@@ -46,6 +49,7 @@ You can connect any combination of the following platforms:
 - [Microsoft Teams](../Notifications/msteams.md)
 - [Datadog Webhook](../Webhooks/datadog_webhook.md)
 - [SolarWinds Webhook](../Webhooks/solarwinds_webhook.md)
+- [Dynatrace Webhook](../Webhooks/dynatrace_webhook.md)
 - [New Relic Webhook](../Webhooks/newrelic_webhook.md)
 - [ServiceNow Webhook](../Webhooks/servicenow_webhook.md)
 - [GCP Cloud Monitoring Webhook](../Webhooks/gcp_monitoring_webhook.md)
@@ -64,9 +68,9 @@ You can connect any combination of the following platforms:
    The platform automatically links related signals (e.g., high CPU → increased latency → service errors).
 
 4. **Troubleshoot with AI Assistance**  
-   Use NudgeBee’s conversational or visual interface to ask natural language questions like:  
-   > “Why did latency spike on checkout-service at 2:45 PM?”  
-   > “Show all errors correlated with high memory usage on auth-service.”
+   Use NudgeBee's conversational or visual interface to ask natural language questions like:  
+   > "Why did latency spike on checkout-service at 2:45 PM?"  
+   > "Show all errors correlated with high memory usage on auth-service."
 
 5. **Resolve & Learn**  
    Generate AI summaries, RCA reports, and recommended actions for future prevention.
