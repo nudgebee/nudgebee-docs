@@ -3,9 +3,18 @@ sidebar_position: 11
 ---
 # Security
 
-## Authentication​
-- Currently supports Google/Azure/Okta/Auth0 for Single Sign-On. We don't maintain passwords for users. If a user doesn't have Single Sign-On, then they can use magic email links for login.
-- Credentials specific to external integrations are stored as encrypted using AES with GCM.
+NudgeBee is designed with security at its core. The platform is **SOC 2 Type II certified** and **ISO 27001 certified**, providing enterprise-grade security for your cloud operations.
+
+This page covers NudgeBee's **Enterprise Guardrails** — authentication, authorization, approval workflows, and audit trails — that keep your operations secure and compliant.
+
+:::info
+NudgeBee does not store passwords. All authentication is handled through SSO providers or magic email links, keeping your login process secure and simple.
+:::
+
+## Authentication
+- Supports Google, Azure, Okta, and Auth0 for Single Sign-On (SSO). To configure SSO for on-prem, see [Authentication Integration](../integrations/Authentication/index.md).
+- Users without SSO can use **magic email links** — enter your email and receive a one-time login link. No password required.
+- Credentials for external integrations are stored encrypted using AES with GCM.
 
 ## Authorization
 - Currently, NudgeBee supports tenant level authorization with 2 roles(admin, readonly)
