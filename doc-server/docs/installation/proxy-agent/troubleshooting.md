@@ -11,10 +11,16 @@ sidebar_position: 6
 **Check these:**
 
 1. **Network access** — The agent needs outbound HTTPS (port 443) to your NudgeBee Relay Server. Test with:
+
+   **Linux:**
    ```bash
    curl -I https://<RELAY_HOST>/status
    ```
-   Replace `<RELAY_HOST>` with your relay URL (provided in the NudgeBee UI). You should get `HTTP/2 200`.
+   **Windows:**
+   ```powershell
+   Invoke-WebRequest -Uri https://<RELAY_HOST>/status -Method Head
+   ```
+   Replace `<RELAY_HOST>` with your relay URL (provided in the NudgeBee UI). You should get a `200` response.
 
 2. **Credentials** — Verify `NB_ACCESS_KEY` and `NB_ACCESS_SECRET` match what the NudgeBee UI shows. A wrong secret produces:
    ```
@@ -40,12 +46,14 @@ sidebar_position: 6
 **Check these:**
 
 1. **Network from agent to database** — The agent needs to reach the database host:port. From the agent machine:
-   ```bash
-   # PostgreSQL
-   pg_isready -h <HOST> -p <PORT>
 
-   # Or generic TCP check
+   **Linux:**
+   ```bash
    nc -zv <HOST> <PORT>
+   ```
+   **Windows:**
+   ```powershell
+   Test-NetConnection -ComputerName <HOST> -Port <PORT>
    ```
 
 2. **Credentials** — Wrong username/password will show in agent logs:
@@ -88,13 +96,84 @@ The agent can't reach the database. Check network connectivity from the agent ho
 2. **Network stability** — Intermittent network issues between the agent and relay will cause reconnections. The agent auto-reconnects, but check your network path.
 
 3. **Agent logs** — Look for errors before the disconnect:
-   ```bash
-   # Docker
-   docker logs nudgebee-forager --tail 50
 
-   # Kubernetes
+   **Linux (systemd):**
+   ```bash
+   journalctl -u nudgebee-forager --tail 50
+   ```
+   **Windows** — `Get-Service` only shows status, not logs. To see actual log output, stop the service and run the binary directly in a PowerShell window:
+   ```powershell
+   Stop-Service NudgebeeForager
+   & "C:\Program Files\Nudgebee\nudgebee-forager.exe" --config C:\ProgramData\Nudgebee\forager.yaml
+   ```
+   **Docker:**
+   ```bash
+   docker logs nudgebee-forager --tail 50
+   ```
+   **Kubernetes:**
+   ```bash
    kubectl logs <forager-pod> --tail 50
    ```
+
+## Windows Service Issues
+
+### Service stuck in "Stopping" during upgrade
+
+If the installer hangs with repeated `WARNING: Waiting for service to stop...` messages, the service is not shutting down in time. This was fixed in a recent release. Upgrade to the latest version:
+
+```powershell
+$env:NB_RELAY_URL="<RELAY_URL>"
+$env:NB_ACCESS_KEY="<ACCESS_KEY>"
+$env:NB_ACCESS_SECRET="<ACCESS_SECRET>"
+Set-ExecutionPolicy Bypass -Scope Process -Force
+iwr -useb https://registry.nudgebee.com/downloads/forager/latest/install.ps1 | iex
+```
+
+If the service is still stuck, force-stop it first, then re-run the installer:
+
+```powershell
+Stop-Service NudgebeeForager -Force
+```
+
+### Service fails to start
+
+Check that the config file exists and is valid:
+
+```powershell
+Test-Path C:\ProgramData\Nudgebee\forager.yaml
+Get-Content C:\ProgramData\Nudgebee\forager.yaml
+```
+
+Verify the binary is present:
+
+```powershell
+Test-Path "C:\Program Files\Nudgebee\nudgebee-forager.exe"
+```
+
+To test your config before starting the service, run the binary directly in a PowerShell window (not as a service). This shows log output directly:
+
+```powershell
+& "C:\Program Files\Nudgebee\nudgebee-forager.exe" --config C:\ProgramData\Nudgebee\forager.yaml
+```
+
+Press `Ctrl+C` to stop. Fix any errors shown, then start the service:
+
+```powershell
+Start-Service NudgebeeForager
+```
+
+### Check service status
+
+```powershell
+Get-Service NudgebeeForager
+```
+
+Expected output when healthy:
+```
+Status   Name               DisplayName
+------   ----               -----------
+Running  NudgebeeForager    Nudgebee Forager
+```
 
 ## Getting Help
 
