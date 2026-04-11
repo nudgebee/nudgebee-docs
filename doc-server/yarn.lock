@@ -2909,10 +2909,10 @@
   dependencies:
     defer-to-connect "^2.0.1"
 
-"@tsconfig/docusaurus@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.npmjs.org/@tsconfig/docusaurus/-/docusaurus-2.0.3.tgz"
-  integrity sha512-3l1L5PzWVa7l0691TjnsZ0yOIEwG9DziSqu5IPZPlI5Dowi7z42cEym8Y35GHbgHvPcBfNxfrbxm7Cncn4nByQ==
+"@tsconfig/docusaurus@^2.0.9":
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/@tsconfig/docusaurus/-/docusaurus-2.0.9.tgz#e530ae78bca4f88917af48fe25a944d6d6bdcdf5"
+  integrity sha512-0jVxZCgy2v7TnJrW9kVNikNwJHeiWb68Zhiiw2vHw4tzBFSP5vS2zn3O5EY2oPEVz5dXZRkK7MnWG3Ay5q0mIg==
 
 "@tybys/wasm-util@^0.10.0":
   version "0.10.1"
