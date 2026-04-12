@@ -185,16 +185,16 @@ html {
   content: '' !important;
 }
 
-/* Expanded state — rotate down */
-.menu__link--sublist-caret::after,
-.menu__caret::before {
-  transform: rotate(90deg) !important;
-}
-
 /* Collapsed state — point right */
 .menu__list-item--collapsed .menu__link--sublist-caret::after,
 .menu__list-item--collapsed .menu__caret::before {
   transform: rotate(0deg) !important;
+}
+
+/* Expanded state — point up */
+.menu__list-item:not(.menu__list-item--collapsed) > .menu__list-item-collapsible .menu__link--sublist-caret::after,
+.menu__list-item:not(.menu__list-item--collapsed) > .menu__list-item-collapsible .menu__caret::before {
+  transform: rotate(-90deg) !important;
 }
 
 [data-theme='dark'] .menu__link--sublist-caret::after,

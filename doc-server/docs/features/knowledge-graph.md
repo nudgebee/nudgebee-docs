@@ -2,18 +2,19 @@
 sidebar_position: 8
 ---
 
-# Knowledge Graph
+# Semantic Knowledge Graph
 
 ## Overview
 
-The Knowledge Graph provides a visual representation of your infrastructure, showing resources and their relationships across cloud providers, Kubernetes clusters, and observability platforms. It helps you understand how your services, applications, and infrastructure components connect and depend on each other.
+The Semantic Knowledge Graph is NudgeBee's intelligence layer — it goes beyond simple infrastructure topology by correlating logs, metrics, traces, and code to build a rich, contextual map of your entire environment. It provides a visual representation of your infrastructure, showing resources and their relationships across cloud providers, Kubernetes clusters, and observability platforms, while enabling NudgeBee's AI agents to reason about your infrastructure with full context.
 
-## Why Use Knowledge Graph
+## Why Use the Semantic Knowledge Graph
 
+- **Correlate signals** - Automatically links logs, metrics, traces, and code changes to build a unified context for every resource
 - **Visualize dependencies** - See service-to-service communication and infrastructure topology at a glance
 - **Understand connections** - Trace how resources connect across different cloud accounts
 - **Impact analysis** - Identify what depends on a resource before making changes
-- **Troubleshooting** - Follow relationship paths to understand how issues propagate
+- **Power AI troubleshooting** - The Semantic Knowledge Graph feeds context to [NuBi and the pre-built AI agents](../ai/), enabling faster and more accurate root cause analysis
 
 ## Getting Started
 
