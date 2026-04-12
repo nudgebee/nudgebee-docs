@@ -1,6 +1,27 @@
-# LLM Provider Integrations
+# LLM Provider Integrations — BYOM (Bring Your Own Model)
 
-This documentation guides you through integrating various LLM providers with NudgeBee's LLM Server and RAG Server applications. Our platform supports multiple LLM providers, allowing you to leverage foundation models or deploy custom models based on your specific needs.
+NudgeBee uses **flexible AI models** — including modular SLMs, LLMs, and specialized agents — to power [NuBi](../../features/ai/), the pre-built Cloud-Ops agents, root cause analysis, automated runbooks, and intelligent recommendations. This section guides you through connecting an LLM provider to your NudgeBee instance.
+
+### Do You Need This?
+
+- **Cloud SaaS users**: A NudgeBee-managed LLM is included by default. You can skip this section unless you want to use BYOM (Bring Your Own Model) for more control over model selection or data handling.
+- **Self-hosted (on-prem) users**: You need to configure an LLM provider for AI features to work. Choose from the options below.
+
+:::info
+Without an LLM connection, NudgeBee still provides monitoring, cost optimization, and alerting. The LLM unlocks [NuBi](../../features/ai/) and the full suite of AI-powered troubleshooting, natural language queries, agentic automation, and auto-generated runbooks.
+:::
+
+### Your Options — Flexible AI Models
+
+NudgeBee supports BYOM (Bring Your Own Model) with three categories of LLM providers:
+
+| Category | Providers | Best For |
+|---|---|---|
+| **Cloud Provider Services** | [AWS Bedrock](./Aws/bedrock.md), [Azure OpenAI](./Azure/azure-openai.md), [Google Vertex AI](./Google/vertex-ai.md), [Google Gemini](./Google/gemini.md), [OpenAI](./OpenAI/) | Teams with existing cloud contracts or preferred providers. |
+| **Self-Hosted / Open Source** | [Ollama](./Ollama/), [HuggingFace](./HuggingFace/), [AWS SageMaker](./Aws/sagemaker.md) | Organizations requiring data privacy, air-gapped environments, or custom-trained models. |
+| **NudgeBee Models** | Pre-trained NudgeBee AI models (nb-llm, nb-slm) | Self-hosted users who want optimized, purpose-built models for Cloud Ops. |
+
+---
 
 ## Supported LLM Providers
 

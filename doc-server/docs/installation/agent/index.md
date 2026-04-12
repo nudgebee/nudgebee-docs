@@ -5,11 +5,31 @@ sidebar_label: K8s Agent
 
 # K8s Agent
 
-The NudgeBee K8s agent is a software component that runs within a customer's Kubernetes cluster. It collects data about performance bottlenecks, and security, and sends it back to the NudgeBee server for analysis. This agent needs to be installed in every cluster that needs to be monitored.
+The NudgeBee Agent is a lightweight software component that runs inside your Kubernetes cluster. It collects data about workloads, performance, cost, and security, and sends it to the NudgeBee server — feeding the [Semantic Knowledge Graph](../../features/knowledge-graph.md) that powers NudgeBee's Cloud-Ops Intelligence. You need to install an agent in every cluster that you want NudgeBee to monitor. The agent supports AWS, Azure, GCP, and on-premises Kubernetes environments.
+
+:::info
+**Both Cloud SaaS and self-hosted users** need to install the agent. This is how NudgeBee gets visibility into your Kubernetes clusters, regardless of your deployment model.
+:::
+
+:::tip
+If you connected a cloud account (AWS, Azure, or GCP), NudgeBee can auto-discover your Kubernetes clusters. You may still need to install the agent for deep monitoring, but cluster discovery happens automatically.
+:::
+
+### What You Will Find in This Section
+
+- **[Installation](./installation/)** — Step-by-step guide to deploy the agent using Helm, including prerequisites and system requirements. Typically takes 5–10 minutes per cluster.
+- **[Helm Values](./installation/helm_values.md)** — Complete reference for agent Helm chart configuration values.
+- **[Upgrade](./installation/upgrade.md)** — How to upgrade an existing agent to a newer version.
+- **[Kubernetes Provider Setup](./installation/k8s-provider/)** — Provider-specific instructions for GKE, AKS, and other managed Kubernetes services.
+- **[Logging Integration](./installation/logging/)** — Connect log sources (ELK, Loki, SignalFx, etc.) to the agent.
+- **[Tracing Integration](./installation/tracing/)** — Connect tracing backends (ClickHouse, GCP) for distributed tracing.
+- **[Proxy Agent](../proxy-agent/)** — Deploy agents through a proxy for restricted or air-gapped environments.
+- **[Local Setup](./local-setup.md)** — Run NudgeBee locally for development and testing.
+- **[On-Prem Setup](./onprem-setup.md)** — Additional configuration for air-gapped or on-premises environments.
 
 ## Architecture
 
-The NudgeBee Agent runs within the customer's Kubernetes cluster. The main component is the Runner, which acts as a central controller, collecting data from various components and communicating with the NudgeBee Server over HTTP and Websocket.
+The NudgeBee Agent runs within your Kubernetes cluster. The main component is the Runner, which acts as a central controller — it collects data from various components and communicates with the NudgeBee Server over HTTP and WebSocket.
 
 ![Agent Architecture](/img/nb_agent_architecture.png)
 
