@@ -172,8 +172,6 @@ The Workflow Builder prevents circular dependencies. If you try to create a conn
 
 Click a trigger node on the canvas to open the **Trigger Configuration** sidebar. Configuration options depend on the trigger type.
 
-![Trigger Configuration - Event Trigger](../img/trigger-config-event.png)
-
 #### Manual Trigger
 
 Runs the workflow when you click **Run** in the editor or select **Manual run** from the listing page.
@@ -214,20 +212,50 @@ All scheduled times use the UTC timezone.
 
 Runs the workflow when an HTTP request is sent to a generated webhook URL.
 
-1. Enter an **Integration Name** (letters, numbers, dots, hyphens, and underscores only)
-2. The webhook URL is displayed once the integration is linked - click the copy icon to copy it
+- **Integration Name** (required) - The `workflow_webhook` integration that authenticates and routes incoming requests. Letters, numbers, dots, hyphens, and underscores only.
+- **Filter Expression** (optional) - A template expression evaluated against the incoming request body. The workflow runs only if it renders to `true` or `1`. The request body is available as `webhook_payload`.
+
+**Setup:**
+
+1. Enter an **Integration Name**
+2. Once the integration is linked, the generated webhook URL is displayed - click the copy icon to copy it
 3. Send HTTP requests to this URL to trigger the workflow
 
+**Filter expression examples:**
+
+| Expression | Behavior |
+|-----------|----------|
+| `{{ webhook_payload.action == "opened" }}` | Only trigger when the payload's `action` is `opened` |
+| `{{ webhook_payload.repository.name == "my-repo" }}` | Only trigger for a specific repository |
+
 :::warning
-A webhook trigger requires a `workflow_webhook` integration configured in **Settings → Integrations**. If you haven't set one up, the sidebar will guide you to create one.
+A webhook trigger requires a `workflow_webhook` integration configured in **Settings → Integrations**. If you haven't set one up, the sidebar will guide you to create one. The integration must be linked to the workflow before the webhook URL is generated.
 :::
+
+![Trigger Configuration - Webhook](../img/trigger-config-webhook.png)
 
 #### Event Trigger
 
-Runs the workflow when a specific event is detected.
+Runs the workflow when a matching platform event is published - for example a recommendation, an alert, or a finding.
 
-- **Event Type / Aggregation Key** - Select the event type to listen for from the dropdown
-- **Filter Expression** (optional) - Use template syntax to narrow down which events trigger the workflow, e.g., `{{ event.source == "my-source" }}`
+- **Event Type / Aggregation Key** (required) - The class of event to listen for, selected from the dropdown
+- **Cluster** (optional) - Restrict to events from a specific Kubernetes cluster
+- **Namespace** (optional) - Restrict to events from a specific Kubernetes namespace
+- **Source** (optional) - Restrict to events from a specific source system
+- **Priority** (optional) - Restrict by severity level
+- **Advanced Filter Expression** (optional) - Click **Switch to advanced filter expression** to replace the structured fields above with a template expression over the full event payload. The expression must render to `true` or `1` for the workflow to run. The event is available as `event`.
+
+The structured filter fields are the simple path - use them for the common case. Switch to the advanced filter expression when you need conditions that the structured fields can't express (nested labels, multi-field comparisons, string matching, etc.).
+
+**Advanced filter examples:**
+
+| Expression | Behavior |
+|-----------|----------|
+| `{{ event.severity == "high" }}` | Only high-severity events |
+| `{{ event.source == "prometheus" }}` | Only events from Prometheus |
+| `{{ event.labels.env == "prod" }}` | Only events labeled `env=prod` |
+
+![Trigger Configuration - Event](../img/trigger-config-event.png)
 
 ### Using Conditions and Branching
 
