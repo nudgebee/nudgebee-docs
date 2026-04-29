@@ -62,7 +62,7 @@ Use this when the MCP server is a **local process** that speaks JSON-RPC over st
 
 **Prerequisite:** [Proxy Agent (Forager)](../../installation/proxy-agent/index.md) installed on a host that can run the command.
 
-Set **Connection Mode** to `vm_agent` and **Transport** to `stdio`. **Command** is the absolute path to the executable Forager will run (e.g. `/usr/local/bin/docker`); **Args** are space-separated arguments — **not** shell-parsed, so quoting is not honored.
+Set **Connection Mode** to `vm_agent` and **Transport** to `stdio`. **Command** is the absolute path to the executable Forager will run (e.g. `/usr/local/bin/docker`); **Args** are space-separated arguments — **not** shell-parsed, so quoting is not honored. If you need pipes, redirects, or arguments containing spaces, point **Command** at a small shell-script wrapper instead.
 
 > Forager spawns the process **lazily on first request** and reuses the same process across calls. The process is terminated when Forager shuts down or the integration is removed.
 

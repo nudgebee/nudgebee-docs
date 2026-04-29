@@ -149,7 +149,7 @@ datasources:
 | `transport` | MCP only | `http` or `stdio` |
 | `url` | MCP HTTP | URL of the MCP server (Forager-reachable) |
 | `command` | MCP stdio | Absolute path to executable Forager runs |
-| `args` | MCP stdio | Space-separated arguments (not shell-parsed) |
+| `args` | MCP stdio | Space-separated arguments (not shell-parsed). For pipes, redirects, or arguments containing spaces, use a shell-script wrapper. |
 | `working_dir` | MCP stdio | Working directory for the spawned process |
 | `env` | MCP stdio | Map of environment variables to set on the spawned process |
 
