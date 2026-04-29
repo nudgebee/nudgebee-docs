@@ -168,95 +168,6 @@ To delete a connection, hover over the edge and click the delete button that app
 The Workflow Builder prevents circular dependencies. If you try to create a connection that would form a loop, both nodes flash briefly and the connection is rejected.
 :::
 
-### Configuring Triggers
-
-Click a trigger node on the canvas to open the **Trigger Configuration** sidebar. Configuration options depend on the trigger type.
-
-#### Manual Trigger
-
-Runs the workflow when you click **Run** in the editor or select **Manual run** from the listing page.
-
-- **Input Parameters (JSON)** - Optionally define a JSON object with parameters that will be available to tasks at runtime
-- Leave the field as `{}` if no inputs are needed
-
-#### Schedule Trigger
-
-Runs the workflow automatically on a recurring schedule.
-
-- **Cron Expression** (required) - Define the schedule in standard 5-field cron format (minute hour day month weekday)
-- **Overlap Policy** - What happens when a new run is due while the previous run is still active:
-  - **Skip** (default) - Skip the new run
-  - **Buffer One** - Queue one pending run
-  - **Buffer All** - Queue all pending runs
-  - **Allow All** - Run all concurrently
-  - **Cancel Other** - Cancel the previous run
-  - **Terminate Other** - Terminate the previous run
-- **Catchup Window** - How far back to look for missed runs after an outage (default: `60s`). Uses Go duration format (e.g., `10m`, `1h`, `24h`)
-
-:::note
-All scheduled times use the UTC timezone.
-:::
-
-![Trigger Configuration - Event Trigger](../img/trigger-config-schedule.png)
-
-**Common cron examples:**
-
-| Expression | Schedule |
-|-----------|----------|
-| `0 9 * * 1-5` | Every weekday at 9:00 AM |
-| `*/15 * * * *` | Every 15 minutes |
-| `0 0 * * 0` | Every Sunday at midnight |
-| `0 12 1 * *` | First day of every month at noon |
-
-#### Webhook Trigger
-
-Runs the workflow when an HTTP request is sent to a generated webhook URL.
-
-- **Integration Name** (required) - The `workflow_webhook` integration that authenticates and routes incoming requests. Letters, numbers, dots, hyphens, and underscores only.
-- **Filter Expression** (optional) - A template expression evaluated against the incoming request body. The workflow runs only if it renders to `true` or `1`. The request body is available as `webhook_payload`.
-
-**Setup:**
-
-1. Enter an **Integration Name**
-2. Once the integration is linked, the generated webhook URL is displayed - click the copy icon to copy it
-3. Send HTTP requests to this URL to trigger the workflow
-
-**Filter expression examples:**
-
-| Expression | Behavior |
-|-----------|----------|
-| `{{ webhook_payload.action == "opened" }}` | Only trigger when the payload's `action` is `opened` |
-| `{{ webhook_payload.repository.name == "my-repo" }}` | Only trigger for a specific repository |
-
-:::warning
-A webhook trigger requires a `workflow_webhook` integration configured in **Settings → Integrations**. If you haven't set one up, the sidebar will guide you to create one. The integration must be linked to the workflow before the webhook URL is generated.
-:::
-
-![Trigger Configuration - Webhook](../img/trigger-config-webhook.png)
-
-#### Event Trigger
-
-Runs the workflow when a matching platform event is published - for example a recommendation, an alert, or a finding.
-
-- **Event Type / Aggregation Key** (required) - The class of event to listen for, selected from the dropdown
-- **Cluster** (optional) - Restrict to events from a specific Kubernetes cluster
-- **Namespace** (optional) - Restrict to events from a specific Kubernetes namespace
-- **Source** (optional) - Restrict to events from a specific source system
-- **Priority** (optional) - Restrict by severity level
-- **Advanced Filter Expression** (optional) - Click **Switch to advanced filter expression** to replace the structured fields above with a template expression over the full event payload. The expression must render to `true` or `1` for the workflow to run. The event is available as `event`.
-
-The structured filter fields are the simple path - use them for the common case. Switch to the advanced filter expression when you need conditions that the structured fields can't express (nested labels, multi-field comparisons, string matching, etc.).
-
-**Advanced filter examples:**
-
-| Expression | Behavior |
-|-----------|----------|
-| `{{ event.severity == "high" }}` | Only high-severity events |
-| `{{ event.source == "prometheus" }}` | Only events from Prometheus |
-| `{{ event.labels.env == "prod" }}` | Only events labeled `env=prod` |
-
-![Trigger Configuration - Event](../img/trigger-config-event.png)
-
 ### Using Conditions and Branching
 
 You can make tasks run conditionally or branch your workflow using special task types.
@@ -340,7 +251,7 @@ The listing page provides several ways to find workflows:
 - **Search by Tags** - Filter by tag labels
 - **Status** dropdown - Filter by Active, Inactive, Paused, or all
 - **Last Exec. Status** dropdown - Filter by last execution result (Running, Completed, Failed, etc.)
-- **Trigger Type** dropdown - Filter by Manual, Schedule, or Webhook triggers
+- **Trigger Type** dropdown - Filter by Manual, Schedule, Webhook, Event, or Optimization triggers
 
 ### Managing Configurations
 
@@ -543,12 +454,15 @@ Some task types cannot be tested individually, including Sub-workflow, Condition
 
 ## Trigger Types Reference
 
+See [Configuring Triggers](./triggers.md) for full details on each trigger type, including field constraints and the [Event Payload Schema](./triggers.md#event-payload-schema).
+
 | Trigger Type | Description | Key Configuration |
 |-------------|-------------|-------------------|
-| Manual Trigger | Start workflow on demand by clicking Run | Input parameters (JSON, optional) |
-| Schedule | Run workflow on a recurring time-based schedule | Cron expression, overlap policy, catchup window |
-| Webhook | Run workflow when an HTTP request hits a generated URL | Integration name (requires webhook integration in Settings) |
-| Event Trigger | Run workflow when a matching event is detected | Event type, filter expression (optional) |
+| [Manual Trigger](./triggers.md#manual-trigger) | Start workflow on demand by clicking Run | Input parameters (JSON object, optional) |
+| [Schedule](./triggers.md#schedule-trigger) | Run workflow on a recurring time-based schedule | Cron expression, overlap policy, catchup window |
+| [Webhook](./triggers.md#webhook-trigger) | Run workflow when an HTTP request hits a generated URL | Integration name (requires webhook integration in Settings), optional filter expression |
+| [Event Trigger](./triggers.md#event-trigger) | Run workflow when a matching event is detected | At least one of: event type, cluster, namespace, source, priority, or advanced expression |
+| [Optimization Trigger](./triggers.md#optimization-trigger) | Run workflow when a new optimization recommendation matches | Cluster, category, rule name (all optional) |
 
 ## Troubleshooting
 
@@ -563,7 +477,7 @@ Some task types cannot be tested individually, including Sub-workflow, Condition
 | "Integration name is required for webhook triggers" | Webhook trigger has no integration name | Enter an integration name in the trigger configuration |
 | "Filter expression has unmatched template braces" | Event filter has malformed template syntax | Ensure your filter uses balanced `{{ }}` braces |
 | "Invalid JSON format" when triggering | Input parameters are not valid JSON | Check your JSON syntax - ensure proper quoting and structure |
-| "Duration must be in Go format" | Catchup window uses an invalid format | Use Go duration format like `10m`, `1h`, or `24h` |
+| "Duration must be in single-unit format" | Catchup window uses an invalid format | Use a single-unit duration like `60s`, `10m`, `1h`, or `7d`. Compound values like `1h30m` aren't accepted. |
 | Workflow execution timed out | Execution exceeded the configured timeout | Increase the timeout in **Settings** or optimize long-running tasks |
 | Workflow execution failed | One or more tasks encountered errors | Open the **Executions** tab, select the execution, and click the failed node to see error details |
 | "Failed to load AI-generated workflow" | AI generation encountered an issue | An empty workflow is created instead - try generating again or build manually |
