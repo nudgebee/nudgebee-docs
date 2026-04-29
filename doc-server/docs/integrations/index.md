@@ -20,6 +20,8 @@ Some integrations are **required** for NudgeBee to function (Kubernetes cluster 
 
 * **[NudgeBee AI / LLM — BYOM](./LLM/)** — Integrate LLM models to power [NuBi](../features/ai/) and the pre-built AI agents for troubleshooting, root cause analysis, and agentic automation. SaaS users get a managed LLM by default; self-hosted users bring their own model (BYOM). **Recommended**.
 
+* **[MCP (Model Context Protocol)](./MCP/)** — Connect external or on-prem MCP servers so their tools become available to NudgeBee AI tasks (`llm.mcp_call`, NuBi). Supports direct HTTP and Forager-proxied (HTTP or stdio) modes. **Optional**.
+
 * **[Tickets](./Tickets/)** — Connect ticketing systems ([Jira](./Tickets/jira.md), [ServiceNow](./Tickets/servicenow.md), [PagerDuty](./Tickets/pagerduty.md), [GitHub Issues](./Tickets/github_issues.md), [GitLab Issues](./Tickets/gitlab.md)) to create, track, and auto-respond to incidents. **Optional**.
 
 * **[GitHub](./Code%20Repository/GitHub/github-integration.md)** — Connect GitHub for code analysis and automated pull requests for optimization recommendations. **Optional**.
