@@ -5,7 +5,7 @@ sidebar_position: 3
 
 The Dynatrace webhook integration forwards **Dynatrace Problems** (incidents) directly into NudgeBee. When a problem fires or resolves in Dynatrace, NudgeBee automatically receives it, enriches it with correlated logs and traces, and creates a trackable incident.
 
-> **Prerequisite:** For full telemetry enrichment (auto-attached logs and traces), configure the [Dynatrace Observability integration](../Observability/dynatrace.md) first.
+> **Prerequisite:** For full telemetry enrichment (auto-attached logs and traces), configure the [Dynatrace Observability integration](../Observability/index.md) first.
 
 ---
 
@@ -178,14 +178,14 @@ When NudgeBee receives a problem, it automatically enriches the incident:
 4. **Trace evidence** — Distributed traces for the same workload and time window are attached.
 5. **Deduplication** — Problems are deduplicated using the **Dynatrace Problem ID** as a unique fingerprint. Reopened problems update the existing incident rather than creating a duplicate.
 
-> Evidence collection (steps 3–4) requires the [Dynatrace Observability integration](../Observability/dynatrace.md) to be configured for the same environment.
+> Evidence collection (steps 3–4) requires the [Dynatrace Observability integration](../Observability/index.md) to be configured for the same environment.
 
 ---
 
 ## Prerequisites Checklist
 
 - [ ] The NudgeBee webhook URL is publicly reachable from Dynatrace's Workflow execution environment
-- [ ] [Dynatrace Observability integration](../Observability/dynatrace.md) configured (for log and trace enrichment)
+- [ ] [Dynatrace Observability integration](../Observability/index.md) configured (for log and trace enrichment)
 - [ ] Access token includes `storage:logs:read` and `storage:spans:read` scopes
 - [ ] *(Optional)* `environment-api:problems:read` scope added for richer problem metadata
 
@@ -210,7 +210,7 @@ When NudgeBee receives a problem, it automatically enriches the incident:
 | Workflow does not trigger on new problems | Trigger misconfigured | Verify the trigger type is **Davis problem** with problem state set to **Active or Closed**. Check event category filters. |
 | Workflow fires only on open, not resolve | Problem state filter incomplete | Set problem state to **Active or Closed** (not just Active) in the trigger configuration. |
 | Incident created but no workload linked | Entity name doesn't match any K8s workload | Check if the impacted entity name in Dynatrace matches a workload name or label in NudgeBee. |
-| No logs or traces attached | Observability integration not configured | Set up the [Dynatrace Observability integration](../Observability/dynatrace.md) first. |
+| No logs or traces attached | Observability integration not configured | Set up the [Dynatrace Observability integration](../Observability/index.md) first. |
 | 403 on problem enrichment | Token missing `environment-api:problems:read` | Add the scope to your token, or the integration falls back to DQL-based enrichment. |
 | Duplicate incidents for the same problem | `event.id` missing in payload | Ensure your payload includes the `event.id` field (included by default with `event() | to_json`). |
 | Payload fields render as literal text | Jinja syntax error in template | Verify expressions use double braces and the `event()` function. Check the workflow execution log for template rendering errors. |
@@ -224,4 +224,4 @@ When NudgeBee receives a problem, it automatically enriches the incident:
 - [Dynatrace Davis problem trigger](https://docs.dynatrace.com/docs/analyze-explore-automate/workflows/trigger/event-trigger)
 - [Dynatrace Problems API v2](https://docs.dynatrace.com/docs/dynatrace-api/environment-api/problems-v2)
 - [Dynatrace Access Tokens](https://docs.dynatrace.com/docs/manage/access-control/access-tokens)
-- [Dynatrace Observability integration in NudgeBee](../Observability/dynatrace.md)
+- [Dynatrace Observability integration in NudgeBee](../Observability/index.md)
