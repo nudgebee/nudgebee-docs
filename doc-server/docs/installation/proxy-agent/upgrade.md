@@ -9,14 +9,24 @@ This page covers upgrading the Proxy Agent (Forager) binary after the initial in
 ## When to Upgrade
 
 - After a security advisory or bug-fix release.
-- When you hit behavior the latest release has fixed (for example, MSSQL queries failing with `Incorrect syntax near 'Q'` or `'d'` on agents installed before **2026-03-27** — those builds don't sanitize CLI-wrapped queries sent by the workspace shim).
+- When you hit behavior the latest release has fixed — check the release notes for the list of issues addressed in each version.
 - Before opening a support request: reproducing on the latest build eliminates a large class of already-fixed issues.
 
-Keep one version behind `latest` at most — the NudgeBee server tracks forward, so very old agents can fall out of protocol.
+Stay within recent versions to avoid protocol drift between the agent and the NudgeBee server.
 
 ## Check Your Current Version
 
-Forager doesn't currently expose a `--version` flag. Use the binary's build timestamp as a proxy:
+Forager prints its build version with `--version`:
+
+```bash
+nudgebee-forager --version
+# Docker:  docker exec nudgebee-forager nudgebee-forager --version
+# Helm:    kubectl -n <namespace> exec deploy/nudgebee-forager-nudgebee-forager-chart -- nudgebee-forager --version
+```
+
+The agent also reports this version in its WebSocket greeting, so the NudgeBee UI (**Admin → Integrations → Servers → Proxy Agent**) shows the running version and last-connected time. That's the fastest cross-check.
+
+For older agents that predate the `--version` flag, fall back to the binary's build timestamp and hash:
 
 **Linux (systemd):**
 ```bash
@@ -36,14 +46,14 @@ docker inspect nudgebee-forager --format '{{.Image}} created {{.Created}}'
 docker image inspect registry.nudgebee.com/nudgebee-forager:latest --format '{{.RepoDigests}}'
 ```
 
-**Helm:**
+**Helm** — `-a` includes chart defaults so the image tag shows even if you never overrode it:
 ```bash
-helm get values nudgebee-forager -o yaml | grep -A1 image
+helm get values nudgebee-forager -a -o yaml | grep -A1 image
 kubectl -n <namespace> get deploy nudgebee-forager-nudgebee-forager-chart \
   -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
 ```
 
-The NudgeBee UI (Admin → Integrations → Servers → Proxy Agent) shows the agent's reported version and last-connected time. That's the fastest cross-check.
+> Replace `nudgebee-forager-nudgebee-forager-chart` with `<release-name>-nudgebee-forager-chart` if you installed under a different Helm release name.
 
 ## Upgrade by Install Method
 
@@ -61,9 +71,9 @@ curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
   bash
 ```
 
-**Pin a specific version** (useful for staged rollouts or rollback):
+**Pin a specific version** (useful for staged rollouts or rollback) — the script reads `NB_VERSION` from the environment:
 ```bash
-curl -fsSL https://registry.nudgebee.com/downloads/forager/<version>/install.sh | \
+curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
   NB_VERSION=<version> NB_RELAY_URL=... NB_ACCESS_KEY=... NB_ACCESS_SECRET=... bash
 ```
 
@@ -102,11 +112,12 @@ docker run -d --name nudgebee-forager \
   -e NB_ACCESS_KEY=<ACCESS_KEY> \
   -e NB_ACCESS_SECRET=<ACCESS_SECRET> \
   -v forager-data:/data \
+  # -v /path/to/forager.yaml:/etc/nudgebee/forager.yaml \   # uncomment if you use a config file instead of env vars
   --restart unless-stopped \
   registry.nudgebee.com/nudgebee-forager:latest
 ```
 
-The `forager-data` named volume survives the `rm`, so data persists. If you mounted a config file, re-mount it on the new container.
+The `forager-data` named volume survives the `rm`, so data persists. If your original container mounted a config file, re-add the same `-v` line on the new container — otherwise the agent falls back to the `NB_*` environment variables shown above.
 
 ### Option 4: Docker Compose
 
@@ -133,28 +144,22 @@ docker compose up -d
 
 ### Option 5: Helm
 
-**To the latest chart + latest image:**
-```bash
-helm repo update   # if you're using a Helm repo mirror
-helm upgrade nudgebee-forager \
-  oci://registry.nudgebee.com/nudgebee-forager-chart \
-  --reuse-values
-```
-
-**To a specific image tag** (without changing other values):
-```bash
-helm upgrade nudgebee-forager \
-  oci://registry.nudgebee.com/nudgebee-forager-chart \
-  --reuse-values \
-  --set image.tag=<tag>
-```
-
-**With a custom `values.yaml`:**
+**With a custom `values.yaml`** (recommended — keeps your config explicit and survives chart upgrades that introduce new defaults):
 ```bash
 helm upgrade nudgebee-forager \
   oci://registry.nudgebee.com/nudgebee-forager-chart \
   -f values.yaml
 ```
+
+**To a specific image tag** (overrides only the tag from your values file):
+```bash
+helm upgrade nudgebee-forager \
+  oci://registry.nudgebee.com/nudgebee-forager-chart \
+  -f values.yaml \
+  --set image.tag=<tag>
+```
+
+> **Avoid `--reuse-values`** unless you've verified the new chart hasn't added new required values or restructured existing ones. `--reuse-values` ignores the new chart defaults entirely, which can leave you on a broken release. If you need that behavior on Helm 3.14+, prefer `--reset-then-reuse-values`, which merges your overrides on top of the new defaults.
 
 Watch the rollout:
 ```bash
@@ -183,6 +188,8 @@ If the new version misbehaves, roll back to a known-good tag. The image registry
 curl -s https://registry.nudgebee.com/v2/nudgebee-forager/tags/list | jq -r .tags[]
 ```
 
+> If `registry.nudgebee.com` requires auth in your environment, add `-u <user>:<token>` (basic) or `-H "Authorization: Bearer <token>"`. The full list of available tags is also visible in the NudgeBee UI under **Admin → Integrations → Servers → Proxy Agent**.
+
 **Linux / Windows:** re-run the installer with `NB_VERSION=<older-tag>`:
 ```bash
 curl -fsSL https://registry.nudgebee.com/downloads/forager/<older-tag>/install.sh | \
@@ -204,7 +211,7 @@ helm rollback nudgebee-forager <revision>
 
 ## Zero-downtime Upgrades (Helm only)
 
-For Helm deployments with `replicaCount: 2+`, Kubernetes handles rolling updates automatically — one pod is replaced at a time, and the NudgeBee Relay Server tolerates the brief reconnect. Single-replica Linux/Windows/Docker installs will see a ~5–10 second outage while the binary restarts; queries received during that window are retried by the NudgeBee AI.
+For Helm deployments with `replicaCount: 2+`, Kubernetes handles rolling updates automatically — one pod is replaced at a time, and the NudgeBee Relay Server tolerates the brief reconnect. Single-replica Linux/Windows/Docker installs will see a ~5–10 second outage while the binary restarts; user-driven queries arriving in that window will surface as a transient error in the UI. For maintenance windows, prefer the Helm path or schedule the upgrade outside of active investigation periods.
 
 ## Common Upgrade Problems
 
