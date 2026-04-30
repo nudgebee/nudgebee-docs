@@ -124,7 +124,7 @@ helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee \
   --kube-context $KUBE_CONTEXT
 ```
 
-To install a specific version, add `--version $CHART_VERSION` to the command.
+To install a specific version, add `--version $CHART_VERSION` to the command. See the [Server Releases](./release/) page for available versions.
 
 :::tip
 **This minimal setup gets NudgeBee running with port-forwarding.** You can add Ingress, SSL, external Postgres, and other configurations later without reinstalling — just update your `values.yaml` and run `helm upgrade` again.
@@ -159,6 +159,23 @@ kubectl port-forward svc/app 3000:80 -n nudgebee --kube-context $KUBE_CONTEXT
 ```
 
 Then open [http://localhost:3000](http://localhost:3000) in your browser. You should see the NudgeBee login page.
+
+
+Use the email address associated with your NudgeBee license to log in. The password is auto-generated during installation and stored in a Kubernetes secret.
+
+Retrieve the password by decoding the secret:
+
+```shell
+kubectl get secret nudgebee-secret -n nudgebee \
+  -o jsonpath='{.data.NEXTAUTH_DUMMY_CREDS_PASSWORD}' \
+  --kube-context $KUBE_CONTEXT | base64 -d
+```
+
+Use the decoded password along with your license email to sign in.
+
+:::caution
+**Security**: The dummy credentials provider is intended for initial setup and onboarding. For production environments, it is recommended to configure a proper authentication provider (SSO, LDAP, etc.) and disable dummy credentials. See [Authentication Integrations](../../integrations/Authentication/) for details.
+:::
 
 :::info
 **Relay and Collector URLs for Agent Installation**: When you install the NudgeBee Agent later, you will need these internal service URLs:
