@@ -166,7 +166,7 @@ Use the email address associated with your NudgeBee license to log in. The passw
 Retrieve the password by decoding the secret:
 
 ```shell
-kubectl get secret nudgebee-secret -n nudgebee \
+kubectl get secret nudgebee -n nudgebee \
   -o jsonpath='{.data.NEXTAUTH_DUMMY_CREDS_PASSWORD}' \
   --kube-context $KUBE_CONTEXT | base64 -d
 ```
