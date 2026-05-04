@@ -36,7 +36,7 @@
     "@typescript-eslint/eslint-plugin": "^8.58.1",
     "@typescript-eslint/parser": "^8.59.1",
     "concurrently": "^9.2.1",
-    "eslint": "^9.39.1",
+    "eslint": "^10.3.0",
     "graphql": "^16.13.2",
     "graphql-markdown": "^7.3.0",
     "node-fetch": "^3.3.2",
