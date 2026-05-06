@@ -11,7 +11,8 @@ NudgeBee's troubleshooting dashboard gives you a real-time view of events, error
 - **AI-powered root cause analysis with NuBi** — When an [LLM is connected](../../integrations/LLM/), NuBi (the SRE AI Agent) and NudgeBee's [pre-built AI agents](../ai/) automatically analyze incidents, correlate signals across the Semantic Knowledge Graph, and suggest root causes in plain language.
 - **Explore the Semantic Knowledge Graph** — Visualize your infrastructure dependencies and trace how issues propagate across services. See [Semantic Knowledge Graph](../knowledge-graph.md).
 - **Configure alerting rules** — Set up custom alerting rules to get notified when specific conditions are met. See [Alerting](./alerting.md).
-- **Use playbooks** — Apply predefined troubleshooting playbooks for common scenarios. See [Playbook Catalog](./playbook-catalog.md).
+- **Attach event playbooks** — Run evidence-collection actions (logs, metrics, custom SQL, kubectl, cloud CLI, SSH, …) automatically on each event so the LLM has the data it needs. See [Playbook Catalog](./playbook-catalog.md).
+- **Understand the split between playbooks and workflows** — Playbooks gather evidence for the LLM; [workflows](../workflow-builder/index.md) post-process the resulting event (triage, ticketing, remediation). See [Event Playbooks vs Workflows](./event-playbooks-vs-workflows.md).
 
 :::info
 **Prerequisites**: To use troubleshooting features, you need at least one [Kubernetes cluster connected](../../installation/agent/installation/) and an [observability source integrated](../../integrations/Observability/). For AI-powered analysis, an [LLM connection](../../integrations/LLM/) is also needed.
@@ -23,5 +24,7 @@ NudgeBee's troubleshooting dashboard gives you a real-time view of events, error
 
 ### What You Will Find in This Section
 
-- **[Alerting](./alerting.md)** — Configure custom alerting rules and thresholds.
-- **[Playbook Catalog](./playbook-catalog.md)** — Browse and apply predefined troubleshooting playbooks for common Kubernetes issues.
+- **[Event Playbooks vs Workflows](./event-playbooks-vs-workflows.md)** — Conceptual guide to the two automation surfaces and when to use each.
+- **[Alerting](./alerting.md)** — Configure custom alerting rules and attach playbook actions for auto-triage.
+- **[Playbook Catalog](./playbook-catalog.md)** — Full reference of every event-playbook action and its parameters, including custom data-collection (proxy DB query, cloud CLI, SSH, kubectl).
+- **[Templating & Best Practices](./templating.md)** — Use gonja (Jinja-style) templates in action parameters, with patterns for labels, outputs, conditionals, and `for_each` loops.

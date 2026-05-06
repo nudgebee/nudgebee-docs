@@ -90,6 +90,24 @@ datasources:
       - "10.0.2.0/24"
     credential_source: gcp_sm
     credential_ref: "projects/my-project/secrets/ssh-fleet-creds/versions/latest"
+
+  # MCP — local stdio server (Forager spawns the process)
+  - name: fetch-mcp
+    type: mcp
+    transport: stdio
+    command: /usr/local/bin/docker
+    args: "run --rm -i mcp/fetch"
+    credential_source: local
+
+  # MCP — HTTP server reachable from inside the network
+  - name: internal-mcp
+    type: mcp
+    transport: http
+    url: http://10.0.1.42:8000/mcp
+    credential_source: local
+    credentials:
+      auth_type: bearer
+      bearer_token: "<token>"
 ```
 
 ## Top-Level Fields
@@ -128,6 +146,12 @@ datasources:
 | `credential_ref` | When using cloud source | Secret name/ARN/resource path |
 | `credentials` | When `local` | Inline credential key-value pairs |
 | `allowed_hosts` | No | List of CIDR ranges or hostnames for SSH dynamic mode (omit `host` to enable) |
+| `transport` | MCP only | `http` or `stdio` |
+| `url` | MCP HTTP | URL of the MCP server (Forager-reachable) |
+| `command` | MCP stdio | Absolute path to executable Forager runs |
+| `args` | MCP stdio | Space-separated arguments (not shell-parsed). For pipes, redirects, or arguments containing spaces, use a shell-script wrapper. |
+| `working_dir` | MCP stdio | Working directory for the spawned process |
+| `env` | MCP stdio | Map of environment variables to set on the spawned process |
 
 ## Common Credential Keys
 
@@ -138,6 +162,7 @@ These are the credential keys used by each datasource type:
 | `postgresql`, `mysql`, `mssql`, `clickhouse`, `oracle` | `username`, `password` |
 | `redis` | `password` (optional) |
 | `ssh` | `username`, `private_key` (PEM format); optionally `password` or `passphrase` |
+| `mcp` (HTTP) | `auth_type` (`bearer`/`basic`/`api_key`/`custom_header`/`oauth2`) plus the matching auth fields: `bearer_token`, `username`/`password`, `custom_header_name`/`custom_header_value`, or `oauth_token_url`/`oauth_client_id`/`oauth_client_secret`/`oauth_scope`/`oauth_audience`. See the [MCP integration guide](../../integrations/MCP/index.md) for the full matrix. |
 
 ## SSH Datasource Notes
 
