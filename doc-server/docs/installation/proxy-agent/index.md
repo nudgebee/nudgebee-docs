@@ -92,6 +92,7 @@ Best for: Self-hosted deployments, GitOps workflows, infrastructure-as-code setu
 | `oracle` | Oracle Database |
 | `redis` | Redis 5+ |
 | `ssh` | Linux / Windows servers via SSH (OpenSSH) |
+| `mcp` | Model Context Protocol servers — HTTP or stdio. See [MCP integration guide](../../integrations/MCP/index.md). |
 
 ## Next Steps
 

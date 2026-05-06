@@ -23,7 +23,7 @@
     "@docusaurus/theme-mermaid": "3.9.2",
     "@easyops-cn/docusaurus-search-local": "^0.55.1",
     "@mdx-js/react": "^3.1.0",
-    "axios": "^1.13.5",
+    "axios": "^1.15.0",
     "clsx": "^2.1.1",
     "prism-react-renderer": "^2.4.1",
     "react": "^18.3.1",
@@ -31,15 +31,15 @@
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.9.2",
-    "@graphql-tools/utils": "^11.0.0",
-    "@tsconfig/docusaurus": "^2.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.46.2",
-    "@typescript-eslint/parser": "^8.57.0",
+    "@graphql-tools/utils": "^11.0.1",
+    "@tsconfig/docusaurus": "^2.0.9",
+    "@typescript-eslint/eslint-plugin": "^8.58.1",
+    "@typescript-eslint/parser": "^8.59.1",
     "concurrently": "^9.2.1",
     "eslint": "^9.39.1",
-    "graphql": "^16.12.0",
+    "graphql": "^16.13.2",
     "graphql-markdown": "^7.3.0",
-    "node-fetch": "^2.7.0",
+    "node-fetch": "^3.3.2",
     "typescript": "^5.8.3"
   },
   "browserslist": {
@@ -58,6 +58,6 @@
     "node": ">=22.0.0"
   },
   "overrides": {
-    "serialize-javascript": "7.0.3"
+    "serialize-javascript": "7.0.5"
   }
 }
