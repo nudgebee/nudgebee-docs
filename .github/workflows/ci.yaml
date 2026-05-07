@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - doc-server/**
+      - .github/workflows/ci.yaml
+  push:
+    branches: [ "main" ]
+    paths:
+      - doc-server/**
+      - .github/workflows/ci.yaml
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ./doc-server/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./doc-server
+        run: npm install --legacy-peer-deps
+
+      - name: Build
+        working-directory: ./doc-server
+        run: npm run build --legacy-peer-deps
+
+      - name: Lint
+        working-directory: ./doc-server
+        run: npm run lint

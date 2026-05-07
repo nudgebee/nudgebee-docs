@@ -1,0 +1,84 @@
+---
+sidebar_position: 4
+---
+
+# Try On-Prem
+
+## Introduction
+
+Following is example configuration for using NudgeBee-agent with On-Prem Server
+
+## Prerequisute
+- Onprem Collector-Server Url
+- Onprem Relay-Server Url
+- Agent Keys
+- Review [Metrics Provider](../installation/metrics/)
+- Review [Loggin Providers](../installation/logging/)
+
+
+### Installation
+
+Installation steps are similar to SaaS. Only changes are required on Relay/Collector endpoints.
+
+
+ ```shell
+ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent  --namespace nudgebee-agent --create-namespace -f values.yaml
+ ```
+
+### Helm Config
+
+```yaml
+runner:
+  relay_address: "wss://{relay-server-url}/register"
+  clickhouse_enabled: true
+  nudgebee: 
+    auth_secret_key: "{agent_keys}"
+    endpoint: "https://{collector-server-url}/"
+
+existingPrometheus:
+  url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+
+opencost:
+  opencost:
+    prometheus:
+      external:
+        url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+
+nodeAgent:
+  enabled: true
+
+opentelemetry-collector:
+  enabled: true
+ ```
+
+### HTTP Configuration
+
+If your agent is available to connect with relay server and you want the relay to connect over HTTP instead of WebSocket:
+
+```yaml
+runner:
+  additional_env_vars:
+    - name: WS_ENABLED
+      value: "false"
+    - name: AGENT_HTTP_URL
+      value: "http://localhost:5000"
+  clickhouse_enabled: true
+  nudgebee: 
+    auth_secret_key: "{agent_keys}"
+    endpoint: "https://{collector-server-url}/"
+
+existingPrometheus:
+  url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+
+opencost:
+  opencost:
+    prometheus:
+      external:
+        url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+
+nodeAgent:
+  enabled: true
+
+opentelemetry-collector:
+  enabled: true
+```
