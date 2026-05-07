@@ -5,7 +5,7 @@ serverPort: 80
 
 image:
   # -- Name of the image repository to pull the container image from.
-  repository: 864186153326.dkr.ecr.us-east-1.amazonaws.com/nudgebee-docs
+  repository: registry.nudgebee.com/nudgebee-docs
   # -- [Image pull policy](https://kubernetes.io/docs/concepts/containers/images/#updating-images) for updating already existing images on a node.
   pullPolicy: IfNotPresent
   # -- Overrides the image tag whose default is the chart appVersion.
@@ -110,19 +110,7 @@ tolerations: []
 
 # -- [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) configuration.
 # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling) for details.
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: node
-          operator: In
-          values:
-          - app
-        - key: eks.amazonaws.com/capacityType
-          operator: In
-          values:
-          - SPOT
+affinity: {}
 
 # -- extraEnvVarsCM append to ConfigMap with extra environment variables. See [values.yaml](values.yaml).
 ## E.g:
