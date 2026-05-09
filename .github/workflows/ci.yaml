@@ -3,14 +3,8 @@ name: CI
 on:
   pull_request:
     branches: [ "main" ]
-    paths:
-      - doc-server/**
-      - .github/workflows/ci.yaml
   push:
     branches: [ "main" ]
-    paths:
-      - doc-server/**
-      - .github/workflows/ci.yaml
 
 jobs:
   build:
