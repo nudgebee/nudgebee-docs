@@ -14,7 +14,7 @@ You can provide the config file in two ways:
 2. **Default location** — if no `--config` flag is given, Forager looks for `forager.yaml` in:
    - Linux: `/etc/nudgebee/` → current directory
    - macOS: `/usr/local/etc/nudgebee/` → current directory
-   - Windows: `%ProgramData%\Nudgebee\` → current directory
+   - Windows: `%ProgramData%\NudgeBee\` → current directory
 
 If no config file is found, Forager still starts using environment variables alone. See [Installation](./installation.md) for how to pass the config file in each deployment mode (Docker, Helm, systemd, etc.).
 

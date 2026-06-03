@@ -21,7 +21,7 @@ Forager prints its build version with `--version`:
 ```bash
 nudgebee-forager --version
 # Docker:  docker exec nudgebee-forager nudgebee-forager --version
-# Helm:    kubectl -n <namespace> exec deploy/nudgebee-forager-nudgebee-forager-chart -- nudgebee-forager --version
+# Helm:    kubectl -n <namespace> exec deploy/nudgebee-forager -- nudgebee-forager --version
 ```
 
 The agent also reports this version in its WebSocket greeting, so the NudgeBee UI (**Admin → Integrations → Servers → Proxy Agent**) shows the running version and last-connected time. That's the fastest cross-check.
@@ -36,24 +36,24 @@ sha256sum /usr/local/bin/nudgebee-forager
 
 **Windows:**
 ```powershell
-Get-Item "C:\Program Files\Nudgebee\nudgebee-forager.exe" | Select-Object LastWriteTime, Length
-Get-FileHash "C:\Program Files\Nudgebee\nudgebee-forager.exe"
+Get-Item "C:\Program Files\NudgeBee\nudgebee-forager.exe" | Select-Object LastWriteTime, Length
+Get-FileHash "C:\Program Files\NudgeBee\nudgebee-forager.exe"
 ```
 
 **Docker / Docker Compose:**
 ```bash
 docker inspect nudgebee-forager --format '{{.Image}} created {{.Created}}'
-docker image inspect registry.nudgebee.com/nudgebee-forager:latest --format '{{.RepoDigests}}'
+docker image inspect ghcr.io/nudgebee/forager:latest --format '{{.RepoDigests}}'
 ```
 
 **Helm** — `-a` includes chart defaults so the image tag shows even if you never overrode it:
 ```bash
 helm get values nudgebee-forager -a -o yaml | grep -A1 image
-kubectl -n <namespace> get deploy nudgebee-forager-nudgebee-forager-chart \
+kubectl -n <namespace> get deploy nudgebee-forager \
   -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
 ```
 
-> Replace `nudgebee-forager-nudgebee-forager-chart` with `<release-name>-nudgebee-forager-chart` if you installed under a different Helm release name.
+> If you installed under a Helm release name that doesn't contain `forager`, the chart fullname template produces `<release-name>-forager` instead of just `<release-name>` — adjust the deployment name accordingly.
 
 ## Upgrade by Install Method
 
@@ -64,7 +64,7 @@ In every method below, your config file and data directory are preserved. Only t
 Re-run the installer. It stops the service, replaces the binary in `/usr/local/bin/`, reinstalls the systemd unit file, and restarts the service. Existing `/etc/nudgebee/forager.yaml` is **not** overwritten.
 
 ```bash
-curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
+curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install.sh | \
   NB_RELAY_URL=<RELAY_URL> \
   NB_ACCESS_KEY=<ACCESS_KEY> \
   NB_ACCESS_SECRET=<ACCESS_SECRET> \
@@ -73,7 +73,7 @@ curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
 
 **Pin a specific version** (useful for staged rollouts or rollback) — the script reads `NB_VERSION` from the environment:
 ```bash
-curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
+curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install.sh | \
   NB_VERSION=<version> NB_RELAY_URL=... NB_ACCESS_KEY=... NB_ACCESS_SECRET=... bash
 ```
 
@@ -85,14 +85,14 @@ journalctl -u nudgebee-forager -f
 
 ### Option 2: Windows Install Script (Windows Service)
 
-Re-run the PowerShell installer in an **Administrator** shell. It stops the `NudgebeeForager` service, replaces `C:\Program Files\Nudgebee\nudgebee-forager.exe`, and restarts the service. Existing `C:\ProgramData\Nudgebee\forager.yaml` is preserved.
+Re-run the PowerShell installer in an **Administrator** shell. It stops the `NudgebeeForager` service, replaces `C:\Program Files\NudgeBee\nudgebee-forager.exe`, and restarts the service. Existing `C:\ProgramData\NudgeBee\forager.yaml` is preserved.
 
 ```powershell
 $env:NB_RELAY_URL="<RELAY_URL>"
 $env:NB_ACCESS_KEY="<ACCESS_KEY>"
 $env:NB_ACCESS_SECRET="<ACCESS_SECRET>"
 Set-ExecutionPolicy Bypass -Scope Process -Force
-iwr -useb https://registry.nudgebee.com/downloads/forager/latest/install.ps1 | iex
+iwr -useb https://github.com/nudgebee/forager/releases/latest/download/install.ps1 | iex
 ```
 
 Verify:
@@ -104,7 +104,7 @@ Get-EventLog -LogName Application -Source NudgebeeForager -Newest 20
 ### Option 3: Docker
 
 ```bash
-docker pull registry.nudgebee.com/nudgebee-forager:latest
+docker pull ghcr.io/nudgebee/forager:latest
 docker stop nudgebee-forager
 docker rm nudgebee-forager
 docker run -d --name nudgebee-forager \
@@ -114,7 +114,7 @@ docker run -d --name nudgebee-forager \
   -v forager-data:/data \
   # -v /path/to/forager.yaml:/etc/nudgebee/forager.yaml \   # uncomment if you use a config file instead of env vars
   --restart unless-stopped \
-  registry.nudgebee.com/nudgebee-forager:latest
+  ghcr.io/nudgebee/forager:latest
 ```
 
 The `forager-data` named volume survives the `rm`, so data persists. If your original container mounted a config file, re-add the same `-v` line on the new container — otherwise the agent falls back to the `NB_*` environment variables shown above.
@@ -133,7 +133,7 @@ Compose re-creates the container with the fresh image and keeps the volume. If y
 # docker-compose.yaml
 services:
   forager:
-    image: registry.nudgebee.com/nudgebee-forager:2026-04-03T09-18-00_05dfc46  # change this
+    image: ghcr.io/nudgebee/forager:v0.1.1  # change this
 ```
 
 Then:
@@ -147,14 +147,14 @@ docker compose up -d
 **With a custom `values.yaml`** (recommended — keeps your config explicit and survives chart upgrades that introduce new defaults):
 ```bash
 helm upgrade nudgebee-forager \
-  oci://registry.nudgebee.com/nudgebee-forager-chart \
+  oci://ghcr.io/nudgebee/charts/forager \
   -f values.yaml
 ```
 
 **To a specific image tag** (overrides only the tag from your values file):
 ```bash
 helm upgrade nudgebee-forager \
-  oci://registry.nudgebee.com/nudgebee-forager-chart \
+  oci://ghcr.io/nudgebee/charts/forager \
   -f values.yaml \
   --set image.tag=<tag>
 ```
@@ -163,8 +163,8 @@ helm upgrade nudgebee-forager \
 
 Watch the rollout:
 ```bash
-kubectl -n <namespace> rollout status deployment/nudgebee-forager-nudgebee-forager-chart
-kubectl -n <namespace> logs -l app.kubernetes.io/name=nudgebee-forager-chart --tail=100 -f
+kubectl -n <namespace> rollout status deployment/nudgebee-forager
+kubectl -n <namespace> logs -l app.kubernetes.io/name=forager --tail=100 -f
 ```
 
 ## Verify the Upgrade
@@ -177,30 +177,30 @@ After any upgrade:
    ```bash
    journalctl -u nudgebee-forager -f            # Linux
    docker logs -f nudgebee-forager              # Docker
-   kubectl logs -f deploy/nudgebee-forager-nudgebee-forager-chart -n <ns>   # Helm
+   kubectl logs -f deploy/nudgebee-forager -n <ns>   # Helm
    ```
 
 ## Rollback
 
-If the new version misbehaves, roll back to a known-good tag. The image registry keeps all past builds indexed by git SHA and by timestamp-SHA. List them:
+If the new version misbehaves, roll back to a known-good tag. Forager images are tagged by release version (e.g. `v0.1.1`). List published versions with the GitHub CLI:
 
 ```bash
-curl -s https://registry.nudgebee.com/v2/nudgebee-forager/tags/list | jq -r .tags[]
+gh release list -R nudgebee/forager --limit 20
 ```
 
-> If `registry.nudgebee.com` requires auth in your environment, add `-u <user>:<token>` (basic) or `-H "Authorization: Bearer <token>"`. The full list of available tags is also visible in the NudgeBee UI under **Admin → Integrations → Servers → Proxy Agent**.
+Or browse them at [github.com/nudgebee/forager/releases](https://github.com/nudgebee/forager/releases). The same list is also visible in the NudgeBee UI under **Admin → Integrations → Servers → Proxy Agent**.
 
 **Linux / Windows:** re-run the installer with `NB_VERSION=<older-tag>`:
 ```bash
-curl -fsSL https://registry.nudgebee.com/downloads/forager/<older-tag>/install.sh | \
+curl -fsSL https://github.com/nudgebee/forager/releases/download/<older-tag>/install.sh | \
   NB_VERSION=<older-tag> NB_RELAY_URL=... NB_ACCESS_KEY=... NB_ACCESS_SECRET=... bash
 ```
 
 **Docker:** pull the older tag and recreate the container with it:
 ```bash
-docker pull registry.nudgebee.com/nudgebee-forager:<older-tag>
+docker pull ghcr.io/nudgebee/forager:<older-tag>
 docker stop nudgebee-forager && docker rm nudgebee-forager
-docker run -d --name nudgebee-forager ... registry.nudgebee.com/nudgebee-forager:<older-tag>
+docker run -d --name nudgebee-forager ... ghcr.io/nudgebee/forager:<older-tag>
 ```
 
 **Helm:** use `helm rollback` (fastest, no need to know the old tag):
@@ -221,7 +221,7 @@ For Helm deployments with `replicaCount: 2+`, Kubernetes handles rolling updates
 | Agent connects but datasources show `Not Connected` | Config push from relay not yet received after reconnect | Wait 30–60s. If it persists, restart: `systemctl restart nudgebee-forager`. |
 | `401 authentication failed` after upgrade | Access key/secret rotated separately | Regenerate and re-run installer with new values |
 | Windows installer fails with "cannot overwrite running binary" | Service didn't stop cleanly | `Stop-Service NudgebeeForager -Force` then re-run the installer |
-| Docker `Unable to find image` on rollback | Older tag no longer cached locally | `docker pull registry.nudgebee.com/nudgebee-forager:<tag>` first |
+| Docker `Unable to find image` on rollback | Older tag no longer cached locally | `docker pull ghcr.io/nudgebee/forager:<tag>` first |
 | Helm rollback leaves pods stuck `Terminating` | Pod's `preStop` hook is slow | `kubectl delete pod <name> --grace-period=0 --force` (last resort) |
 
 For deeper diagnostics see [Troubleshooting](./troubleshooting.md).

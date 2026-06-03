@@ -3,7 +3,7 @@ sidebar_position: 11
 ---
 # Security
 
-NudgeBee is designed with security at its core. The platform is **SOC 2 Type II certified** and **ISO 27001 certified**, providing enterprise-grade security for your cloud operations.
+NudgeBee is designed with security at its core. [NudgeBee Cloud](https://app.nudgebee.com) (the managed SaaS offering) is **SOC 2 Type II certified** and **ISO 27001 certified**. These certifications cover the hosted service; self-hosted (Community and Enterprise) deployments run entirely within your own infrastructure, under your own controls.
 
 This page covers NudgeBee's **Enterprise Guardrails** — authentication, authorization, approval workflows, and audit trails — that keep your operations secure and compliant.
 
@@ -12,9 +12,10 @@ NudgeBee does not store passwords. All authentication is handled through SSO pro
 :::
 
 ## Authentication
-- Supports Google, Azure, Okta, and Auth0 for Single Sign-On (SSO). To configure SSO for on-prem, see [Authentication Integration](../integrations/Authentication/index.md).
+- **OAuth SSO** with Google, Okta, OneLogin, Azure AD (and B2C), and Auth0 is available in **all editions** (Community, Enterprise, Cloud). See [Authentication Integration](../integrations/Authentication/index.md) for setup.
+- **SAML 2.0 SSO** (with IdP-driven user provisioning and group-to-role mapping) is available in the **Enterprise** and **Cloud** editions.
 - Users without SSO can use **magic email links** — enter your email and receive a one-time login link. No password required.
-- Credentials for external integrations are stored encrypted using AES with GCM.
+- Credentials for external integrations are stored encrypted (AES-GCM) at rest using the `NUDGEBEE_ENCRYPTION_KEY` set at install time.
 
 ## Authorization
 - Currently, NudgeBee supports tenant level authorization with 2 roles(admin, readonly)

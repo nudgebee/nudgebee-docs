@@ -10,19 +10,23 @@ NudgeBee is an **AI Agents & Agentic Workflow Platform for SRE, CloudOps, and Su
 
 NudgeBee's Semantic Knowledge Graph correlates logs, metrics, traces, and code to give your team Cloud-Ops Intelligence that reduces MTTR from hours to minutes. Pre-packaged but not a black box — every agent and workflow is fully extensible, modular, and controllable.
 
+:::tip[NudgeBee is open source]
+The **Community** edition is free, Apache 2.0 licensed, and fully functional — self-host it from public images on `ghcr.io/nudgebee` with no license key. See [Editions](./editions.md) for the Community / Enterprise / Cloud comparison.
+:::
+
 <div style={{position: "relative", paddingBottom: "62.5%", height: 0}}><iframe src="https://www.loom.com/embed/0691f374484541468dcfb6d71fedd817?sid=970a6eb4-c0e9-40a2-b2c9-9ba145231f54" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
 
 ---
 
 ## Deployment Models
 
-NudgeBee is available in two deployment models. Choose the one that fits your organization's requirements:
+NudgeBee is available in two deployment models — and self-hosted comes in two **editions** (free Community and licensed Enterprise — see [Editions](./editions.md)). Choose what fits your organization's requirements:
 
 | | **Cloud SaaS** | **Self-Hosted (On-Prem)** |
 |---|---|---|
-| **How it works** | NudgeBee hosts and manages the server for you. You connect your infrastructure to the NudgeBee cloud. | You install the NudgeBee server on your own Kubernetes cluster. |
-| **Best for** | SRE, CloudOps, and Support teams that want to get started quickly without managing additional infrastructure. | Organizations with strict data residency, compliance, or air-gapped environment requirements. |
-| **Security** | SOC 2 Type II and ISO 27001 certified. | Full data control within your own infrastructure. |
+| **How it works** | NudgeBee hosts and manages the server for you. You connect your infrastructure to the NudgeBee cloud. | You install the NudgeBee server on your own Kubernetes cluster. Available as the free open-source **Community** edition or the licensed **Enterprise** edition. |
+| **Best for** | SRE, CloudOps, and Support teams that want to get started quickly without managing additional infrastructure. | Organizations with strict data residency, compliance, or air-gapped environment requirements — or anyone who wants a free, fully-functional self-hosted deployment. |
+| **Security** | SOC 2 Type II and ISO 27001 certified. | Full data control within your own infrastructure. No telemetry — see [Telemetry & Privacy](./telemetry.md). |
 | **Get started** | Sign up at [app.nudgebee.com](https://app.nudgebee.com) | Follow the [Server Installation Guide](./installation/server/) |
 
 ---
@@ -88,7 +92,7 @@ NudgeBee ships with 30+ pre-built Cloud-Ops Agents and 30+ integrations. Capabil
 | **[GitHub](./integrations/Code%20Repository/GitHub/github-integration.md)** / **[GitLab](./integrations/Code%20Repository/GitLab/gitlab-integration.md)** | Auto-PRs for optimization recommendations, code-level troubleshooting | Optional |
 | **[CI/CD system](./integrations/CICD/argocd-integration.md)** (ArgoCD) | Deployment change correlation, rollback insights | Optional |
 | **[Ticketing system](./integrations/Tickets/index.md)** (Jira, ServiceNow, PagerDuty, GitHub Issues, GitLab Issues) | Ticket creation, auto-responses, similar-issue search, runbook references | Optional |
-| **[Authentication provider](./integrations/Authentication/index.md)** | SSO / SAML integration (on-prem only) | Optional |
+| **[Authentication provider](./integrations/Authentication/index.md)** | OAuth SSO (Google/Okta/Azure AD/Auth0) — all editions. SAML 2.0 — Enterprise/Cloud only. | Optional |
 
 ---
 

@@ -24,7 +24,7 @@ Optimize CPU and memory requests/limits for a Kubernetes workload. Can apply cha
 | `cpu` | object | No | CPU configuration: `change_pct` (number, required — percentage to change), `max` (string, e.g., `"1"`), `min` (string, e.g., `"10m"`), `remove_limit` (boolean). |
 | `memory` | object | No | Memory configuration: `change_pct` (number, required — percentage to change), `max` (string, e.g., `"1Gi"`), `min` (string, e.g., `"100Mi"`), `remove_limit` (boolean). |
 | `gitops_config` | object | No | GitOps config: `enabled` (boolean) — if true, creates a PR instead of applying directly. |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 
@@ -56,7 +56,7 @@ Scale the number of replicas for a Kubernetes workload up or down.
 | `min` | number | No | Minimum replica count (floor). |
 | `max` | number | No | Maximum replica count (ceiling). |
 | `gitops_config` | object | No | GitOps config: `enabled` (boolean) — if true, creates a PR. |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 
@@ -87,7 +87,7 @@ Resize a Kubernetes Persistent Volume Claim to match actual usage.
 | `change_to` | string | No | Target absolute storage size (e.g., `20Gi`). |
 | `max` | string | No | Maximum storage size allowed (e.g., `100Gi`). |
 | `gitops_config` | object | No | GitOps config: `enabled` (boolean). |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 | `resource_id` | string | No | Resource ID for the target PVC (used for GitOps). |
 
 ### Output
@@ -113,7 +113,7 @@ Continuously monitor and auto-adjust resources for Kubernetes workloads based on
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `action_params` | object | Yes | Configuration for continuous rightsizing analysis. |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 
@@ -136,7 +136,7 @@ Perform a rolling restart of a Kubernetes workload to apply configuration change
 | `namespace` | string | Yes | Kubernetes namespace. |
 | `name` | string | Yes | Workload or pod name. |
 | `kind` | string | Yes | Resource kind (`Deployment`, `StatefulSet`, `DaemonSet`, `Pod`). |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 
@@ -164,7 +164,7 @@ Delete a Kubernetes pod to force a restart or clean up a stuck pod.
 | `kind` | string | No | Resource kind. Default: `Pod`. If set to a workload kind (e.g., `Deployment`), deletes a pod owned by that workload. |
 | `target_pod_name` | string | No | Specific pod to delete (when `kind` is a workload). If not set, the first found pod is deleted. |
 | `force` | boolean | No | If true, immediately removes the pod (`--grace-period=0 --force`). Useful for stuck pods. |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 
@@ -189,7 +189,7 @@ Safely drain and optionally remove a Kubernetes node. Cordons the node (prevents
 | `name` | string | Yes | Node name to shut down. |
 | `delete_node` | boolean | No | Whether to delete the node object after draining. Default: `false`. |
 | `ignore_pdbs` | boolean | No | If true, bypasses PodDisruptionBudgets using deletion instead of eviction. Default: `false`. |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 

@@ -53,17 +53,23 @@ GitOps Way Of Configuring NudgeBee Optimizations -
 ### Can NudgeBee work on K3s/Kind/Minikube?
 Yes, please refer to the Installation Guide for local testing.
 
-### Does NudgeBee Docker images have any security vulnerabilities?
-No, NudgeBee uses Alpine-based images to reduce overall size and security issues. We use AWS ECR and NudgeBee for scanning images maintained by us. We can share a security report for that as per request.
+### How are NudgeBee Docker images secured?
+NudgeBee uses minimal Alpine-based images to reduce attack surface and image size. Images are scanned for known vulnerabilities as part of the release pipeline. To report a suspected vulnerability, see the [security policy](https://github.com/nudgebee/nudgebee-docs/blob/main/SECURITY.md).
 
-### Does NudgeBee have VAPT reports?
-Yes, we use ZAP/manual pen testing for our security testing and can share reports based on request.
+### Is NudgeBee penetration tested?
+Yes. NudgeBee undergoes regular security testing, including automated and manual penetration testing, as part of its release process.
 
 ### Can I configure multiple clusters within a single NudgeBee server?
 Yes, configure agents on each targeted cluster.
 
-### What are different NudgeBee distributions?
-NudgeBee has both SaaS and self-hosted solutions. As an end-user, you can use the SaaS solution to quickly validate/test the product and the self-hosted solution for long-term deployment (if there are compliance constraints which don't allow any kind of data movement).
+### What are the different NudgeBee distributions / editions?
+NudgeBee is available in three editions — see the [Editions page](./editions.md) for the full side-by-side comparison.
+
+- **Community** — free, open-source (Apache 2.0), fully functional self-hosted. Pull public images from `ghcr.io/nudgebee`; no license key.
+- **Enterprise** — self-hosted with a commercial license. Adds SAML 2.0 SSO, NudgeBee's managed models (`nb-llm` / `nb-slm`), and commercial support.
+- **Cloud** (SaaS) — fully managed at [app.nudgebee.com](https://app.nudgebee.com). Fastest way to evaluate.
+
+Use Cloud for fastest evaluation; Community for a free, self-hosted deployment; Enterprise when you need SAML, managed models, or a commercial SLA while staying on-prem.
 
 ### What is the NudgeBee release cycle?
 We target to have a weekly release cycle with hotfixes as per requirements. We follow SemVer for our versioning.
@@ -81,9 +87,9 @@ Logs - We integrate with existing log services like Loki/ELK, so again, it depen
 
 #### Servers store the following data:
 
-Aggregated Metrics - We do aggregation on a daily basis. No retention policy yet. Would like to understand the use case.
-Events - Troubleshooting pages. Current retention is 60 days. You can make it configurable.
-Deleted Pods/Workloads etc. - We store deleted workloads/pods etc. No retention policy yet. Will share once that is there, maybe by next week.
+Aggregated Metrics - Aggregated on a daily basis and retained for long-term trend analysis.
+Events - Troubleshooting pages. Default retention is 60 days, and is configurable.
+Deleted Pods/Workloads etc. - Records of deleted workloads/pods are retained to support historical analysis.
 
 ### Does NudgeBee support Anomaly Detection?
 No, this is part of the roadmap.

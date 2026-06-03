@@ -3,7 +3,7 @@ sidebar_position: 10
 ---
 # API Tokens
 
-API Tokens allow you to authenticate with Nudgebee APIs programmatically. You can use them to automate workflows, integrate with external tools, or build custom scripts that interact with Nudgebee.
+API Tokens allow you to authenticate with NudgeBee APIs programmatically. You can use them to automate workflows, integrate with external tools, or build custom scripts that interact with NudgeBee.
 
 ## Accessing API Tokens
 
@@ -64,7 +64,7 @@ curl https://app.nudgebee.com/api/auth/token \
   -H 'content-type: application/json'
 ```
 
-- Replace `your@email.com` with your Nudgebee account email.
+- Replace `your@email.com` with your NudgeBee account email.
 - Replace `YOUR_API_TOKEN` with the token you copied when creating it.
 
 The response will contain a JWT token (referred to as `AUTH_TOKEN` below).
@@ -95,5 +95,5 @@ Replace `$AUTH_TOKEN` with the JWT token received in Step 1, and `$QUERY_DATA` w
 ## Notes
 
 - The API token itself is used as the `secret` field in Step 1. It is **not** used directly as a Bearer token in API calls.
-- The base URL in the `curl` commands should match your Nudgebee environment (e.g., `https://app.nudgebee.com` for production).
+- The base URL in the `curl` commands should match your NudgeBee environment (e.g., `https://app.nudgebee.com` for production).
 - If you are using a self-hosted or on-premise deployment, replace the base URL with your instance's domain.

@@ -68,7 +68,7 @@ You can proceed to the next step even if the check fails — NudgeBee will fall 
 
 - If permissions are available, NudgeBee automatically:
   1. Creates a webhook integration and generates a unique webhook URL.
-  2. Creates a **webhook notification channel** named "Nudgebee Monitoring Alerts" in your GCP project.
+  2. Creates a **webhook notification channel** named "NudgeBee Monitoring Alerts" in your GCP project.
   3. Attaches the notification channel to all enabled alert policies.
 
 - If auto-setup fails, NudgeBee displays the webhook URL and instructions for manual setup (see below).
@@ -98,7 +98,7 @@ https://<your-nudgebee-domain>/api/webhooks/gcp-monitoring?token=<generated-toke
 1. Open the [GCP Monitoring Notification Channels page](https://console.cloud.google.com/monitoring/alerting/notifications) for your project.
 2. Under **Webhooks**, click **Add New**.
 3. Configure the channel:
-   - **Display Name**: enter a name (e.g., `Nudgebee Alerts`).
+   - **Display Name**: enter a name (e.g., `NudgeBee Alerts`).
    - **Endpoint URL**: paste the webhook URL from Step 1.
 4. Click **Save**.
 
@@ -173,5 +173,5 @@ When NudgeBee syncs your GCP account, it verifies that the webhook notification 
 | Auto-setup fails or permission check shows missing permissions | Grant the **Monitoring Editor** role (`roles/monitoring.editor`) to the service account. This single role covers all permissions needed for auto-setup. |
 | Events not appearing after manual setup | Verify the webhook URL is correct, the notification channel is enabled in GCP, and it is attached to at least one alert policy. |
 | Events created but missing details | Ensure the alert policy has conditions configured with metrics and thresholds. Log-based alerts may have fewer details. |
-| Duplicate notification channels | NudgeBee checks for an existing channel named "Nudgebee Monitoring Alerts" before creating a new one. If you manually renamed or deleted it, auto-setup will create a new one. |
+| Duplicate notification channels | NudgeBee checks for an existing channel named "NudgeBee Monitoring Alerts" before creating a new one. If you manually renamed or deleted it, auto-setup will create a new one. |
 | Webhook URL returns 401 | The `token` query parameter is invalid. Delete the integration in NudgeBee and re-enable real-time alerts to generate a new token. |

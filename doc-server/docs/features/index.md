@@ -28,6 +28,6 @@ Explore everything NudgeBee offers for Cloud-Ops Intelligence, troubleshooting, 
 
 - **[SLO](./slo.md)** — Define and track Service Level Objectives to ensure your services meet reliability targets. Get alerted when SLOs are at risk and use historical data to make informed capacity decisions.
 
-- **[Security](./security.md)** — Enterprise-grade security with SOC 2 Type II and ISO 27001 certification. Includes SSO authentication, role-based access control, approval workflows, and full audit trails for every action.
+- **[Security](./security.md)** — Role-based access control, approval workflows, and full audit trails for every action. OAuth SSO (Google, Okta, Azure AD, Auth0) and magic-link login are in every edition; **SAML 2.0 SSO** is available in the Enterprise and Cloud editions. NudgeBee Cloud is SOC 2 Type II and ISO 27001 certified.
 
 - **[User Management](./user-management.md)** — Invite team members, assign admin or read-only roles, and control access at both tenant and account level. New users get started instantly via email invite — no password setup needed.

@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer').themes.dracula;;
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'NudgeBee',
-  tagline: '',
+  tagline: 'AI Agents & Agentic Workflows for SRE, CloudOps, and Support Teams',
   favicon: 'img/favicon.png',
   markdown: {
     mermaid: true,
@@ -54,7 +54,8 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: require.resolve('./sidebars.js')  
+          sidebarPath: require.resolve('./sidebars.js'),
+          editUrl: 'https://github.com/nudgebee/nudgebee-docs/tree/main/doc-server/',
         },
         blog: false,
         theme: {
@@ -67,8 +68,8 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // Replace with your project's social card
-      image: 'img/NudgeBee.png',
+      // Social card shown when a docs link is shared (Open Graph / Twitter)
+      image: 'img/Nudgebee.png',
       navbar: {
         logo: {
           alt: 'NudgeBee Logo',

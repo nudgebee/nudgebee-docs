@@ -14,5 +14,5 @@ Add the GCP API Key to NudgeBee agent values
 opencost:
   opencost:
     exporter:
-      cloudProviderApiKey: "op3nco57op3Nco57OP3Nco57op3nco57op3Nco57"
+      cloudProviderApiKey: "<your-gcp-billing-api-key>"
 ```

@@ -4,6 +4,19 @@ sidebar_position: 7
 
 # Helm values
 
+:::note[Defaults reflect the Enterprise chart]
+The defaults in the table below are generated from the **Enterprise** chart
+overlay. The **Community** chart (`oci://ghcr.io/nudgebee/charts/nudgebee`)
+ships with a few different defaults — most notably:
+
+- `global.image.registry` defaults to `ghcr.io/nudgebee` (not `registry.nudgebee.com`).
+- `nudgebee_registry_secret.enabled` defaults to `false` (no registry secret needed).
+- `nudgebee_secret.NUDGEBEE_LICENSE` defaults to empty (no license required).
+
+See the [Server Installation Guide](./index.md) for the Community vs Enterprise
+side-by-side examples.
+:::
+
 ## Values
 
 | Key | Type | Default | Description |
@@ -29,7 +42,7 @@ sidebar_position: 7
 | etl.image.tag | string | `""` |  |
 | global.image.registry | string | `"registry.nudgebee.com"` |  |
 | global.imagePullSecrets[0].name | string | `"nudgebee-registry-secret"` |  |
-| global.existingNudgebeeSecretName | string | `""` | Name of an existing Kubernetes secret to use for Nudgebee configurations (e.g., NUDGEBEE_LICENSE, BASE_URL). When set, these configurations are managed within this secret. |
+| global.existingNudgebeeSecretName | string | `""` | Name of an existing Kubernetes secret to use for NudgeBee configurations (e.g., NUDGEBEE_LICENSE, BASE_URL). When set, these configurations are managed within this secret. |
 | hasura.fullnameOverride | string | `"hasura"` |  |
 | hasura.image.repository | string | `"hasura/graphql-engine"` |  |
 | hasura.image.tag | string | `"v2.36.1-ce"` |  |

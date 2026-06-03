@@ -17,7 +17,7 @@ Common conventions:
 - Every action accepts an optional `title` to override the evidence card title. Setting a title also adds it as an alias key in `outputs` / `extracted_labels`, which makes referencing the action's output from a later step much more readable.
 - Action parameters accept template expressions (`{{ alert.labels.namespace }}`, `{{ extracted_labels['logs_0']['_series'] }}`) so values can be derived from the event payload or earlier actions. See [Templating & Best Practices](./templating.md) for the full context, filters, and patterns.
 - Every action also supports the control parameters [`if`, `for_each`, `for_each_limit`, `for_each_on_limit_exceeded`](#conditional--iterative-control).
-- **Source `nudgebee`** = action runs in the Nudgebee server (no agent required). **Source `prometheus`** = action runs in the in-cluster Kubernetes agent.
+- **Source `nudgebee`** = action runs in the NudgeBee server (no agent required). **Source `prometheus`** = action runs in the in-cluster Kubernetes agent.
 
 ---
 
@@ -408,7 +408,7 @@ Chronosphere traces with tag filters.
 
 ## Proxy Agent (Custom Data Collection)
 
-These actions execute through a Nudgebee **proxy agent** running inside your network. Use them to query private databases, hit internal HTTP endpoints, or run shell commands on hosts the cloud-side server cannot reach directly. The `datasource_id` parameter is rendered as a dropdown of configured proxy integrations of the matching type (tenant-wide).
+These actions execute through a NudgeBee **proxy agent** running inside your network. Use them to query private databases, hit internal HTTP endpoints, or run shell commands on hosts the cloud-side server cannot reach directly. The `datasource_id` parameter is rendered as a dropdown of configured proxy integrations of the matching type (tenant-wide).
 
 ### `proxy_db_query`
 
@@ -458,7 +458,7 @@ Join an incident channel on Slack / Teams / Google Chat.
 |:---|:---|:---|:---|:---|
 | `platform` | string | **Yes** | `slack` | One of `slack`, `ms_teams`, `google_chat`. |
 | `channel_id` | string | **Yes** | — | Channel to join. |
-| `incident_id` | string | **Yes** | — | UUID of the Nudgebee incident. |
+| `incident_id` | string | **Yes** | — | UUID of the NudgeBee incident. |
 | `team_id` | string | No | integration default | Workspace / team override. |
 | `text` | string | No | — | Optional join message. |
 
@@ -470,7 +470,7 @@ Post a message to a Slack / Teams / Google Chat channel.
 |:---|:---|:---|:---|:---|
 | `platform` | string | **Yes** | `slack` | One of `slack`, `ms_teams`, `google_chat`. |
 | `channel_id` | string | **Yes** | — | Channel to post to. |
-| `incident_id` | string | **Yes** | — | UUID of the Nudgebee incident. |
+| `incident_id` | string | **Yes** | — | UUID of the NudgeBee incident. |
 | `text` | string | **Yes** | — | Message body. |
 | `team_id` | string | No | integration default | Workspace / team override. |
 
@@ -709,7 +709,7 @@ HPA configuration / scaling-policy mismatch analysis.
 
 ### `nudgebee_playbook_trigger_enricher`
 
-Trigger another Nudgebee runbook on this event.
+Trigger another NudgeBee runbook on this event.
 
 | Field | Type | Required | Default | Description |
 |:---|:---|:---|:---|:---|

@@ -19,7 +19,7 @@ Run GitHub CLI commands for managing issues, PRs, releases, and more.
 |:---|:---|:---|:---|
 | `integration_id` | integration | Yes | GitHub integration ID. |
 | `command` | string | Yes | GitHub CLI command (e.g., `issue create --title "Bug" --body "Details"`). |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 

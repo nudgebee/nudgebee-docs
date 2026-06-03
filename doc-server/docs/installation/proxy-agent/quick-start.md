@@ -39,7 +39,7 @@ import TabItem from '@theme/TabItem';
 <TabItem value="script" label="Linux" default>
 
 ```bash
-curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
+curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install.sh | \
   NB_RELAY_URL=<RELAY_URL> \
   NB_ACCESS_KEY=<ACCESS_KEY> \
   NB_ACCESS_SECRET=<ACCESS_SECRET> \
@@ -58,7 +58,7 @@ $env:NB_RELAY_URL="<RELAY_URL>"
 $env:NB_ACCESS_KEY="<ACCESS_KEY>"
 $env:NB_ACCESS_SECRET="<ACCESS_SECRET>"
 Set-ExecutionPolicy Bypass -Scope Process -Force
-iwr -useb https://registry.nudgebee.com/downloads/forager/latest/install.ps1 | iex
+iwr -useb https://github.com/nudgebee/forager/releases/latest/download/install.ps1 | iex
 ```
 
 Installs Forager as a Windows Service that starts automatically on boot.
@@ -73,7 +73,7 @@ docker run -d --name nudgebee-forager \
   -e NB_ACCESS_SECRET=<ACCESS_SECRET> \
   -v forager-data:/data \
   --restart unless-stopped \
-  registry.nudgebee.com/nudgebee-forager:latest
+  ghcr.io/nudgebee/forager:latest
 ```
 
 </TabItem>
@@ -81,7 +81,7 @@ docker run -d --name nudgebee-forager \
 
 ```bash
 helm install nudgebee-forager \
-  oci://registry.nudgebee.com/nudgebee-forager-chart \
+  oci://ghcr.io/nudgebee/charts/forager \
   --set forager.relayURL=<RELAY_URL> \
   --set forager.accessKey=<ACCESS_KEY> \
   --set forager.accessSecret=<ACCESS_SECRET>
@@ -112,7 +112,7 @@ Expected output:
 ```
 Status   Name               DisplayName
 ------   ----               -----------
-Running  NudgebeeForager    Nudgebee Forager
+Running  NudgebeeForager    NudgeBee Forager
 ```
 To see the actual log output on Windows, run the binary directly in a PowerShell window — see [Troubleshooting: Windows Service](./troubleshooting.md#windows-service-issues).
 

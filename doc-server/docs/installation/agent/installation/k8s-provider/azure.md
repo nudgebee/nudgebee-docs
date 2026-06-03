@@ -1,6 +1,6 @@
-# Nudgebee Integration with Azure Monitor (Traces + Prometheus)
+# NudgeBee Integration with Azure Monitor (Traces + Prometheus)
 
-This guide explains how to integrate **Azure Monitor** with **Nudgebee** to collect **traces and Prometheus metrics** securely using an **Azure AD App**/**Service Principal**.  
+This guide explains how to integrate **Azure Monitor** with **NudgeBee** to collect **traces and Prometheus metrics** securely using an **Azure AD App**/**Service Principal**.  
 
 ---
 
@@ -27,7 +27,7 @@ nodeAgent:
 
 ## Required Permissions for the Azure AD App (Service Principal)
 
-The Nudgebee integration requires the Azure AD App to have the correct **role assignments** in Azure so it can query **Application Insights (traces)** and **Azure Monitor (Prometheus metrics)**.
+The NudgeBee integration requires the Azure AD App to have the correct **role assignments** in Azure so it can query **Application Insights (traces)** and **Azure Monitor (Prometheus metrics)**.
 
 ---
 
@@ -91,17 +91,17 @@ To simplify management, you can assign the role at the **resource group level** 
 
 ## Endpoints in Azure Monitor
 
-To integrate Nudgebee with Prometheus metrics from Azure Monitor, you need to obtain your workspace's Prometheus **query endpoint**.
+To integrate NudgeBee with Prometheus metrics from Azure Monitor, you need to obtain your workspace's Prometheus **query endpoint**.
 
 ### How to Find the Prometheus Endpoint
 1. Go to your **Azure Monitor Workspace** in the Azure portal.  
 2. Click on your monitoring workspace name.  
 3. Open the **Overview** page.  
-4. Copy the **"Prometheus query endpoint"** URL—this will be used as the `Prometheus URL` in Nudgebee.  
+4. Copy the **"Prometheus query endpoint"** URL—this will be used as the `Prometheus URL` in NudgeBee.  
 
 ---
 
-### Adding the Instrumentation Key to Nudgebee
+### Adding the Instrumentation Key to NudgeBee
 
 You can add your App credentials to your values file as,
 
@@ -128,7 +128,7 @@ To collect **traces**, you’ll need the **Instrumentation Key** from Applicatio
 
 ---
 
-### Adding the Instrumentation Key to Nudgebee
+### Adding the Instrumentation Key to NudgeBee
 
 Update your values file for otel as,
 

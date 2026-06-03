@@ -58,7 +58,7 @@ Run commands on a remote server via SSH using a configured integration.
 |:---|:---|:---|:---|
 | `integration_id` | integration | Yes | SSH integration ID (contains host, credentials). |
 | `command` | string | Yes | Command to execute on the remote server. |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 

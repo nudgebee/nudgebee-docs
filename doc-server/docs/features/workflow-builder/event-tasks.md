@@ -11,7 +11,7 @@ Store and track events for analysis and troubleshooting.
 
 **Display Name:** Store Event
 
-Save an event to Nudgebee for later troubleshooting and analysis. Events can trigger notifications, AI analysis, and appear in the event timeline.
+Save an event to NudgeBee for later troubleshooting and analysis. Events can trigger notifications, AI analysis, and appear in the event timeline.
 
 :::important Deduplication by `finding_id`
 

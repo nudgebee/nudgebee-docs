@@ -104,7 +104,7 @@ The agent can't reach the database. Check network connectivity from the agent ho
    **Windows** — `Get-Service` only shows status, not logs. To see actual log output, stop the service and run the binary directly in a PowerShell window:
    ```powershell
    Stop-Service NudgebeeForager
-   & "C:\Program Files\Nudgebee\nudgebee-forager.exe" --config C:\ProgramData\Nudgebee\forager.yaml
+   & "C:\Program Files\NudgeBee\nudgebee-forager.exe" --config C:\ProgramData\NudgeBee\forager.yaml
    ```
    **Docker:**
    ```bash
@@ -126,7 +126,7 @@ $env:NB_RELAY_URL="<RELAY_URL>"
 $env:NB_ACCESS_KEY="<ACCESS_KEY>"
 $env:NB_ACCESS_SECRET="<ACCESS_SECRET>"
 Set-ExecutionPolicy Bypass -Scope Process -Force
-iwr -useb https://registry.nudgebee.com/downloads/forager/latest/install.ps1 | iex
+iwr -useb https://github.com/nudgebee/forager/releases/latest/download/install.ps1 | iex
 ```
 
 If the service is still stuck, force-stop it first, then re-run the installer:
@@ -140,20 +140,20 @@ Stop-Service NudgebeeForager -Force
 Check that the config file exists and is valid:
 
 ```powershell
-Test-Path C:\ProgramData\Nudgebee\forager.yaml
-Get-Content C:\ProgramData\Nudgebee\forager.yaml
+Test-Path C:\ProgramData\NudgeBee\forager.yaml
+Get-Content C:\ProgramData\NudgeBee\forager.yaml
 ```
 
 Verify the binary is present:
 
 ```powershell
-Test-Path "C:\Program Files\Nudgebee\nudgebee-forager.exe"
+Test-Path "C:\Program Files\NudgeBee\nudgebee-forager.exe"
 ```
 
 To test your config before starting the service, run the binary directly in a PowerShell window (not as a service). This shows log output directly:
 
 ```powershell
-& "C:\Program Files\Nudgebee\nudgebee-forager.exe" --config C:\ProgramData\Nudgebee\forager.yaml
+& "C:\Program Files\NudgeBee\nudgebee-forager.exe" --config C:\ProgramData\NudgeBee\forager.yaml
 ```
 
 Press `Ctrl+C` to stop. Fix any errors shown, then start the service:
@@ -172,7 +172,7 @@ Expected output when healthy:
 ```
 Status   Name               DisplayName
 ------   ----               -----------
-Running  NudgebeeForager    Nudgebee Forager
+Running  NudgebeeForager    NudgeBee Forager
 ```
 
 ## Getting Help
@@ -180,4 +180,4 @@ Running  NudgebeeForager    Nudgebee Forager
 If you're still stuck:
 1. Collect agent logs: `docker logs nudgebee-forager` or `kubectl logs <pod>`
 2. Note the account ID and datasource ID
-3. Contact NudgeBee support with the logs and details
+3. For Community / OSS users, open an issue at [nudgebee/forager](https://github.com/nudgebee/forager/issues) with the logs. Enterprise / Cloud users can contact NudgeBee support.

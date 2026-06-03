@@ -2,12 +2,25 @@
 sidebar_position: 1
 sidebar_label: Server
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Server Installation
 
 The NudgeBee Server is the central component of the NudgeBee platform. It receives data from NudgeBee Agents, performs analysis, and handles user authentication and integrates with external services. This is required for self-hosted deployments only.
 
 :::note
 **Cloud SaaS users**: You do not need to install the server. It is fully managed for you at [app.nudgebee.com](https://app.nudgebee.com). Skip to the [Agent Installation](../agent/installation/index.md).
+:::
+
+:::tip[Choosing an edition]
+The self-hosted server comes in two editions (see [Editions](../../editions.md) for the full comparison):
+
+- **Community** <Community/> — free and open source, fully functional. Images are pulled from the public `ghcr.io/nudgebee` registry. **No license key required.** OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), magic-link email, and credentials login are all included.
+- **Enterprise** <Enterprise/> — adds **SAML 2.0** SSO, NudgeBee's managed models (`nb-llm`, `nb-slm`), and commercial support. Images are pulled from `registry.nudgebee.com` and require a license key.
+
+The installation steps below use tabs — pick your edition in each step.
 :::
 
 ## Architecture
@@ -34,12 +47,12 @@ Make sure you have the following ready before starting the installation.
 |---|---|---|
 | **Kubernetes cluster** | v1.27 or newer, minimum 2 nodes | Each node: 16 GB RAM, 4 cores, 100 GB SSD |
 | **Helm** | v3.x installed and configured | [Install Helm](https://helm.sh/) if you don't have it |
-| **NudgeBee License Key** | Provided when you sign up for a self-hosted license | Contact NudgeBee support if you don't have one |
-| **Registry access** | Cluster must be able to pull images from `registry.nudgebee.com` | Or mirror the images to your internal registry for air-gapped environments |
+| **Registry access** | Cluster must be able to pull images: `ghcr.io/nudgebee` (Community) or `registry.nudgebee.com` (Enterprise) | Or mirror the images to your internal registry for air-gapped environments |
+| **NudgeBee License Key** | **Enterprise only.** Not needed for the Community edition. | Enterprise customers receive a license key; community users skip this. |
 | **Persistent Volume** | 200 GB available (100 GB if you use an external Postgres) | Required for database and application state |
 
 :::info
-**How much does the server actually use?** All NudgeBee server components together consume approximately 12 GB RAM and 4 CPU cores. This includes the bundled Postgres, RabbitMQ, and ClickHouse. If you manage these dependencies externally, the footprint drops to around 8 GB RAM and 2 CPU cores. The 2-node recommendation provides headroom for reliability.
+**How much does the server actually use?** All NudgeBee server components together consume approximately 12 GB RAM and 4 CPU cores. This includes the bundled Postgres, RabbitMQ, Redis, Temporal, and Qdrant subcharts (ClickHouse is off by default and only needed for trace/log analytics). If you manage these dependencies externally, the footprint drops to around 8 GB RAM and 2 CPU cores. The 2-node recommendation provides headroom for reliability.
 :::
 
 ### Optional but Recommended
@@ -57,7 +70,7 @@ These are not required to get NudgeBee running, but they improve the production 
 
 Your cluster needs the following network access for the installation and normal operation:
 
-- **Outbound to `registry.nudgebee.com`** — to pull Docker images during installation.
+- **Outbound to the container registry** — `ghcr.io/nudgebee` (Community) or `registry.nudgebee.com` (Enterprise) — to pull Docker images during installation.
 - **Internal DNS resolution** — pods must be able to resolve the `BASE_URL` you configure (used for authentication).
 - **Outbound to external services** (if you use them) — Slack, Jira, MS Teams, GitHub, OpenAI, etc. require outbound connectivity from the NudgeBee server.
 - **Inbound from external services** (optional) — if you use bidirectional integrations like Slack apps, Slack needs to reach your NudgeBee server's public URL.
@@ -70,20 +83,72 @@ Your cluster needs the following network access for the installation and normal 
 
 ## 2. Install NudgeBee
 
-The installation is three steps: log in to the Helm registry, create a values file, and run the Helm install.
+The installation is three steps: select your edition (and, for Enterprise, log in to the Helm registry), create a values file, and run the Helm install.
 
-### Step 1: Log in to the Helm Registry
+### Step 1: Select Your Edition
 
+<Tabs groupId="edition">
+<TabItem value="community" label="Community (free)">
+
+Community images are public on `ghcr.io/nudgebee` — **no registry login is required.** Just set the chart location used by the commands below:
+
+```shell
+export NUDGEBEE_CHART=oci://ghcr.io/nudgebee/charts/nudgebee
+```
+
+</TabItem>
+<TabItem value="enterprise" label="Enterprise">
+
+Log in to the NudgeBee Helm registry with your license key, then set the chart location:
 
 ```shell
 helm registry login registry.nudgebee.com --username nudgebee --password $NUDGEBEE_LICENSE_KEY
+export NUDGEBEE_CHART=oci://registry.nudgebee.com/nudgebee
 ```
 
 Replace `$NUDGEBEE_LICENSE_KEY` with your actual license key.
 
+</TabItem>
+</Tabs>
+
 ### Step 2: Create Your `values.yaml`
 
 Create a file called `values.yaml` with the minimum required configuration. This gets NudgeBee running with port-forwarding — the simplest setup that works.
+
+<Tabs groupId="edition">
+<TabItem value="community" label="Community (free)">
+
+```yaml
+global:
+  image:
+    registry: "ghcr.io/nudgebee"
+
+nudgebee_secret:
+  BASE_URL: "http://localhost:3000"
+  # 32-byte hex — generate once with `openssl rand -hex 32` and store in your
+  # secret manager. Rotating after data is written makes previously-encrypted
+  # DB rows unreadable, so treat it like a database master password.
+  NUDGEBEE_ENCRYPTION_KEY: "<your-32-byte-hex-key>"
+
+app:
+  ingress:
+    enabled: false
+k8s-collector:
+  ingress:
+    enabled: false
+relay-server:
+  ingress:
+    enabled: false
+```
+
+Generate `NUDGEBEE_ENCRYPTION_KEY` with:
+
+```shell
+openssl rand -hex 32
+```
+
+</TabItem>
+<TabItem value="enterprise" label="Enterprise">
 
 ```yaml
 global:
@@ -97,6 +162,7 @@ nudgebee_registry_secret:
 
 nudgebee_secret:
   BASE_URL: "http://localhost:3000"
+  NUDGEBEE_ENCRYPTION_KEY: "<your-32-byte-hex-key>"   # openssl rand -hex 32
   NUDGEBEE_LICENSE: <your-license-key>
 
 app:
@@ -110,12 +176,16 @@ relay-server:
     enabled: false
 ```
 
-Replace `<your-license-key>` with your NudgeBee license key.
+Replace `<your-license-key>` with your NudgeBee license key and generate
+`NUDGEBEE_ENCRYPTION_KEY` with `openssl rand -hex 32`.
+
+</TabItem>
+</Tabs>
 
 ### Step 3: Run the Helm Install
 
 ```shell
-helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee \
+helm upgrade nudgebee $NUDGEBEE_CHART \
   -f values.yaml \
   --install \
   --namespace nudgebee \
@@ -161,7 +231,7 @@ kubectl port-forward svc/app 3000:80 -n nudgebee --kube-context $KUBE_CONTEXT
 Then open [http://localhost:3000](http://localhost:3000) in your browser. You should see the NudgeBee login page.
 
 
-Use the email address associated with your NudgeBee license to log in. The password is auto-generated during installation and stored in a Kubernetes secret.
+Log in with the admin email address you configured during installation (for Enterprise, this is the email associated with your NudgeBee license). The password is auto-generated during installation and stored in a Kubernetes secret.
 
 Retrieve the password by decoding the secret:
 
@@ -171,7 +241,7 @@ kubectl get secret nudgebee -n nudgebee \
   --kube-context $KUBE_CONTEXT | base64 -d
 ```
 
-Use the decoded password along with your license email to sign in.
+Use the decoded password along with the admin email to sign in.
 
 :::caution
 **Security**: The dummy credentials provider is intended for initial setup and onboarding. For production environments, it is recommended to configure a proper authentication provider (SSO, LDAP, etc.) and disable dummy credentials. See [Authentication Integrations](../../integrations/Authentication/) for details.
@@ -218,7 +288,11 @@ NudgeBee exposes three services that each need their own Ingress entry:
 
 The following `values.yaml` uses cert-manager for SSL. Adjust the annotations and TLS settings based on your cluster's ingress controller and certificate management setup.
 
-Replace all `<placeholder>` values with your actual domains and license key.
+Replace all `<placeholder>` values with your actual domains (and, for Enterprise, your license key).
+
+:::note[Community edition]
+The example below is for the Enterprise registry. For the **Community** edition, set `global.image.registry: "ghcr.io/nudgebee"` and remove the `imagePullSecrets`, `nudgebee_registry_secret`, and `NUDGEBEE_LICENSE` lines.
+:::
 
 ```yaml
 global:
@@ -288,7 +362,7 @@ relay-server:
 After updating your `values.yaml`, apply the changes:
 
 ```shell
-helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee \
+helm upgrade nudgebee $NUDGEBEE_CHART \
   -f values.yaml \
   --install \
   --namespace nudgebee \
@@ -338,7 +412,7 @@ The most common reason for installation failures or timeouts is the **post-insta
 **Fix — re-run Helm upgrade:**
 
 ```shell
-helm upgrade nudgebee oci://registry.nudgebee.com/nudgebee \
+helm upgrade nudgebee $NUDGEBEE_CHART \
   -f values.yaml \
   --install \
   --namespace nudgebee \

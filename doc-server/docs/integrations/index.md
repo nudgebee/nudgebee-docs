@@ -30,7 +30,7 @@ Some integrations are **required** for NudgeBee to function (Kubernetes cluster 
 
 * **[CI/CD - ArgoCD](./CICD/argocd-integration.md)** — Connect ArgoCD for deployment change correlation and rollback insights. **Optional**.
 
-* **[Authentication](./Authentication/)** — Integrate NudgeBee with an existing authentication system (Google, Azure, Okta, Auth0). Only applicable for on-prem deployments. **Optional**.
+* **[Authentication](./Authentication/)** — Integrate NudgeBee with an existing identity provider — OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), LDAP, Teleport, or SAML 2.0. OAuth SSO and friends are available in every edition; SAML 2.0 is **Enterprise** and **Cloud** only. **Optional**.
 
 :::tip
 **Recommended setup order**: Observability source first, then a notification channel, then an LLM provider. This gives you monitoring, alerts, and AI-powered insights right away.

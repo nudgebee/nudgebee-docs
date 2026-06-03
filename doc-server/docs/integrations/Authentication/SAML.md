@@ -2,7 +2,11 @@
 sidebar_position: 2
 ---
 
-# SAML 2.0
+# SAML 2.0 <Enterprise/> <Cloud/>
+
+:::info[Enterprise / Cloud feature]
+SAML 2.0 SSO is part of the **Enterprise** and **Cloud** editions. The free **Community** edition supports OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), magic-link email, and built-in credentials login — see the [Authentication index](./index.md). The SAML-specific features (IdP-driven user provisioning, group-to-role mapping, role synchronization on every login) are what's gated. See [Editions](../../editions.md).
+:::
 
 ## Description
 
@@ -55,7 +59,7 @@ Before configuring SAML, ensure you have:
 | `SAML_CERT` | The IdP's X.509 signing certificate in PEM format. Used to verify SAML assertion signatures. | See [Certificate Setup](#certificate-setup) |
 | `SAML_AUDIENCE` | The expected audience in the SAML assertion. Typically your NudgeBee base URL. | `https://app.yourdomain.com` |
 | `NEXTAUTH_URL` | The base URL of your NudgeBee application. Used to construct the ACS callback URL. | `https://app.yourdomain.com` |
-| `NEXTAUTH_SECRET` | A secret key used to sign session tokens. Must be a strong random string. | `N+vHVMgf0+C678HnyDR9NFBksCz...` |
+| `NEXTAUTH_SECRET` | A secret key used to sign session tokens. Must be a strong random string — generate one with `openssl rand -base64 32`. | `<your-random-secret>` |
 
 ### Optional Environment Variables
 

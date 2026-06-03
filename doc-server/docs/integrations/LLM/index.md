@@ -4,8 +4,8 @@ NudgeBee uses **flexible AI models** — including modular SLMs, LLMs, and speci
 
 ### Do You Need This?
 
-- **Cloud SaaS users**: A NudgeBee-managed LLM is included by default. You can skip this section unless you want to use BYOM (Bring Your Own Model) for more control over model selection or data handling.
-- **Self-hosted (on-prem) users**: You need to configure an LLM provider for AI features to work. Choose from the options below.
+- **Cloud SaaS / Enterprise users**: A NudgeBee-managed LLM is available. You can skip this section unless you want to use BYOM (Bring Your Own Model) for more control over model selection or data handling.
+- **Community (open-source) users**: You need to configure your own LLM provider for AI features to work — this is the BYOM path. Choose from the options below.
 
 :::info
 Without an LLM connection, NudgeBee still provides monitoring, cost optimization, and alerting. The LLM unlocks [NuBi](../../features/ai/) and the full suite of AI-powered troubleshooting, natural language queries, agentic automation, and auto-generated runbooks.
@@ -19,7 +19,7 @@ NudgeBee supports BYOM (Bring Your Own Model) with three categories of LLM provi
 |---|---|---|
 | **Cloud Provider Services** | [AWS Bedrock](./Aws/bedrock.md), [Azure OpenAI](./Azure/azure-openai.md), [Google Vertex AI](./Google/vertex-ai.md), [Google Gemini](./Google/gemini.md), [OpenAI](./OpenAI/) | Teams with existing cloud contracts or preferred providers. |
 | **Self-Hosted / Open Source** | [Ollama](./Ollama/), [HuggingFace](./HuggingFace/), [AWS SageMaker](./Aws/sagemaker.md) | Organizations requiring data privacy, air-gapped environments, or custom-trained models. |
-| **NudgeBee Models** | Pre-trained NudgeBee AI models (nb-llm, nb-slm) | Self-hosted users who want optimized, purpose-built models for Cloud Ops. |
+| **NudgeBee Models** <Enterprise/> <Cloud/> | Pre-trained NudgeBee AI models (nb-llm, nb-slm) | Enterprise/Cloud users who want optimized, purpose-built models for Cloud Ops. |
 
 ---
 
@@ -39,12 +39,16 @@ Choose from the following LLM providers to integrate with your NudgeBee applicat
 - [Hugging Face](./HuggingFace/index.md) - Integration with Hugging Face's model repository and inference APIs
 - [Ollama](./Ollama/index.md) - Integration with self-hosted Ollama deployments
 
-### NudgeBee Models  
+### NudgeBee Models <Enterprise/> <Cloud/>
 
-NudgeBee provides pre-trained AI models that can be downloaded and deployed on supported platforms (applicable for on-premises or self-hosted environments):
+:::info[Enterprise feature]
+NudgeBee's pre-trained `nb-llm` / `nb-slm` / `nb-text-embeddings` models are part of the **Enterprise** and **Cloud** editions and are downloaded from the licensed `registry.nudgebee.com` registry. **Community (open-source) users** should connect their own model instead — see the [Open Source & Self-Hosted Options](#open-source--self-hosted-options) above (Ollama, Hugging Face) or any BYOM provider. See [Editions](../../editions.md) for details.
+:::
+
+NudgeBee provides pre-trained AI models that can be downloaded and deployed on supported platforms (applicable for licensed on-premises or self-hosted Enterprise environments):
 
  **NudgeBee AI/LLM Models**  
-   - Download pre-trained AI models from the NudgeBee platform using the following commands:
+   - Download pre-trained AI models from the NudgeBee platform using the following commands (requires an Enterprise license key):
 
      ##### SLM
       ```bash
