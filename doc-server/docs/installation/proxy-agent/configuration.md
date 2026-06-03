@@ -147,7 +147,7 @@ datasources:
 | `credentials` | When `local` | Inline credential key-value pairs |
 | `allowed_hosts` | No | List of CIDR ranges or hostnames for SSH dynamic mode (omit `host` to enable) |
 | `known_hosts` | No | SSH only. Path to an OpenSSH `known_hosts` file used to verify the server host key (see [host key verification](#ssh-datasource-notes)) |
-| `host_key` | No | SSH only. A single `authorized_keys`-style host public key line used to verify the server host key |
+| `host_key` | No | SSH only. A single SSH public key in standard format (e.g. `ssh-ed25519 AAAAC3Nza...`) used to verify the server host key |
 | `transport` | MCP only | `http` or `stdio` |
 | `url` | MCP HTTP | URL of the MCP server (Forager-reachable) |
 | `command` | MCP stdio | Absolute path to executable Forager runs |
@@ -206,7 +206,7 @@ These are the credential keys used by each datasource type:
 **Host key verification** — By default Forager does not verify the server host key, which leaves the connection unprotected against man-in-the-middle attacks. Set one of the following on the datasource to enable verification:
 
 - `known_hosts` — path to an OpenSSH `known_hosts` file. Use this for fleets or when you maintain a shared host-key file.
-- `host_key` — a single `authorized_keys`-style host public key line. Use this to pin one server's key inline.
+- `host_key` — a single SSH public key in standard format (e.g. `ssh-ed25519 AAAAC3Nza...`). Use this to pin one server's key inline.
 
 If both are set, `known_hosts` takes precedence. When neither is set, verification is skipped and Forager logs a warning at startup.
 
