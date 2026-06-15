@@ -146,6 +146,8 @@ datasources:
 | `credential_ref` | When using cloud source | Secret name/ARN/resource path |
 | `credentials` | When `local` | Inline credential key-value pairs |
 | `allowed_hosts` | No | List of CIDR ranges or hostnames for SSH dynamic mode (omit `host` to enable) |
+| `known_hosts` | No | SSH only. Path to an OpenSSH `known_hosts` file used to verify the server host key (see [host key verification](#ssh-datasource-notes)) |
+| `host_key` | No | SSH only. A single SSH public key in standard format (e.g. `ssh-ed25519 AAAAC3Nza...`) used to verify the server host key |
 | `transport` | MCP only | `http` or `stdio` |
 | `url` | MCP HTTP | URL of the MCP server (Forager-reachable) |
 | `command` | MCP stdio | Absolute path to executable Forager runs |
@@ -199,6 +201,34 @@ These are the credential keys used by each datasource type:
       b3BlbnNzaC1rZXktdjEAAAAABG5vbmUA...
       -----END OPENSSH PRIVATE KEY-----
     passphrase: optional-if-key-is-encrypted
+```
+
+**Host key verification** — By default Forager does not verify the server host key, which leaves the connection unprotected against man-in-the-middle attacks. Set one of the following on the datasource to enable verification:
+
+- `known_hosts` — path to an OpenSSH `known_hosts` file. Use this for fleets or when you maintain a shared host-key file.
+- `host_key` — a single SSH public key in standard format (e.g. `ssh-ed25519 AAAAC3Nza...`). Use this to pin one server's key inline.
+
+If both are set, `known_hosts` takes precedence. When neither is set, verification is skipped and Forager logs a warning at startup.
+
+```yaml
+# Static mode with host key pinned inline
+- name: web-server
+  type: ssh
+  host: 10.0.1.80
+  port: 22
+  host_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA..."
+  credential_source: aws_sm
+  credential_ref: "prod/ssh-web-server"
+
+# Dynamic mode verifying against a known_hosts file
+- name: ssh-fleet
+  type: ssh
+  port: 22
+  allowed_hosts:
+    - "10.0.1.0/24"
+  known_hosts: /etc/nudgebee/ssh_known_hosts
+  credential_source: gcp_sm
+  credential_ref: "projects/my-project/secrets/fleet-ssh-creds/versions/latest"
 ```
 
 **Windows support** — Forager works with Windows OpenSSH Server. Windows uses PowerShell as the default shell, so commands should use `;` instead of `&&` to chain operations.
