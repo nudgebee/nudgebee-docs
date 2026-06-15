@@ -4,7 +4,11 @@ sidebar_position: 6
 
 # Helm Chart Values
 
-NudgeBee Helm chart for Kubernetes
+NudgeBee Helm chart for Kubernetes.
+
+:::note[Table may lag behind the current chart defaults]
+The k8s-agent chart is public OSS at [`nudgebee/k8s-agent`](https://github.com/nudgebee/k8s-agent) and its current image defaults all live on `ghcr.io/nudgebee/*` (e.g. `runner.image.repository: ghcr.io/nudgebee/nudgebee-agent`, `nodeAgent.image.repository: ghcr.io/nudgebee/node-agent`). The auto-generated table below may still show older `registry.nudgebee.com/*` entries — when in doubt, trust [`charts/nudgebee-agent/values.yaml`](https://github.com/nudgebee/k8s-agent/blob/main/charts/nudgebee-agent/values.yaml) in the upstream repo.
+:::
 
 ## Requirements
 

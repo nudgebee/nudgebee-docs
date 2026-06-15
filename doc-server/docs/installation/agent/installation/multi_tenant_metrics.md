@@ -73,7 +73,7 @@ Create a Kubernetes `Service` or `Ingress` if you need external access.
 
 ## 🔌 Wire into NudgeBee
 
-Once installed, update Nudgebee’s `prometheus_url` to point to the proxy:
+Once installed, update NudgeBee’s `prometheus_url` to point to the proxy:
 
 ```yaml
 globalConfig:

@@ -10,11 +10,11 @@
 
 ## Introduction
 
-The ArgoCD integration allows Nudgebee to connect with your ArgoCD GitOps platform, enabling intelligent monitoring, automated incident response, and seamless deployment management. This integration brings the power of AI-driven troubleshooting to your GitOps workflows.
+The ArgoCD integration allows NudgeBee to connect with your ArgoCD GitOps platform, enabling intelligent monitoring, automated incident response, and seamless deployment management. This integration brings the power of AI-driven troubleshooting to your GitOps workflows.
 
 ### What is ArgoCD Integration?
 
-ArgoCD is a declarative, GitOps continuous delivery tool for Kubernetes. Nudgebee's ArgoCD integration provides:
+ArgoCD is a declarative, GitOps continuous delivery tool for Kubernetes. NudgeBee's ArgoCD integration provides:
 
 - **Real-time application health monitoring** - Track sync status, deployment health, and configuration drift
 - **Automated incident correlation** - Connect application issues with recent deployments
@@ -27,7 +27,7 @@ ArgoCD is a declarative, GitOps continuous delivery tool for Kubernetes. Nudgebe
 - **Intelligent troubleshooting** - AI agent provides root cause analysis and actionable fixes
 - **Natural language control** - Manage ArgoCD applications using conversational queries
 - **Automated deployment tracking** - Every incident includes deployment history context
-- **GitOps visibility** - Complete view of your deployment pipeline in Nudgebee
+- **GitOps visibility** - Complete view of your deployment pipeline in NudgeBee
 
 ---
 
@@ -43,7 +43,7 @@ Before configuring the ArgoCD integration, ensure you have:
    - Version: Compatible with ArgoCD CLI
 
 2. **Kubernetes Cluster Access**
-   - Nudgebee deployed with access to Kubernetes cluster
+   - NudgeBee deployed with access to Kubernetes cluster
    - Ability to create Kubernetes secrets
 
 3. **Authentication Credentials**
@@ -68,7 +68,7 @@ Before configuring the ArgoCD integration, ensure you have:
 
 ### Step 1: Create Kubernetes Secret
 
-First, create a Kubernetes secret containing your ArgoCD credentials. This secret will be referenced by Nudgebee to authenticate with ArgoCD.
+First, create a Kubernetes secret containing your ArgoCD credentials. This secret will be referenced by NudgeBee to authenticate with ArgoCD.
 
 #### Using Auth Token (Recommended)
 
@@ -89,9 +89,9 @@ kubectl create secret generic argocd-credentials \
   -n nudgebee
 ```
 
-**Note:** Replace `nudgebee` with the namespace where Nudgebee is deployed.
+**Note:** Replace `nudgebee` with the namespace where NudgeBee is deployed.
 
-### Step 2: Configure Integration in Nudgebee UI
+### Step 2: Configure Integration in NudgeBee UI
 
 1. **Navigate to Integrations**
    - Go to **Settings** → **Integrations**
@@ -118,7 +118,7 @@ kubectl create secret generic argocd-credentials \
 
 3. **Test Configuration**
    - Click **"Save"** to test the connection
-   - Nudgebee will execute `argocd version --client` to validate connectivity
+   - NudgeBee will execute `argocd version --client` to validate connectivity
    - If successful, you'll see a success message
 
 4. **Verify Integration**
@@ -127,7 +127,7 @@ kubectl create secret generic argocd-credentials \
 
 ### Step 3: Link to Cloud Accounts
 
-Select which Nudgebee cloud accounts should use this ArgoCD integration. This allows deployment history to be automatically correlated with incidents in those accounts.
+Select which NudgeBee cloud accounts should use this ArgoCD integration. This allows deployment history to be automatically correlated with incidents in those accounts.
 
 ---
 
@@ -150,7 +150,7 @@ The ArgoCD Agent is an intelligent GitOps incident responder that provides:
 
 ### 2. Automated Deployment History
 
-For every incident in Nudgebee, deployment history is automatically retrieved if:
+For every incident in NudgeBee, deployment history is automatically retrieved if:
 - The affected service has an `argocd.argoproj.io/instance` label
 - ArgoCD integration is configured for the account
 - The service is not from AWS CloudWatch alarms

@@ -27,7 +27,7 @@ Query logs from connected observability platforms (Loki, CloudWatch, DataDog, Sp
 | `log_group` | string | No | Log group name. Dynamic options based on account and region. |
 | `service_name` | string | No | Cloud service name (e.g., `AWS/EC2`). |
 | `resource_id` | string | No | Specific resource ID. |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 
@@ -60,7 +60,7 @@ Query metrics from connected monitoring platforms (Prometheus, CloudWatch, Chron
 | `metric_names` | array | No | Metric names to query. |
 | `statistics` | array | No | Statistics to compute. Options: `Average`, `Sum`, `Maximum`, `Minimum`. |
 | `metric_namespace` | string | No | Metric namespace (e.g., `AWS/EC2`). |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 
@@ -96,7 +96,7 @@ Query distributed traces from connected tracing platforms (SignOz, Jaeger, Tempo
 | `offset` | number | No | Pagination offset. Default: `0`. |
 | `trace_provider` | string | No | Tracing provider. Options: `signoz`, `jaeger`, `tempo`, `datadog`, `newrelic`. |
 | `trace_provider_source` | string | No | Provider source. Options: `agent`, `user`. |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 
@@ -124,7 +124,7 @@ List available log groups, optionally filtered by namespace or workload.
 | `metric_provider` | string | No | Provider. Options: `prometheus`, `aws_cloudwatch`, `chronosphere`, `datadog`, `newrelic`, `ES`. |
 | `metric_provider_source` | string | No | Provider source. Options: `agent`, `user`. |
 | `service_name` | string | No | Cloud service name. |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 

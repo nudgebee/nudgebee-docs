@@ -53,7 +53,7 @@ Fetch the details of an existing ticket by its ID.
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `ticket_id` | string | Yes | Ticket ID to retrieve (e.g., `PROJ-123` for Jira, issue number for GitHub). |
-| `integration_id` | integration | No | Ticket integration. Required if the ticket was not created via Nudgebee. |
+| `integration_id` | integration | No | Ticket integration. Required if the ticket was not created via NudgeBee. |
 | `project_key` | string | No | Project key. Required for GitHub/GitLab (`owner/repo` format). |
 | `account_id` | account | No | Account override. |
 
@@ -192,7 +192,7 @@ Fetch all comments from a ticket.
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `ticket_id` | string | Yes | Ticket ID. |
-| `integration_id` | integration | No | Ticket integration (required if not created via Nudgebee). |
+| `integration_id` | integration | No | Ticket integration (required if not created via NudgeBee). |
 | `project_key` | string | No | Project key (required for GitHub/GitLab). |
 | `account_id` | account | No | Account override. |
 

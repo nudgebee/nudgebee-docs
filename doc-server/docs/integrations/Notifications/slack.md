@@ -46,7 +46,7 @@ mpim:read
 
 **Step 4.** Also, to enable interaction with bot, navigate to Interactivity & Components under Features. (**This step can be skipped if you don’t want to use interactive features in Slack.**)
 
-Click Enable Interactive Components, and you’ll be able to enter your Request URL (this is the location of your on-premise Nudgebee) and Options Load URL:
+Click Enable Interactive Components, and you’ll be able to enter your Request URL (this is the location of your on-premise NudgeBee) and Options Load URL:
 
 ```Request URL: https://www.your-nudgebee-server.com/api/webhooks/slack/interactive```
 

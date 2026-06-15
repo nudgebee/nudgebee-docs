@@ -20,7 +20,7 @@ Run a SQL query against a connected database.
 | `integration_id` | integration | Yes | Database integration ID. |
 | `dbms_type` | string | Yes | Database type. Options: `mysql`, `postgresql`, `clickhouse`, `mssql`, `oracle`. |
 | `command` | string | Yes | SQL query to execute. |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 
@@ -42,7 +42,7 @@ Run commands against a Redis instance.
 |:---|:---|:---|:---|
 | `integration_id` | integration | Yes | Redis integration ID. |
 | `command` | string | Yes | Redis command (e.g., `GET key`, `INFO memory`). |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 

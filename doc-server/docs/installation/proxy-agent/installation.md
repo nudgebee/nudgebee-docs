@@ -17,7 +17,7 @@ Replace `<RELAY_URL>`, `<ACCESS_KEY>`, and `<ACCESS_SECRET>` in the commands bel
 Downloads and installs Forager as a **systemd** service on Linux. Requires root / sudo.
 
 ```bash
-curl -fsSL https://registry.nudgebee.com/downloads/forager/latest/install.sh | \
+curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install.sh | \
   NB_RELAY_URL=<RELAY_URL> \
   NB_ACCESS_KEY=<ACCESS_KEY> \
   NB_ACCESS_SECRET=<ACCESS_SECRET> \
@@ -57,16 +57,16 @@ $env:NB_RELAY_URL="<RELAY_URL>"
 $env:NB_ACCESS_KEY="<ACCESS_KEY>"
 $env:NB_ACCESS_SECRET="<ACCESS_SECRET>"
 Set-ExecutionPolicy Bypass -Scope Process -Force
-iwr -useb https://registry.nudgebee.com/downloads/forager/latest/install.ps1 | iex
+iwr -useb https://github.com/nudgebee/forager/releases/latest/download/install.ps1 | iex
 ```
 
 After installation:
 
 | Path | Description |
 |------|-------------|
-| `C:\Program Files\Nudgebee\nudgebee-forager.exe` | Binary |
-| `C:\ProgramData\Nudgebee\forager.yaml` | Config file |
-| `C:\ProgramData\Nudgebee\` | Data directory |
+| `C:\Program Files\NudgeBee\nudgebee-forager.exe` | Binary |
+| `C:\ProgramData\NudgeBee\forager.yaml` | Config file |
+| `C:\ProgramData\NudgeBee\` | Data directory |
 | `NudgebeeForager` | Windows Service name |
 
 **Service management:**
@@ -76,10 +76,10 @@ Restart-Service NudgebeeForager              # restart
 Stop-Service NudgebeeForager                 # stop
 ```
 
-**Using a local config file:** The installer creates `C:\ProgramData\Nudgebee\forager.yaml` with your access credentials. To add datasources, edit that file and restart the service:
+**Using a local config file:** The installer creates `C:\ProgramData\NudgeBee\forager.yaml` with your access credentials. To add datasources, edit that file and restart the service:
 
 ```powershell
-notepad C:\ProgramData\Nudgebee\forager.yaml
+notepad C:\ProgramData\NudgeBee\forager.yaml
 # Add your datasources (see Configuration Reference), then restart:
 Restart-Service NudgebeeForager
 ```
@@ -95,7 +95,7 @@ docker run -d --name nudgebee-forager \
   -e NB_ACCESS_SECRET=<ACCESS_SECRET> \
   -v forager-data:/data \
   --restart unless-stopped \
-  registry.nudgebee.com/nudgebee-forager:latest
+  ghcr.io/nudgebee/forager:latest
 ```
 
 **Using a local config file:** Mount your config file into the container at `/etc/nudgebee/forager.yaml`. Forager automatically looks for it there — no extra flags needed:
@@ -105,7 +105,7 @@ docker run -d --name nudgebee-forager \
   -v /path/to/forager.yaml:/etc/nudgebee/forager.yaml:ro \
   -v forager-data:/data \
   --restart unless-stopped \
-  registry.nudgebee.com/nudgebee-forager:latest
+  ghcr.io/nudgebee/forager:latest
 ```
 
 When using a config file, you can put `relay_url`, `access_key`, and `access_secret` in the YAML instead of passing them as env vars.
@@ -116,7 +116,7 @@ When using a config file, you can put `relay_url`, `access_key`, and `access_sec
 # docker-compose.yaml
 services:
   forager:
-    image: registry.nudgebee.com/nudgebee-forager:latest
+    image: ghcr.io/nudgebee/forager:latest
     restart: unless-stopped
     environment:
       - NB_RELAY_URL=<RELAY_URL>
@@ -139,7 +139,7 @@ docker compose up -d
 # docker-compose.yaml
 services:
   forager:
-    image: registry.nudgebee.com/nudgebee-forager:latest
+    image: ghcr.io/nudgebee/forager:latest
     restart: unless-stopped
     volumes:
       - ./forager.yaml:/etc/nudgebee/forager.yaml:ro
@@ -155,7 +155,7 @@ Place your `forager.yaml` in the same directory as `docker-compose.yaml`, then r
 
 ```bash
 helm install nudgebee-forager \
-  oci://registry.nudgebee.com/nudgebee-forager-chart \
+  oci://ghcr.io/nudgebee/charts/forager \
   --set forager.relayURL=<RELAY_URL> \
   --set forager.accessKey=<ACCESS_KEY> \
   --set forager.accessSecret=<ACCESS_SECRET>
@@ -169,7 +169,7 @@ Create a `values.yaml` to customize the deployment:
 replicaCount: 1
 
 image:
-  repository: registry.nudgebee.com/nudgebee-forager
+  repository: ghcr.io/nudgebee/forager
   pullPolicy: IfNotPresent
   tag: "latest"
 
@@ -244,7 +244,7 @@ Then install with:
 
 ```bash
 helm install nudgebee-forager \
-  oci://registry.nudgebee.com/nudgebee-forager-chart \
+  oci://ghcr.io/nudgebee/charts/forager \
   -f values.yaml
 ```
 
@@ -324,7 +324,7 @@ Expected output:
 ```
 Status   Name               DisplayName
 ------   ----               -----------
-Running  NudgebeeForager    Nudgebee Forager
+Running  NudgebeeForager    NudgeBee Forager
 ```
 To see the actual log output on Windows, run the binary directly in a PowerShell window — see [Troubleshooting: Windows Service](./troubleshooting.md#windows-service-issues).
 

@@ -19,7 +19,7 @@ Run ArgoCD commands to manage application deployments (sync, rollback, status ch
 |:---|:---|:---|:---|
 | `integration_id` | integration | Yes | ArgoCD integration ID. |
 | `command` | string | Yes | ArgoCD command (e.g., `app sync my-app`, `app get my-app`). |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 

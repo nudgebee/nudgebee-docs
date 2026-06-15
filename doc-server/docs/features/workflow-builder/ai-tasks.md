@@ -81,7 +81,7 @@ Ask AI to investigate a specific event or alert. Designed for event-triggered wo
 
 **Display Name:** Ask NuBi
 
-Ask NuBi (Nudgebee's AI assistant) to investigate an issue or answer a question. NuBi has access to your infrastructure context including K8s clusters, services, and events.
+Ask NuBi (NudgeBee's AI assistant) to investigate an issue or answer a question. NuBi has access to your infrastructure context including K8s clusters, services, and events.
 
 ![Ask NuBi Task](./img/llm-nubi.png)
 

@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Alerting & Auto-Investigation
 
-When an alert fires, Nudgebee can run a small list of "actions" automatically — gathering logs, fetching cloud metrics, snapshotting database queries, hitting an internal API — and attach the results to the alert as evidence. The LLM then writes the root cause analysis with all of that context already in hand.
+When an alert fires, NudgeBee can run a small list of "actions" automatically — gathering logs, fetching cloud metrics, snapshotting database queries, hitting an internal API — and attach the results to the alert as evidence. The LLM then writes the root cause analysis with all of that context already in hand.
 
 You set this up once, on the alert. After that, every time the alert fires, the same investigation happens automatically.
 
@@ -19,7 +19,7 @@ A few real examples:
 None of these require any custom code or workflow. Each is two or three clicks in the alert editor.
 
 :::tip Works for any alert source
-This works for alerts you create in Nudgebee (Prometheus rules) **and** for alerts forwarded from any of the integrations Nudgebee accepts via webhook: **Datadog**, **New Relic**, **Dynatrace**, **Splunk**, **SolarWinds**, **Grafana**, **GCP Cloud Monitoring**, **Azure Monitor**, **PagerDuty**, **Zenduty**, **ServiceNow**, or the generic webhook (used for AWS CloudWatch via SNS, or any other source). The flow is the same in every case.
+This works for alerts you create in NudgeBee (Prometheus rules) **and** for alerts forwarded from any of the integrations NudgeBee accepts via webhook: **Datadog**, **New Relic**, **Dynatrace**, **Splunk**, **SolarWinds**, **Grafana**, **GCP Cloud Monitoring**, **Azure Monitor**, **PagerDuty**, **Zenduty**, **ServiceNow**, or the generic webhook (used for AWS CloudWatch via SNS, or any other source). The flow is the same in every case.
 :::
 
 ---
@@ -30,7 +30,7 @@ Open the cloud or cluster account from the top-right account picker, then go to 
 
 ![AlertManager listing](./img/alertmanager-listing.png)
 
-Every alert Nudgebee knows about is listed here — Prometheus rules you authored, plus alerts forwarded from external sources. From any row you can edit the alert, attach actions to it, or pause it.
+Every alert NudgeBee knows about is listed here — Prometheus rules you authored, plus alerts forwarded from external sources. From any row you can edit the alert, attach actions to it, or pause it.
 
 ---
 
@@ -40,15 +40,15 @@ The alert editor is a short wizard. The first two steps are about **the alert it
 
 ### 1. Alert configuration
 
-Give the alert a name, severity, and short summary. The name is what Nudgebee uses to remember which actions belong to which alert, so pick something stable.
+Give the alert a name, severity, and short summary. The name is what NudgeBee uses to remember which actions belong to which alert, so pick something stable.
 
 If the alert came in from an external source (Datadog, New Relic, an AWS / GCP / Azure alarm forwarded via webhook, etc.), the alert entry is created automatically when it first fires — open the existing row in Alert Manager and go straight to **Add Actions**.
 
 ### 2. Triggering condition
 
-For Prometheus rules created in Nudgebee, this is where you write the PromQL and choose how long the condition must hold (the `for:` window) before the alert fires.
+For Prometheus rules created in NudgeBee, this is where you write the PromQL and choose how long the condition must hold (the `for:` window) before the alert fires.
 
-For external alerts, the trigger condition lives in the originating system (Datadog, CloudWatch, …) — Nudgebee just records the alert when the source notifies it.
+For external alerts, the trigger condition lives in the originating system (Datadog, CloudWatch, …) — NudgeBee just records the alert when the source notifies it.
 
 ### 3. Add actions
 
@@ -133,7 +133,7 @@ Attach three actions, in this order:
 2. **Get Cloud Provider Metrics** — pulls CPU, IOPS, and connection-count history from CloudWatch.
 3. **Database Query (Proxy Agent)** — runs the same `pg_stat_activity` snapshot as above, against the same instance.
 
-When the alarm fires, the alert in Nudgebee will have all three evidence cards waiting — AWS view, metric trend, live workload — and the analysis ties them together. Notice that none of this is Kubernetes-specific.
+When the alarm fires, the alert in NudgeBee will have all three evidence cards waiting — AWS view, metric trend, live workload — and the analysis ties them together. Notice that none of this is Kubernetes-specific.
 
 ### Slow Datadog monitor — pull the service graph
 
@@ -147,9 +147,9 @@ The LLM ends up with a clear picture of where the latency is coming from before 
 
 ---
 
-## Need data that's not in the catalog?
+## Need data that's not in the catalog? {#custom-data-collection}
 
-You don't need to write a workflow or a plugin for this. Nudgebee includes "run my command" actions for the common shapes of custom data collection:
+You don't need to write a workflow or a plugin for this. NudgeBee includes "run my command" actions for the common shapes of custom data collection:
 
 - **Run a SQL query** anywhere your proxy agent can reach — Postgres, MySQL, MSSQL, ClickHouse, Oracle.
 - **Hit an internal HTTP endpoint** — Grafana, Jenkins, your own health checks.

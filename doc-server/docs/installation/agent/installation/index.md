@@ -41,7 +41,7 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 | **Helm** | v3.x installed and configured | [Install Helm](https://helm.sh/) if you don't have it |
 | **Linux Kernel** | v4.2 or newer on all nodes | Required for eBPF-based network metrics collection |
 | **NudgeBee Auth Key** | Generated from the NudgeBee UI | See [Step 1](#step-1-generate-your-auth-key) below |
-| **Registry access** | Outbound access to `registry.nudgebee.com` and `nudgebee.github.io` | Or mirror images to your internal registry |
+| **Registry access** | Outbound access to `nudgebee.github.io` (public Helm repo) and `ghcr.io/nudgebee` (public agent images) | Air-gapped clusters can mirror the images to their own registry and override `runner.image.repository` / `nodeAgent.image.repository` |
 | **Prometheus** | A running Prometheus instance in the cluster | If you don't have one, the install script can set it up for you |
 
 :::tip

@@ -2,7 +2,9 @@
 
 This document explains how to integrate various authentication systems with your NudgeBee application. NudgeBee utilizes a flexible authentication system that supports a wide array of identity providers, allowing you to choose the method that best suits your organization's needs.
 
-Note - This guide is only applicable to On-Prem license.
+:::info[Which providers are in which edition?]
+**Community** ships with OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), magic-link email, and built-in credentials login — these all work out of the box on every install. **SAML 2.0** (with IdP-driven user provisioning and group-to-role mapping) is **Enterprise** and **Cloud** only. See [Editions](../../editions.md).
+:::
 
 ## Authentication Providers
 
@@ -20,11 +22,13 @@ NudgeBee supports several authentication providers. Each provider requires speci
 -   [Email (Magic Link)](#email-magic-link)
 -   [Dummy Credentials (For On-Prem Admin)](#dummy-credentials-for-on-prem-admin)
 -   [LDAP](#ldap)
--   [SAML 2.0](#saml-20) — For SAML-based SSO with automatic user provisioning and group mapping
+-   [SAML 2.0](#saml-20) <Enterprise/> <Cloud/> — For SAML-based SSO with automatic user provisioning and group mapping
 
-## SAML 2.0 {#saml-20}
+## SAML 2.0 <Enterprise/> <Cloud/> {#saml-20}
 
-NudgeBee supports SAML 2.0 for Single Sign-On (SSO). 
+NudgeBee supports SAML 2.0 for Single Sign-On (SSO). This integration is part
+of the **Enterprise** and **Cloud** editions — see the dedicated [SAML 2.0
+setup guide](./SAML.md) for configuration steps.
 
 - [General Notes](#general-notes)
 

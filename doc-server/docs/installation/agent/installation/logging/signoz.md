@@ -16,8 +16,8 @@ runner:
   signoz:
     enabled: false
     url: "https://signoz.signoz:3301"
-    user_email: "xxx.yyy@nudgebee.com"
-    user_password: "xxxx"
+    user_email: "user@example.com"
+    user_password: "<your-password>"
     apiKey: ""
     global_filter: '[{"key": {"key": "service.name"},"op": "=","value": "currency"}]'
 ```

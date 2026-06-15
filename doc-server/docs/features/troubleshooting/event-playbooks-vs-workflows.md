@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Event Playbooks vs Workflows
 
-Nudgebee gives you two different automation surfaces, and they exist for two different reasons. Understanding the split keeps you from building the right thing in the wrong place.
+NudgeBee gives you two different automation surfaces, and they exist for two different reasons. Understanding the split keeps you from building the right thing in the wrong place.
 
 | | **Event Playbook** | **Workflow** |
 |---|---|---|
@@ -20,7 +20,7 @@ Nudgebee gives you two different automation surfaces, and they exist for two dif
 > **Event playbook = "what should the LLM look at when this fires?"**
 > **Workflow = "what should we *do* about events like this?"**
 
-Event playbooks are not Kubernetes-specific. They run for **any event Nudgebee ingests**, regardless of the source — see [Event Sources](#event-sources) below. The catalog includes K8s actions (logs, kubectl, pod profiler), cloud actions (CloudWatch / GCP Cloud Monitoring / Azure Monitor metrics & logs, AWS/GCP/Azure CLI), database actions (proxy DB query), HTTP/SSH actions, and APM actions (Datadog, Signoz, Chronosphere). You attach whichever set is relevant to the alert.
+Event playbooks are not Kubernetes-specific. They run for **any event NudgeBee ingests**, regardless of the source — see [Event Sources](#event-sources) below. The catalog includes K8s actions (logs, kubectl, pod profiler), cloud actions (CloudWatch / GCP Cloud Monitoring / Azure Monitor metrics & logs, AWS/GCP/Azure CLI), database actions (proxy DB query), HTTP/SSH actions, and APM actions (Datadog, Signoz, Chronosphere). You attach whichever set is relevant to the alert.
 
 ## Worked Examples
 
@@ -60,12 +60,12 @@ In every case both surfaces run for the same incident; neither replaces the othe
 
 Both surfaces operate on the same event object. The link between an arriving event and the playbook attached to it is the **alert name** (and for non-alert events, the **`aggregation_key`**).
 
-Events flow into Nudgebee from:
+Events flow into NudgeBee from:
 
 | Source | What's accepted |
 |---|---|
-| **Prometheus** in your K8s cluster | Any rule defined in the Nudgebee Alert Manager (or upstream Prometheus AlertManager). Native source — alerts are matched by `labels.nb_alert_name`, `labels.alertname`, or the event's `aggregation_key`, in that order. |
-| **APM / observability webhooks** | First-class handlers exist for **Datadog**, **New Relic**, **Dynatrace**, **Splunk**, **SolarWinds**, and **Grafana**. (Signoz and Chronosphere are query-able from playbook actions but Nudgebee does not have webhook handlers for their alerts — those would arrive via the generic webhook.) |
+| **Prometheus** in your K8s cluster | Any rule defined in the NudgeBee Alert Manager (or upstream Prometheus AlertManager). Native source — alerts are matched by `labels.nb_alert_name`, `labels.alertname`, or the event's `aggregation_key`, in that order. |
+| **APM / observability webhooks** | First-class handlers exist for **Datadog**, **New Relic**, **Dynatrace**, **Splunk**, **SolarWinds**, and **Grafana**. (Signoz and Chronosphere are query-able from playbook actions but NudgeBee does not have webhook handlers for their alerts — those would arrive via the generic webhook.) |
 | **Cloud-provider alarms** | First-class handlers for **GCP Cloud Monitoring** and **Azure Monitor**. AWS CloudWatch alarms typically arrive via the generic webhook (often through SNS). |
 | **Incident / ITSM** | First-class handlers for **PagerDuty**, **Zenduty**, and **ServiceNow**. |
 | **Generic / custom** | The generic webhook endpoint accepts any payload with the standard event fields. Use it for anything not covered above. |
@@ -73,7 +73,7 @@ Events flow into Nudgebee from:
 
 When the event is ingested:
 
-1. Nudgebee resolves an **alert name** for the event (from `nb_alert_name`, `alertname`, or the `aggregation_key`).
+1. NudgeBee resolves an **alert name** for the event (from `nb_alert_name`, `alertname`, or the `aggregation_key`).
 2. Event playbooks bound to that alert name are run. Their outputs are appended as evidence on the event.
 3. AI analysis runs on the now-enriched event and produces the root-cause summary.
 4. Any workflow with an **Event Trigger** matching the `aggregation_key` is dispatched. Workflows see the final, enriched event — including whatever the playbook collected.
@@ -116,5 +116,5 @@ These actions are how you extend evidence collection without writing code or tou
 - [Alerting & Action Customisation](./alerting.md) — attaching playbook actions to an alert (works for Prometheus, cloud, and APM-webhook events).
 - [Playbook Catalog](./playbook-catalog.md) — full reference of every action, its parameters, and which event categories it applies to.
 - [Workflow Builder](../workflow-builder/index.md) — designing post-processing automations.
-- [Event Trigger configuration](../workflow-builder/index.md#event-trigger) — how a workflow subscribes to events.
+- [Event Trigger configuration](../workflow-builder/triggers.md#event-trigger) — how a workflow subscribes to events.
 - [`events.store` task](../workflow-builder/event-tasks.md) — how a workflow can produce events that other playbooks/workflows then react to.

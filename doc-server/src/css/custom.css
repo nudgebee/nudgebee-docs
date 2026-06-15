@@ -361,6 +361,55 @@ div[class^='codeBlockTitle'] {
   letter-spacing: 0.04em;
 }
 
+/* ===== EDITION BADGES (Community / Enterprise / Cloud) ===== */
+.edition-badge {
+  display: inline-block;
+  padding: 0.1em 0.55em;
+  border-radius: 0.6em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+  margin-left: 0.4em;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.edition-badge--community {
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
+  border-color: rgba(22, 163, 74, 0.35);
+}
+
+.edition-badge--enterprise {
+  background: rgba(124, 58, 237, 0.12);
+  color: #6d28d9;
+  border-color: rgba(124, 58, 237, 0.35);
+}
+
+.edition-badge--cloud {
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+  border-color: rgba(37, 99, 235, 0.35);
+}
+
+[data-theme='dark'] .edition-badge--community {
+  background: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+}
+
+[data-theme='dark'] .edition-badge--enterprise {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+}
+
+[data-theme='dark'] .edition-badge--cloud {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
 /* ===== IMAGES ===== */
 .markdown img {
   border-radius: var(--ifm-global-radius);

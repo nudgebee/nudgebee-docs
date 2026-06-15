@@ -4,17 +4,17 @@ sidebar_position: 5
 
 # Templating & Best Practices
 
-Most action parameters in Nudgebee are not just static strings — they accept **templates**. A template is a small expression like `{{ alert.labels.namespace }}` that pulls a value from the alert (or from an earlier action's output) at the moment the alert fires.
+Most action parameters in NudgeBee are not just static strings — they accept **templates**. A template is a small expression like `{{ alert.labels.namespace }}` that pulls a value from the alert (or from an earlier action's output) at the moment the alert fires.
 
-This is what lets one alert configuration handle hundreds of real alerts without manual editing. You write the action once, with placeholders, and Nudgebee fills them in for each event.
+This is what lets one alert configuration handle hundreds of real alerts without manual editing. You write the action once, with placeholders, and NudgeBee fills them in for each event.
 
-Nudgebee uses **gonja** — a Go implementation of Jinja2 — so the syntax will be familiar to anyone who has used Ansible or Jinja-based tools.
+NudgeBee uses **gonja** — a Go implementation of Jinja2 — so the syntax will be familiar to anyone who has used Ansible or Jinja-based tools.
 
 ---
 
 ## The basics
 
-You can use templates in any action parameter — text, textarea, lists, or objects. Nudgebee serialises the whole parameter blob, runs gonja over it, and parses the result back, so a template inside any field works the same way.
+You can use templates in any action parameter — text, textarea, lists, or objects. NudgeBee serialises the whole parameter blob, runs gonja over it, and parses the result back, so a template inside any field works the same way.
 
 | Syntax | What it does |
 |:---|:---|
@@ -92,7 +92,7 @@ There is no `alert.subject_name`, `alert.namespace`, `alert.severity`, `alert.ag
 
 ### What's in `outputs[key]`
 
-`outputs[key]` is whatever object the action returned. For Nudgebee server-side actions (most actions whose source is `nudgebee` — `proxy_db_query`, `cloud_cli`, `notification_channel_*`, the `proxy_*` family, etc.), the shape depends on the response type the action chose:
+`outputs[key]` is whatever object the action returned. For NudgeBee server-side actions (most actions whose source is `nudgebee` — `proxy_db_query`, `cloud_cli`, `notification_channel_*`, the `proxy_*` family, etc.), the shape depends on the response type the action chose:
 
 | Response type | Shape (visible fields) |
 |:---|:---|
@@ -103,7 +103,7 @@ There is no `alert.subject_name`, `alert.namespace`, `alert.severity`, `alert.ag
 
 For agent-side actions (source `prometheus` — `pod_enricher`, `logs_enricher`, `node_disk_analyzer`, …), the response is whatever the in-cluster agent returns over relay. The shape can be richer (e.g. `pod_enricher` returns a structured `data` object you can navigate with `outputs.pod_enricher_0.data.containers[0].restarts`) but is action-specific. Two practical implications:
 
-- For JSON-format server-side actions, `outputs.foo.data` is a **string** of JSON. Either pipe it through `| markdown` (the [Nudgebee filter](#nudgebee-specific-filters), which JSON-escapes safely) or accept that you'll be doing string-level reasoning.
+- For JSON-format server-side actions, `outputs.foo.data` is a **string** of JSON. Either pipe it through `| markdown` (the [NudgeBee filter](#nudgebee-specific-filters), which JSON-escapes safely) or accept that you'll be doing string-level reasoning.
 - The `markdown` filter is the safest way to embed a previous action's result in another action's text-shaped parameter (Slack messages, ticket bodies). It handles all four response types and JSON-escapes the result.
 
 ### What's in `extracted_labels[key]`
@@ -177,9 +177,9 @@ Filters transform a value. Pipe them with `|`.
 | `selectattr` | `{{ items \| selectattr('status', 'eq', 'failed') }}` | Filter list by attribute. |
 | `map(attribute=…)` | `{{ items \| map(attribute='name') }}` | Pluck a field (also see `pluck` below). |
 
-### Nudgebee-specific filters
+### NudgeBee-specific filters
 
-In addition to the standard Jinja filters above, Nudgebee registers a handful of custom filters that come up often in alert investigation. They're available in any action parameter.
+In addition to the standard Jinja filters above, NudgeBee registers a handful of custom filters that come up often in alert investigation. They're available in any action parameter.
 
 | Filter | Signature | What it does |
 |:---|:---|:---|
@@ -336,7 +336,7 @@ Or, when the value is already a JSON-shaped string, use `| tojson` to preserve t
 labels: "{{ outputs.extractor.data | tojson }}"
 ```
 
-Nudgebee post-processes the rendered template and parses any string that looks like JSON back into the right type, so you usually don't need to think about this.
+NudgeBee post-processes the rendered template and parses any string that looks like JSON back into the right type, so you usually don't need to think about this.
 
 ---
 
@@ -389,7 +389,7 @@ There is no in-editor template preview. The fastest way to confirm a template wo
 |:---|:---|
 | `unable to render template` at runtime | Bad syntax in one of the action's parameters. Open the alert, find the action with the error message in its evidence card, and fix the offending template. |
 | Value looks like `<no value>` or empty in the evidence card | The label or output you referenced doesn't exist on this event. Add a `\| default(...)`. |
-| Action expected an object / array but got a string | A template returned a JSON-shaped string. Pipe it through `\| tojson` (or rely on auto-parse — Nudgebee converts string-encoded JSON back to the typed value before the action runs). |
+| Action expected an object / array but got a string | A template returned a JSON-shaped string. Pipe it through `\| tojson` (or rely on auto-parse — NudgeBee converts string-encoded JSON back to the typed value before the action runs). |
 | `for_each` ran zero times | The expression didn't resolve to an array. Check the rendered value — `extracted_labels` is keyed by `<action_name>_<index>` (e.g. `logs_0`) and most extractors put rows under `_series`. |
 | `if:` is being skipped when you expected it to run | The rendered template must equal the string `"true"` (case-insensitive — `"True"`, `"TRUE"` all work) or boolean `true`. Anything else skips the action: `"false"`, `"False"`, the empty string, `"True "` with a trailing space, `"yes"`, `"1"`, etc. Use the `gt` / `lt` / `gte` / `lte` filters to get a clean lowercase `"true"` / `"false"` you don't have to second-guess. |
 

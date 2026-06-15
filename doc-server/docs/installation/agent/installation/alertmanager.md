@@ -32,7 +32,7 @@ This setup is ideal when:
                               │                       │
                               │                       ▼
                               ▼               ┌──────────────┐
-                       ┌──────────────┐       │ Nudgebee     │
+                       ┌──────────────┐       │ NudgeBee     │
                        │ Alert Rules  │       │ Agent        │
                        │ Evaluation   │       └──────────────┘
                        └──────────────┘

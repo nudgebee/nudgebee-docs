@@ -34,7 +34,7 @@ Execute a custom script in Bash, Python, JavaScript, or PowerShell. Scripts can 
 | `image` | string | No | Container image override (for `kubernetes` or `agent` executor types). |
 | `resources` | object | No | Resource limits for Kubernetes execution: `cpu_request`, `cpu_limit`, `memory_request`, `memory_limit`. |
 | `parser_type` | string | No | Output format parser. Set to `json` to parse stdout as JSON. |
-| `account_id` | account | No | Nudgebee account ID. |
+| `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
 
