@@ -43,6 +43,10 @@ If you're trying to attach **evidence-collection actions to a specific alert** (
   - **Paused** - Triggers suspended, can be resumed
   - **Draft** - Under construction, not yet activated
 
+:::tip
+Workflows are version-controlled: save drafts freely, publish immutable named versions, and point production at a chosen Live version. See [Workflow Versioning](./workflow-versioning.md).
+:::
+
 ## Getting Started
 
 ### Accessing the Workflow Builder
