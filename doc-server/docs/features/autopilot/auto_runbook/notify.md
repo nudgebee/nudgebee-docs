@@ -2,7 +2,7 @@
 
 *Add this action in the [Automation builder](../autopilot.md): click **Add Action**, search for it, and configure its parameters.*
 
-![Adding and configuring the Im notification action in the NudgeBee automation builder](./img/notify.gif)
+![Adding and configuring the IM notification action in the NudgeBee automation builder](./img/notify.gif)
 
 
 ## Overview

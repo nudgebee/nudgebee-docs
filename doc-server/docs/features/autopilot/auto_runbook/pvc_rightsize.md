@@ -2,7 +2,7 @@
 
 *Add this action in the [Automation builder](../autopilot.md): click **Add Action**, search for it, and configure its parameters.*
 
-![Adding and configuring the Pv Rightsize action in the NudgeBee automation builder](./img/pvc-rightsize.gif)
+![Adding and configuring the PV Right Size action in the NudgeBee automation builder](./img/pvc-rightsize.gif)
 
 
 ## Overview
