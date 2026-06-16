@@ -93,7 +93,7 @@ When enabled, the minimap shows an overview of the entire graph. Click on any ar
 - **Drag nodes** - Click and drag any node to reposition it on the canvas
 - **Pan canvas** - Click and drag on the background to move the entire view
 
-<!-- ![Navigation Controls](./img/knowledge-graph-navigation.png) -->
+![Knowledge Graph walkthrough: navigating from Home to Troubleshoot, opening the Knowledge Graph, narrowing the graph with the Node filter, then using the zoom, fit-to-screen, and drill-down controls](./img/knowledge-graph-navigation.gif)
 *Zoom controls (top-left) and MiniMap (bottom-right)*
 
 ## Understanding the Visualization

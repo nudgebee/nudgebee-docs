@@ -1,5 +1,10 @@
 # Action: Restart Workload Gracefully
 
+*Add this action in the [Automation builder](../autopilot.md): click **Add Action**, search for it, and configure its parameters.*
+
+![Adding and configuring the Workload Restart action in the NudgeBee automation builder](./img/workload-restart.gif)
+
+
 The "Restart Workload Gracefully" action is designed to restart the specified Kubernetes workloads gracefully. This action ensures that the workloads are restarted without causing any disruption or downtime.
 
 ## Description

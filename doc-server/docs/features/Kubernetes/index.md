@@ -9,6 +9,8 @@ The Kubernetes section provides a centralized view of all your connected Kuberne
 **Prerequisite**: At least one Kubernetes cluster must be connected via the [NudgeBee Agent](../../installation/agent/installation/) or through a [cloud account](../Cloud/AWS.md).
 :::
 
+![NudgeBee Cluster Overview showing connected Kubernetes clusters with CPU and memory utilization, pod and node issues, and key insights for each cluster](./img/clusters-overview.png)
+
 ### Watch a Walkthrough
 
 <div style={{position: "relative", paddingBottom: "56.25%", height: 0}}><iframe src="https://www.loom.com/embed/1f9b4652c98c4d5a957ab5a3e8f9f33c?sid=b1378ad1-6e56-43f4-8935-213d197c8f86" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>

@@ -1,5 +1,10 @@
 # Action: REST API Action in Runbook
 
+*Add this action in the [Automation builder](../autopilot.md): click **Add Action**, search for it, and configure its parameters.*
+
+![Adding and configuring the HTTP / REST API action in the NudgeBee automation builder](./img/rest-api.gif)
+
+
 The **REST API Action** in Runbook allows users to interact with external APIs by sending HTTP requests directly from the Runbook workflow. This action is highly configurable, enabling users to define request parameters, payloads, and execution behavior.
 
 ## Fields and Configuration

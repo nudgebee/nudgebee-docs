@@ -6,6 +6,8 @@ sidebar_position: 1
 
 Explore everything NudgeBee offers for Cloud-Ops Intelligence, troubleshooting, cost optimization, and automation.
 
+![NudgeBee Home dashboard with the NuBi AI assistant, live Troubleshoot and Optimize summaries, automation statistics, and quick links](./img/home-overview.png)
+
 - **[Troubleshooting](./troubleshooting/index.md)** — Resolve incidents faster with AI-powered root cause analysis. NuBi correlates events across metrics, logs, and traces to pinpoint the root cause — so your team spends minutes, not hours, on each incident.
 
 - **[Optimizations](./optimizations.md)** — Lower your cloud costs with actionable recommendations. The FinOps AI-Assistant continuously analyzes resource utilization and identifies right-sizing, scaling, and cleanup opportunities across all your clusters.

@@ -1,6 +1,16 @@
 ## Add Azure Account Integration
 
-To connect your Azure account, you must first create an **App Registration** in Azure, which generates a **Service Principal** (an identity for your application). You will then grant this Service Principal access to your subscription.
+To connect your Azure account, you must first create an **App Registration** in Azure, which generates a **Service Principal** (an identity for your application). You then grant this Service Principal **Reader** access to the subscriptions you want to monitor, and NudgeBee onboards them through a short three-step wizard.
+
+The **Add Azure Account** wizard has three steps — **Credentials → Select Subscriptions → Review & Onboard**. You enter the service principal credentials in step 1; NudgeBee then discovers the subscriptions that principal can access, so you no longer paste a Subscription ID manually.
+
+![Step 1 of the Add Azure Account wizard — entering the Display Name, Directory (tenant) ID, Application (client) ID, and Client Secret, with the Credentials, Select Subscriptions, and Review & Onboard steps shown at the top](./img/azure-add-account.png)
+
+:::tip
+The form includes a built-in **Setup Guide — How to create an Azure service principal** with copy-paste Azure CLI commands, so you can create the principal without leaving NudgeBee.
+
+![The in-form Setup Guide showing the Azure CLI commands to create a service principal and assign the Reader role](./img/azure-setup-guide.png)
+:::
 
 ### Prerequisites
 
@@ -35,9 +45,9 @@ az ad app credential reset --id $APP --display-name "nudgebee-secret" --query pa
     * **Reader** (for accessing general resource information)
 3.  **Create a Client Secret** for that App Registration.
 
-### Configuration Fields
+### Step 1 — Credentials Fields
 
-Here is a guide to finding the values for each required field.
+Here is a guide to finding the values for each required field in step 1 of the wizard.
 
 * **Display Name \*** (Required)
     * A friendly, custom name for this integration (e.g., "Azure Production Account"). This is for your reference.
@@ -64,16 +74,21 @@ Here is a guide to finding the values for each required field.
         3.  Add a description and choose an expiration period.
         4.  **Important:** After you click "Add," the secret's **Value** will be displayed *one time only*. You must copy this value immediately. It will be permanently hidden after you leave the page.
 
-* **Subscription ID \*** (Required)
-    * **What it is:** The unique identifier for the specific Azure subscription you want to connect to.
-    * **Where to find it:**
-        1.  In the Azure Portal's top search bar, search for **Subscriptions**.
-        2.  Click on the name of the subscription you are connecting.
-        3.  On its **Overview** page, you will find the **Subscription ID**. Copy this value.
+:::info
+You no longer paste a **Subscription ID** here. After the credentials are validated, NudgeBee discovers the subscriptions the service principal can access and lets you pick them in the next step.
+:::
 
----
+### Step 2 — Select Subscriptions
 
-After entering all the details, click **Save** to complete the integration.
+Click **Next**, then **Discover Subscriptions**. NudgeBee uses the service principal to find the subscriptions it can access and lists them — select the ones you want to onboard.
+
+![Step 2 of the wizard — NudgeBee has discovered the subscriptions the service principal can access, each with a checkbox to select it for onboarding](./img/azure-select-subscriptions.png)
+
+### Step 3 — Review & Onboard
+
+Review the selected subscriptions and click **Onboard** to finish. The connected subscriptions then appear in the Azure accounts list with their status and real-time event state.
+
+![Step 3 of the wizard — reviewing the subscriptions that will be onboarded before clicking Onboard](./img/azure-review-onboard.png)
 
 ---
 
@@ -241,3 +256,5 @@ az role assignment create \
   --role "Monitoring Contributor" \
   --scope "/subscriptions/<subscription-id>"
 ```
+
+<!-- assets verified -->

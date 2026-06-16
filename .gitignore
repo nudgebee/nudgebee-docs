@@ -141,3 +141,5 @@ dmypy.json
 .idea
 
 nohup.out
+incoming-shots/
+.claude/

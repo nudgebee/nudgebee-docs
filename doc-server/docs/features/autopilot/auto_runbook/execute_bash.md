@@ -1,5 +1,10 @@
 # Action: Execute Bash
 
+*Add this action in the [Automation builder](../autopilot.md): click **Add Action**, search for it, and configure its parameters.*
+
+![Adding and configuring the Run Script (Bash) action in the NudgeBee automation builder](./img/execute-bash.gif)
+
+
 ## Overview
 
 The Execute Bash action in the Kubernetes Automation Tool allows users to execute custom shell scripts on their Kubernetes resources. This action can be performed in two modes: Ephemeral Container and Dedicated Pod.

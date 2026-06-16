@@ -8,6 +8,8 @@ NudgeBee delivers **Cloud-Ops Intelligence** through **NuBi**, the SRE AI Agent,
 
 NudgeBee's AI capabilities are **pre-packaged but not a black box** — every agent is fully extensible, modular, and controllable, with enterprise guardrails like RBAC, approval workflows, and audit trails.
 
+![NuBi investigation analysis for an OOMKilled pod, showing AI-generated insights, an incident summary, the identified root cause, and supporting evidence](./img/nubi-rca.png)
+
 :::info
 **Prerequisite**: An [LLM provider](../../integrations/LLM/) must be connected for AI features to work. Cloud SaaS users get a managed LLM by default. Self-hosted users can use BYOM (Bring Your Own Model) — see [LLM Integrations](../../integrations/LLM/).
 :::

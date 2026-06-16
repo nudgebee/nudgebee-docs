@@ -1,5 +1,10 @@
 # Action: Delete Pod Gracefully
 
+*Add this action in the [Automation builder](../autopilot.md): click **Add Action**, search for it, and configure its parameters.*
+
+![Adding and configuring the Pod Delete action in the NudgeBee automation builder](./img/delete-pod-gracefully.gif)
+
+
 ## Overview
 
 The Delete Pod Gracefully action in the Kubernetes Automation Tool allows users to delete a pod from a workload gracefully. This action ensures that the pod is terminated in a controlled manner, allowing it to clean up resources and save state if necessary.

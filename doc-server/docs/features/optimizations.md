@@ -13,6 +13,8 @@ NudgeBee's **FinOps AI-Assistant** continuously analyzes your Kubernetes workloa
 To automatically apply optimization recommendations without manual approval, configure [Autopilot Auto-Optimize](../autopilot/auto_optimize/). To have NudgeBee raise pull requests with the recommended changes, connect a [GitHub](../integrations/Code%20Repository/GitHub/github-integration.md) or [GitLab](../integrations/Code%20Repository/GitLab/gitlab-integration.md) repository.
 :::
 
+![NudgeBee Optimize summary showing potential monthly savings, prioritized right-sizing recommendations, and a per-account cost and health overview](./img/optimize-overview.png)
+
 ### Watch a Walkthrough
 
 <div style={{position: "relative", paddingBottom: "62.5%", height: 0}}><iframe src="https://www.loom.com/embed/cd617c360cc54fc98fad656bf91e63d0?sid=2b5ab1fb-b413-4c25-97cf-86fa86529e8a" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>

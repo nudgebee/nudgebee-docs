@@ -1,5 +1,10 @@
 # Action: Horizontal Rightsize
 
+*Add this action in the [Automation builder](../autopilot.md): click **Add Action**, search for it, and configure its parameters.*
+
+![Adding and configuring the Horizontal Rightsize action in the NudgeBee automation builder](./img/horizontal-rightsize.gif)
+
+
 ## Overview
 
 The HorizontalRightsize action in the Kubernetes Automation Tool allows you to scale the number of replicas for a Kubernetes workload either up or down. This action ensures that your workloads have the optimal number of replicas based on their performance needs and load.

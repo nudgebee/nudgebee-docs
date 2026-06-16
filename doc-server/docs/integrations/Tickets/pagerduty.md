@@ -36,7 +36,7 @@ Use a **General Access REST API Key** (not a read-only key). NudgeBee needs writ
 
 Navigate to **Settings** > **Integrations** > **Tickets** tab and select **PagerDuty** to open the configuration form.
 
-<!-- ![PagerDuty in Tickets tab](../../../static/img/pagerduty_card.png) -->
+![PagerDuty in the Tickets tab of the Integrations catalog](../../../static/img/pagerduty_card.png)
 
 ### Configuration Fields
 
@@ -51,7 +51,7 @@ Navigate to **Settings** > **Integrations** > **Tickets** tab and select **Pager
 * **Username**
     * Your PagerDuty username or email. Used as the "From" header when creating incidents.
 
-<!-- ![PagerDuty configuration form](../../../static/img/pagerduty_form.png) -->
+![PagerDuty configuration form with Name, Account URL, Email, and API Key fields](../../../static/img/pagerduty_form.png)
 
 **Credential validation**: on save, NudgeBee tests the connection by listing your PagerDuty services. If authentication fails, verify your API key is correct and has sufficient permissions.
 

@@ -18,7 +18,7 @@ Before configuring the integration, ensure you have the following from your Azur
 
 Navigate to **Integrations** > **Observability** tab and select **Azure Application Insights** to open the configuration form.
 
-<!-- ![Azure App Insights in Observability tab](../../../static/img/azure_app_insights_card.png) -->
+![Azure App Insights in Observability tab](../../../static/img/azure_app_insights_card.png)
 
 ### Configuration Fields
 
@@ -64,7 +64,7 @@ Navigate to **Integrations** > **Observability** tab and select **Azure Applicat
 * **Default Traces Provider**
     * Enable this to set Azure Application Insights as the default source for distributed trace queries.
 
-<!-- ![Azure App Insights configuration form](../../../static/img/azure_app_insights_form.png) -->
+![Azure App Insights configuration form](../../../static/img/azure_app_insights_form.png)
 
 ---
 
