@@ -1,5 +1,10 @@
 # Action: Terminate Node Gracefully
 
+*Add this action in the [Automation builder](../autopilot.md): click **Add Action**, search for it, and configure its parameters.*
+
+![Adding and configuring the Node Graceful Shutdown action in the NudgeBee automation builder](./img/node-shutdown.gif)
+
+
 ## Overview
 
 The **Terminate Node Gracefully** action allows users to safely shut down a Kubernetes node as part of an automated workflow. This action is particularly useful in scenarios such as cluster scaling, maintenance, or draining underutilized nodes.

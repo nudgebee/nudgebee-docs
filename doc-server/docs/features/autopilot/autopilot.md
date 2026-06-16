@@ -5,6 +5,8 @@ sidebar_position: 4
 
 Autopilot enables automated, self-healing operations for your Kubernetes clusters using NudgeBee's 30+ pre-built Cloud-Ops Agents. Instead of manually responding to every alert, you can configure automated runbooks that detect issues and take corrective action — like restarting a pod, scaling a workload, or creating a ticket — powered by [NuBi and the pre-built AI agents](../ai/) with human-in-loop approvals for safety.
 
+![NudgeBee Automation listing showing configured automations with their trigger type (webhook, schedule, manual), last execution, and status](./img/automations-list.png)
+
 ### Why Use Autopilot?
 
 - **Reduce MTTR from hours to minutes** — Automated responses execute in seconds. Common issues get resolved before your team even sees the alert.

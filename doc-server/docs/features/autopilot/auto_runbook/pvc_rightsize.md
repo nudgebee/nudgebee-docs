@@ -1,5 +1,10 @@
 # Action: PV Right Size
 
+*Add this action in the [Automation builder](../autopilot.md): click **Add Action**, search for it, and configure its parameters.*
+
+![Adding and configuring the PV Right Size action in the NudgeBee automation builder](./img/pvc-rightsize.gif)
+
+
 ## Overview
 
 The **PV Right Size** action in the Automation Platform allows users to automatically increase the size of a Persistent Volume Claim (PVC) based on storage usage patterns. This ensures that workloads do not fail due to lack of storage and helps maintain application availability.

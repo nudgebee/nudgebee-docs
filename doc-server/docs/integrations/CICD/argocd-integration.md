@@ -93,6 +93,10 @@ kubectl create secret generic argocd-credentials \
 
 ### Step 2: Configure Integration in NudgeBee UI
 
+The walkthrough below shows the full flow — opening the **CI/CD** category, selecting **ArgoCD**, clicking **Add ArgoCD Account**, and filling in the configuration form.
+
+![Walkthrough of adding an ArgoCD integration in NudgeBee: opening the CI/CD category, selecting ArgoCD, clicking Add ArgoCD Account, and filling in the integration name, account, K8s secret, and authentication options](./img/argocd-setup-flow.gif)
+
 1. **Navigate to Integrations**
    - Go to **Settings** → **Integrations**
    - Click on **CI/CD** category

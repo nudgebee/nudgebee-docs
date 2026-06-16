@@ -5,6 +5,8 @@ sidebar_position: 7
 
 Notification rules let you control where alerts and event notifications are routed — and which ones are suppressed. By creating rules, you can direct notifications from specific clusters, namespaces, or workloads to the right channel, or disable notifications for noisy resources.
 
+![NudgeBee Notification Rules list showing rules by source, cluster, destination channels, and status (Active or Suppressed)](./img/notification-rules.png)
+
 :::info
 **Prerequisite**: You need at least one [notification channel configured](/docs/integrations/Notifications/) (Slack, Microsoft Teams, or Google Chat) before you can create routing rules.
 :::

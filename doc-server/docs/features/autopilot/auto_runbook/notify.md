@@ -1,5 +1,10 @@
 # Action: Notify
 
+*Add this action in the [Automation builder](../autopilot.md): click **Add Action**, search for it, and configure its parameters.*
+
+![Adding and configuring the IM notification action in the NudgeBee automation builder](./img/notify.gif)
+
+
 ## Overview
 
 The **Notify** action in the Automation Platform allows users to send real-time notifications when a workflow is triggered. This action helps keep relevant teams informed about critical changes or events such as scaling down deployments, ticket creation, or incident detection.

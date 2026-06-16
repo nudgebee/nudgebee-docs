@@ -16,7 +16,7 @@ Before configuring the integration, ensure you have the following from your Chro
 
 Navigate to **Integrations** > **Observability** tab and select **Chronosphere** to open the configuration form.
 
-<!-- ![Chronosphere in Observability tab](../../../static/img/chronosphere_card.png) -->
+![Chronosphere in Observability tab](../../../static/img/chronosphere_card.png)
 
 ### Configuration Fields
 
@@ -42,7 +42,7 @@ Navigate to **Integrations** > **Observability** tab and select **Chronosphere**
 * **Default Traces Provider**
     * Enable this to set Chronosphere as the default source for distributed trace queries.
 
-<!-- ![Chronosphere configuration form](../../../static/img/chronosphere_form.png) -->
+![Chronosphere configuration form](../../../static/img/chronosphere_form.png)
 
 ---
 

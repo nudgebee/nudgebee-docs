@@ -34,7 +34,7 @@ NudgeBee authenticates against the Loggly Search API using an **API Token**.
 
 Navigate to **Integrations** > **Observability** tab and select **Loggly** to open the configuration form.
 
-<!-- ![Loggly in Observability tab](../../../static/img/loggly_card.png) -->
+![Loggly in Observability tab](../../../static/img/loggly_card.png)
 
 ### Configuration Fields
 
@@ -56,7 +56,7 @@ Navigate to **Integrations** > **Observability** tab and select **Loggly** to op
 * **Default Log Provider**
     * Enable this to set Loggly as the default source for log queries across NudgeBee.
 
-<!-- ![Loggly configuration form](../../../static/img/loggly_form.png) -->
+![Loggly configuration form](../../../static/img/loggly_form.png)
 
 ---
 

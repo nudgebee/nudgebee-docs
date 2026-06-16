@@ -1,6 +1,10 @@
 ## Add GCP Account Integration
 
-To connect your GCP account, you must first enable the required APIs, create a **Service Account** in Google Cloud, and grant it the necessary permissions.
+To connect your GCP account, you must first enable the required APIs, create a **Service Account** in Google Cloud, and grant it the necessary permissions. NudgeBee then onboards your projects through a short three-step wizard.
+
+The **Add GCP Account** wizard has three steps — **Service Account → Projects → Billing**. You paste the service account JSON key in step 1; NudgeBee then discovers the projects that account can access, and you configure the BigQuery billing export in the last step. There is a built-in **Setup Guide — How to create a GCP service account** in the form if you need it.
+
+![Step 1 of the Add GCP Account wizard — entering a Display Name and pasting the Service Account Key (JSON), with the Service Account, Projects, and Billing steps shown at the top](./img/gcp-add-account.png)
 
 ### Prerequisites
 
@@ -97,49 +101,30 @@ This is required for cost data. Enable it in the GCP Console:
    * Navigate to [Billing > Billing Export](https://console.cloud.google.com/billing/export)
    * Enable **BigQuery Export** and note the dataset and table name
 
-### Configuration Fields
+### Step 1 — Service Account
 
-Here is a guide to finding the values for each required field.
+Enter a **Display Name** and paste the entire **Service Account Key (JSON)** you downloaded for the service account. Click **Check Permissions** to validate the key, then **Next**.
 
-* **Display Name \*** (Required)
-   * A friendly, custom name for this integration (e.g., "GCP Production Account"). This is for your reference.
+* **Display Name** — a friendly name for this integration (e.g. `GCP Production Account`).
+* **Service Account Key (JSON)** — open the downloaded JSON key file and paste its entire contents. Treat this value like a password.
 
-* **Project ID \*** (Required)
-   * **What it is:** The unique identifier for your Google Cloud project.
-   * **Where to find it:**
-      1. Log in to the [Google Cloud Console](https://console.cloud.google.com).
-      2. Click on the project dropdown at the top of the page.
-      3. You will see your project name and **Project ID** listed. Copy the **Project ID** (not the Project Name).
+### Step 2 — Select Projects
 
-* **Service Account Key (JSON) \*** (Required)
-   * **What it is:** A JSON credential file for your service account. **Treat this value like a password and store it securely.**
-   * **Where to find it:**
-      1. In the Google Cloud Console, navigate to [**IAM & Admin > Service Accounts**](https://console.cloud.google.com/iam-admin/serviceaccounts).
-      2. Click on the service account you created for this integration.
-      3. Go to the **Keys** tab.
-      4. Click **Add Key > Create new key**.
-      5. Select **JSON** as the key type and click **Create**.
-      6. **Important:** The JSON key file will be downloaded to your computer *one time only*. You must save this file securely.
-      7. Open the downloaded JSON file and copy its entire contents.
-      8. Paste the entire JSON content into the **Service Account Key (JSON)** field.
+NudgeBee can either **auto-discover** the projects the service account can access, or you can **enter project IDs manually**. On the **Auto-Discover** tab, click **Discover Projects** and select the projects you want to monitor; on the **Manual Entry** tab, type the project IDs yourself. You no longer paste a single Project ID.
 
-* **Billing Dataset Name \*** (Required)
-   * **What it is:** The BigQuery dataset name where billing data is exported.
-   * **Where to find it:**
-      1. In the Google Cloud Console, navigate to **Billing > Billing export**.
-      2. You will see the dataset name listed (e.g., `billing_export_dataset`).
-      3. Copy this dataset name.
+![Step 2 of the wizard — NudgeBee has auto-discovered the GCP projects the service account can access, each with a checkbox to select it for monitoring](./img/gcp-select-projects.png)
 
-* **Billing Table Name \*** (Required)
-   * **What it is:** The BigQuery table name where billing data is stored.
-   * **Where to find it:**
-      1. In the BigQuery export settings (same location as above), you will see the full table name.
-      2. It typically follows this format: `gcp_billing_export_v1_XXXXXX_XXXXXX_XXXXXX`
-      3. Copy this table name.
+### Step 3 — Billing
 
----
+Billing data is exported to a central BigQuery table (configured in the GCP Console under **Billing → Billing export**), which may live in a different project than your resource projects.
 
-After entering all the details, click **Save** to complete the integration.
+* **Billing Project ID** *(optional)* — the GCP project containing the BigQuery billing export. Leave empty to use the service account's project.
+* **BigQuery Dataset Name** — the dataset where billing data is exported (e.g. `billing_export`).
+* **BigQuery Table Name** — the billing export table (e.g. `gcp_billing_export_v1_XXXXXX`).
+
+Click **Validate Billing**, then **Save & Continue** to finish. The connected projects then appear in the GCP accounts list with their status and real-time event state.
+
+![Step 3 of the wizard — configuring the BigQuery billing export with the Billing Project ID, dataset, and table fields](./img/gcp-billing.png)
 
 ### Troubleshooting
 

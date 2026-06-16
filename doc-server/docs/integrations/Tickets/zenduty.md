@@ -35,7 +35,7 @@ The API key must have permissions to create and manage incidents across your tea
 
 Navigate to **Settings** > **Integrations** > **Tickets** tab and select **ZenDuty** to open the configuration form.
 
-<!-- ![ZenDuty in Tickets tab](../../../static/img/zenduty_card.png) -->
+![ZenDuty in Tickets tab](../../../static/img/zenduty_card.png)
 
 ### Configuration Fields
 
@@ -50,7 +50,7 @@ Navigate to **Settings** > **Integrations** > **Tickets** tab and select **ZenDu
 * **Username**
     * Your ZenDuty email address for reference.
 
-<!-- ![ZenDuty configuration form](../../../static/img/zenduty_form.png) -->
+![ZenDuty configuration form](../../../static/img/zenduty_form.png)
 
 **Credential validation**: on save, NudgeBee tests the connection by fetching your ZenDuty teams. If authentication fails, verify your API key is correct.
 

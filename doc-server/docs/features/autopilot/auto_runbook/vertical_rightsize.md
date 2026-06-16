@@ -1,5 +1,10 @@
 # Action: Vertical Rightsize
 
+*Add this action in the [Automation builder](../autopilot.md): click **Add Action**, search for it, and configure its parameters.*
+
+![Adding and configuring the Vertical Rightsize action in the NudgeBee automation builder](./img/vertical-rightsize.gif)
+
+
 ## Overview
 
 The VerticalRightsize action in the Kubernetes Automation Tool allows you to scale the CPU and memory resources of a Kubernetes workload either up or down. This action ensures that your workloads have the optimal resource allocations based on their performance needs.
