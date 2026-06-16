@@ -1,0 +1,8 @@
+{
+  "label": "Semantic Knowledge Graph",
+  "position": 8,
+  "link": {
+    "type": "doc",
+    "id": "features/knowledge-graph/index"
+  }
+}
