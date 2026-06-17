@@ -14,6 +14,10 @@ NudgeBee's AI capabilities are **pre-packaged but not a black box** — every ag
 **Prerequisite**: An [LLM provider](../../integrations/LLM/) must be connected for AI features to work. Cloud SaaS users get a managed LLM by default. Self-hosted users can use BYOM (Bring Your Own Model) — see [LLM Integrations](../../integrations/LLM/).
 :::
 
+:::tip See NuBi in action
+Want concrete examples? **[NuBi Use Cases](./use-cases/)** walks through real conversations: the exact questions to ask, how NuBi investigates step by step, and the answers it lands on.
+:::
+
 ## Pre-built AI Assistants
 
 NudgeBee includes four purpose-built AI assistants, each focused on a specific domain:
