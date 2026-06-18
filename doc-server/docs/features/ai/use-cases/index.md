@@ -13,8 +13,10 @@ NuBi chat needs an [LLM provider](../../../integrations/LLM/) connected, plus a 
 ## Available now
 
 - **[Find the Root Cause of a Failing Service](./incident-rca.md)**. A service is throwing errors and you don't know why. NuBi triages it, traces the failure across services through the Knowledge Graph, proves it with logs and traces, and points to the exact line of code. One conversation, symptom to fix.
+- **[Cut Through Alert Noise](./alert-management.md)**. Thousands of alerts, almost none worth paging on. NuBi audits what's firing, checks which alerts line up with real degradation, and classifies each as noisy, flapping, stale, or valid, so you know what to keep, tune, and silence.
+- **[Audit Database Health](./database-health.md)**. No DBA on call. NuBi checks your Postgres for bloat, slow queries, and unused indexes, verifies a fix is safe against your application code, and drafts the migration as a pull request for your review.
 
-More use cases are on the way: alert-fatigue audits, "what changed after a deploy", cost and right-sizing, on-call handoffs.
+More use cases are on the way: "what changed after a deploy", cost and right-sizing, on-call handoffs.
 
 ## How NuBi answers
 
