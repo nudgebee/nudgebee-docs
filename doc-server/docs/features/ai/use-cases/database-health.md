@@ -30,6 +30,8 @@ Healthy connections, but is anything slow?
 
 NuBi reads `pg_stat_statements` and ranks queries by average time. Nothing is slow right now, but the history is telling: one statement averages **38.9 seconds** across **1,313 calls**, dominating total load. It also notes, honestly, that the actual SQL text is hidden by an `insufficient privilege` error, and tells you which Postgres role to grant to see it.
 
+![NuBi's slow-query analysis for dev-pg: top queries ranked by average execution time, with a note that the SQL text is hidden by an insufficient-privilege error](./img/uc-db-health-step2.png)
+
 ## Step 3: Find unused indexes
 
 Slow queries often mean missing indexes. The opposite problem is just as real: indexes nobody uses, which cost storage and slow every write.
@@ -62,13 +64,15 @@ NuBi runs a code analysis against the application source. It finds the indexes a
 
 NuBi writes the migration and opens a pull request: an `up.sql` that drops the eight indexes, a `down.sql` that recreates them for rollback, and a description explaining the change. It does not run anything against the database. It hands you a normal PR to review and merge.
 
+![NuBi confirming it created a migration and raised a pull request to drop the unused indexes, listing the up and down migration files it generated](./img/uc-db-health-step5.png)
+
 ## NuBi proposes, you approve
 
-NudgeBee never changes your database directly. The fix lands as a normal pull request, the drop migration plus a matching rollback, so your usual review and CI decide whether it ships. You keep the final say, and any project-specific migration rules are enforced exactly where they belong: in your pipeline, not by an agent writing to production.
+NuBi never changes your database directly. The fix lands as a normal pull request, the drop migration plus a matching rollback, so your usual review and CI decide whether it ships. You keep the final say, and any project-specific migration rules are enforced exactly where they belong: in your pipeline, not by an agent writing to production.
 
 ## Tips for your own database audits
 
 - **"Unused" is relative to the stats you're reading.** Index-usage counters reset, and query patterns differ between staging and production. Treat NuBi's list as candidates and confirm against production usage before dropping anything.
 - **Always verify dependencies before dropping.** The code-analysis step is what makes the change safe. Ask NuBi to check the application source, not just the database.
-- **Let it open the PR, then let your pipeline gate it.** NudgeBee proposes changes as reviewable pull requests. Your CI and reviewers stay the final authority, which is exactly where project-specific rules get enforced.
+- **Let it open the PR, then let your pipeline gate it.** NuBi proposes changes as reviewable pull requests. Your CI and reviewers stay the final authority, which is exactly where project-specific rules get enforced.
 - **Bloat and unused indexes are write-path problems.** They rarely show up as a slow query. Audit them on a schedule, not just when something is already on fire.
