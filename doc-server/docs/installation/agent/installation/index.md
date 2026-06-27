@@ -115,7 +115,7 @@ Use this method if you need more control over the installation, want to customiz
 ```bash
 helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-stack \
   --namespace nudgebee-agent --create-namespace \
-  --set nodeExporter.enabled=false \
+  --set nodeExporter.enabled=true \
   --set pushgateway.enabled=false \
   --set alertmanager.enabled=true \
   --set kubeStateMetrics.enabled=true \
