@@ -1,0 +1,42 @@
+[
+  {
+    "slug": "2026-07-product-updates-launch",
+    "title": "Introducing Product Updates",
+    "body": "You can now catch up on **what's new** right from the header. Click the megaphone icon any time to see the latest features, fixes, and announcements.",
+    "category": "announcement",
+    "url": null,
+    "highlight": true,
+    "is_active": true,
+    "published_at": "2026-07-01T09:00:00Z"
+  },
+  {
+    "slug": "2026-06-faster-investigations",
+    "title": "Faster AI investigations",
+    "body": "Investigations now **stream results incrementally** and cite the exact telemetry they used, so you can follow the agent's reasoning as it works.\n\n- Lower time-to-first-insight\n- Inline evidence for every step",
+    "category": "feature",
+    "url": "https://docs.nudgebee.com/features/investigations/",
+    "highlight": true,
+    "is_active": true,
+    "published_at": "2026-06-18T09:00:00Z"
+  },
+  {
+    "slug": "2026-05-spot-savings-eks",
+    "title": "Spot savings for EKS",
+    "body": "Optimize now recommends **Spot-backed node groups** for fault-tolerant EKS workloads, with projected monthly savings per recommendation.",
+    "category": "feature",
+    "url": null,
+    "highlight": false,
+    "is_active": true,
+    "published_at": "2026-05-12T09:00:00Z"
+  },
+  {
+    "slug": "2026-04-slack-alert-dedup",
+    "title": "Fixed: duplicate Slack alerts on failover",
+    "body": "Resolved an issue where some Slack alerts were delivered twice during relay failover. No action needed on your end.",
+    "category": "fix",
+    "url": null,
+    "highlight": false,
+    "is_active": true,
+    "published_at": "2026-04-03T09:00:00Z"
+  }
+]
