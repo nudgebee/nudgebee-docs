@@ -1,5 +1,15 @@
 [
   {
+    "slug": "2026-07-1_4_update",
+    "title": "NudgeBee 1.4.0 is Here",
+    "body": "Here's a quick overview of the latest updates and improvements we've made to NudgeBee.",
+    "category": "announcement",
+    "url": "https://docs.nudgebee.com/docs/installation/server/release/1.4.0/",
+    "highlight": true,
+    "is_active": true,
+    "published_at": "2026-07-29T00:00:00Z"
+  },
+  {
     "slug": "2026-07-1_3_update",
     "title": "NudgeBee 1.3.0 is Here",
     "body": "Here's a quick overview of the latest updates and improvements we've made to NudgeBee.",
