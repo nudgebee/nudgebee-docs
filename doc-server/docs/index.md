@@ -35,6 +35,8 @@ NudgeBee is available in two deployment models — and self-hosted comes in two 
 
 NudgeBee monitors your Kubernetes workloads by collecting metrics, events, logs, and traces from your clusters. This data feeds the Semantic Knowledge Graph and powers all of NudgeBee's troubleshooting, optimization, and automation capabilities.
 
+**Scope**: NudgeBee monitors Kubernetes workloads, with one agent per monitored cluster. If you have no Kubernetes clusters, there is nothing for the agent to collect — and because the self-hosted server needs a cluster of its own to run on, self-hosting is not an option either; use Cloud SaaS. Datasources outside Kubernetes (databases on VMs, SSH servers, managed services) are reached through the [Proxy Agent](./installation/proxy-agent/index.md).
+
 NudgeBee has two components, both packaged as Helm charts that deploy natively on Kubernetes — no separate VMs, custom installers, or complex setup required:
 
 | Component | What it does | Who installs it |
@@ -50,14 +52,16 @@ Once the server is running (or you have signed up for SaaS), there are two ways 
 
 ### Option 1: Connect a Cloud Account — Fastest Way to Start
 
-Connect your cloud account ([AWS](./features/Cloud/AWS.md), [Azure](./features/Cloud/Azure.md), or [GCP](./features/Cloud/GCP.md)) and NudgeBee automatically discovers all Kubernetes clusters mapped to that account. You get immediate visibility across your entire cloud infrastructure — no need to install anything on individual clusters upfront.
+Connect your cloud account ([AWS](./features/Cloud/AWS.md), [Azure](./features/Cloud/Azure.md), or [GCP](./features/Cloud/GCP.md)) and NudgeBee automatically discovers all Kubernetes clusters mapped to that account, along with your cloud resources and billing data.
+
+**Connecting a cloud account gives you inventory and discovery. Deep monitoring still requires the agent on each cluster you want to troubleshoot, optimize, or automate** — workload metrics, Kubernetes events, logs, traces, and eBPF network data all come from the agent. Start with the cloud account to see what you have, then install agents on the clusters that matter.
 
 ### Option 2: Install the Agent Directly on a Cluster
 
 Install the [NudgeBee Agent](./installation/agent/installation/index.md) directly into each Kubernetes cluster you want to monitor. The agent is a lightweight Helm chart that takes about 5 minutes to deploy. It collects detailed workload data and sends it to the NudgeBee server for deep monitoring, cost analysis, and AI-powered troubleshooting.
 
 :::tip
-**Not sure which to pick?** If you have multiple clusters across cloud accounts, start with the cloud account connection for instant discovery. You can always install agents on specific clusters later for deeper monitoring and automation capabilities.
+**Not sure which to pick?** These are not alternatives — most teams do both. If you have multiple clusters across cloud accounts, connect the cloud account first for instant inventory, then install the agent on each cluster you want deep monitoring and automation for.
 :::
 
 ---

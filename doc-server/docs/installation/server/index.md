@@ -8,11 +8,12 @@ import TabItem from '@theme/TabItem';
 
 # Server Installation
 
-The NudgeBee Server is the central component of the NudgeBee platform. It receives data from NudgeBee Agents, performs analysis, and handles user authentication and integrates with external services. This is required for self-hosted deployments only.
+**Who this page is for: self-hosted users only.** If you are on Cloud SaaS, the
+server is already running for you — skip to
+[Agent Installation](../agent/installation/index.md). Not sure which model you
+are on? See [Choose Your Deployment Model](../index.md#choose-your-deployment-model).
 
-:::note
-**Cloud SaaS users**: You do not need to install the server. It is fully managed for you at [app.nudgebee.com](https://app.nudgebee.com). Skip to the [Agent Installation](../agent/installation/index.md).
-:::
+The NudgeBee Server is the central component of the NudgeBee platform. It receives data from NudgeBee Agents, performs analysis, handles user authentication, and integrates with external services. It runs as a Helm release in a Kubernetes cluster (or namespace) of your own — separate from the clusters you monitor.
 
 :::tip[Choosing an edition]
 The self-hosted server comes in two editions (see [Editions](../../editions.md) for the full comparison):
@@ -29,6 +30,40 @@ The installation steps below use tabs — pick your edition in each step.
 
 :::tip
 **Estimated time**: 15–30 minutes, depending on your cluster and infrastructure setup.
+:::
+
+### Components and Why They Exist
+
+The Helm chart bundles its own datastores and message bus so a fresh install
+works with no external setup. The table below is here so you can make the one
+architectural decision that matters early: **what to run bundled, and what to
+point at infrastructure you already operate.**
+
+:::warning[RabbitMQ and Postgres are hard requirements]
+The server **will not start** without them — backend consumers do not bootstrap
+without RabbitMQ, and queries fail without Postgres. You can run them externally,
+but you cannot run without them. Redis, by contrast, is genuinely optional: the
+server falls back to an in-memory cache when it is not configured.
+:::
+
+| Component | Required? | What it does | Bring your own? |
+|---|---|---|---|
+| **PostgreSQL** | **Required** | Primary datastore — workloads, workflow state, metadata, and configuration. Queries fail without it. | Yes — point `APP_DATABASE_URL` at a managed Postgres and set `postgresql.enabled: false` |
+| **RabbitMQ** | **Required** | Message bus between backend services. Consumers will not bootstrap without it. | Yes — set the `RABBIT_MQ_*` values and `rabbitmq.enabled: false` |
+| **Temporal** | **Required for workflows** | Durable-execution engine behind the Workflow Builder and Autopilot runbooks. | Bundled by default |
+| **Qdrant** | **Required for AI features** | Vector store for RAG retrieval used by NuBi and AI troubleshooting. | Bundled by default |
+| **Redis** | Optional | Cache. Falls back to in-memory when unset — fine for trials, recommended for production. | Yes — set the `CACHE_PROVIDER` / `REDIS_*` values |
+| **ClickHouse** | Optional | Analytical store for high-volume trace and log analytics. **Off by default** (`clickhouse.enabled: false`). | Yes — set `clickhouse.auth.existingSecret` |
+
+Externalizing a datastore is worth it when you already have HA, backups, and DBA
+tooling for it — the bundled subcharts are single-replica and are not a
+substitute for a managed database in production. Keep them bundled for trials
+and evaluations, where the lower setup cost matters more.
+
+:::info
+**How much does the server actually use?** See
+[Resource Footprint](#resource-footprint) below — that section is the single
+source of truth for these numbers.
 :::
 
 ### Watch the Walkthrough
@@ -51,9 +86,19 @@ Make sure you have the following ready before starting the installation.
 | **NudgeBee License Key** | **Enterprise only.** Not needed for the Community edition. | Enterprise customers receive a license key; community users skip this. |
 | **Persistent Volume** | 200 GB available (100 GB if you use an external Postgres) | Required for database and application state |
 
-:::info
-**How much does the server actually use?** All NudgeBee server components together consume approximately 12 GB RAM and 4 CPU cores. This includes the bundled Postgres, RabbitMQ, Redis, Temporal, and Qdrant subcharts (ClickHouse is off by default and only needed for trace/log analytics). If you manage these dependencies externally, the footprint drops to around 8 GB RAM and 2 CPU cores. The 2-node recommendation provides headroom for reliability.
-:::
+### Resource Footprint
+
+This is the reference figure for server capacity planning — other pages link
+here rather than restating it.
+
+| Deployment | RAM | CPU |
+|---|---|---|
+| **All bundled** (Postgres, RabbitMQ, Redis, Temporal, Qdrant included) | ~12 GB | ~4 cores |
+| **External dependencies** (you run Postgres, RabbitMQ, Redis yourself) | ~8 GB | ~2 cores |
+
+ClickHouse is off by default and is not included above; enable it only if you
+need trace/log analytics. The 2-node recommendation in the table above provides
+headroom for reliability, not just capacity.
 
 ### Optional but Recommended
 
@@ -68,12 +113,14 @@ These are not required to get NudgeBee running, but they improve the production 
 
 ### Network Requirements
 
-Your cluster needs the following network access for the installation and normal operation:
+Your cluster needs the following network access for the installation and normal operation. Each rule is listed with **what breaks if you omit it**, so you can justify the exception to whoever owns your egress policy.
 
-- **Outbound to the container registry** — `ghcr.io/nudgebee` (Community) or `registry.nudgebee.com` (Enterprise) — to pull Docker images during installation.
-- **Internal DNS resolution** — pods must be able to resolve the `BASE_URL` you configure (used for authentication).
-- **Outbound to external services** (if you use them) — Slack, Jira, MS Teams, GitHub, OpenAI, etc. require outbound connectivity from the NudgeBee server.
-- **Inbound from external services** (optional) — if you use bidirectional integrations like Slack apps, Slack needs to reach your NudgeBee server's public URL.
+| Access | Why it is needed | What breaks without it |
+|---|---|---|
+| **Outbound to the container registry** — `ghcr.io/nudgebee` (Community) or `registry.nudgebee.com` (Enterprise) | Pulls the server images during install and upgrade | Pods stay in `ImagePullBackOff` and the install never completes. Air-gapped clusters must mirror the images to an internal registry instead |
+| **Internal DNS resolution of `BASE_URL`** | Pods call back to the configured base URL during authentication | Login fails with callback/redirect errors even though every pod is `Running` |
+| **Outbound to external services** (Slack, Jira, MS Teams, GitHub, your LLM provider) | Outbound calls to the integrations you enable | Only the corresponding integration fails — the rest of the platform keeps working. Skip these rules until you enable the integration |
+| **Inbound from external services** (optional) | Bidirectional integrations — Slack interactive actions, webhook triggers — call back into your server | Notifications still go out, but buttons, slash commands, and inbound webhooks do nothing |
 
 :::tip
 **Starting simple?** You can skip Ingress, SSL, and external services for now. The minimal installation works with just outbound registry access and internal DNS. Add public access and integrations later.
@@ -102,11 +149,24 @@ export NUDGEBEE_CHART=oci://ghcr.io/nudgebee/charts/nudgebee
 Log in to the NudgeBee Helm registry with your license key, then set the chart location:
 
 ```shell
-helm registry login registry.nudgebee.com --username nudgebee --password $NUDGEBEE_LICENSE_KEY
+read -s -p "License key: " NUDGEBEE_LICENSE_KEY   # reads without echoing, keeps it out of shell history
+helm registry login registry.nudgebee.com --username nudgebee --password "$NUDGEBEE_LICENSE_KEY"
 export NUDGEBEE_CHART=oci://registry.nudgebee.com/nudgebee
 ```
 
-Replace `$NUDGEBEE_LICENSE_KEY` with your actual license key.
+:::caution[Treat the license key like a password]
+This key authenticates your cluster to the NudgeBee registry and lets your
+agents report in as you. Anyone who has it can pull your images and send data as
+your organization — so it carries real blast radius, not a discount-code level of
+risk.
+
+- Store it in a secret manager or a Kubernetes Secret. **Never commit it to a
+  `values.yaml`** or paste it into a shared Slack/Teams channel.
+- Command-line arguments are saved in shell history. Read it from a secret
+  manager or prompt for it (`read -s`, as above) rather than typing it inline.
+- For GitOps and Vault-style workflows, reference an existing secret instead —
+  see [Managing Secrets Externally](#managing-secrets-externally).
+:::
 
 </TabItem>
 </Tabs>
@@ -204,13 +264,46 @@ To install a specific version, add `--version $CHART_VERSION` to the command. Se
 
 ## 3. Verify the Installation
 
-After the Helm install completes, check that all pods are running:
+Three checks confirm a good install. Work through them in order — each one rules
+out a different class of failure.
+
+**1. Every pod is `Running` or `Completed`**
 
 ```shell
 kubectl get pods -n nudgebee
 ```
 
-All pods should show `Running` or `Completed` status. This typically takes 2–3 minutes after the Helm command finishes.
+This typically takes 2–3 minutes after the Helm command finishes. You should see
+the NudgeBee services (`app`, `k8s-collector`, `relay-server`, `services-server`,
+`etl-server`, `hasura`, `llm-server`, `rag-server`, `ticket-server`,
+`notifications`, `auto-pilot`, `ml-server`, `cloud-collector-server`) alongside
+the bundled dependencies (`postgresql`, `rabbitmq`), plus the
+`postgres-migrations` job in `Completed`. The exact list varies with the chart
+version and which optional components you enabled.
+
+**2. The migration job completed**
+
+```shell
+kubectl get jobs -n nudgebee
+```
+
+Migrations must show `1/1` completions. A migration stuck at `0/1` is the single
+most common cause of a failed install — see
+[Troubleshooting](#troubleshooting-installation-failures).
+
+**3. The UI answers**
+
+```shell
+kubectl port-forward svc/app 3000:80 -n nudgebee &
+PF_PID=$!
+curl -sS -o /dev/null -w '%{http_code}\n' http://localhost:3000
+kill $PF_PID          # stop the port-forward when you are done checking
+```
+
+A `200` (or a `3xx` redirect to the login route) means the app is serving. Open
+[http://localhost:3000](http://localhost:3000) and **you should see the NudgeBee
+login page** — that is what a successful install looks like. If you configured
+Ingress, `curl` your `BASE_URL` instead.
 
 :::caution
 **If pods are stuck in `Pending`, `CrashLoopBackOff`, or `Error`**, see the [Troubleshooting](#troubleshooting-installation-failures) section below.
@@ -261,12 +354,18 @@ If you configured Ingress (see next section), navigate to the URL you set as `BA
 
 ## 5. Add Ingress and SSL (Recommended for Production)
 
-The minimal installation above works with port-forwarding, but for production use you should expose NudgeBee via Ingress with SSL. This enables:
+The minimal installation above works with port-forwarding, but for production use you should expose NudgeBee via Ingress with SSL.
 
-- Public URL access for your team (no need to run `kubectl port-forward`)
-- Slack and Google Chat app integrations (they need to reach your server)
-- Webhook triggers for the Workflow Builder
-- Magic link email authentication
+**You need Ingress when** anything outside your kubeconfig has to reach the
+server: your team wants a shared URL instead of running `kubectl port-forward`;
+Slack or Google Chat apps need to call back into NudgeBee; the Workflow Builder
+uses webhook triggers; or you want magic-link email login, which sends users a
+link they must be able to open.
+
+**You can skip it when** you are evaluating NudgeBee solo, everyone who needs
+access already has cluster credentials, and you are logging in with the
+credentials provider rather than magic links. Port-forwarding is enough — and you
+can add Ingress later with a `helm upgrade`, without reinstalling.
 
 ### Understanding the Three Endpoints
 
@@ -375,6 +474,16 @@ helm upgrade nudgebee $NUDGEBEE_CHART \
 ## 6. Advanced Configuration
 
 These options are for teams that need to customize the installation for production requirements. You can skip this section for your initial setup and come back later.
+
+### Using Your Own Datastores
+
+The bundled Postgres, RabbitMQ, and Redis subcharts are single-replica and sized
+for getting started. Point NudgeBee at your own instances when you need HA,
+point-in-time backups, or want the database inside the tooling your DBAs already
+run — the trade-off is that you now own their upgrades and capacity. See
+[Components and Why They Exist](#components-and-why-they-exist) for what each one
+does and which values to set, and
+[All Configuration Options](./secret_configs.md) for the connection settings.
 
 ### Managing Secrets Externally
 

@@ -36,9 +36,34 @@ Configuration related to the NudgeBee license. Only relevant for the **Enterpris
 - **`NUDGEBEE_ENCRYPTION_KEY`**: 32-byte hex key that encrypts integration credentials and other at-rest secrets in the database. **Required** — the chart fails install if this is empty or left as `__REPLACE__`. Generate once with `openssl rand -hex 32` and store securely in your secret manager. **Losing this key makes previously-encrypted DB rows unreadable**, so treat it like a database master password.
 - **`NEXTAUTH_SECRET`**: Encryption key used for encoding NextAuth session cookies. **Auto-generated** by the Helm chart on a fresh install (using the lookup-or-generate pattern) and reused on upgrade — you don't need to set it manually. **GitOps users** running offline-render (Argo CD, Flux) must set it explicitly, because `lookup` returns empty during offline render.
 - **`ACTION_API_SERVER_TOKEN`**: Auth token between internal services. Same auto-generation behavior as `NEXTAUTH_SECRET` — GitOps users must set explicitly.
-- **`JWT_PUBLIC_KEY`**: Public key for JWT Auth Tokens. Optional — Helm chart includes a default.
-- **`JWT_PRIVATE_KEY`**: Private key for JWT Auth Tokens. Optional — Helm chart includes a default.
+- **`JWT_PUBLIC_KEY`** / **`JWT_PRIVATE_KEY`**: Key pair used to sign and verify NudgeBee's JWT auth tokens. **Optional for a quick trial — required to override in production.** The Helm chart ships a built-in default pair so a fresh install works out of the box; that default is the same in every install, so anyone with a copy of the chart can mint tokens your server will accept. Generate your own pair before you expose the server to real users:
+
+  ```shell
+  openssl genrsa -out jwt-private.pem 2048
+  openssl rsa -in jwt-private.pem -pubout -out jwt-public.pem
+  ```
+
+  Set the PEM contents as `JWT_PRIVATE_KEY` and `JWT_PUBLIC_KEY`, or manage them through `global.existingNudgebeeSecretName`. Rotating them invalidates existing sessions — users simply log in again.
 - **`LICENSE_PUBLIC_KEY`**: RSA public key for verifying the `NUDGEBEE_LICENSE` JWT. **Empty in the Community edition** — `getLicenseDetails()` short-circuits to `licenseType=free`. Only set for Enterprise installs.
+
+:::warning[Override shipped defaults before going to production]
+Some values above are marked optional only because the Helm chart ships a
+working default. A default that ships with the chart is the same default
+everywhere it is installed — it is fine for a trial and a real risk in
+production, where it lets anyone with the chart forge auth tokens or read
+secrets they should not.
+
+Before you put real users or real credentials on a NudgeBee server, set:
+
+| Value | Why | How |
+|---|---|---|
+| `NUDGEBEE_ENCRYPTION_KEY` | Encrypts integration credentials at rest. The chart refuses to install with an empty value, so set it deliberately and store it — losing it makes encrypted rows unreadable | `openssl rand -hex 32` |
+| `JWT_PRIVATE_KEY` / `JWT_PUBLIC_KEY` | The shipped default pair is identical in every install; anyone with it can mint tokens your server accepts | `openssl genrsa` (see above) |
+| `NEXTAUTH_SECRET`, `ACTION_API_SERVER_TOKEN` | Auto-generated per install, so no action is needed — **except** on GitOps offline render (Argo CD, Flux), where `lookup` returns empty and you must set them explicitly | `openssl rand -base64 32` |
+
+Store all of them in a secret manager and reference them with
+`global.existingNudgebeeSecretName` rather than committing them to a values file.
+:::
 
 
 ## Authentication

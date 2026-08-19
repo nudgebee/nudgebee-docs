@@ -11,6 +11,8 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 :::
 
 :::info
+**Who this page is for: everyone.** Both Cloud SaaS and self-hosted users install the agent — one per Kubernetes cluster you want monitored. Not sure which model you are on? See [Choose Your Deployment Model](../../index.md#choose-your-deployment-model).
+
 **Cloud SaaS users**: You only need to install the agent — the server is managed for you. Generate your agent auth key at [app.nudgebee.com](https://app.nudgebee.com) and skip straight to [Install the Agent](#2-install-the-agent).
 
 **Self-hosted users**: Make sure the [NudgeBee Server is installed](../../server/) first. You will need the Relay Server URL and Collector Server URL from your server setup — see [Self-Hosted Configuration](#4-for-self-hosted-nudgebee).
@@ -65,9 +67,13 @@ The agent is lightweight. Here is what it uses on a cluster with up to 100 nodes
 
 ### Network
 
-- **Outbound to NudgeBee** — WebSocket and HTTP to the NudgeBee server (cloud or self-hosted) for data delivery.
-- **Outbound to cloud pricing APIs** — AWS, Azure, GCP endpoints for cost data (used by OpenCost).
-- **Internal cluster access** — The agent uses Kubernetes RBAC to read workload and event data. All required roles are automatically created by the Helm chart ([see RBAC definition](https://raw.githubusercontent.com/nudgebee/k8s-agent/main/charts/nudgebee-agent/templates/runner-service-account.yaml)).
+Each rule is listed with **what breaks if you omit it**, so you can justify the exception to whoever owns your egress policy.
+
+| Access | Why it is needed | What breaks without it |
+|---|---|---|
+| **Outbound to NudgeBee** — WebSocket and HTTP to the server (cloud or self-hosted) | The only path the agent has to deliver collected data | The cluster never appears in the UI. This one is non-negotiable — if outbound WebSocket is blocked, see [Using HTTP Instead of WebSocket](#using-http-instead-of-websocket) |
+| **Outbound to cloud pricing APIs** — AWS, Azure, GCP endpoints | OpenCost fetches list prices to turn resource usage into cost | Monitoring and troubleshooting keep working; cost figures are missing or fall back to defaults |
+| **Internal cluster access** (Kubernetes RBAC) | The agent reads workload and event data through the API server. All required roles are created by the Helm chart ([see RBAC definition](https://raw.githubusercontent.com/nudgebee/k8s-agent/main/charts/nudgebee-agent/templates/runner-service-account.yaml)) | The runner cannot discover workloads and logs permission errors on startup |
 
 ---
 
@@ -80,8 +86,23 @@ The agent is lightweight. Here is what it uses on a cluster with up to 100 nodes
 3. Enter a name for your cluster and click **Connect**.
 4. Copy the **Auth Key** that is generated.
 
-:::caution
-Keep your Auth Key secure — it authenticates the agent with the NudgeBee server. Do not commit it to version control. Use Kubernetes secrets or a secrets manager in production.
+:::caution[Treat the auth key like a password]
+This key authenticates your cluster to the NudgeBee server and lets an agent
+report in as you. Anyone who has it can send data into your tenant — so it
+carries real blast radius, not a throwaway identifier.
+
+- Store it in a secret manager or a Kubernetes Secret. **Never commit it to a
+  `values.yaml`** or paste it into a shared Slack/Teams channel.
+- Command-line arguments are saved in shell history, and the quick-install
+  script takes the key as an argument. Read it from a secret manager or prompt
+  for it instead of typing it inline:
+
+  ```bash
+  read -s NUDGEBEE_AUTH_KEY        # prompts without echoing
+  ./installation.sh -a "$NUDGEBEE_AUTH_KEY"
+  ```
+- Generate a separate auth key per cluster, so you can revoke one without
+  touching the others.
 :::
 
 ### Step 2: Choose Your Installation Method

@@ -12,7 +12,7 @@ The NudgeBee Agent is a lightweight software component that runs inside your Kub
 :::
 
 :::tip
-If you connected a cloud account (AWS, Azure, or GCP), NudgeBee can auto-discover your Kubernetes clusters. You may still need to install the agent for deep monitoring, but cluster discovery happens automatically.
+**Already connected a cloud account?** Connecting a cloud account gives you inventory and discovery — NudgeBee finds the Kubernetes clusters and cloud resources in that account. Deep monitoring still requires the agent on each cluster you want to troubleshoot, optimize, or automate: workload metrics, Kubernetes events, logs, traces, and eBPF network data all come from the agent.
 :::
 
 ### What You Will Find in This Section

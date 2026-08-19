@@ -27,14 +27,12 @@ sidebar_position: 4
 
 ### What is the typical system requirement for running NB on my cluster? What is the expected cost of operations for running the base NudgeBee
 
-#### For Agent:
-Agent has multiple components. All of them combined take around 6GB memory and 3 core CPUs
-This also includes Prometheus(Alertmanager/KubestateMetrics)
-If we remove Prometheus components, then it takes around 3GB and 2 cores
+The installation pages are the source of truth for these figures — they are
+maintained alongside the Helm charts, so use them for capacity planning rather
+than the summary here:
 
-#### For Server:
-All server components take around 12GB RAM and 4 core CPUs
-This includes running postgres/rabbitmq etc. If the customer is managing these dependencies, then it will take around 8GB RAM and 2 core CPUs
+- **Agent** — see [Resource Footprint](./installation/agent/installation/index.md#resource-footprint) for the per-component breakdown. Roughly 3 GB RAM / 2 cores for the agent alone, or around 6 GB RAM / 3 cores if the installer also sets up Prometheus (Alertmanager, kube-state-metrics) for you.
+- **Server** — see [Resource Footprint](./installation/server/index.md#resource-footprint). Roughly 12 GB RAM / 4 cores with the bundled Postgres, RabbitMQ and other dependencies, dropping to about 8 GB RAM / 2 cores when you manage those dependencies yourself.
 
 ### How NudgeBee Optimizations Work with GitOps
 
