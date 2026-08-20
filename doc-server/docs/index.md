@@ -87,74 +87,58 @@ NudgeBee has two components, both packaged as Helm charts that deploy natively o
 **Self-hosted users**: You need a dedicated Kubernetes cluster (or namespace) to run the NudgeBee Server before connecting your monitored clusters. Sizing typically requires a 2-node cluster with 16 GB RAM and 4 cores per node. If you do not have Kubernetes clusters to run the server on, choose **Cloud SaaS**.
 :::
 
-### Architecture Overview — What Runs Where
+### Architecture Overview
 
 ```mermaid
 flowchart TB
-    classDef browser fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#78350f,rx:8,ry:8;
-    classDef app fill:#bae6fd,stroke:#0284c7,stroke-width:2px,color:#0369a1,rx:8,ry:8;
-    classDef backend fill:#bbf7d0,stroke:#16a34a,stroke-width:2px,color:#14532d,rx:8,ry:8;
-    classDef datastore fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#1e293b,rx:8,ry:8;
-    classDef collector fill:#ddd6fe,stroke:#7c3aed,stroke-width:2px,color:#4c1d95,rx:8,ry:8;
-    classDef agent fill:#fecdd3,stroke:#e11d48,stroke-dasharray: 5 5,stroke-width:2px,color:#881337,rx:8,ry:8;
+    classDef infra fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e40af,rx:6,ry:6;
+    classDef sec fill:#fffbeb,stroke:#f59e0b,stroke-width:2px,color:#92400e,rx:6,ry:6;
+    classDef cp fill:#f5f3ff,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6,rx:6,ry:6;
+    classDef datastore fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#334155,rx:6,ry:6;
+    classDef integ fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#065f46,rx:6,ry:6;
 
-    BROWSER["<b>Browser</b>"]:::browser
-    APP["<b>app</b><br/><small>Next.js UI + auth boundary</small>"]:::app
-
-    subgraph SERVICES["Microservices (Internal RPC with tenant + user context stamped on every call)"]
+    subgraph MON["Monitored Infrastructure"]
         direction TB
-        SERVICES_SERVER["<b>services-server</b><br/><small>Go core backend</small>"]:::backend
-        LLM_SERVER["<b>llm-server</b><br/><small>agents + tools</small>"]:::backend
-        WORKFLOW_SERVER["<b>workflow-server</b><br/><small>runbooks + automations</small>"]:::backend
-        NOTIFICATIONS["<b>notifications</b><br/><small>Slack / Teams / email</small>"]:::backend
-        TICKET_SERVER["<b>ticket-server</b><br/><small>Jira / PagerDuty ...</small>"]:::backend
+        K8S["<b>Kubernetes Clusters</b><br/><small>• Runner Deployment<br/>• Node Agent DaemonSet (eBPF)<br/>• Kubewatch Forwarder<br/>• OpenCost Subchart</small>"]:::infra
+        VM["<b>VMs & Bare Metal</b><br/><small>• Proxy Agent (Forager)<br/>• Database & Host Metrics</small>"]:::infra
+        CLOUD["<b>Cloud Provider APIs</b><br/><small>• AWS / GCP / Azure Inventory<br/>• Cloud Cost & Resource Tags</small>"]:::infra
     end
 
-    subgraph STORAGE["Storage & Caching Layer (Shared by ALL services)"]
-        POSTGRES["<b>Postgres</b><br/><small>state + audit</small>"]:::datastore
-        REDIS["<b>Redis</b><br/><small>cache</small>"]:::datastore
+    subgraph SEC_BOUND["Network Boundary"]
+        SEC["<b>Zero Inbound Ports Required</b><br/><small>Strictly Outbound HTTPS / WSS (TCP 443)</small>"]:::sec
     end
 
-    subgraph INFRA["Messaging, Vector & Durable Execution"]
-        RABBITMQ["<b>RabbitMQ</b><br/><small>events</small>"]:::datastore
-        QDRANT["<b>Qdrant</b><br/><small>RAG vectors</small>"]:::datastore
-        TEMPORAL["<b>Temporal</b><br/><small>durable workflows</small>"]:::datastore
+    subgraph CP["NudgeBee Control Plane (Server)"]
+        direction TB
+        RELAY["<b>Relay Server</b> (:8080)<br/><small>WebSocket Gateway for Agents</small>"]:::cp
+        API["<b>Services Server</b> (:8000)<br/><small>REST & GraphQL Control Plane</small>"]:::cp
+        UI["<b>Web Dashboard</b> (:3000)<br/><small>Next.js Frontend & NuBi Chat</small>"]:::cp
+        QUEUE["<b>RabbitMQ Broker</b><br/><small>Task & Event Distribution</small>"]:::datastore
+        DB["<b>PostgreSQL</b><br/><small>Metadata & Alert Config</small>"]:::datastore
+        QDRANT["<b>Qdrant Vector DB</b><br/><small>Semantic Knowledge Graph</small>"]:::datastore
+        TEMPORAL["<b>Temporal Engine</b><br/><small>Durable Runbooks & Autopilot</small>"]:::datastore
     end
 
-    subgraph COLLECTORS["Collectors & Ingress Hub"]
-        K8S_COLLECTOR["<b>k8s-collector</b><br/><small>cluster state + metrics</small>"]:::collector
-        CLOUD_COLLECTOR["<b>cloud-collector</b><br/><small>AWS / Azure / GCP scans</small>"]:::collector
-        RELAY_SERVER["<b>relay-server</b><br/><small>websocket hub</small>"]:::collector
+    subgraph EXT["Integrations & GitOps"]
+        direction TB
+        LLM["<b>BYOM LLM Providers</b><br/><small>AWS Bedrock • Ollama • OpenAI • Vertex</small>"]:::integ
+        NOTIF["<b>ChatOps & Incident Channels</b><br/><small>Slack • Microsoft Teams • Google Chat</small>"]:::integ
+        GITOPS["<b>GitOps Automated PRs</b><br/><small>GitHub • GitLab Manifest Pull Requests</small>"]:::integ
     end
 
-    AGENT["<b>nudgebee-agent (in YOUR cluster)</b><br/><small>kubectl • Prometheus • OpenCost</small>"]:::agent
-
-    BROWSER --> APP
-    APP --> SERVICES_SERVER
-    APP --> LLM_SERVER
-    APP --> WORKFLOW_SERVER
-    APP --> NOTIFICATIONS
-    APP --> TICKET_SERVER
-
-    SERVICES_SERVER -.-> STORAGE
-    LLM_SERVER -.-> STORAGE
-    WORKFLOW_SERVER -.-> STORAGE
-    NOTIFICATIONS -.-> STORAGE
-    TICKET_SERVER -.-> STORAGE
-
-    LLM_SERVER -->|vector search| QDRANT
-    WORKFLOW_SERVER -->|durable execution| TEMPORAL
-
-    K8S_COLLECTOR -->|signals| RABBITMQ
-    CLOUD_COLLECTOR -->|signals| RABBITMQ
-    RELAY_SERVER -->|signals| RABBITMQ
-    RABBITMQ --> SERVICES_SERVER
-
-    K8S_COLLECTOR -.-> STORAGE
-    CLOUD_COLLECTOR -.-> STORAGE
-    RELAY_SERVER -.-> STORAGE
-
-    AGENT -.->|outbound only (WSS)| RELAY_SERVER
+    K8S -->|WSS Outbound| SEC
+    VM -->|WSS Outbound| SEC
+    CLOUD -->|HTTPS Read-Only| SEC
+    SEC --> RELAY
+    RELAY --> QUEUE
+    QUEUE --> API
+    API --> DB
+    API --> QDRANT
+    API --> TEMPORAL
+    UI <--> API
+    API --> LLM
+    API --> NOTIF
+    API --> GITOPS
 ```
 
 ### Connecting Your Infrastructure
