@@ -45,7 +45,7 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 | **Kubernetes cluster** | v1.27 or newer | The cluster you want to monitor |
 | **Helm** | v3.x installed and configured | [Install Helm](https://helm.sh/) if you don't have it |
 | **Linux Kernel** | v4.2 or newer on all nodes | Required for eBPF-based network metrics collection |
-| **NudgeBee Auth Key** | Generated from the NudgeBee UI | Go to **Kubernetes** $\rightarrow$ **Connect Cluster** |
+| **NudgeBee Auth Key** | Generated from the NudgeBee UI | Go to **Kubernetes** → **Connect Cluster** |
 | **Registry access** | Outbound access to `nudgebee.github.io` (Helm repo) and `ghcr.io/nudgebee` (agent images) | Air-gapped clusters can mirror images internally |
 | **Prometheus** | A running Prometheus instance in the cluster | If omitted, the installer can deploy a bundled instance |
 
@@ -65,7 +65,7 @@ The agent components are designed to be low overhead:
 ### Step 1: Generate Your Auth Key
 
 1. Log in to [app.nudgebee.com](https://app.nudgebee.com) (or your self-hosted NudgeBee UI).
-2. Navigate to **Kubernetes** $\rightarrow$ **Connect Cluster** in the left sidebar.
+2. Navigate to **Kubernetes** → **Connect Cluster** in the left sidebar.
 3. Enter a friendly name for your cluster and click **Connect**.
 4. Copy the generated **Auth Key** (`<YOUR_AUTH_KEY>`).
 
@@ -123,7 +123,15 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
 helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
 helm repo update
 
-# 2. Deploy NudgeBee Agent (with GCP Cloud Billing API key for OpenCost)
+# 2. Install Prometheus (skip if already running in cluster)
+helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-stack \
+  --namespace nudgebee-agent --create-namespace \
+  --set nodeExporter.enabled=true \
+  --set alertmanager.enabled=true \
+  --set kubeStateMetrics.enabled=true \
+  -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
+
+# 3. Deploy NudgeBee Agent (with GCP Cloud Billing API key for OpenCost)
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
@@ -200,7 +208,7 @@ Look for log confirmation: `Connected to NudgeBee Relay successfully` and `Regis
 
 | Error Symptom | Cause | Resolution |
 |---|---|---|
-| **`401 Unauthorized / Invalid API Key`** | Incorrect or revoked Auth Key | Verify the key from **Kubernetes $\rightarrow$ Connect Cluster** and re-run `helm upgrade` with `--set runner.nudgebee.auth_secret_key="<KEY>"`. |
+| **`401 Unauthorized / Invalid API Key`** | Incorrect or revoked Auth Key | Verify the key from **Kubernetes → Connect Cluster** and re-run `helm upgrade` with `--set runner.nudgebee.auth_secret_key="<KEY>"`. |
 | **`WebSocket Dial Timeout / EOF`** | Outbound firewall blocking WebSocket | Ensure the cluster network allows outbound TCP traffic to port 443 (for SaaS `app.nudgebee.com` or your Ingress `relay.<domain>`). |
 | **`CRD / Webhook timeout error`** | Prometheus operator CRDs not yet established | Re-run the `helm upgrade` command. Helm will resume once the CRDs finish registering. |
 | **`Prometheus connection refused / empty metrics`** | Wrong Prometheus service URL | Ensure `globalConfig.prometheus_url` points to an accessible Prometheus service DNS (e.g. `http://<service-name>.<namespace>.svc:9090`). |
