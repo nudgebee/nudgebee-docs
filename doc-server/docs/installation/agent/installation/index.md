@@ -204,14 +204,85 @@ Look for log confirmation: `Connected to NudgeBee Relay successfully` and `Regis
 
 ---
 
-## Troubleshooting Common Errors
+## 3. Troubleshooting Agent Installation Errors
+
+Use this diagnostic reference to resolve common agent deployment and communication issues.
+
+---
+
+### Diagnostic Quick Reference
 
 | Error Symptom | Cause | Resolution |
 |---|---|---|
 | **`401 Unauthorized / Invalid API Key`** | Incorrect or revoked Auth Key | Verify the key from **Kubernetes → Connect Cluster** and re-run `helm upgrade` with `--set runner.nudgebee.auth_secret_key="<KEY>"`. |
-| **`WebSocket Dial Timeout / EOF`** | Outbound firewall blocking WebSocket | Ensure the cluster network allows outbound TCP traffic to port 443 (for SaaS `app.nudgebee.com` or your Ingress `relay.<domain>`). |
-| **`CRD / Webhook timeout error`** | Prometheus operator CRDs not yet established | Re-run the `helm upgrade` command. Helm will resume once the CRDs finish registering. |
-| **`Prometheus connection refused / empty metrics`** | Wrong Prometheus service URL | Ensure `globalConfig.prometheus_url` points to an accessible Prometheus service DNS (e.g. `http://<service-name>.<namespace>.svc:9090`). |
+| **`node-agent CrashLoopBackOff` (eBPF load failure)** | Kernel < 4.2 or non-standard distro (Bottlerocket, Talos, GKE COS) | Check kernel with `uname -r`. Ensure `/sys/kernel/debug` is accessible, or disable eBPF with `--set nodeAgent.ebpf.enabled=false`. |
+| **`WebSocket Dial Timeout / EOF`** | Outbound firewall or NetworkPolicy blocking TCP 443 | Verify egress to `wss://relay.nudgebee.com` (SaaS) or your relay Ingress. Ensure port 443 is open. |
+| **`Prometheus connection refused / empty metrics`** | Wrong Prometheus service URL or missing KSM | Point `globalConfig.prometheus_url` to valid service DNS (e.g. `http://<service>.<namespace>.svc:9090`). |
+| **OpenCost shows $0.00 / Missing Cost Data** | Missing cloud provider pricing API key | Provide `--set opencost.opencost.exporter.cloudProviderApiKey="<KEY>"` or AWS CUR integration. |
+| **`CRD / Webhook timeout error`** | Prometheus operator CRDs not yet established | Wait 30 seconds and re-run the `helm upgrade` command. |
+
+---
+
+### In-Depth Diagnostic Scenarios
+
+#### 1. Node-Agent eBPF Probe Load Failures
+If the `nudgebee-node-agent` DaemonSet pods enter `CrashLoopBackOff` or fail to attach eBPF probes:
+
+**Diagnose:**
+```shell
+kubectl logs daemonset/nudgebee-node-agent -n nudgebee-agent
+```
+
+**Resolution:**
+- Verify that your Kubernetes node kernel is version **4.2 or higher** (`uname -r`).
+- For container-optimized operating systems (e.g. AWS Bottlerocket or GKE COS), ensure debugfs and bpf filesystems are mounted.
+- If running on microVMs or kernels with restricted eBPF, disable kernel probe instrumentation while maintaining metric scraping:
+  ```shell
+  helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
+    --namespace nudgebee-agent \
+    --reuse-values \
+    --set nodeAgent.ebpf.enabled=false
+  ```
+
+#### 2. Prometheus Metric Discovery & Zero Metrics
+If the cluster connects in the UI but workload CPU and memory graphs remain empty:
+
+**Diagnose:**
+```shell
+# Test Prometheus DNS resolution from inside the agent runner pod
+kubectl exec -it deployment/nudgebee-runner -n nudgebee-agent -- wget -qO- http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090/api/v1/query?query=up
+```
+
+**Resolution:**
+Ensure `globalConfig.prometheus_url` and `opencost.opencost.prometheus.external.url` point to the exact Prometheus service running in your cluster.
+
+#### 3. Egress Firewall & Kubernetes NetworkPolicy
+If your cluster enforces default-deny egress NetworkPolicies, the runner will fail with `WebSocket dial timeout`:
+
+**Resolution:**
+Apply a NetworkPolicy allowing outbound TCP traffic on port 443 from the `nudgebee-agent` namespace:
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-nudgebee-egress
+  namespace: nudgebee-agent
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 53  # Allow DNS resolution
+        - protocol: UDP
+          port: 53
+```
 
 
 ---

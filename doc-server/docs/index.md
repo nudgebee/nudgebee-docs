@@ -87,6 +87,60 @@ NudgeBee has two components, both packaged as Helm charts that deploy natively o
 **Self-hosted users**: You need a dedicated Kubernetes cluster (or namespace) to run the NudgeBee Server before connecting your monitored clusters. Sizing typically requires a 2-node cluster with 16 GB RAM and 4 cores per node. If you do not have Kubernetes clusters to run the server on, choose **Cloud SaaS**.
 :::
 
+### Architecture Overview
+
+```mermaid
+flowchart TB
+    classDef infra fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e40af,rx:6,ry:6;
+    classDef sec fill:#fffbeb,stroke:#f59e0b,stroke-width:2px,color:#92400e,rx:6,ry:6;
+    classDef cp fill:#f5f3ff,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6,rx:6,ry:6;
+    classDef datastore fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#334155,rx:6,ry:6;
+    classDef integ fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#065f46,rx:6,ry:6;
+
+    subgraph MON["Monitored Infrastructure"]
+        direction TB
+        K8S["<b>Kubernetes Clusters</b><br/><small>• Runner Deployment<br/>• Node Agent DaemonSet (eBPF)<br/>• Kubewatch Forwarder<br/>• OpenCost Subchart</small>"]:::infra
+        VM["<b>VMs & Bare Metal</b><br/><small>• Proxy Agent (Forager)<br/>• Database & Host Metrics</small>"]:::infra
+        CLOUD["<b>Cloud Provider APIs</b><br/><small>• AWS / GCP / Azure Inventory<br/>• Cloud Cost & Resource Tags</small>"]:::infra
+    end
+
+    subgraph SEC_BOUND["Network Boundary"]
+        SEC["<b>Zero Inbound Ports Required</b><br/><small>Strictly Outbound HTTPS / WSS (TCP 443)</small>"]:::sec
+    end
+
+    subgraph CP["NudgeBee Control Plane (Server)"]
+        direction TB
+        RELAY["<b>Relay Server</b> (:8080)<br/><small>WebSocket Gateway for Agents</small>"]:::cp
+        API["<b>Services Server</b> (:8000)<br/><small>REST & GraphQL Control Plane</small>"]:::cp
+        UI["<b>Web Dashboard</b> (:3000)<br/><small>Next.js Frontend & NuBi Chat</small>"]:::cp
+        QUEUE["<b>RabbitMQ Broker</b><br/><small>Task & Event Distribution</small>"]:::datastore
+        DB["<b>PostgreSQL</b><br/><small>Metadata & Alert Config</small>"]:::datastore
+        QDRANT["<b>Qdrant Vector DB</b><br/><small>Semantic Knowledge Graph</small>"]:::datastore
+        TEMPORAL["<b>Temporal Engine</b><br/><small>Durable Runbooks & Autopilot</small>"]:::datastore
+    end
+
+    subgraph EXT["Integrations & GitOps"]
+        direction TB
+        LLM["<b>BYOM LLM Providers</b><br/><small>AWS Bedrock • Ollama • OpenAI • Vertex</small>"]:::integ
+        NOTIF["<b>ChatOps & Incident Channels</b><br/><small>Slack • Microsoft Teams • Google Chat</small>"]:::integ
+        GITOPS["<b>GitOps Automated PRs</b><br/><small>GitHub • GitLab Manifest Pull Requests</small>"]:::integ
+    end
+
+    K8S -->|WSS Outbound| SEC
+    VM -->|WSS Outbound| SEC
+    CLOUD -->|HTTPS Read-Only| SEC
+    SEC --> RELAY
+    RELAY --> QUEUE
+    QUEUE --> API
+    API --> DB
+    API --> QDRANT
+    API --> TEMPORAL
+    UI <--> API
+    API --> LLM
+    API --> NOTIF
+    API --> GITOPS
+```
+
 ### Connecting Your Infrastructure
 
 Once the server is running (or you have signed up for SaaS), connect your infrastructure:

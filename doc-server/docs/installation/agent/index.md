@@ -29,9 +29,41 @@ If you connected a cloud account (AWS, Azure, or GCP), NudgeBee can auto-discove
 
 ## Architecture
 
-The NudgeBee Agent runs within your Kubernetes cluster. The main component is the Runner, which acts as a central controller — it collects data from various components and communicates with the NudgeBee Server over HTTP and WebSocket.
+The NudgeBee Agent runs within your Kubernetes cluster. The main component is the Runner, which acts as a central controller — it coordinates data collection from cluster components and maintains a secure, outbound-only WebSocket connection to the NudgeBee Server.
 
-![Agent Architecture](/img/nb_agent_architecture.png)
+```mermaid
+flowchart TB
+    classDef runner fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e40af,rx:6,ry:6;
+    classDef collector fill:#f0fdf4,stroke:#22c55e,stroke-width:2px,color:#14532d,rx:6,ry:6;
+    classDef k8s fill:#fffbeb,stroke:#f59e0b,stroke-width:2px,color:#92400e,rx:6,ry:6;
+    classDef server fill:#f5f3ff,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6,rx:6,ry:6;
+
+    subgraph MONITORED["Monitored Kubernetes Cluster"]
+        API_SERVER["<b>Kubernetes API Server</b><br/><small>Cluster state, Pods, Deployments</small>"]:::k8s
+
+        subgraph AGENT["NudgeBee Agent Namespace (nudgebee-agent)"]
+            RUNNER["<b>NudgeBee Runner</b> (Deployment)<br/><small>• Aggregates telemetry<br/>• Executes in-cluster diagnostic & remediation tasks<br/>• Outbound WSS tunnel</small>"]:::runner
+            KUBEWATCH["<b>Event Watcher / Kubewatch</b><br/><small>Streams resource changes & pod events</small>"]:::collector
+            NODE_AGENT["<b>Node Agent</b> (DaemonSet)<br/><small>eBPF network metrics, latency, packet telemetry</small>"]:::collector
+            OPENCOST["<b>OpenCost Subchart</b><br/><small>Real-time pod/node cost allocation</small>"]:::collector
+            PROM["<b>Prometheus / KSM</b> (Optional Bundled)<br/><small>Scrapes metrics & ServiceMonitors</small>"]:::collector
+        end
+    end
+
+    subgraph BACKEND["NudgeBee Server Control Plane"]
+        RELAY["<b>Relay Server</b> (:8080)<br/><small>wss://relay.nudgebee.com/register</small>"]:::server
+        COLLECTOR["<b>Collector Server</b><br/><small>https://collector.nudgebee.com</small>"]:::server
+    end
+
+    API_SERVER -->|Watch Events| KUBEWATCH
+    KUBEWATCH -->|Forward Events| RUNNER
+    NODE_AGENT -->|eBPF Metrics| PROM
+    PROM -->|Query Metrics| RUNNER
+    OPENCOST -->|Cost Allocation| RUNNER
+
+    RUNNER -->|Outbound WSS :443| RELAY
+    RUNNER -->|HTTPS Telemetry :443| COLLECTOR
+```
 
 ## Components
 

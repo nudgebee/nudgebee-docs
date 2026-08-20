@@ -10,7 +10,7 @@ documentation — this page is the source of truth for what each one includes.
 
 | | **Community** <Community/> | **Enterprise** <Enterprise/> | **Cloud** <Cloud/> |
 |---|---|---|---|
-| **What it is** | Free, open-source (Apache 2.0), self-hosted. Fully functional. | Self-hosted with a commercial license. Adds enterprise features and support. | Fully managed SaaS, hosted and operated by NudgeBee. |
+| **What it is** | Free self-hosted edition. Server is licensed under **BSL 1.1**; Agents are **Apache 2.0**. Fully functional. | Self-hosted with a commercial license. Adds enterprise features and SLA support. | Fully managed SaaS, hosted and operated by NudgeBee. |
 | **Where it runs** | Your own Kubernetes cluster | Your own Kubernetes cluster | [app.nudgebee.com](https://app.nudgebee.com) |
 | **Container images** | Public — `ghcr.io/nudgebee` (no authentication) | Licensed — `registry.nudgebee.com` | Managed for you |
 | **License key** | Not required | Required | Not applicable |
@@ -25,7 +25,7 @@ the Workflow Builder, and Autopilot all work out of the box. You can move to
 Enterprise or Cloud later without losing your configuration.
 :::
 
-## What's in the open-source (Community) edition
+## What's in the Community edition
 
 The Community edition is **fully functional** for self-hosted Kubernetes
 operations. It includes:
@@ -64,10 +64,8 @@ per-feature badges are updated together so the docs always reflect what's
 actually gated.
 :::
 
-## Trademarks
+## Licensing & Trademarks
 
-NudgeBee is open source under the Apache 2.0 license, but the **NudgeBee name
-and logo are trademarks**. The Apache license does not grant trademark rights —
-in particular, modified builds and forks must be renamed. See the
-[trademark policy](https://github.com/nudgebee/nudgebee-docs/blob/main/TRADEMARKS.md)
-for what's allowed.
+- **NudgeBee Server**: Licensed under the **Business Source License 1.1 (BSL 1.1)**. Free for non-competing production and internal operations, automatically converting to open source under Apache 2.0 after its change date.
+- **NudgeBee Agents & Ecosystem**: The Kubernetes Agent ([k8s-agent](https://github.com/nudgebee/k8s-agent)) and Proxy Agent ([forager](https://github.com/nudgebee/forager)) are licensed under the **Apache 2.0 License**.
+- **Trademarks**: The **NudgeBee name and logo are trademarks**. The licenses do not grant trademark rights — modified builds and forks must be renamed. See the [trademark policy](https://github.com/nudgebee/nudgebee-docs/blob/main/TRADEMARKS.md) for what is allowed.
