@@ -20,6 +20,30 @@ NudgeBee does not store passwords. All authentication is handled through SSO pro
 ## Authorization
 - Currently, NudgeBee supports tenant level authorization with 2 roles(admin, readonly)
 
+## Kubernetes Agent RBAC & Least-Privilege Permissions
+
+For security compliance teams reviewing the in-cluster agent deployment, the NudgeBee agent requests read-only Kubernetes `ClusterRole` permissions by default:
+
+| API Group | Resources | Verb Permissions | Purpose |
+|---|---|---|---|
+| `""` (Core) | `pods`, `nodes`, `namespaces`, `services`, `endpoints`, `events`, `persistentvolumes`, `persistentvolumeclaims` | `get`, `list`, `watch` | Topology mapping, resource health, and incident triage. |
+| `apps` | `deployments`, `statefulsets`, `daemonsets`, `replicasets` | `get`, `list`, `watch` | Workload configuration and right-sizing analysis. |
+| `batch` | `jobs`, `cronjobs` | `get`, `list`, `watch` | Batch workload failure detection. |
+| `networking.k8s.io` | `ingresses`, `networkpolicies` | `get`, `list`, `watch` | Traffic routing and network topology mapping. |
+| `autoscaling` | `horizontalpodautoscalers` | `get`, `list`, `watch` | HPA scaling tracking. |
+
+:::note No Secret Data Access
+The agent **never reads Secret data contents** (`get` or `list` on `secrets` is excluded from default ClusterRole bindings).
+:::
+
+## Network Security & Firewall Rules
+
+| Traffic Flow | Direction | Protocol / Port | Destination | Purpose |
+|---|---|---|---|---|
+| **Agent to Server** | Outbound | TCP `443` (WSS / HTTPS) | `app.nudgebee.com` or self-hosted Ingress | Streaming metrics, events, and telemetry. |
+| **Agent to Cloud Pricing** | Outbound | TCP `443` (HTTPS) | AWS, GCP, Azure pricing endpoints | OpenCost pricing calculations. |
+| **Server to In-Cluster Relay** | Inbound / Internal | TCP `8080` (Internal ClusterIP) | `relay-server.nudgebee.svc` | Real-time agent relay communication. |
+
 ## Audit
 - User operations are tracked and can be viewed on the UI.
 

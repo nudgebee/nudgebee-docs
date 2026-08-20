@@ -18,6 +18,47 @@ The **Community** edition is free, Apache 2.0 licensed, and fully functional —
 
 ---
 
+---
+
+## Get Started in 3 Steps: Fork in the Road
+
+Choose your path to get up and running:
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', margin: '1.5rem 0' }}>
+  <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.25rem', backgroundColor: '#fbfbfb' }}>
+    <h3 style={{ marginTop: 0 }}>⚡ Option A: Cloud SaaS (5 mins)</h3>
+    <p>Zero infrastructure to manage. Evaluated and ready instantly.</p>
+    <ol>
+      <li>Sign up at <a href="https://app.nudgebee.com">app.nudgebee.com</a>.</li>
+      <li><a href="./installation/agent/installation/">Install the Agent</a> on your cluster (or connect your cloud account).</li>
+      <li>Connect <a href="./integrations/Notifications/slack">Slack</a> and start exploring AI insights.</li>
+    </ol>
+  </div>
+  <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.25rem', backgroundColor: '#fbfbfb' }}>
+    <h3 style={{ marginTop: 0 }}>🛡️ Option B: Self-Hosted / On-Prem</h3>
+    <p>Complete data isolation inside your own Kubernetes environment.</p>
+    <ol>
+      <li><a href="./installation/server/">Deploy NudgeBee Server</a> on your Kubernetes cluster via Helm.</li>
+      <li>Configure your <a href="./integrations/LLM/">BYOM LLM provider</a> (or local Ollama/vLLM).</li>
+      <li><a href="./installation/agent/installation/">Install the Agent</a> on monitored clusters.</li>
+    </ol>
+  </div>
+</div>
+
+---
+
+## Core Concepts & Glossary
+
+| Term | Definition | Role in Platform |
+|---|---|---|
+| **NuBi** | **SRE AI Agent** | Interacts in natural language via UI or Slack/Teams, investigates incidents, pulls traces/logs, and performs root cause analysis. |
+| **NudgeBee Agent** | **In-Cluster Collector** | Lightweight DaemonSet & runner deployed inside monitored Kubernetes clusters to stream metrics, events, and eBPF network telemetry. |
+| **NudgeBee Server** | **Control Plane** | Hosts the web dashboard, API, Semantic Knowledge Graph, database, and workflow orchestration engine. |
+| **Semantic Knowledge Graph (SKG)** | **Relational Dependency Map** | Live topological graph correlating pods, nodes, cloud services, metrics, traces, git commits, and tickets. |
+| **Autopilot** | **Automated Operations** | Policy-gated automated right-sizing and self-healing runbooks with configurable human approval checkpoints. |
+
+---
+
 ## Deployment Models
 
 NudgeBee is available in two deployment models — and self-hosted comes in two **editions** (free Community and licensed Enterprise — see [Editions](./editions.md)). Choose what fits your organization's requirements:
@@ -42,23 +83,17 @@ NudgeBee has two components, both packaged as Helm charts that deploy natively o
 | **[NudgeBee Server](./installation/server/index.md)** | The control plane — hosts the UI, Semantic Knowledge Graph, AI agents, and workflow engine. | **Self-hosted users only.** Cloud SaaS users skip this — NudgeBee hosts it for you. |
 | **[NudgeBee Agent](./installation/agent/installation/index.md)** | Lightweight collector that runs inside each cluster you want to monitor. Collects workload data and sends it to the server. | **Everyone** — both SaaS and self-hosted users. |
 
-:::info
-**Self-hosted users**: You need a dedicated Kubernetes cluster (or namespace) to run the NudgeBee Server before connecting your monitored clusters. See the [Server Installation Guide](./installation/server/) for requirements — typically a 2-node cluster with 16 GB RAM and 4 cores per node is sufficient for up to 400 monitored nodes.
+:::info Infrastructure Prerequisite
+**Self-hosted users**: You need a dedicated Kubernetes cluster (or namespace) to run the NudgeBee Server before connecting your monitored clusters. Sizing typically requires a 2-node cluster with 16 GB RAM and 4 cores per node. If you do not have Kubernetes clusters to run the server on, choose **Cloud SaaS**.
 :::
 
-Once the server is running (or you have signed up for SaaS), there are two ways to connect your monitored infrastructure — both take just a few minutes:
+### Connecting Your Infrastructure
 
-### Option 1: Connect a Cloud Account — Fastest Way to Start
+Once the server is running (or you have signed up for SaaS), connect your infrastructure:
 
-Connect your cloud account ([AWS](./features/Cloud/AWS.md), [Azure](./features/Cloud/Azure.md), or [GCP](./features/Cloud/GCP.md)) and NudgeBee automatically discovers all Kubernetes clusters mapped to that account. You get immediate visibility across your entire cloud infrastructure — no need to install anything on individual clusters upfront.
+- **1. Connect a Cloud Account (Broad Inventory & Cluster Discovery)**: Connecting [AWS](./features/Cloud/AWS.md), [Azure](./features/Cloud/Azure.md), or [GCP](./features/Cloud/GCP.md) automatically discovers cloud resources, managed Kubernetes clusters, load balancers, and billing data across your accounts.
+- **2. Install the Agent (Deep Telemetry & Real-Time AI RCA)**: To enable deep workload monitoring, pod log analysis, distributed tracing, and live AI debugging on specific clusters, install the [NudgeBee Agent](./installation/agent/installation/index.md) inside each target cluster.
 
-### Option 2: Install the Agent Directly on a Cluster
-
-Install the [NudgeBee Agent](./installation/agent/installation/index.md) directly into each Kubernetes cluster you want to monitor. The agent is a lightweight Helm chart that takes about 5 minutes to deploy. It collects detailed workload data and sends it to the NudgeBee server for deep monitoring, cost analysis, and AI-powered troubleshooting.
-
-:::tip
-**Not sure which to pick?** If you have multiple clusters across cloud accounts, start with the cloud account connection for instant discovery. You can always install agents on specific clusters later for deeper monitoring and automation capabilities.
-:::
 
 ---
 

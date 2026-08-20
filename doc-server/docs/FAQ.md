@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 100
 ---
 
 # FAQ
@@ -16,6 +16,16 @@ sidebar_position: 4
 ### What are the ML libraries that NudgeBee uses? What are the dependencies?
 - TensorFlow for recommendations for replicas
 - AWS Bedrock using LLAMA (optional) for AI-based recommendations on logs/errors
+
+### What are the hard dependencies for the NudgeBee Server?
+- **PostgreSQL**: Hard requirement. Stores cluster configurations, user metadata, alert rules, and workflow states. Queries and services fail without it.
+- **RabbitMQ**: Hard requirement. Powers internal message queues between backend services and workers. Consumers will not bootstrap without it.
+- **Redis**: Optional. Falls back to in-memory caching if omitted.
+
+### Is the NudgeBee Agent mandatory if I already connected a cloud account?
+- **Cloud Account Connection** provides inventory discovery across your AWS/Azure/GCP resources and auto-detects existing Kubernetes clusters.
+- **The Agent** is required inside each cluster to collect real-time workload metrics, stream pod logs, capture eBPF network telemetry, and perform automated AI root cause analysis.
+- For full AI troubleshooting and cost optimizations on a cluster, installing the Agent is required.
 
 ### What are the pre-conditions(software/hardware) for installing NudgeBee on my cluster?
 

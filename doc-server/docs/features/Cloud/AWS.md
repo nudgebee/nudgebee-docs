@@ -73,25 +73,60 @@ StackSets deploy only to **member** accounts, not the management account itself.
 
 ---
 
-## CloudWatch Alarms Permissions
+## Least-Privilege IAM Policy (Manual Role Creation)
 
-NudgeBee collects existing CloudWatch alarms from your AWS account and can create new alarms based on recommendations.
+If you prefer to create a custom IAM role manually instead of using the managed CloudFormation template, attach the following least-privilege policy document to your cross-account role:
 
-### Permissions Included in CloudFormation Template
-
-The CloudFormation template includes:
-
-**Read permissions** (via `ReadOnlyAccess` managed policy):
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "NudgeBeeCloudWatchDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:DescribeAlarms",
+        "cloudwatch:DescribeAlarmsForMetric",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:ListMetrics"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NudgeBeeEKSDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "eks:DescribeCluster",
+        "eks:ListClusters"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NudgeBeeCostAndUsageDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "cur:DescribeReportDefinitions",
+        "ce:GetCostAndUsage",
+        "ce:GetCostForecast",
+        "ce:GetDimensionValues"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NudgeBeeCURS3Access",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:ListBucket",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::<YOUR_CUR_BUCKET_NAME>",
+        "arn:aws:s3:::<YOUR_CUR_BUCKET_NAME>/*"
+      ]
+    }
+  ]
+}
 ```
-cloudwatch:DescribeAlarms
-cloudwatch:DescribeAlarmsForMetric
-```
-
-**Write permissions** (included when the account is connected in **Standard** access mode):
-```
-cloudwatch:PutMetricAlarm
-```
-
-These permissions allow NudgeBee to both monitor existing alarms and create new ones for your resources.
 
 <!-- assets verified -->

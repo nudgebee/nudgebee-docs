@@ -1,10 +1,15 @@
----
-sidebar_position: 1
----
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Agent Installation
 
-Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The agent collects workload data, performance metrics, cost information, and security insights, and sends them to the NudgeBee server — feeding the Semantic Knowledge Graph that powers NudgeBee's AI troubleshooting, optimization recommendations, and automation.
+Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The agent runs as a lightweight collector DaemonSet and controller within your cluster. It gathers live workload telemetry, resource utilization, events, logs, and distributed traces, streaming them to the NudgeBee Server to build the **Semantic Knowledge Graph** for real-time AI troubleshooting and cost optimizations.
+
+:::note[Do I need the Agent?]
+- **Connecting a Cloud Account** (AWS/Azure/GCP) provides high-level cloud inventory and cluster auto-discovery without installing software upfront.
+- **Installing the Agent** inside the cluster is **required for deep in-cluster telemetry**, live pod logs, kernel-level eBPF network metrics, OpenCost pricing analysis, and automated AI incident RCA.
+- Both **Cloud SaaS** and **Self-Hosted** deployments install the exact same agent into monitored clusters.
+:::
 
 :::tip
 **Estimated time**: 5–10 minutes per cluster using the quick install script, or 10–15 minutes for manual Helm installation.
@@ -40,34 +45,18 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 | **Kubernetes cluster** | v1.27 or newer | The cluster you want to monitor |
 | **Helm** | v3.x installed and configured | [Install Helm](https://helm.sh/) if you don't have it |
 | **Linux Kernel** | v4.2 or newer on all nodes | Required for eBPF-based network metrics collection |
-| **NudgeBee Auth Key** | Generated from the NudgeBee UI | See [Step 1](#step-1-generate-your-auth-key) below |
-| **Registry access** | Outbound access to `nudgebee.github.io` (public Helm repo) and `ghcr.io/nudgebee` (public agent images) | Air-gapped clusters can mirror the images to their own registry and override `runner.image.repository` / `nodeAgent.image.repository` |
-| **Prometheus** | A running Prometheus instance in the cluster | If you don't have one, the install script can set it up for you |
-
-:::tip
-**Already have Prometheus running?** You just need its URL (e.g., `http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090`). If you don't have Prometheus, don't worry — the quick install script or the manual steps below will install it for you.
-:::
+| **NudgeBee Auth Key** | Generated from the NudgeBee UI | Go to **Kubernetes** $\rightarrow$ **Connect Cluster** |
+| **Registry access** | Outbound access to `nudgebee.github.io` (Helm repo) and `ghcr.io/nudgebee` (agent images) | Air-gapped clusters can mirror images internally |
+| **Prometheus** | A running Prometheus instance in the cluster | If omitted, the installer can deploy a bundled instance |
 
 ### Resource Footprint
 
-The agent is lightweight. Here is what it uses on a cluster with up to 100 nodes:
+The agent components are designed to be low overhead:
 
-| Component | Typical Usage | Upper Limit | Notes |
-|---|---|---|---|
-| **Node Agent** | 100 MiB RAM, 0.1 CPU | 1 GiB RAM, 0.5 CPU | Runs on each node (DaemonSet) |
-| **Runner** | 500 MiB RAM, 0.1 CPU | 2 GiB RAM, 0.5 CPU | Central controller — one per cluster |
-| **Event Watcher** | 200 MiB RAM, 0.1 CPU | 1 GiB RAM, 0.5 CPU | Monitors K8s events |
-| **Tracing** (optional) | 1 GiB RAM, 0.1 CPU | 2 GiB RAM, 0.5 CPU | Requires 50 GiB PVC |
-
-:::info
-**Prometheus and logging** are not included in the table above — their resource usage depends on your existing setup. If the installer sets up Prometheus for you, expect an additional 1–2 GiB RAM.
-:::
-
-### Network
-
-- **Outbound to NudgeBee** — WebSocket and HTTP to the NudgeBee server (cloud or self-hosted) for data delivery.
-- **Outbound to cloud pricing APIs** — AWS, Azure, GCP endpoints for cost data (used by OpenCost).
-- **Internal cluster access** — The agent uses Kubernetes RBAC to read workload and event data. All required roles are automatically created by the Helm chart ([see RBAC definition](https://raw.githubusercontent.com/nudgebee/k8s-agent/main/charts/nudgebee-agent/templates/runner-service-account.yaml)).
+| Component | Sizing Breakdown | Notes |
+|---|---|---|
+| **Agent Core (without Prometheus)** | **~3 GB RAM, 2 CPU cores** | Includes Runner, Node Agent DaemonSet, Event Watcher, OpenCost |
+| **Agent with Bundled Observability** | **~6 GB RAM, 3 CPU cores** | Includes Prometheus, Alertmanager, and Kube-State-Metrics |
 
 ---
 
@@ -76,23 +65,19 @@ The agent is lightweight. Here is what it uses on a cluster with up to 100 nodes
 ### Step 1: Generate Your Auth Key
 
 1. Log in to [app.nudgebee.com](https://app.nudgebee.com) (or your self-hosted NudgeBee UI).
-2. Go to **Kubernetes** → **Connect Cluster**.
-3. Enter a name for your cluster and click **Connect**.
-4. Copy the **Auth Key** that is generated.
+2. Navigate to **Kubernetes** $\rightarrow$ **Connect Cluster** in the left sidebar.
+3. Enter a friendly name for your cluster and click **Connect**.
+4. Copy the generated **Auth Key** (`<YOUR_AUTH_KEY>`).
 
-:::caution
-Keep your Auth Key secure — it authenticates the agent with the NudgeBee server. Do not commit it to version control. Use Kubernetes secrets or a secrets manager in production.
+:::caution Blast Radius of Auth Key
+Your Auth Key authorizes your agent to send data to your NudgeBee control plane. Store it securely in a secret manager or Kubernetes Secret — never commit it in cleartext.
 :::
 
 ### Step 2: Choose Your Installation Method
 
-Pick one of the two methods below. The quick install script is the fastest option — it detects your environment and handles dependencies automatically.
-
----
-
 #### Option A: Quick Install Script (Recommended)
 
-The fastest way to get the agent running. The script detects your environment, installs Prometheus if needed, and deploys the agent — all in one step.
+The automated script detects your cluster environment, sets up Prometheus if not already present, and deploys the agent with optimal defaults:
 
 ```bash
 wget https://raw.githubusercontent.com/nudgebee/k8s-agent/refs/heads/prod/installation.sh
@@ -100,77 +85,126 @@ chmod +x installation.sh
 ./installation.sh -a <YOUR_AUTH_KEY>
 ```
 
-Replace `<YOUR_AUTH_KEY>` with the auth key you copied in Step 1.
-
-That's it — the script handles everything else. Skip to [Verify the Installation](#3-verify-the-installation).
-
 ---
 
-#### Option B: Manual Helm Installation
+#### Option B: Manual Helm Installation by Environment
 
-Use this method if you need more control over the installation, want to customize Helm values, or are in a restricted environment where you can't run external scripts.
+Select your Kubernetes environment below for tailored Helm installation commands:
 
-**B1. Install Prometheus** (skip if you already have Prometheus running)
+<Tabs groupId="environment">
+<TabItem value="eks" label="AWS EKS">
 
 ```bash
+# 1. Add NudgeBee Helm repository
+helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
+helm repo update
+
+# 2. Install Prometheus (skip if already running in cluster)
 helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-stack \
   --namespace nudgebee-agent --create-namespace \
   --set nodeExporter.enabled=true \
-  --set pushgateway.enabled=false \
   --set alertmanager.enabled=true \
   --set kubeStateMetrics.enabled=true \
   -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
-```
 
-**B2. Add the NudgeBee Helm repo**
-
-```bash
-helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
-helm repo update
-```
-
-**B3. Install the agent**
-
-For **Cloud SaaS** users:
-
-```bash
+# 3. Deploy NudgeBee Agent
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
-  --set globalConfig.prometheus_url="<PROMETHEUS_URL>" \
-  --set opencost.opencost.prometheus.external.url="<PROMETHEUS_URL>"
+  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090" \
+  --set opencost.opencost.prometheus.external.url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090"
 ```
 
-Replace:
-- `<YOUR_AUTH_KEY>` — the auth key from Step 1
-- `<PROMETHEUS_URL>` — your Prometheus endpoint (e.g., `http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090`)
+</TabItem>
+<TabItem value="gke" label="GCP GKE">
 
-For **self-hosted** users, see the [Self-Hosted Configuration](#4-for-self-hosted-nudgebee) section below — you need additional settings to point the agent to your own server.
+```bash
+# 1. Add NudgeBee Helm repository
+helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
+helm repo update
+
+# 2. Deploy NudgeBee Agent (with GCP Cloud Billing API key for OpenCost)
+helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
+  --namespace nudgebee-agent --create-namespace \
+  --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
+  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090" \
+  --set opencost.opencost.prometheus.external.url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090" \
+  --set opencost.opencost.exporter.cloudProviderApiKey="<YOUR_GCP_BILLING_API_KEY>"
+```
+
+</TabItem>
+<TabItem value="aks" label="Azure AKS">
+
+```bash
+# 1. Add NudgeBee Helm repository
+helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
+helm repo update
+
+# 2. Deploy NudgeBee Agent (Azure Monitor integration enabled)
+helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
+  --namespace nudgebee-agent --create-namespace \
+  --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
+  --set nodeAgent.enabled=true \
+  --set nodeAgent.podmonitor.enabled=true \
+  --set nodeAgent.podmonitor.azuremanaged=true
+```
+
+</TabItem>
+<TabItem value="local" label="Local (Kind / Minikube)">
+
+```bash
+# 1. Add NudgeBee Helm repository
+helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
+helm repo update
+
+# 2. Deploy NudgeBee Agent with minimal local footprint
+helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
+  --namespace nudgebee-agent --create-namespace \
+  --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
+  --set nodeAgent.resources.requests.cpu="50m" \
+  --set nodeAgent.resources.requests.memory="64Mi"
+```
+
+</TabItem>
+</Tabs>
 
 ---
 
-## 3. Verify the Installation
+## 3. Verify the Installation (Checklist) {#3-verify-the-installation}
 
-After installation, check that the agent pods are running:
+After running the install command, verify that the agent is communicating with the server:
 
+### 1. Verify Pod Readiness
 ```bash
 kubectl get pods -n nudgebee-agent
 ```
+**Expected Output:**
+- `nudgebee-runner-*`: `1/1 Running`
+- `nudgebee-node-agent-*` (DaemonSet): `1/1 Running` on every worker node
+- `nudgebee-event-watcher-*`: `1/1 Running`
 
-All pods should show `Running` status within 1–2 minutes.
-
-Then confirm your cluster appears in NudgeBee:
-
-1. Open the NudgeBee UI ([app.nudgebee.com](https://app.nudgebee.com) or your self-hosted URL).
-2. Navigate to **Kubernetes**.
-3. Your cluster should appear within 2–3 minutes, and workload data starts populating shortly after.
-
-:::tip
-**Expected outcome**: You should see your cluster name in the Kubernetes section, with nodes, workloads, and pods populating automatically. If the cluster does not appear after 5 minutes, check the agent pod logs:
+### 2. Inspect Agent Connection Logs
 ```bash
-kubectl logs -n nudgebee-agent -l app=nudgebee-runner
+kubectl logs -n nudgebee-agent -l app=nudgebee-runner --tail=50
 ```
-:::
+Look for log confirmation: `Connected to NudgeBee Relay successfully` and `Registration acknowledged`.
+
+### 3. Check the NudgeBee Dashboard
+1. Open [app.nudgebee.com](https://app.nudgebee.com) or your self-hosted dashboard.
+2. Navigate to **Kubernetes**.
+3. Your cluster should display with a **Connected** badge, and nodes and workload pods will start populating within 2 minutes.
+
+---
+
+## Troubleshooting Common Errors
+
+| Error Symptom | Cause | Resolution |
+|---|---|---|
+| **`401 Unauthorized / Invalid API Key`** | Incorrect or revoked Auth Key | Verify the key from **Kubernetes $\rightarrow$ Connect Cluster** and re-run `helm upgrade` with `--set runner.nudgebee.auth_secret_key="<KEY>"`. |
+| **`WebSocket Dial Timeout / EOF`** | Outbound firewall blocking WebSocket | Ensure the cluster network allows outbound TCP traffic to port 443 (for SaaS `app.nudgebee.com` or your Ingress `relay.<domain>`). |
+| **`CRD / Webhook timeout error`** | Prometheus operator CRDs not yet established | Re-run the `helm upgrade` command. Helm will resume once the CRDs finish registering. |
+| **`Prometheus connection refused / empty metrics`** | Wrong Prometheus service URL | Ensure `globalConfig.prometheus_url` points to an accessible Prometheus service DNS (e.g. `http://<service-name>.<namespace>.svc:9090`). |
+
 
 ---
 

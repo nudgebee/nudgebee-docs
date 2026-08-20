@@ -14,6 +14,40 @@ to opt out of, because nothing is collected.
 Your operational data — metrics, logs, traces, events, and the Semantic
 Knowledge Graph built from them — stays within your own infrastructure.
 
+## Zero-Telemetry & Data Isolation Architecture
+
+```mermaid
+graph TB
+    subgraph Your Kubernetes Cluster
+        PODS[Application Pods & Workloads]
+        SECRETS[Kubernetes Secrets & DB Rows]
+        AGENT[NudgeBee In-Cluster Agent]
+        PROM[In-Cluster Prometheus & Loki]
+    end
+
+    subgraph Data Boundaries
+        LOCAL[STAYS 100% IN-CLUSTER<br/>• Database Row Data & Payloads<br/>• Application Secrets & Tokens<br/>• Raw Customer Data]
+        STREAM[PROCESSED IN CONTROL PLANE<br/>• Aggregated Resource Metrics<br/>• Anonymized Error Names<br/>• Event Timestamps & Topology]
+    end
+
+    PODS -.-> LOCAL
+    SECRETS -.-> LOCAL
+    AGENT --> PROM
+    AGENT --> STREAM
+```
+
+### Data Boundary Classification
+
+| Data Category | Where It Stays | Is It Sent to External LLMs? |
+|---|---|---|
+| **Database Row Data & Payloads** | **100% In-Cluster** | **No** — Never accessed or transmitted. |
+| **Kubernetes Secrets & Certificates** | **100% In-Cluster** | **No** — Metadata names may be inspected; secret values are never read. |
+| **Pod Logs & Traces** | **In-Cluster Observability** | **Sanitized Only** — Only selected log snippets during an active incident triage prompt. |
+| **Resource Metrics (CPU/RAM/Disk)** | NudgeBee Server | **No** — Evaluated via deterministic statistical algorithms for right-sizing. |
+| **Topology & Dependency Graph** | NudgeBee Server | **No** — Stored in local PostgreSQL / Qdrant instance. |
+
+---
+
 ## Where your data goes
 
 NudgeBee only makes outbound connections to the services **you explicitly
@@ -26,11 +60,8 @@ configure**:
 | **Integrations you connect** | When you use them | Slack, Jira, GitHub, observability backends, etc. — only the integrations you set up, only to their endpoints. |
 | **Cloud provider pricing APIs** | For cost analysis | AWS / Azure / GCP public pricing endpoints, used by cost optimization. |
 
-:::info
-**Air-gapped deployments**: Because there is no telemetry, the Community and
-Enterprise editions run fully offline once images are mirrored to an internal
-registry and you use a self-hosted LLM. See the
-[Server Installation Guide](./installation/server/index.md) for mirroring guidance.
+:::info Air-gapped Deployments
+Because there is no telemetry, the Community and Enterprise editions run fully offline once images are mirrored to an internal registry and you use a self-hosted LLM (e.g. Ollama or vLLM). See the [Server Installation Guide](./installation/server/index.md) for mirroring guidance.
 :::
 
 ## NudgeBee Cloud (SaaS)
