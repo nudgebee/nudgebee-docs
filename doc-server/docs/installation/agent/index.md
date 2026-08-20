@@ -46,7 +46,7 @@ flowchart TB
             KUBEWATCH["<b>Event Watcher (Kubewatch)</b><br/><small>Streams resource changes & pod events</small>"]:::collector
             NODE_AGENT["<b>Node Agent</b> (DaemonSet)<br/><small>eBPF network metrics, latency & packet telemetry</small>"]:::collector
             PROM["<b>Metrics Engine (Prometheus / KSM)</b><br/><small>Scrapes workload metrics & ServiceMonitors</small>"]:::collector
-            LOGS["<b>Logs Collector</b><br/><small>Loki • OpenObserve • Elasticsearch • Fluentbit</small>"]:::collector
+            LOGS["<b>Logs Engine</b><br/><small>Loki • OpenObserve • Elasticsearch • Fluentbit</small>"]:::collector
             TRACES["<b>Distributed Tracing (OTel Collector)</b><br/><small>OTLP spans • ClickHouse • Jaeger • Tempo</small>"]:::collector
         end
     end
@@ -59,10 +59,11 @@ flowchart TB
     API_SERVER -->|Watch Events| KUBEWATCH
     KUBEWATCH -->|Forward Events| RUNNER
     NODE_AGENT -->|eBPF Metrics| PROM
-    PROM -->|Query Metrics| RUNNER
-    LOGS -->|Log Streams & Anomalies| RUNNER
     NODE_AGENT -->|OTLP Spans| TRACES
-    TRACES -->|Trace Latency & Errors| RUNNER
+
+    RUNNER -->|Query Metrics| PROM
+    RUNNER -->|Query Logs| LOGS
+    RUNNER -->|Query Traces| TRACES
 
     RUNNER -->|Outbound WSS :443| RELAY
     RUNNER -->|HTTPS Telemetry :443| COLLECTOR
