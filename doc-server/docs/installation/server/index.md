@@ -29,52 +29,70 @@ The installation steps below use tabs — pick your edition in each step.
 
 ```mermaid
 flowchart TB
-    classDef client fill:#f0fdf4,stroke:#22c55e,stroke-width:2px,color:#14532d,rx:6,ry:6;
-    classDef ingress fill:#fffbeb,stroke:#f59e0b,stroke-width:2px,color:#92400e,rx:6,ry:6;
-    classDef core fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e40af,rx:6,ry:6;
-    classDef db fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#334155,rx:6,ry:6;
-    classDef ext fill:#faf5ff,stroke:#a855f7,stroke-width:2px,color:#6b21a8,rx:6,ry:6;
+    classDef browser fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#78350f,rx:8,ry:8;
+    classDef app fill:#bae6fd,stroke:#0284c7,stroke-width:2px,color:#0369a1,rx:8,ry:8;
+    classDef backend fill:#bbf7d0,stroke:#16a34a,stroke-width:2px,color:#14532d,rx:8,ry:8;
+    classDef datastore fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#1e293b,rx:8,ry:8;
+    classDef collector fill:#ddd6fe,stroke:#7c3aed,stroke-width:2px,color:#4c1d95,rx:8,ry:8;
+    classDef agent fill:#fecdd3,stroke:#e11d48,stroke-dasharray: 5 5,stroke-width:2px,color:#881337,rx:8,ry:8;
 
-    subgraph CLIENTS["Clients & Ingress"]
-        USER["Browser UI Users"]:::client
-        AGENTS["K8s & Proxy Agents"]:::client
-        INGRESS["NGINX / ALB Ingress Controller<br/><small>TLS Termination & WSS Upgrade</small>"]:::ingress
+    BROWSER["<b>Browser</b>"]:::browser
+    APP["<b>app</b><br/><small>Next.js UI + auth boundary</small>"]:::app
+
+    subgraph SERVICES["Microservices (Internal RPC with tenant + user context stamped on every call)"]
+        direction TB
+        SERVICES_SERVER["<b>services-server</b><br/><small>Go core backend</small>"]:::backend
+        LLM_SERVER["<b>llm-server</b><br/><small>agents + tools</small>"]:::backend
+        WORKFLOW_SERVER["<b>workflow-server</b><br/><small>runbooks + automations</small>"]:::backend
+        NOTIFICATIONS["<b>notifications</b><br/><small>Slack / Teams / email</small>"]:::backend
+        TICKET_SERVER["<b>ticket-server</b><br/><small>Jira / PagerDuty ...</small>"]:::backend
     end
 
-    subgraph SERVER["NudgeBee Server Control Plane"]
-        APP["<b>Web App (Frontend)</b> :3000<br/><small>Next.js Dashboard & NuBi UI</small>"]:::core
-        RELAY["<b>Relay Server</b> :8080<br/><small>WebSocket Agent Gateway</small>"]:::core
-        API["<b>Services Server</b> :8000<br/><small>REST / GraphQL / Auth / Agent Orchestration</small>"]:::core
-        TEMPORAL["<b>Temporal Worker</b><br/><small>Durable Runbook Execution</small>"]:::core
+    subgraph STORAGE["Storage & Caching Layer (Shared by ALL services)"]
+        POSTGRES["<b>Postgres</b><br/><small>state + audit</small>"]:::datastore
+        REDIS["<b>Redis</b><br/><small>cache</small>"]:::datastore
     end
 
-    subgraph DATA["Datastores & Message Queues"]
-        RABBIT["<b>RabbitMQ Broker</b><br/><small>Task Queues & Event Topics</small>"]:::db
-        PG["<b>PostgreSQL DB</b><br/><small>App Metadata, Alerts, Workflows</small>"]:::db
-        QDRANT["<b>Qdrant Vector DB</b><br/><small>Embeddings & Graph Index</small>"]:::db
-        REDIS["<b>Redis Cache</b><br/><small>Sessions & Fast Lookup</small>"]:::db
+    subgraph INFRA["Messaging, Vector & Durable Execution"]
+        RABBITMQ["<b>RabbitMQ</b><br/><small>events</small>"]:::datastore
+        QDRANT["<b>Qdrant</b><br/><small>RAG vectors</small>"]:::datastore
+        TEMPORAL["<b>Temporal</b><br/><small>durable workflows</small>"]:::datastore
     end
 
-    subgraph OUTBOUND["Egress Integrations"]
-        LLM["<b>BYOM LLM</b><br/><small>Bedrock • OpenAI • Ollama</small>"]:::ext
-        CHANNELS["<b>Notifications & GitOps</b><br/><small>Slack • Teams • GitHub PRs</small>"]:::ext
+    subgraph COLLECTORS["Collectors & Ingress Hub"]
+        K8S_COLLECTOR["<b>k8s-collector</b><br/><small>cluster state + metrics</small>"]:::collector
+        CLOUD_COLLECTOR["<b>cloud-collector</b><br/><small>AWS / Azure / GCP scans</small>"]:::collector
+        RELAY_SERVER["<b>relay-server</b><br/><small>websocket hub</small>"]:::collector
     end
 
-    USER -->|HTTPS :443| INGRESS
-    AGENTS -->|WSS / HTTPS :443| INGRESS
-    INGRESS -->|HTTP| APP
-    INGRESS -->|WSS| RELAY
-    INGRESS -->|HTTP| API
+    AGENT["<b>nudgebee-agent (in YOUR cluster)</b><br/><small>kubectl • Prometheus • OpenCost</small>"]:::agent
 
-    APP <--> API
-    RELAY --> RABBIT
-    RABBIT --> API
-    API --> PG
-    API --> QDRANT
-    API --> REDIS
-    API --> TEMPORAL
-    API --> LLM
-    API --> CHANNELS
+    BROWSER --> APP
+    APP --> SERVICES_SERVER
+    APP --> LLM_SERVER
+    APP --> WORKFLOW_SERVER
+    APP --> NOTIFICATIONS
+    APP --> TICKET_SERVER
+
+    SERVICES_SERVER -.-> STORAGE
+    LLM_SERVER -.-> STORAGE
+    WORKFLOW_SERVER -.-> STORAGE
+    NOTIFICATIONS -.-> STORAGE
+    TICKET_SERVER -.-> STORAGE
+
+    LLM_SERVER -->|vector search| QDRANT
+    WORKFLOW_SERVER -->|durable execution| TEMPORAL
+
+    K8S_COLLECTOR -->|signals| RABBITMQ
+    CLOUD_COLLECTOR -->|signals| RABBITMQ
+    RELAY_SERVER -->|signals| RABBITMQ
+    RABBITMQ --> SERVICES_SERVER
+
+    K8S_COLLECTOR -.-> STORAGE
+    CLOUD_COLLECTOR -.-> STORAGE
+    RELAY_SERVER -.-> STORAGE
+
+    AGENT -.->|outbound only (WSS)| RELAY_SERVER
 ```
 
 :::tip
