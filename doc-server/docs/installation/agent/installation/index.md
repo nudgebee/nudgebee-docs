@@ -45,7 +45,7 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 | **Kubernetes cluster** | v1.27 or newer | The cluster you want to monitor |
 | **Helm** | v3.x installed and configured | [Install Helm](https://helm.sh/) if you don't have it |
 | **Linux Kernel** | v4.2 or newer on all nodes | Required for eBPF-based network metrics collection |
-| **NudgeBee Auth Key** | Generated from the NudgeBee UI | Go to **Kubernetes** $\rightarrow$ **Connect Cluster** |
+| **NudgeBee Auth Key** | Generated from the NudgeBee UI | Go to **Kubernetes** → **Connect Cluster** |
 | **Registry access** | Outbound access to `nudgebee.github.io` (Helm repo) and `ghcr.io/nudgebee` (agent images) | Air-gapped clusters can mirror images internally |
 | **Prometheus** | A running Prometheus instance in the cluster | If omitted, the installer can deploy a bundled instance |
 
@@ -55,8 +55,8 @@ The agent components are designed to be low overhead:
 
 | Component | Sizing Breakdown | Notes |
 |---|---|---|
-| **Agent Core (without Prometheus)** | **~3 GB RAM, 2 CPU cores** | Includes Runner, Node Agent DaemonSet, Event Watcher, OpenCost |
-| **Agent with Bundled Observability** | **~6 GB RAM, 3 CPU cores** | Includes Prometheus, Alertmanager, and Kube-State-Metrics |
+| **Agent Core (without Prometheus)** | **~2 GB RAM, 1-2 CPU cores** | Includes Runner, Node Agent DaemonSet (eBPF), Event Watcher |
+| **Agent with Bundled Observability** | **~5 GB RAM, 2-3 CPU cores** | Includes Prometheus, Alertmanager, and Kube-State-Metrics |
 
 ---
 
@@ -65,7 +65,7 @@ The agent components are designed to be low overhead:
 ### Step 1: Generate Your Auth Key
 
 1. Log in to [app.nudgebee.com](https://app.nudgebee.com) (or your self-hosted NudgeBee UI).
-2. Navigate to **Kubernetes** $\rightarrow$ **Connect Cluster** in the left sidebar.
+2. Navigate to **Kubernetes** → **Connect Cluster** in the left sidebar.
 3. Enter a friendly name for your cluster and click **Connect**.
 4. Copy the generated **Auth Key** (`<YOUR_AUTH_KEY>`).
 
@@ -73,26 +73,12 @@ The agent components are designed to be low overhead:
 Your Auth Key authorizes your agent to send data to your NudgeBee control plane. Store it securely in a secret manager or Kubernetes Secret — never commit it in cleartext.
 :::
 
-### Step 2: Choose Your Installation Method
+### Step 2: Deploy via Helm
 
-#### Option A: Quick Install Script (Recommended)
-
-The automated script detects your cluster environment, sets up Prometheus if not already present, and deploys the agent with optimal defaults:
-
-```bash
-wget https://raw.githubusercontent.com/nudgebee/k8s-agent/refs/heads/prod/installation.sh
-chmod +x installation.sh
-./installation.sh -a <YOUR_AUTH_KEY>
-```
-
----
-
-#### Option B: Manual Helm Installation by Environment
-
-Select your Kubernetes environment below for tailored Helm installation commands:
+Choose your Kubernetes environment:
 
 <Tabs groupId="environment">
-<TabItem value="eks" label="AWS EKS">
+<TabItem value="eks" label="AWS EKS" default>
 
 ```bash
 # 1. Add NudgeBee Helm repository
@@ -111,8 +97,7 @@ helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
-  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090" \
-  --set opencost.opencost.prometheus.external.url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090"
+  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090"
 ```
 
 </TabItem>
@@ -123,13 +108,19 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
 helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
 helm repo update
 
-# 2. Deploy NudgeBee Agent (with GCP Cloud Billing API key for OpenCost)
+# 2. Install Prometheus (skip if already running in cluster)
+helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-stack \
+  --namespace nudgebee-agent --create-namespace \
+  --set nodeExporter.enabled=true \
+  --set alertmanager.enabled=true \
+  --set kubeStateMetrics.enabled=true \
+  -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
+
+# 3. Deploy NudgeBee Agent
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
-  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090" \
-  --set opencost.opencost.prometheus.external.url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090" \
-  --set opencost.opencost.exporter.cloudProviderApiKey="<YOUR_GCP_BILLING_API_KEY>"
+  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090"
 ```
 
 </TabItem>
@@ -196,14 +187,85 @@ Look for log confirmation: `Connected to NudgeBee Relay successfully` and `Regis
 
 ---
 
-## Troubleshooting Common Errors
+## 3. Troubleshooting Agent Installation Errors
+
+Use this diagnostic reference to resolve common agent deployment and communication issues.
+
+---
+
+### Diagnostic Quick Reference
 
 | Error Symptom | Cause | Resolution |
 |---|---|---|
-| **`401 Unauthorized / Invalid API Key`** | Incorrect or revoked Auth Key | Verify the key from **Kubernetes $\rightarrow$ Connect Cluster** and re-run `helm upgrade` with `--set runner.nudgebee.auth_secret_key="<KEY>"`. |
-| **`WebSocket Dial Timeout / EOF`** | Outbound firewall blocking WebSocket | Ensure the cluster network allows outbound TCP traffic to port 443 (for SaaS `app.nudgebee.com` or your Ingress `relay.<domain>`). |
-| **`CRD / Webhook timeout error`** | Prometheus operator CRDs not yet established | Re-run the `helm upgrade` command. Helm will resume once the CRDs finish registering. |
-| **`Prometheus connection refused / empty metrics`** | Wrong Prometheus service URL | Ensure `globalConfig.prometheus_url` points to an accessible Prometheus service DNS (e.g. `http://<service-name>.<namespace>.svc:9090`). |
+| **`401 Unauthorized / Invalid API Key`** | Incorrect or revoked Auth Key | Verify the key from **Kubernetes → Connect Cluster** and re-run `helm upgrade` with `--set runner.nudgebee.auth_secret_key="<KEY>"`. |
+| **`node-agent CrashLoopBackOff` (eBPF load failure)** | Kernel < 4.2 or non-standard distro (Bottlerocket, Talos, GKE COS) | Check kernel with `uname -r`. Ensure `/sys/kernel/debug` is accessible, or disable eBPF with `--set nodeAgent.ebpf.enabled=false`. |
+| **`WebSocket Dial Timeout / EOF`** | Outbound firewall or NetworkPolicy blocking TCP 443 | Verify egress to `wss://relay.nudgebee.com` (SaaS) or your relay Ingress. Ensure port 443 is open. |
+| **`Prometheus connection refused / empty metrics`** | Wrong Prometheus service URL or missing KSM | Point `globalConfig.prometheus_url` to valid service DNS (e.g. `http://<service>.<namespace>.svc:9090`). |
+| **OpenCost shows $0.00 / Missing Cost Data** | Missing cloud provider pricing API key | Provide `--set opencost.opencost.exporter.cloudProviderApiKey="<KEY>"` or AWS CUR integration. |
+| **`CRD / Webhook timeout error`** | Prometheus operator CRDs not yet established | Wait 30 seconds and re-run the `helm upgrade` command. |
+
+---
+
+### In-Depth Diagnostic Scenarios
+
+#### 1. Node-Agent eBPF Probe Load Failures
+If the `nudgebee-node-agent` DaemonSet pods enter `CrashLoopBackOff` or fail to attach eBPF probes:
+
+**Diagnose:**
+```shell
+kubectl logs daemonset/nudgebee-node-agent -n nudgebee-agent
+```
+
+**Resolution:**
+- Verify that your Kubernetes node kernel is version **4.2 or higher** (`uname -r`).
+- For container-optimized operating systems (e.g. AWS Bottlerocket or GKE COS), ensure debugfs and bpf filesystems are mounted.
+- If running on microVMs or kernels with restricted eBPF, disable kernel probe instrumentation while maintaining metric scraping:
+  ```shell
+  helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
+    --namespace nudgebee-agent \
+    --reuse-values \
+    --set nodeAgent.ebpf.enabled=false
+  ```
+
+#### 2. Prometheus Metric Discovery & Zero Metrics
+If the cluster connects in the UI but workload CPU and memory graphs remain empty:
+
+**Diagnose:**
+```shell
+# Test Prometheus DNS resolution from inside the agent runner pod
+kubectl exec -it deployment/nudgebee-runner -n nudgebee-agent -- wget -qO- http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090/api/v1/query?query=up
+```
+
+**Resolution:**
+Ensure `globalConfig.prometheus_url` points to the exact Prometheus service running in your cluster.
+
+#### 3. Egress Firewall & Kubernetes NetworkPolicy
+If your cluster enforces default-deny egress NetworkPolicies, the runner will fail with `WebSocket dial timeout`:
+
+**Resolution:**
+Apply a NetworkPolicy allowing outbound TCP traffic on port 443 from the `nudgebee-agent` namespace:
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-nudgebee-egress
+  namespace: nudgebee-agent
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 53  # Allow DNS resolution
+        - protocol: UDP
+          port: 53
+```
 
 
 ---
@@ -229,12 +291,6 @@ runner:
 
 globalConfig:
   prometheus_url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
-
-opencost:
-  opencost:
-    prometheus:
-      external:
-        url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
 ```
 
 Replace the placeholder values with your actual server URLs and auth key.
@@ -275,12 +331,6 @@ runner:
 
 globalConfig:
   prometheus_url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
-
-opencost:
-  opencost:
-    prometheus:
-      external:
-        url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
 ```
 
 This disables WebSocket connections and configures the agent to accept HTTP connections from the relay instead.

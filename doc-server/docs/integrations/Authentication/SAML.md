@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+sidebar_label: SAML 2.0
 ---
 
 # SAML 2.0 <Enterprise/> <Cloud/>

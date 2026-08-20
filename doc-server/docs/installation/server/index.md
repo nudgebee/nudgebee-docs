@@ -27,7 +27,73 @@ The installation steps below use tabs — pick your edition in each step.
 
 ## Architecture
 
-![Server Architecture](/img/nb_server_architecture.png)
+```mermaid
+flowchart TB
+    classDef browser fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#78350f,rx:8,ry:8;
+    classDef app fill:#bae6fd,stroke:#0284c7,stroke-width:2px,color:#0369a1,rx:8,ry:8;
+    classDef backend fill:#bbf7d0,stroke:#16a34a,stroke-width:2px,color:#14532d,rx:8,ry:8;
+    classDef datastore fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#1e293b,rx:8,ry:8;
+    classDef collector fill:#ddd6fe,stroke:#7c3aed,stroke-width:2px,color:#4c1d95,rx:8,ry:8;
+    classDef agent fill:#fecdd3,stroke:#e11d48,stroke-dasharray: 5 5,stroke-width:2px,color:#881337,rx:8,ry:8;
+
+    BROWSER["<b>Browser</b>"]:::browser
+    APP["<b>app</b><br/><small>Next.js UI + auth boundary</small>"]:::app
+
+    subgraph SERVICES["Microservices (Internal RPC with tenant + user context stamped on every call)"]
+        direction TB
+        SERVICES_SERVER["<b>services-server</b><br/><small>Go core backend</small>"]:::backend
+        LLM_SERVER["<b>llm-server</b><br/><small>agents + tools</small>"]:::backend
+        WORKFLOW_SERVER["<b>workflow-server</b><br/><small>runbooks + automations</small>"]:::backend
+        NOTIFICATIONS["<b>notifications</b><br/><small>Slack / Teams / email</small>"]:::backend
+        TICKET_SERVER["<b>ticket-server</b><br/><small>Jira / PagerDuty ...</small>"]:::backend
+    end
+
+    subgraph STORAGE["Storage & Caching Layer (Shared by ALL services)"]
+        POSTGRES["<b>Postgres</b><br/><small>state + audit</small>"]:::datastore
+        REDIS["<b>Redis</b><br/><small>cache</small>"]:::datastore
+    end
+
+    subgraph INFRA["Messaging, Vector & Durable Execution"]
+        RABBITMQ["<b>RabbitMQ</b><br/><small>events</small>"]:::datastore
+        QDRANT["<b>Qdrant</b><br/><small>RAG vectors</small>"]:::datastore
+        TEMPORAL["<b>Temporal</b><br/><small>durable workflows</small>"]:::datastore
+    end
+
+    subgraph COLLECTORS["Collectors & Ingress Hub"]
+        K8S_COLLECTOR["<b>k8s-collector</b><br/><small>cluster state + metrics</small>"]:::collector
+        CLOUD_COLLECTOR["<b>cloud-collector</b><br/><small>AWS / Azure / GCP scans</small>"]:::collector
+        RELAY_SERVER["<b>relay-server</b><br/><small>websocket hub</small>"]:::collector
+    end
+
+    AGENT["<b>nudgebee-agent (in YOUR cluster)</b><br/><small>kubectl • Prometheus • Logs & Traces</small>"]:::agent
+
+    BROWSER --> APP
+    APP --> SERVICES_SERVER
+    APP --> LLM_SERVER
+    APP --> WORKFLOW_SERVER
+    APP --> NOTIFICATIONS
+    APP --> TICKET_SERVER
+
+    SERVICES_SERVER -.-> STORAGE
+    LLM_SERVER -.-> STORAGE
+    WORKFLOW_SERVER -.-> STORAGE
+    NOTIFICATIONS -.-> STORAGE
+    TICKET_SERVER -.-> STORAGE
+
+    LLM_SERVER -->|vector search| QDRANT
+    WORKFLOW_SERVER -->|durable execution| TEMPORAL
+
+    K8S_COLLECTOR -->|signals| RABBITMQ
+    CLOUD_COLLECTOR -->|signals| RABBITMQ
+    RELAY_SERVER -->|signals| RABBITMQ
+    RABBITMQ --> SERVICES_SERVER
+
+    K8S_COLLECTOR -.-> STORAGE
+    CLOUD_COLLECTOR -.-> STORAGE
+    RELAY_SERVER -.-> STORAGE
+
+    AGENT -.->|"outbound only (WSS :443)"| RELAY_SERVER
+```
 
 :::tip
 **Estimated time**: 15–30 minutes, depending on your cluster and infrastructure setup.
@@ -463,50 +529,98 @@ nudgebee_secret:
 
 ## 7. Troubleshooting Installation Failures {#troubleshooting-installation-failures}
 
-### Most Common Issue: Migration Job Timeout
+Use this diagnostic playbook if your Helm deployment encounters errors or pods fail to transition into a `Running` state.
 
+---
 
-The most common reason for installation failures or timeouts is the **post-installation migration job** not completing. This usually happens because dependent services (like the database) were not fully ready when Helm triggered the migration.
+### Diagnostic Quick Reference
 
-**Fix — re-run Helm upgrade:**
+| Error Symptom | Probable Cause | Diagnostic Command & Fix |
+|---|---|---|
+| **Migration Job Timeout / `0/1 Completed`** | Database not ready before migration ran, or stale schema lock | Check logs: `kubectl logs job/nudgebee-migration -n nudgebee`<br/>Fix: Re-run `helm upgrade --wait` |
+| **`error pinging postgres: lookup postgres`** | Incorrect DB hostname or bundled vs external mismatch | Check `nudgebee_secret.APP_DATABASE_URL`<br/>Bundled: `postgresql.nudgebee.svc.cluster.local:5432`<br/>External: Verify RDS / Cloud SQL endpoint |
+| **RabbitMQ connection refused / CrashLoop** | RabbitMQ broker not ready or bad AMQP credentials | Check: `kubectl logs deployment/nudgebee-rabbitmq -n nudgebee`<br/>Verify `RABBIT_MQ_HOST: "rabbitmq"` and port `5672` |
+| **502 Bad Gateway / WebSocket Disconnects** | Ingress missing WebSocket upgrade or timeout annotations | Add `nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"` to Ingress manifest |
+| **Pod Exit Code 137 (`OOMKilled`)** | Node under memory pressure or insufficient pod limit | Check: `kubectl describe pod <name> -n nudgebee`<br/>Fix: Increase RAM request/limit in `values.yaml` |
 
+---
+
+### Failure Scenarios & Step-by-Step Fixes
+
+#### 1. Migration Job Timeout or CrashLoop
+The most common reason for installation timeouts is the **post-installation schema migration job** failing to complete. This occurs when the database pod is still initializing when the migration begins.
+
+**Diagnose:**
+```shell
+kubectl logs job/nudgebee-migration -n nudgebee
+```
+
+**Resolution:**
+Ensure PostgreSQL is in a `Running` state, then re-run the Helm upgrade with the `--wait` flag to allow dependencies to stabilize:
 ```shell
 helm upgrade nudgebee $NUDGEBEE_CHART \
   -f values.yaml \
   --install \
   --namespace nudgebee \
   --wait \
-  --kube-context $KUBE_CONTEXT
+  --timeout 10m
 ```
 
-This re-triggers the post-install migration and typically resolves the issue.
-
-:::tip
-If you installed a specific version, include `--version $CHART_VERSION` in the command.
-:::
-
-### General Troubleshooting Steps
-
-If re-running Helm upgrade does not resolve the issue, check the following:
-
-**Check pod status** — look for pods in `Error`, `CrashLoopBackOff`, or `Pending` state:
-```shell
-kubectl get pods -n nudgebee -o wide
+#### 2. Database Connection or DNS Lookup Failure
+If backend pods (`services-server`, `relay-server`) crash on startup with errors like:
+```text
+error pinging postgres: dial tcp: lookup postgres: no such host
 ```
 
-**Check pod logs** — examine logs from failing pods, particularly migration-related pods:
+**Resolution:**
+- **If using Bundled PostgreSQL (`postgresql.enabled: true`)**: Ensure `APP_DATABASE_URL` references the in-cluster Kubernetes DNS name:
+  `postgresql://nudgebee:<PASSWORD>@nudgebee-postgresql.nudgebee.svc.cluster.local:5432/nudgebee?sslmode=disable`
+- **If using External PostgreSQL (`postgresql.enabled: false`)**: Ensure your Kubernetes cluster nodes have network routing and security group access to your cloud database endpoint (e.g. AWS RDS or GCP Cloud SQL) on port 5432.
+
+#### 3. RabbitMQ Broker Connection Failure
+If backend services fail to initialize task consumers and event queues:
+
+**Diagnose:**
 ```shell
-kubectl logs <pod-name> -n nudgebee
+kubectl get pods -n nudgebee -l app.kubernetes.io/name=rabbitmq
+kubectl logs deployment/nudgebee-services-server -n nudgebee | grep -i rabbit
 ```
 
-**Inspect a failing pod** — get detailed information about why a pod is stuck:
-```shell
-kubectl describe pod <failing-pod-name> -n nudgebee
+**Resolution:**
+Verify that `RABBIT_MQ_HOST` matches your service name (default `rabbitmq` or `nudgebee-rabbitmq`) and that the `RABBIT_MQ_PASSWORD` matches the secret generated during install.
+
+#### 4. Ingress 502 Bad Gateway / WebSocket EOF
+If the NudgeBee web UI loads but live events, agent connections, or NuBi AI chat stream disconnect unexpectedly:
+
+**Resolution:**
+Ensure your Ingress controller is configured for long-lived WebSocket connections. For NGINX Ingress, apply these annotations:
+```yaml
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "relay-server"
 ```
 
-**Review recent events** — look for image pull errors, resource issues, or volume problems:
+#### 5. Control Plane OOMKilled (Exit Code 137)
+If pods randomly restart under heavy metric or event ingestion:
+
+**Diagnose:**
 ```shell
-kubectl get events -n nudgebee --sort-by=.lastTimestamp
+kubectl get pods -n nudgebee -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.containerStatuses[*].lastState.terminated.reason}{"\n"}{end}'
+```
+
+**Resolution:**
+If `OOMKilled` appears, adjust the container memory limits in your `values.yaml`:
+```yaml
+services_server:
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2"
+      memory: "4Gi"
 ```
 
 ---

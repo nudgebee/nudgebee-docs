@@ -25,7 +25,7 @@ Use the table below to determine the exact path for your setup:
 | Your Situation | Recommended Model | Where to Go |
 |---|---|---|
 | **Want fastest start & zero infra management** | **Cloud SaaS** | [Agent Installation](./agent/installation/index.md) (or [Cloud Account Discovery](../features/Cloud/index.md)) |
-| **Strict data residency / air-gapped environment** | **Self-Hosted** | [Server Installation](./server/index.md) $\rightarrow$ then [Agent Installation](./agent/installation/index.md) |
+| **Strict data residency / air-gapped environment** | **Self-Hosted** | [Server Installation](./server/index.md) → then [Agent Installation](./agent/installation/index.md) |
 | **Evaluating free open-source edition** | **Self-Hosted (Community)** | [Server Installation](./server/index.md) (select Community edition) |
 | **No Kubernetes clusters yet** | **Cloud SaaS** | Sign up at [app.nudgebee.com](https://app.nudgebee.com) — add clusters when ready |
 

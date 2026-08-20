@@ -39,6 +39,8 @@ nudgebee_secret:
 nudgebee_secret:
   LLM_PROVIDER: "bedrock"
   AWS_DEFAULT_REGION: "us-east-1"
+  # Bare model IDs (e.g. anthropic.claude-3-5-sonnet-20241022-v2:0) are valid for on-demand regional inference.
+  # Cross-region inference profile IDs (e.g. us.anthropic.claude-3-5-sonnet-20241022-v2:0) provide cross-region availability.
   AWS_BEDROCK_MODEL_ID: "anthropic.claude-3-5-sonnet-20241022-v2:0"
   # In EKS, IRSA is recommended; otherwise pass access keys:
   # AWS_ACCESS_KEY_ID: "<YOUR_KEY>"

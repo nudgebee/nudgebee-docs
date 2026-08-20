@@ -29,53 +29,73 @@ If you connected a cloud account (AWS, Azure, or GCP), NudgeBee can auto-discove
 
 ## Architecture
 
-The NudgeBee Agent runs within your Kubernetes cluster. The main component is the Runner, which acts as a central controller — it collects data from various components and communicates with the NudgeBee Server over HTTP and WebSocket.
+The NudgeBee Agent runs within your Kubernetes cluster. The main component is the Runner, which acts as a central controller — it coordinates data collection from cluster components and maintains a secure, outbound-only WebSocket connection to the NudgeBee Server.
 
-![Agent Architecture](/img/nb_agent_architecture.png)
+```mermaid
+flowchart TB
+    classDef runner fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e40af,rx:6,ry:6;
+    classDef collector fill:#f0fdf4,stroke:#22c55e,stroke-width:2px,color:#14532d,rx:6,ry:6;
+    classDef k8s fill:#fffbeb,stroke:#f59e0b,stroke-width:2px,color:#92400e,rx:6,ry:6;
+    classDef server fill:#f5f3ff,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6,rx:6,ry:6;
+
+    subgraph MONITORED["Monitored Kubernetes Cluster"]
+        API_SERVER["<b>Kubernetes API Server</b><br/><small>Cluster state, Pods, Deployments</small>"]:::k8s
+
+        subgraph AGENT["NudgeBee Agent Namespace (nudgebee-agent)"]
+            RUNNER["<b>NudgeBee Runner</b> (Deployment)<br/><small>• Aggregates telemetry signals<br/>• Executes in-cluster diagnostic & remediation tasks<br/>• Outbound WSS tunnel</small>"]:::runner
+            KUBEWATCH["<b>Event Watcher (Kubewatch)</b><br/><small>Streams resource changes & pod events</small>"]:::collector
+            NODE_AGENT["<b>Node Agent</b> (DaemonSet)<br/><small>eBPF network metrics, latency & packet telemetry</small>"]:::collector
+            PROM["<b>Metrics Engine (Prometheus / KSM)</b><br/><small>Scrapes workload metrics & ServiceMonitors</small>"]:::collector
+            LOGS["<b>Logs Engine</b><br/><small>Loki • OpenObserve • Elasticsearch • Fluentbit</small>"]:::collector
+            TRACES["<b>Distributed Tracing (OTel Collector)</b><br/><small>OTLP spans • ClickHouse • Jaeger • Tempo</small>"]:::collector
+        end
+    end
+
+    subgraph BACKEND["NudgeBee Server Control Plane"]
+        RELAY["<b>Relay Server</b> (:8080)<br/><small>wss://relay.nudgebee.com/register</small>"]:::server
+        COLLECTOR["<b>Collector Server</b><br/><small>https://collector.nudgebee.com</small>"]:::server
+    end
+
+    API_SERVER -->|Watch Events| KUBEWATCH
+    KUBEWATCH -->|Forward Events| RUNNER
+    NODE_AGENT -->|eBPF Metrics| PROM
+    NODE_AGENT -->|OTLP Spans| TRACES
+
+    RUNNER -->|Query Metrics| PROM
+    RUNNER -->|Query Logs| LOGS
+    RUNNER -->|Query Traces| TRACES
+
+    RUNNER -->|"Outbound WSS :443"| RELAY
+    RUNNER -->|"HTTPS Telemetry :443"| COLLECTOR
+```
 
 ## Components
 
-### [Event Watcher (Forwarder)](https://github.com/robusta-dev/kubewatch) - Watch for K8s events and Forward to Runner
+### [Event Watcher (Forwarder)](https://github.com/robusta-dev/kubewatch) - Watch for K8s Events
 - Monitors Kubernetes events using the Kubernetes API server.
 - Filters and processes events based on predefined criteria.
-- Forwards relevant events to the Runner component.
+- Forwards relevant events to the Runner component for incident triage.
 
-### [Node Agent](https://github.com/nudgebee/node-agent) - Network Metrics Collection using eBPF
-The Node Agent is responsible for collecting network metrics on each Kubernetes node using eBPF (Extended Berkeley Packet Filter) and publishing them to Prometheus for further analysis.
+### [Node Agent](https://github.com/nudgebee/node-agent) - Network & eBPF Telemetry
+The Node Agent collects low-overhead network metrics and distributed trace signals on each Kubernetes node using eBPF:
+- **eBPF Probes**: Attaches to socket connections and packet lifecycle events to capture latency, throughput, and connection resets.
+- **Metric & Signal Publisher**: Publishes network performance signals to Prometheus and forwards distributed traces to the OpenTelemetry collector.
 
-- eBPF Probe
-  - Attaches eBPF probes to key networking events, such as packet transmissions and receptions.
-  - Captures relevant metrics, including latency, throughput, and error rates.
+### [Runner](https://github.com/nudgebee/k8s-agent) - Discovery & In-Cluster Controller
+The Runner facilitates workload discovery, coordinates data aggregation from metrics/logs/traces, and communicates securely with the NudgeBee Server:
+- Discovers running workloads, pods, and services via Kubernetes API.
+- Maintains an outbound-only WebSocket connection to the Relay Server.
+- Executes diagnostic runbooks and remediation commands safely inside the cluster.
 
-- Metric Publisher
-  - Aggregates collected metrics.
-  - Publishes metrics to Prometheus for centralized monitoring.
-  - Detects Application Errors (Logs and API Errors) and publishes these metrics to Prometheus.
+### [Logging Integration](./installation/logging/) - Log Stream Collection
+Collects and aggregates application, system, and container logs from Loki, OpenObserve, Elasticsearch, CloudWatch, or Fluent Bit for AI-driven root cause analysis and anomaly detection.
 
-### [Runner](https://github.com/nudgebee/nudgebee-agent) - Discovery and Communication with NudgeBee Server
-The Runner component facilitates the discovery of Kubernetes cluster workloads and communicates with the NudgeBee server for workload synchronization.
+### [Tracing Integration](./installation/tracing/) - Distributed Tracing & APM
+Leverages the OpenTelemetry Collector and backends (ClickHouse, Jaeger, Tempo, GCP Cloud Trace) to capture distributed transaction traces, map service dependencies, and pinpoint latency bottlenecks.
 
-- Workload Discovery
-  - Uses the Kubernetes API to discover running workloads within the cluster.
-  - Periodically updates the list of workloads.
-
-- Communication with NudgeBee
-  - Establishes a secure connection with the NudgeBee server.
-  - Sends information about discovered workloads to the NudgeBee server for further processing.
-
-### [CostModel](https://github.com/opencost/opencost) - Cost Collection
-NudgeBee uses OpenCost for calculating cost metrics for Pods/Workloads etc.
-
-### Recommendation Jobs
-NudgeBee runs the following container Images on a scheduled basis as K8s Jobs for generating specific recommendations.
-
-[Security Recommendation](https://github.com/aquasecurity/trivy)
-NudgeBee Currently uses Trivy for Generating Docker Image Vulnerability related security Recommendations
-
-[Usage Recommendation](https://github.com/robusta-dev/krr)
-NudgeBee Currently uses Krr for Generating Usage related Recommendations
-
-[Best Practices Recommendation](https://github.com/derailed/popeye)
-NudgeBee Currently uses Popeye for Generating Best Practices related Recommendations
-
-[Prometheus](https://github.com/prometheus/prometheus) (Or [VictoriaMetrics](https://victoriametrics.com/)) - Metrics Collection and alerting
+### Recommendation & Diagnostic Jobs
+NudgeBee runs scheduled container jobs for specialized analysis:
+- **[Security Vulnerabilities](https://github.com/aquasecurity/trivy)**: Scans container images for CVEs using Trivy.
+- **[Workload Rightsizing](https://github.com/robusta-dev/krr)**: Analyzes CPU and memory usage patterns for FinOps recommendations.
+- **[Cluster Best Practices](https://github.com/derailed/popeye)**: Inspects Kubernetes configurations for misconfigurations and anti-patterns.
+- **[Prometheus](https://github.com/prometheus/prometheus)** (or VictoriaMetrics): Scrapes and indexes real-time workload metrics.
