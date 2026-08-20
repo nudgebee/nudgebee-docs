@@ -55,8 +55,8 @@ The agent components are designed to be low overhead:
 
 | Component | Sizing Breakdown | Notes |
 |---|---|---|
-| **Agent Core (without Prometheus)** | **~3 GB RAM, 2 CPU cores** | Includes Runner, Node Agent DaemonSet, Event Watcher, OpenCost |
-| **Agent with Bundled Observability** | **~6 GB RAM, 3 CPU cores** | Includes Prometheus, Alertmanager, and Kube-State-Metrics |
+| **Agent Core (without Prometheus)** | **~2 GB RAM, 1-2 CPU cores** | Includes Runner, Node Agent DaemonSet (eBPF), Event Watcher |
+| **Agent with Bundled Observability** | **~5 GB RAM, 2-3 CPU cores** | Includes Prometheus, Alertmanager, and Kube-State-Metrics |
 
 ---
 
@@ -73,26 +73,12 @@ The agent components are designed to be low overhead:
 Your Auth Key authorizes your agent to send data to your NudgeBee control plane. Store it securely in a secret manager or Kubernetes Secret — never commit it in cleartext.
 :::
 
-### Step 2: Choose Your Installation Method
+### Step 2: Deploy via Helm
 
-#### Option A: Quick Install Script (Recommended)
-
-The automated script detects your cluster environment, sets up Prometheus if not already present, and deploys the agent with optimal defaults:
-
-```bash
-wget https://raw.githubusercontent.com/nudgebee/k8s-agent/refs/heads/prod/installation.sh
-chmod +x installation.sh
-./installation.sh -a <YOUR_AUTH_KEY>
-```
-
----
-
-#### Option B: Manual Helm Installation by Environment
-
-Select your Kubernetes environment below for tailored Helm installation commands:
+Choose your Kubernetes environment:
 
 <Tabs groupId="environment">
-<TabItem value="eks" label="AWS EKS">
+<TabItem value="eks" label="AWS EKS" default>
 
 ```bash
 # 1. Add NudgeBee Helm repository
@@ -111,8 +97,7 @@ helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
-  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090" \
-  --set opencost.opencost.prometheus.external.url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090"
+  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090"
 ```
 
 </TabItem>
@@ -131,13 +116,11 @@ helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-
   --set kubeStateMetrics.enabled=true \
   -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
 
-# 3. Deploy NudgeBee Agent (with GCP Cloud Billing API key for OpenCost)
+# 3. Deploy NudgeBee Agent
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
-  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090" \
-  --set opencost.opencost.prometheus.external.url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090" \
-  --set opencost.opencost.exporter.cloudProviderApiKey="<YOUR_GCP_BILLING_API_KEY>"
+  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090"
 ```
 
 </TabItem>
@@ -254,7 +237,7 @@ kubectl exec -it deployment/nudgebee-runner -n nudgebee-agent -- wget -qO- http:
 ```
 
 **Resolution:**
-Ensure `globalConfig.prometheus_url` and `opencost.opencost.prometheus.external.url` point to the exact Prometheus service running in your cluster.
+Ensure `globalConfig.prometheus_url` points to the exact Prometheus service running in your cluster.
 
 #### 3. Egress Firewall & Kubernetes NetworkPolicy
 If your cluster enforces default-deny egress NetworkPolicies, the runner will fail with `WebSocket dial timeout`:
@@ -308,12 +291,6 @@ runner:
 
 globalConfig:
   prometheus_url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
-
-opencost:
-  opencost:
-    prometheus:
-      external:
-        url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
 ```
 
 Replace the placeholder values with your actual server URLs and auth key.
@@ -354,12 +331,6 @@ runner:
 
 globalConfig:
   prometheus_url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
-
-opencost:
-  opencost:
-    prometheus:
-      external:
-        url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
 ```
 
 This disables WebSocket connections and configures the agent to accept HTTP connections from the relay instead.
