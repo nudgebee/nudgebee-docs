@@ -92,7 +92,7 @@ flowchart TB
     CLOUD_COLLECTOR -.-> STORAGE
     RELAY_SERVER -.-> STORAGE
 
-    AGENT -.->|outbound only (WSS)| RELAY_SERVER
+    AGENT -.->|"outbound only (WSS :443)"| RELAY_SERVER
 ```
 
 :::tip

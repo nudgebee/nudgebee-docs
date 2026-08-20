@@ -99,8 +99,8 @@ flowchart LR
     PLATFORM["<b>NudgeBee Platform</b><br/><small>• Cortex Intelligence & Graph<br/>• DAIR Adaptive Router & SLMs<br/>• SRE Agents & Autopilot Runbooks</small>"]:::platform
     INTEG["<b>Actions & Integrations</b><br/><small>• Slack / Teams Incident Triage<br/>• Jira / PagerDuty Sync<br/>• Automated GitOps PRs</small>"]:::integ
 
-    INFRA -->|Outbound Telemetry (WSS :443)| PLATFORM
-    PLATFORM -->|Alerts, Insights & Auto-PRs| INTEG
+    INFRA -->|"Outbound Telemetry (WSS :443)"| PLATFORM
+    PLATFORM -->|"Alerts, Insights & Auto-PRs"| INTEG
 ```
 
 :::tip Deep-Dive: Platform Reference Architecture

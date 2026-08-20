@@ -65,8 +65,8 @@ flowchart TB
     RUNNER -->|Query Logs| LOGS
     RUNNER -->|Query Traces| TRACES
 
-    RUNNER -->|Outbound WSS :443| RELAY
-    RUNNER -->|HTTPS Telemetry :443| COLLECTOR
+    RUNNER -->|"Outbound WSS :443"| RELAY
+    RUNNER -->|"HTTPS Telemetry :443"| COLLECTOR
 ```
 
 ## Components
