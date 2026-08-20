@@ -27,7 +27,73 @@ The installation steps below use tabs — pick your edition in each step.
 
 ## Architecture
 
-![NudgeBee Server Runtime Architecture](/img/server_runtime_architecture.png)
+```mermaid
+flowchart TB
+    classDef browser fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#78350f,rx:8,ry:8;
+    classDef app fill:#bae6fd,stroke:#0284c7,stroke-width:2px,color:#0369a1,rx:8,ry:8;
+    classDef backend fill:#bbf7d0,stroke:#16a34a,stroke-width:2px,color:#14532d,rx:8,ry:8;
+    classDef datastore fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#1e293b,rx:8,ry:8;
+    classDef collector fill:#ddd6fe,stroke:#7c3aed,stroke-width:2px,color:#4c1d95,rx:8,ry:8;
+    classDef agent fill:#fecdd3,stroke:#e11d48,stroke-dasharray: 5 5,stroke-width:2px,color:#881337,rx:8,ry:8;
+
+    BROWSER["<b>Browser</b>"]:::browser
+    APP["<b>app</b><br/><small>Next.js UI + auth boundary</small>"]:::app
+
+    subgraph SERVICES["Microservices (Internal RPC with tenant + user context stamped on every call)"]
+        direction TB
+        SERVICES_SERVER["<b>services-server</b><br/><small>Go core backend</small>"]:::backend
+        LLM_SERVER["<b>llm-server</b><br/><small>agents + tools</small>"]:::backend
+        WORKFLOW_SERVER["<b>workflow-server</b><br/><small>runbooks + automations</small>"]:::backend
+        NOTIFICATIONS["<b>notifications</b><br/><small>Slack / Teams / email</small>"]:::backend
+        TICKET_SERVER["<b>ticket-server</b><br/><small>Jira / PagerDuty ...</small>"]:::backend
+    end
+
+    subgraph STORAGE["Storage & Caching Layer (Shared by ALL services)"]
+        POSTGRES["<b>Postgres</b><br/><small>state + audit</small>"]:::datastore
+        REDIS["<b>Redis</b><br/><small>cache</small>"]:::datastore
+    end
+
+    subgraph INFRA["Messaging, Vector & Durable Execution"]
+        RABBITMQ["<b>RabbitMQ</b><br/><small>events</small>"]:::datastore
+        QDRANT["<b>Qdrant</b><br/><small>RAG vectors</small>"]:::datastore
+        TEMPORAL["<b>Temporal</b><br/><small>durable workflows</small>"]:::datastore
+    end
+
+    subgraph COLLECTORS["Collectors & Ingress Hub"]
+        K8S_COLLECTOR["<b>k8s-collector</b><br/><small>cluster state + metrics</small>"]:::collector
+        CLOUD_COLLECTOR["<b>cloud-collector</b><br/><small>AWS / Azure / GCP scans</small>"]:::collector
+        RELAY_SERVER["<b>relay-server</b><br/><small>websocket hub</small>"]:::collector
+    end
+
+    AGENT["<b>nudgebee-agent (in YOUR cluster)</b><br/><small>kubectl • Prometheus • Logs & Traces</small>"]:::agent
+
+    BROWSER --> APP
+    APP --> SERVICES_SERVER
+    APP --> LLM_SERVER
+    APP --> WORKFLOW_SERVER
+    APP --> NOTIFICATIONS
+    APP --> TICKET_SERVER
+
+    SERVICES_SERVER -.-> STORAGE
+    LLM_SERVER -.-> STORAGE
+    WORKFLOW_SERVER -.-> STORAGE
+    NOTIFICATIONS -.-> STORAGE
+    TICKET_SERVER -.-> STORAGE
+
+    LLM_SERVER -->|vector search| QDRANT
+    WORKFLOW_SERVER -->|durable execution| TEMPORAL
+
+    K8S_COLLECTOR -->|signals| RABBITMQ
+    CLOUD_COLLECTOR -->|signals| RABBITMQ
+    RELAY_SERVER -->|signals| RABBITMQ
+    RABBITMQ --> SERVICES_SERVER
+
+    K8S_COLLECTOR -.-> STORAGE
+    CLOUD_COLLECTOR -.-> STORAGE
+    RELAY_SERVER -.-> STORAGE
+
+    AGENT -.->|"outbound only (WSS :443)"| RELAY_SERVER
+```
 
 :::tip
 **Estimated time**: 15–30 minutes, depending on your cluster and infrastructure setup.
