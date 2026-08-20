@@ -16,93 +16,56 @@ All state, metadata, vector embeddings, and telemetry remain inside **your custo
 ```mermaid
 flowchart TB
     classDef persona fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#78350f,rx:6,ry:6;
-    classDef agent fill:#bae6fd,stroke:#0284c7,stroke-width:2px,color:#0369a1,rx:8,ry:8;
-    classDef builder fill:#e0e7ff,stroke:#6366f1,stroke-width:2px,color:#3730a3,rx:8,ry:8;
-    classDef brain fill:#f5f3ff,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6,rx:8,ry:8;
-    classDef lib fill:#f1f5f9,stroke:#64748b,stroke-width:2px,color:#1e293b,rx:8,ry:8;
-    classDef data fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#065f46,rx:8,ry:8;
-    classDef slm fill:#fef2f2,stroke:#ef4444,stroke-width:2px,color:#991b1b,rx:8,ry:8;
-    classDef collector fill:#ddd6fe,stroke:#7c3aed,stroke-width:2px,color:#4c1d95,rx:8,ry:8;
-    classDef egress fill:#fff1f2,stroke:#f43f5e,stroke-width:2px,color:#881337,rx:8,ry:8;
+    classDef cp fill:#f5f3ff,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6,rx:6,ry:6;
+    classDef data fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#065f46,rx:6,ry:6;
+    classDef ext fill:#fff1f2,stroke:#f43f5e,stroke-width:2px,color:#881337,rx:6,ry:6;
 
-    subgraph L1["Layer 1 • Personas & Access Surfaces"]
+    subgraph SURF["1. Personas, Surfaces & Role-Based Agents"]
         direction LR
-        P1["<b>Personas</b>: SRE • DevOps • FinOps • Platform • SecOps • CFO"]:::persona
-        P2["<b>Access</b>: Web Dashboard • Slack / Teams • CLI • REST / GraphQL API • CI/CD • SSO"]:::persona
+        PERSONAS["<b>Access & Surfaces</b><br/><small>Web UI • Slack/Teams • CLI • REST/GraphQL API • CI/CD • SSO</small>"]:::persona
+        AGENTS["<b>Specialized SRE Agents & Builders</b><br/><small>AI-SRE • AI-FinOps • AI-K8sOps • AI-CloudOps • Custom Builders</small>"]:::persona
+        PERSONAS --> AGENTS
     end
 
-    subgraph L2["Layer 2 • Role-Based Agents (Surface)"]
+    subgraph BRAIN["2. Control Plane & Cortex Intelligence (In-VPC)"]
         direction LR
-        A_SRE["<b>AI-SRE</b><br/><small>Incident RCA & Triage</small>"]:::agent
-        A_FIN["<b>AI-FinOps</b><br/><small>Cost & Rightsizing</small>"]:::agent
-        A_K8S["<b>AI-K8sOps</b><br/><small>Cluster Reliability</small>"]:::agent
-        A_CLOUD["<b>AI-CloudOps</b><br/><small>Cloud Topology & Scans</small>"]:::agent
-        A_CUSTOM["<b>Custom Agents</b><br/><small>User-Defined Agents</small>"]:::agent
+        CORTEX["<b>Cortex Intelligence</b><br/><small>Knowledge Graph • Multi-Tier Memory • RAG Retrieval</small>"]:::cp
+        DAIR["<b>DAIR Adaptive Router</b><br/><small>8-Signal Routing • Prompt Cache • PII/DLP Gate</small>"]:::cp
+        RUNTIME["<b>Runtime & Guardrails</b><br/><small>Agent Harness • Policy Engine • HITL Approvals • Audit</small>"]:::cp
     end
 
-    subgraph L3["Layer 3 • Builders"]
+    subgraph STORAGE["3. In-VPC Data Plane & SLM Serving"]
         direction LR
-        B_OPS["<b>AI-Ops Automation Builder</b><br/><small>Visual Runbook & DAG Composer</small>"]:::builder
-        B_AGENT["<b>AI-Agent Builder</b><br/><small>Agent Definition & Prompt Harness</small>"]:::builder
+        DATA["<b>Storage, Graph & Event Bus</b><br/><small>PostgreSQL • Redis • ClickHouse • Qdrant • RabbitMQ</small>"]:::data
+        SLM["<b>In-VPC Private SLMs (vLLM / Ollama)</b><br/><small>Qwen 3+ • Llama 3+ • Gemma 4 • BYOM GPU Pool</small>"]:::data
     end
 
-    subgraph L4["Layer 4 • Control Plane — The Brain (Cortex • DAIR Router • Guardrails & HITL)"]
-        direction TB
-        CORTEX["<b>Cortex Intelligence Layer</b><br/><small>Knowledge Graph Engine • Multi-Tier Memory (Redis + Graph DB) • RAG Retrieval (Vector DB + Reranker) • Ingestion Pipeline</small>"]:::brain
-        DAIR["<b>DAIR • Adaptive Model Router</b><br/><small>8-Signal Adaptive Router • Semantic Prompt Cache • PII / DLP Redaction Gate</small>"]:::brain
-        RUNTIME["<b>Runtime, Policy & Guardrails</b><br/><small>Agent Orchestrator (Plan-Act-Observe) • Guardrails & Policy Engine • HITL Approval Surface • Immutable Audit Log</small>"]:::brain
-        CORTEX --- DAIR --- RUNTIME
-    end
-
-    subgraph L5["Layer 5 • Libraries — Install Once, Build Forever"]
+    subgraph EGRESS["4. Collectors & Categorized Egress"]
         direction LR
-        LIB_AGENTS["<b>Library of Agents</b>"]:::lib
-        LIB_TOOLS["<b>Library of Tools & Skills</b>"]:::lib
-        LIB_RUNBOOKS["<b>Library of Runbooks & Automations</b>"]:::lib
+        COLLECT["<b>In-Cluster Collectors</b><br/><small>Relay Server • k8s-collector • OTel Collector</small>"]:::ext
+        INTEG["<b>Categorized Egress</b><br/><small>Slack/Teams • Jira/ServiceNow • GitHub Auto-PRs • Frontier LLMs</small>"]:::ext
     end
 
-    subgraph L6["Layer 6 • In-VPC Data Plane (Per-Tenant Storage)"]
-        direction LR
-        D_PG["<b>PostgreSQL</b><br/><small>Metadata & Config</small>"]:::data
-        D_REDIS["<b>Redis</b><br/><small>Session Cache</small>"]:::data
-        D_CH["<b>ClickHouse</b><br/><small>Runs & Traces</small>"]:::data
-        D_VEC["<b>Vector DB</b><br/><small>Qdrant Embeddings</small>"]:::data
-        D_GRAPH["<b>Graph DB</b><br/><small>Topology & Ownership</small>"]:::data
-        D_MQ["<b>Event Bus</b><br/><small>RabbitMQ</small>"]:::data
-    end
-
-    subgraph L7["Layer 7 • Self-Hosted SLMs (In-VPC Default)"]
-        SLMS["<b>In-VPC Private SLM Serving (vLLM / Ollama / TGI)</b><br/><small>Qwen 3+ • Gemma 4 • Llama 3+ • Nemotron • Granite • BYOM GPU Pool</small>"]:::slm
-    end
-
-    subgraph L8["Layer 8 • Collectors & Ingress Hub"]
-        direction LR
-        C_RELAY["<b>Relay Server</b> (:8080)"]:::collector
-        C_K8S["<b>k8s-collector</b>"]:::collector
-        C_CLOUD["<b>cloud-collector</b>"]:::collector
-        C_OTEL["<b>OTel Collector</b>"]:::collector
-        C_SYNC["<b>Ticketing & GitOps Sync</b>"]:::collector
-    end
-
-    subgraph L9["Layer 9 • Categorized External Egress (Strictly Outbound via DAIR + PII Gate)"]
-        direction LR
-        E_COLLAB["<b>Collaboration</b><br/><small>Slack • Teams • PagerDuty</small>"]:::egress
-        E_ITSM["<b>Ticketing / ITSM</b><br/><small>Jira • ServiceNow • Linear</small>"]:::egress
-        E_SCM["<b>SCM & CI/CD</b><br/><small>GitHub • GitLab • Argo CD</small>"]:::egress
-        E_CLOUD["<b>Cloud APIs</b><br/><small>AWS • GCP • Azure • OCI</small>"]:::egress
-        E_OBS["<b>Observability</b><br/><small>Datadog • New Relic • Grafana</small>"]:::egress
-        E_FRONTIER["<b>Frontier LLMs</b><br/><small>Bedrock • OpenAI • Vertex</small>"]:::egress
-    end
-
-    L1 --> L2
-    L2 --> L3
-    L3 --> L4
-    L4 --> L5
-    L5 --> L6
-    L6 --> L7
-    L7 --> L8
-    L8 --> L9
+    SURF --> BRAIN
+    BRAIN --> STORAGE
+    BRAIN --> EGRESS
 ```
+
+---
+
+### Platform Architecture Reference (9-Layer Model)
+
+| Layer | Functional Domain | Key Capabilities & Components | Deployment Boundary |
+|---|---|---|---|
+| **Layer 1** | **Personas & Access** | SRE, DevOps, FinOps, SecOps, Platform, CFO via Web Dashboard, Slack/Teams ChatOps, CLI, REST/GraphQL APIs, and SSO. | User Interface |
+| **Layer 2** | **Role-Based Agents** | **AI-SRE** (RCA & triage), **AI-FinOps** (cost & rightsizing), **AI-K8sOps** (workload reliability), **AI-CloudOps** (cloud drift & scans), and Custom Agents. | In-VPC Control Plane |
+| **Layer 3** | **Builders** | **AI-Ops Automation Builder** (visual runbook/DAG composer) and **AI-Agent Builder** (agent definition & prompt harness). | In-VPC Control Plane |
+| **Layer 4** | **Control Plane (The Brain)** | • **Cortex Intelligence**: Knowledge Graph Engine, Multi-Tier Memory (Redis + Graph DB), RAG Vector Retrieval, Continuous Grounding.<br/>• **DAIR Router**: 8-Signal Model Router, Semantic Prompt Cache, PII/DLP Redaction Gate.<br/>• **Runtime & Guardrails**: Agent Harness (*Plan-Act-Observe*), Policy Engine, HITL Approval Surface, Immutable Audit Logs. | In-VPC Control Plane |
+| **Layer 5** | **Libraries ("Install Once, Build Forever")** | Library of Pre-Built Agents, Library of Diagnostic Tools/Skills, and Library of Automated Runbooks. | In-VPC Control Plane |
+| **Layer 6** | **In-VPC Data Plane** | PostgreSQL (metadata/config), Redis (sessions/cache), ClickHouse (runs/traces), Qdrant (RAG vectors), Graph DB (topology/ownership), Object Store (S3-compatible artifacts), RabbitMQ (event bus). | In-VPC Customer Data Plane |
+| **Layer 7** | **Self-Hosted SLM Serving** | Local private Small Language Model serving via **vLLM / Ollama / TGI** (Qwen 3+, Llama 3+, Gemma 4, Nemotron, Granite, BYOM GPU pools). | In-VPC Model Layer |
+| **Layer 8** | **Collectors & Ingress** | Relay Server (:8080), `k8s-collector`, `cloud-collector`, OpenTelemetry Collector, and Ticketing/GitOps Sync. | In-VPC & In-Cluster |
+| **Layer 9** | **Categorized External Egress** | Collaboration (Slack, Teams), ITSM (Jira, ServiceNow), SCM (GitHub, GitLab), Cloud APIs (AWS, GCP, Azure), Observability backends, and Frontier LLMs (via DAIR + PII Gate). | External Egress |
 
 ---
 
