@@ -87,91 +87,25 @@ NudgeBee has two components, both packaged as Helm charts that deploy natively o
 **Self-hosted users**: You need a dedicated Kubernetes cluster (or namespace) to run the NudgeBee Server before connecting your monitored clusters. Sizing typically requires a 2-node cluster with 16 GB RAM and 4 cores per node. If you do not have Kubernetes clusters to run the server on, choose **Cloud SaaS**.
 :::
 
-### Architecture Overview
+### Architecture at a Glance
 
 ```mermaid
-flowchart TB
-    classDef browser fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#78350f,rx:8,ry:8;
-    classDef app fill:#bae6fd,stroke:#0284c7,stroke-width:2px,color:#0369a1,rx:8,ry:8;
-    classDef backend fill:#bbf7d0,stroke:#16a34a,stroke-width:2px,color:#14532d,rx:8,ry:8;
-    classDef datastore fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#1e293b,rx:8,ry:8;
-    classDef collector fill:#ddd6fe,stroke:#7c3aed,stroke-width:2px,color:#4c1d95,rx:8,ry:8;
-    classDef agent fill:#fecdd3,stroke:#e11d48,stroke-dasharray: 5 5,stroke-width:2px,color:#881337,rx:8,ry:8;
+flowchart LR
+    classDef infra fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e40af,rx:8,ry:8;
+    classDef platform fill:#f5f3ff,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6,rx:8,ry:8;
     classDef integ fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#065f46,rx:8,ry:8;
 
-    subgraph CLIENTS["Users & UI"]
-        BROWSER["<b>Browser Users</b>"]:::browser
-        APP["<b>Web App & NuBi UI</b><br/><small>Next.js Dashboard + Auth Boundary</small>"]:::app
-        BROWSER --> APP
-    end
+    INFRA["<b>Monitored Infrastructure</b><br/><small>• Kubernetes Clusters<br/>• VMs & Bare Metal<br/>• Cloud Provider Accounts</small>"]:::infra
+    PLATFORM["<b>NudgeBee Platform</b><br/><small>• Cortex Intelligence & Graph<br/>• DAIR Adaptive Router & SLMs<br/>• SRE Agents & Autopilot Runbooks</small>"]:::platform
+    INTEG["<b>Actions & Integrations</b><br/><small>• Slack / Teams Incident Triage<br/>• Jira / PagerDuty Sync<br/>• Automated GitOps PRs</small>"]:::integ
 
-    subgraph MON["Monitored Infrastructure (Zero Inbound Ports)"]
-        direction TB
-        K8S["<b>Kubernetes Clusters</b><br/><small>• Runner Deployment<br/>• Node Agent DaemonSet (eBPF)<br/>• Kubewatch Forwarder<br/>• Metrics, Logs & Traces</small>"]:::agent
-        VM["<b>VMs & Bare Metal</b><br/><small>• Proxy Agent (Forager)<br/>• Database & Host Metrics</small>"]:::agent
-        CLOUD["<b>Cloud Provider APIs</b><br/><small>• AWS / GCP / Azure Scans<br/>• Cloud Cost & Inventory</small>"]:::agent
-    end
-
-    subgraph CP["NudgeBee Control Plane Platform"]
-        direction TB
-
-        subgraph SERVICES["Core Microservices Layer"]
-            direction TB
-            SERVICES_SERVER["<b>services-server</b><br/><small>Go core backend & GraphQL</small>"]:::backend
-            LLM_SERVER["<b>llm-server (AI Engine)</b><br/><small>NuBi SRE Agents, RAG & AI Gateway</small>"]:::backend
-            WORKFLOW_SERVER["<b>workflow-server</b><br/><small>Autopilot & Automation Runbooks</small>"]:::backend
-            NOTIFICATIONS["<b>notifications</b><br/><small>ChatOps Alert Dispatcher</small>"]:::backend
-            TICKET_SERVER["<b>ticket-server</b><br/><small>Bidirectional Incident Sync</small>"]:::backend
-        end
-
-        subgraph INGRESS_INGEST["Ingress Hub & Collectors"]
-            RELAY["<b>relay-server</b><br/><small>WebSocket Gateway (:8080)</small>"]:::collector
-            K8S_COLL["<b>k8s-collector</b><br/><small>Cluster state & metrics</small>"]:::collector
-            CLOUD_COLL["<b>cloud-collector</b><br/><small>Cloud inventory & billing</small>"]:::collector
-        end
-
-        subgraph DATASTORES["Shared Storage & Durable Engines"]
-            direction LR
-            POSTGRES["<b>Postgres</b><br/><small>State & Audit</small>"]:::datastore
-            REDIS["<b>Redis</b><br/><small>Cache Layer</small>"]:::datastore
-            RABBIT["<b>RabbitMQ</b><br/><small>Event Bus</small>"]:::datastore
-            QDRANT["<b>Qdrant Vector DB</b><br/><small>Semantic Knowledge Graph</small>"]:::datastore
-            TEMPORAL["<b>Temporal Engine</b><br/><small>Durable Workflows</small>"]:::datastore
-        end
-    end
-
-    subgraph EXT["External Ecosystem & Integrations"]
-        direction TB
-        LLM["<b>BYOM LLM Providers</b><br/><small>AWS Bedrock • Ollama • OpenAI • Vertex</small>"]:::integ
-        CHANNELS["<b>ChatOps & Notifications</b><br/><small>Slack • Microsoft Teams • Google Chat</small>"]:::integ
-        GITOPS["<b>GitOps & Ticketing</b><br/><small>GitHub • GitLab Auto-PRs • Jira • PagerDuty</small>"]:::integ
-    end
-
-    K8S -->|WSS Outbound :443| RELAY
-    VM -->|WSS Outbound :443| RELAY
-    CLOUD -->|HTTPS API Read-Only| CLOUD_COLL
-
-    RELAY -->|signals| RABBIT
-    K8S_COLL -->|signals| RABBIT
-    CLOUD_COLL -->|signals| RABBIT
-    RABBIT --> SERVICES_SERVER
-
-    APP --> SERVICES_SERVER
-    APP --> LLM_SERVER
-    APP --> WORKFLOW_SERVER
-    APP --> NOTIFICATIONS
-    APP --> TICKET_SERVER
-
-    SERVICES_SERVER -.-> POSTGRES
-    SERVICES_SERVER -.-> REDIS
-    LLM_SERVER -->|Vector RAG Search| QDRANT
-    WORKFLOW_SERVER -->|Durable Execution| TEMPORAL
-
-    LLM_SERVER --> LLM
-    NOTIFICATIONS --> CHANNELS
-    WORKFLOW_SERVER --> GITOPS
-    TICKET_SERVER --> GITOPS
+    INFRA -->|Outbound Telemetry (WSS :443)| PLATFORM
+    PLATFORM -->|Alerts, Insights & Auto-PRs| INTEG
 ```
+
+:::tip Deep-Dive: Platform Reference Architecture
+For an in-depth breakdown of the 9-layer enterprise architecture (including the **Cortex Intelligence Layer**, **DAIR Adaptive Model Router**, in-VPC data plane, and runtime microservices), explore our dedicated **[Architecture & System Design Guide](./architecture.md)**.
+:::
 
 ### Connecting Your Infrastructure
 
