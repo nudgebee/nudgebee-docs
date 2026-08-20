@@ -11,45 +11,7 @@ NudgeBee is an enterprise-grade AI observability, incident triage, and automatio
 
 ## 1. Platform Reference Architecture
 
-All state, metadata, vector embeddings, and telemetry remain inside **your customer VPC** (or dedicated tenant boundary). The platform is organized into 9 distinct functional layers:
-
-```mermaid
-flowchart TB
-    classDef persona fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#78350f,rx:6,ry:6;
-    classDef cp fill:#f5f3ff,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6,rx:6,ry:6;
-    classDef data fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#065f46,rx:6,ry:6;
-    classDef ext fill:#fff1f2,stroke:#f43f5e,stroke-width:2px,color:#881337,rx:6,ry:6;
-
-    subgraph SURF["1. Personas, Surfaces & Role-Based Agents"]
-        direction LR
-        PERSONAS["<b>Access & Surfaces</b><br/><small>Web UI • Slack/Teams • CLI • REST/GraphQL API • CI/CD • SSO</small>"]:::persona
-        AGENTS["<b>Specialized SRE Agents & Builders</b><br/><small>AI-SRE • AI-FinOps • AI-K8sOps • AI-CloudOps • Custom Builders</small>"]:::persona
-        PERSONAS --> AGENTS
-    end
-
-    subgraph BRAIN["2. Control Plane & Cortex Intelligence (In-VPC)"]
-        direction LR
-        CORTEX["<b>Cortex Intelligence</b><br/><small>Knowledge Graph • Multi-Tier Memory • RAG Retrieval</small>"]:::cp
-        DAIR["<b>DAIR Adaptive Router</b><br/><small>8-Signal Routing • Prompt Cache • PII/DLP Gate</small>"]:::cp
-        RUNTIME["<b>Runtime & Guardrails</b><br/><small>Agent Harness • Policy Engine • HITL Approvals • Audit</small>"]:::cp
-    end
-
-    subgraph STORAGE["3. In-VPC Data Plane & SLM Serving"]
-        direction LR
-        DATA["<b>Storage, Graph & Event Bus</b><br/><small>PostgreSQL • Redis • ClickHouse • Qdrant • RabbitMQ</small>"]:::data
-        SLM["<b>In-VPC Private SLMs (vLLM / Ollama)</b><br/><small>Qwen 3+ • Llama 3+ • Gemma 4 • BYOM GPU Pool</small>"]:::data
-    end
-
-    subgraph EGRESS["4. Collectors & Categorized Egress"]
-        direction LR
-        COLLECT["<b>In-Cluster Collectors</b><br/><small>Relay Server • k8s-collector • OTel Collector</small>"]:::ext
-        INTEG["<b>Categorized Egress</b><br/><small>Slack/Teams • Jira/ServiceNow • GitHub Auto-PRs • Frontier LLMs</small>"]:::ext
-    end
-
-    SURF --> BRAIN
-    BRAIN --> STORAGE
-    BRAIN --> EGRESS
-```
+![NudgeBee Platform Reference Architecture](/img/platform_reference_architecture.png)
 
 ---
 
@@ -96,73 +58,7 @@ DAIR optimizes every model invocation across 8 real-time signals: **task complex
 
 The diagram below illustrates how NudgeBee's core microservices, datastores, and collectors interact at runtime:
 
-```mermaid
-flowchart TB
-    classDef browser fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#78350f,rx:8,ry:8;
-    classDef app fill:#bae6fd,stroke:#0284c7,stroke-width:2px,color:#0369a1,rx:8,ry:8;
-    classDef backend fill:#bbf7d0,stroke:#16a34a,stroke-width:2px,color:#14532d,rx:8,ry:8;
-    classDef datastore fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#1e293b,rx:8,ry:8;
-    classDef collector fill:#ddd6fe,stroke:#7c3aed,stroke-width:2px,color:#4c1d95,rx:8,ry:8;
-    classDef agent fill:#fecdd3,stroke:#e11d48,stroke-dasharray: 5 5,stroke-width:2px,color:#881337,rx:8,ry:8;
-
-    BROWSER["<b>Browser</b>"]:::browser
-    APP["<b>app</b><br/><small>Next.js UI + auth boundary</small>"]:::app
-
-    subgraph SERVICES["Microservices (Internal RPC with tenant + user context stamped on every call)"]
-        direction TB
-        SERVICES_SERVER["<b>services-server</b><br/><small>Go core backend & GraphQL</small>"]:::backend
-        LLM_SERVER["<b>llm-server</b> (AI Engine)<br/><small>NuBi SRE Agents, RAG & AI Gateway</small>"]:::backend
-        WORKFLOW_SERVER["<b>workflow-server</b><br/><small>Autopilot & Runbook Automations</small>"]:::backend
-        NOTIFICATIONS["<b>notifications</b><br/><small>Slack / Teams / Email Dispatcher</small>"]:::backend
-        TICKET_SERVER["<b>ticket-server</b><br/><small>Jira / ServiceNow / PagerDuty</small>"]:::backend
-    end
-
-    subgraph STORAGE["Storage & Caching Layer (Shared by ALL services)"]
-        POSTGRES["<b>Postgres</b><br/><small>State & Audit</small>"]:::datastore
-        REDIS["<b>Redis</b><br/><small>Cache Layer</small>"]:::datastore
-    end
-
-    subgraph INFRA["Messaging, Vector & Durable Execution"]
-        RABBITMQ["<b>RabbitMQ</b><br/><small>Event Bus & Signal Broker</small>"]:::datastore
-        QDRANT["<b>Qdrant</b><br/><small>RAG Vectors & Knowledge Embeddings</small>"]:::datastore
-        TEMPORAL["<b>Temporal</b><br/><small>Durable Workflow Execution</small>"]:::datastore
-    end
-
-    subgraph COLLECTORS["Collectors & Ingress Hub"]
-        K8S_COLLECTOR["<b>k8s-collector</b><br/><small>Cluster state & metrics</small>"]:::collector
-        CLOUD_COLLECTOR["<b>cloud-collector</b><br/><small>AWS / Azure / GCP scans</small>"]:::collector
-        RELAY_SERVER["<b>relay-server</b><br/><small>WebSocket Gateway (:8080)</small>"]:::collector
-    end
-
-    AGENT["<b>nudgebee-agent (in YOUR cluster)</b><br/><small>kubectl • Prometheus • Logs & Traces</small>"]:::agent
-
-    BROWSER --> APP
-    APP --> SERVICES_SERVER
-    APP --> LLM_SERVER
-    APP --> WORKFLOW_SERVER
-    APP --> NOTIFICATIONS
-    APP --> TICKET_SERVER
-
-    SERVICES_SERVER -.-> STORAGE
-    LLM_SERVER -.-> STORAGE
-    WORKFLOW_SERVER -.-> STORAGE
-    NOTIFICATIONS -.-> STORAGE
-    TICKET_SERVER -.-> STORAGE
-
-    LLM_SERVER -->|vector search| QDRANT
-    WORKFLOW_SERVER -->|durable execution| TEMPORAL
-
-    K8S_COLLECTOR -->|signals| RABBITMQ
-    CLOUD_COLLECTOR -->|signals| RABBITMQ
-    RELAY_SERVER -->|signals| RABBITMQ
-    RABBITMQ --> SERVICES_SERVER
-
-    K8S_COLLECTOR -.-> STORAGE
-    CLOUD_COLLECTOR -.-> STORAGE
-    RELAY_SERVER -.-> STORAGE
-
-    AGENT -.->|"outbound only (WSS :443)"| RELAY_SERVER
-```
+![NudgeBee Runtime Architecture](/img/server_runtime_architecture.png)
 
 ---
 
