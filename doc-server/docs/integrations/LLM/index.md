@@ -21,6 +21,38 @@ NudgeBee supports BYOM (Bring Your Own Model) with three categories of LLM provi
 | **Self-Hosted / Open Source** | [Ollama](./Ollama/), [HuggingFace](./HuggingFace/), [AWS SageMaker](./Aws/sagemaker.md) | Organizations requiring data privacy, air-gapped environments, or custom-trained models. |
 | **NudgeBee Models** <Enterprise/> <Cloud/> | Pre-trained NudgeBee AI models (nb-llm, nb-slm) | Enterprise/Cloud users who want optimized, purpose-built models for Cloud Ops. |
 
+### BYOM Configuration Matrix & Helm Values Snippets
+
+To configure your own LLM provider on a self-hosted NudgeBee deployment, set the appropriate provider flags under `nudgebee_secret` in your `values.yaml`:
+
+#### 1. Self-Hosted Ollama / vLLM (Private VPC / Air-Gapped)
+```yaml
+nudgebee_secret:
+  LLM_PROVIDER: "ollama"  # or "vllm"
+  OLLAMA_BASE_URL: "http://ollama.ai-infra.svc.cluster.local:11434"
+  OLLAMA_MODEL: "llama3.1:8b"
+  EMBEDDING_MODEL: "nomic-embed-text"
+```
+
+#### 2. AWS Bedrock (Claude 3.5 / Llama 3)
+```yaml
+nudgebee_secret:
+  LLM_PROVIDER: "bedrock"
+  AWS_DEFAULT_REGION: "us-east-1"
+  AWS_BEDROCK_MODEL_ID: "anthropic.claude-3-5-sonnet-20241022-v2:0"
+  # In EKS, IRSA is recommended; otherwise pass access keys:
+  # AWS_ACCESS_KEY_ID: "<YOUR_KEY>"
+  # AWS_SECRET_ACCESS_KEY: "<YOUR_SECRET>"
+```
+
+#### 3. OpenAI / Azure OpenAI
+```yaml
+nudgebee_secret:
+  LLM_PROVIDER: "openai"
+  OPENAI_API_KEY: "<YOUR_OPENAI_API_KEY>"
+  OPENAI_MODEL: "gpt-4o"
+```
+
 ---
 
 ## Supported LLM Providers

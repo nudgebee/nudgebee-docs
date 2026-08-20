@@ -191,28 +191,47 @@ You can make tasks run conditionally or branch your workflow using special task 
 3. Connect different downstream tasks to each case branch
 4. Conditional connections appear as colored, thicker lines with a condition label
 
-### Using Template Expressions
+### Using Template Expressions & Variables
 
-Template expressions let you use dynamic values in task parameters. They use the `{{ }}` syntax.
+Template expressions allow you to dynamically pass data between workflow steps, evaluate conditional branching, and reference global configurations. They use double curly braces `{{ }}`.
 
-**Common patterns:**
+#### Variable Reference Cheatsheet
 
-| Expression | Description |
-|-----------|-------------|
-| `{{ Task.output.value }}` | Reference an output from a previous task |
-| `{{ Configs.key_name }}` | Reference a shared configuration value |
-| `{{ variable == "value" }}` | Conditional expression for branching or filtering |
-| `{{ event.source == "my-source" }}` | Filter expression for event triggers |
+| Expression Syntax | Scope | Description & Example |
+|---|---|---|
+| `{{ steps.<task_id>.output }}` | Task Output | Full JSON output of a completed prior task. |
+| `{{ steps.fetch_logs.output.log_lines }}` | Nested Field | Extract a specific field or array from a previous task's output. |
+| `{{ event.source }}` | Event Trigger | Originating event source (e.g. `prometheus`, `kubernetes`, `aws_eventbridge`). |
+| `{{ event.payload.cluster }}` | Event Payload | Name of the cluster where the event was detected. |
+| `{{ event.payload.namespace }}` | Event Payload | Kubernetes namespace of the affected entity. |
+| `{{ Configs.<key_name> }}` | Global Config | Value of a shared secret or global constant (e.g. `{{ Configs.slack_channel_alerts }}`). |
+| `{{ input.<param_name> }}` | Manual Input | User-supplied parameter from a manual run modal. |
 
-**Where you can use them:**
-- Any text or textarea field in task parameters
-- Conditional execution fields
-- Event filter expressions
-- Output parameter definitions
+---
 
-**How to insert them:**
-- Type the expression directly using `{{ }}` syntax
-- Or drag an output field from the **Previous tasks outputs** panel in the task configuration sidebar
+## Cookbook: 3 Ready-to-Use Workflow Blueprints
+
+Below are 3 popular workflow patterns you can import or assemble in minutes:
+
+### 1. Automated Node Drain on Spot Termination Notice
+**Trigger**: Event (`source == "aws_eventbridge"`, `detail-type == "EC2 Spot Instance Interruption Warning"`)
+- **Step 1 (`Kubectl`)**: Taint node: `kubectl cordon {{ event.payload.instance_id }}`
+- **Step 2 (`Kubectl`)**: Safely evict workloads: `kubectl drain {{ event.payload.instance_id }} --ignore-daemonsets --delete-emptydir-data --grace-period=120`
+- **Step 3 (`IM Notification`)**: Send Slack message: `⚠️ Node {{ event.payload.instance_id }} drained ahead of spot termination.`
+
+### 2. Slack Alert Enrichment with Pod Logs & RCA
+**Trigger**: Event (`source == "prometheus"`, `severity == "critical"`)
+- **Step 1 (`Query Logs`)**: Fetch last 100 log lines from the crashing pod: `{{ event.payload.pod_name }}`
+- **Step 2 (`LLM Investigation`)**: Feed logs and events into NuBi for automated diagnosis: `Investigate root cause for {{ steps.query_logs.output.logs }}`
+- **Step 3 (`IM Notification`)**: Post an interactive Slack card with the pod status, root cause summary, and one-click remediation button.
+
+### 3. Automated Cleanup of Orphaned PVs & Stale Namespaces
+**Trigger**: Schedule (Cron: `0 2 * * 0` — every Sunday at 2 AM)
+- **Step 1 (`Kubectl`)**: List unattached PersistentVolumes in `Released` state: `kubectl get pv -o json`
+- **Step 2 (`Manual Approval`)**: Send summary to SRE team with approval button before deletion.
+- **Step 3 (`Kubectl`)**: Delete approved released PVs and reclaim cloud storage costs.
+
+---
 
 ## Managing Workflows
 

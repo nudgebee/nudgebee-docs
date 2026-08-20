@@ -13,7 +13,50 @@ NudgeBee's **FinOps AI-Assistant** continuously analyzes your Kubernetes workloa
 To automatically apply optimization recommendations without manual approval, configure [Autopilot Auto-Optimize](../autopilot/auto_optimize/). To have NudgeBee raise pull requests with the recommended changes, connect a [GitHub](../integrations/Code%20Repository/GitHub/github-integration.md) or [GitLab](../integrations/Code%20Repository/GitLab/gitlab-integration.md) repository.
 :::
 
-![NudgeBee Optimize summary showing potential monthly savings, prioritized right-sizing recommendations, and a per-account cost and health overview](./img/optimize-overview.png)
+---
+
+## Right-Sizing Calculation Methodology
+
+NudgeBee uses deterministic statistical analysis over historical Prometheus metrics to calculate safe resource recommendations:
+
+| Recommendation Type | Observation Window | Sizing Metric | Strategy & Risk Profile |
+|---|---|---|---|
+| **CPU Limits** | Past 14 Days | Max P99 + 20% Headroom | **Low Risk** — Prevents CPU throttling during unexpected traffic spikes. |
+| **CPU Requests** | Past 14 Days | P95 Utilization | **Low Risk** — Maximizes bin-packing efficiency across worker nodes. |
+| **Memory Limits** | Past 7 Days | Peak Utilization + 15% Buffer | **Zero OOM Tolerance** — Prevents kernel OOM-killer termination of stateful pods. |
+| **Memory Requests** | Past 7 Days | Peak Utilization | **Low Risk** — Eliminates idle reserved memory overhead. |
+| **Unattached Volumes** | Past 30 Days | 0 Read/Write IOPS | **Zero Impact** — Flags unmounted, detached PVCs/EBS volumes for safe removal. |
+
+### Pricing Engine
+
+Cost figures are calculated using:
+- **In-Cluster OpenCost Engine**: Accurately accounts for node instance types, storage classes, and shared namespace allocations.
+- **Cloud Provider Pricing APIs**: Real-time integration with AWS Pricing API, GCP Cloud Billing, and Azure Retail Rates.
+- **Custom Discount Rates**: Support for enterprise discount agreements (EDP/MCA) and reserved instance commitments.
+
+---
+
+## GitOps & Automated Pull Request Workflow
+
+Instead of applying manual `kubectl` patches, NudgeBee enables infrastructure-as-code teams to review and merge recommendations via GitOps pull requests:
+
+```mermaid
+graph LR
+    O[FinOps Recommendation] --> G[NudgeBee Git Engine]
+    G --> B[Create Branch & Commit Diff]
+    B --> PR[Open Pull Request in GitHub / GitLab]
+    PR --> CI[CI / ArgoCD / Flux Deployment]
+```
+
+### How to Raise Automated PRs
+
+1. Connect your repository under **Admin $\rightarrow$ Integrations $\rightarrow$ Code Repositories** ([GitHub](../integrations/Code%20Repository/GitHub/github-integration.md) or [GitLab](../integrations/Code%20Repository/GitLab/gitlab-integration.md)).
+2. Navigate to **Optimizations $\rightarrow$ Workload Right-Sizing**.
+3. Select the target deployment or StatefulSet.
+4. Click **Create Pull Request**.
+5. NudgeBee creates a new branch, updates the Helm `values.yaml` or Terraform manifest with the recommended CPU/memory requests and limits, and opens a Pull Request with a clear rationale table for your engineering team to review.
+
+---
 
 ### Watch a Walkthrough
 
