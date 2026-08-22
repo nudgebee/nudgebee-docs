@@ -178,15 +178,15 @@ Follow these steps to go from zero to a working NudgeBee setup. The path differs
 
 | Step | Cloud SaaS | Self-Hosted |
 |---|---|---|
-| **1. Get access** | [Sign up at app.nudgebee.com](https://app.nudgebee.com) — no installation needed, you are ready in seconds. | [Install the NudgeBee Server](./installation/server/index.md) on a Kubernetes cluster. Takes 15–30 minutes. |
-| **2. Connect your clusters** | [Install the Agent](./installation/agent/installation/index.md) on each cluster, or [connect a cloud account](./features/Cloud/index.md) for auto-discovery. | Same — [install the Agent](./installation/agent/installation/index.md) or [connect a cloud account](./features/Cloud/index.md). |
-| **3. Connect observability** | Connect your existing monitoring tools (Prometheus, Datadog, New Relic, etc.). See [Observability Integrations](./integrations/Observability/index.md). | Same — connect your monitoring tools. |
-| **4. Enable AI** | Already included — a managed LLM is provided. Nothing to configure. | [Connect an LLM provider](./integrations/LLM/index.md) (BYOM) to enable NuBi and AI-powered troubleshooting. |
-| **5. Set up notifications** | Connect [Slack](./integrations/Notifications/slack.md), [Teams](./integrations/Notifications/msteams.md), or [Google Chat](./integrations/Notifications/google_chat.md). | Same — connect your messaging tool. |
-| **6. Explore** | You are ready! Check [Optimizations](./features/optimizations.md), [Troubleshooting](./features/troubleshooting/index.md), and the [Semantic Knowledge Graph](./features/knowledge-graph.md). | Same — start exploring the dashboard. |
+| **1. Get access** | [Sign up at app.nudgebee.com](https://app.nudgebee.com) — ready in seconds with zero infrastructure to manage. | [Install the NudgeBee Server](./installation/server/index.md) on a Kubernetes cluster. Takes 15–30 minutes. |
+| **2. Connect AI (LLM)** | Managed LLM included by default. Nothing to configure. | [Connect your BYOM model provider](./integrations/LLM/index.md) (OpenAI, Bedrock, Ollama) under Settings → AI / LLM. |
+| **3. Connect your clusters** | [Install the Agent](./installation/agent/installation/index.md) on each cluster, or [connect a cloud account](./features/Cloud/index.md). | Same — [install the Agent](./installation/agent/installation/index.md) on each monitored cluster. |
+| **4. Verify observability** | Ingest metrics from the agent or connect external tools ([Prometheus, Datadog](./integrations/Observability/index.md)). | Same — verify bundled Prometheus or connect your observability stack. |
+| **5. Run first investigation** | Open the **NuBi AI drawer** to run your first cluster health investigation. | Same — run your first natural-language triage investigation with NuBi. |
+| **6. Configure integrations** | Connect [Slack/Teams](./integrations/Notifications/) for alerts and [GitHub/GitLab](./integrations/Code%20Repository/GitHub/github-integration.md) for auto-PRs. | Same — configure notification channels, ticketing, and GitOps repositories. |
 
 :::tip
-Steps 3–5 can be done in any order. Each integration adds capabilities independently — you do not need to complete everything before you start seeing value.
+Steps 4–6 can be tailored to your workflow. Each integration expands platform capabilities independently.
 :::
 
 ---
