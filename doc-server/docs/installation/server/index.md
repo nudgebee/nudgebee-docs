@@ -17,10 +17,10 @@ The NudgeBee Server is the central control plane of the NudgeBee platform. It ho
 :::
 
 :::tip[Choosing an edition]
-The self-hosted server comes in two editions (see [Editions](../../editions.md) for the full comparison):
+The self-hosted server comes in two editions (see [Editions & Capabilities](../../editions.md) for the full comparison):
 
-- **Community** <Community/> — free and open source (Apache 2.0), fully functional. Images are pulled from the public `ghcr.io/nudgebee` registry. **No license key required.** OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), magic-link email, and credentials login are all included.
-- **Enterprise** <Enterprise/> — adds **SAML 2.0** SSO, NudgeBee's managed models (`nb-llm`, `nb-slm`), and commercial support. Images are pulled from `registry.nudgebee.com` and require a license key.
+- **Community** <Community/> — free, source-available self-hosted edition. The Server is licensed under **BSL 1.1** (converting to Apache 2.0 on its stated change date); Agents are **Apache 2.0**. Images are pulled from the public `ghcr.io/nudgebee` registry. **No license key required.** OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), magic-link email, and credentials login are all included.
+- **Enterprise** <Enterprise/> — adds **SAML 2.0** SSO, NudgeBee's managed models (`nb-llm`, `nb-slm`), and commercial SLA support. Images are pulled from `registry.nudgebee.com` and require a license key.
 
 The installation steps below use tabs — pick your edition in each step.
 :::
@@ -133,6 +133,25 @@ The NudgeBee server relies on core backend services. You can run them bundled in
 | **Helm** | v3.x installed and configured | v3.x installed and configured | [Install Helm](https://helm.sh/) |
 | **Registry Access** | `ghcr.io/nudgebee` (Community) or `registry.nudgebee.com` (Enterprise) | Same | Air-gapped environments can mirror images internally |
 | **NudgeBee License Key** | Enterprise only | Enterprise only | Community edition does not require a key |
+
+### Preflight Cluster Validation
+
+Before deploying, run this quick check in your terminal to verify your cluster meets the version, capacity, and storage requirements:
+
+```bash
+# 1. Verify kubectl context and Kubernetes server version (v1.27+)
+kubectl config current-context
+kubectl version --short 2>/dev/null || kubectl version
+
+# 2. Verify Helm version (v3.10+)
+helm version --short
+
+# 3. Check allocatable CPU and memory across your nodes
+kubectl get nodes -o custom-columns=NAME:.metadata.name,STATUS:.status.conditions[-1].type,ALLOCATABLE_CPU:.status.allocatable.cpu,ALLOCATABLE_MEM:.status.allocatable.memory
+
+# 4. Verify default StorageClass exists for persistent volumes
+kubectl get storageclass
+```
 
 ### Network Requirements & Decision Rationale
 
@@ -262,13 +281,17 @@ Replace `<your-license-key>` with your NudgeBee license key and generate
 ### Step 3: Run the Helm Install
 
 ```shell
+# 1. Set your target Kubernetes context (or omit --kube-context if already using current context):
+export KUBE_CONTEXT="$(kubectl config current-context)"
+
+# 2. Deploy NudgeBee Server:
 helm upgrade nudgebee $NUDGEBEE_CHART \
   -f values.yaml \
   --install \
   --namespace nudgebee \
   --create-namespace \
   --wait \
-  --kube-context $KUBE_CONTEXT
+  --kube-context "$KUBE_CONTEXT"
 ```
 
 To install a specific version, add `--version $CHART_VERSION` to the command. See the [Server Releases](../../releases/server/) page for available versions.
@@ -324,48 +347,53 @@ You should receive an `HTTP/1.1 200 OK` (or `307 Temporary Redirect` to `/auth/s
 
 ---
 
-## 4. Access the UI
+## 4. Access the UI & Authenticate
 
-### Without Ingress (Port-Forwarding)
+### Understanding Authentication by Deployment Mode
+- **Cloud SaaS (`app.nudgebee.com`)**: Completely passwordless — users sign in using OAuth SSO (Google, GitHub, Okta, Microsoft) or email magic links. No passwords are stored or generated.
+- **Self-Hosted Community & Enterprise**: Initializes with a secure bootstrap admin password stored in an in-cluster Kubernetes secret so administrators can complete initial setup and configure SSO.
+
+### Accessing Without Ingress (Port-Forwarding)
 
 Forward the NudgeBee UI to your local machine:
 
 ```shell
-kubectl port-forward svc/app 3000:80 -n nudgebee --kube-context $KUBE_CONTEXT
+kubectl port-forward svc/app 3000:80 -n nudgebee
 ```
 
-Then open [http://localhost:3000](http://localhost:3000) in your browser. You should see the NudgeBee login page.
+Then open [http://localhost:3000](http://localhost:3000) in your browser to view the login screen.
 
-Log in with the admin email address configured during installation (for Enterprise, this is the email associated with your NudgeBee license). The initial password is auto-generated during installation and stored in a Kubernetes secret.
+### Retrieving the Bootstrap Admin Credentials
 
-Retrieve the password by decoding the secret:
+Retrieve the auto-generated bootstrap password from the `nudgebee` secret:
 
 ```shell
 kubectl get secret nudgebee -n nudgebee \
-  -o jsonpath='{.data.NEXTAUTH_DUMMY_CREDS_PASSWORD}' \
-  --kube-context $KUBE_CONTEXT | base64 -d
+  -o jsonpath='{.data.NEXTAUTH_DUMMY_CREDS_PASSWORD}' | base64 -d
 echo
 ```
 
-Use the decoded password along with the admin email to sign in.
+Use your admin email (e.g. `admin@nudgebee.local` or the email provided during install) and the decoded password to sign in.
 
 :::caution Production Security
-**The dummy credentials provider is intended for initial evaluation only.** For production environments, configure a proper identity provider (SSO, SAML, or LDAP) and disable dummy credentials. See [Authentication Integrations](../../integrations/Authentication/) for details.
+**The bootstrap credentials provider is intended for initial onboarding and evaluation only.** For production, configure an enterprise identity provider (SAML 2.0 or OAuth SSO) and disable dummy credentials. See [Authentication Integrations](../../integrations/Authentication/) for details.
 :::
-
-:::info
-**Relay and Collector URLs for Agent Installation**: When you install the NudgeBee Agent later, you will need these internal service URLs:
-- **Relay Server URL**: `ws://relay-server.nudgebee.svc:8080`
-- **Collector Server URL**: `http://k8s-collector.nudgebee.svc`
-:::
-
-### With Ingress (Public URL)
-
-If you configured Ingress (see next section), navigate to the URL you set as `BASE_URL` — for example, `https://nudgebee.yourcompany.com`.
 
 ---
 
-## 5. Add Ingress and SSL (Recommended for Production)
+## 5. Verify Control Plane Health & Next Steps
+
+Once logged into the dashboard, complete your initial control plane verification:
+
+1. **Verify UI & Dashboard Navigation**: Navigate through **Kubernetes**, **Troubleshoot**, and **Optimizations** to confirm all views load without errors.
+2. **Connect an LLM Provider (BYOM)**: Navigate to **Settings → AI / LLM** and configure your API key ([OpenAI, AWS Bedrock, or Ollama](../../integrations/LLM/)) to enable NuBi AI investigations and automated RCA.
+3. **Next Step: Install the K8s Agent**: The NudgeBee Server is the control plane. To begin ingesting real-time pod telemetry, logs, and metrics from your target clusters, proceed to:
+
+👉 **[Install the NudgeBee Agent on Your Cluster](../agent/installation/index.md)**
+
+---
+
+## 6. Add Ingress and SSL (Recommended for Production)
 
 The minimal installation above works with port-forwarding, but for production use you should expose NudgeBee via Ingress with SSL. This enables:
 

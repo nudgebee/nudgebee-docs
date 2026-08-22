@@ -10,38 +10,59 @@ NudgeBee is an **AI Agents & Agentic Workflow Platform for SRE, CloudOps, and Su
 
 NudgeBee's Semantic Knowledge Graph correlates logs, metrics, traces, and code to give your team Cloud-Ops Intelligence that reduces MTTR from hours to minutes. Pre-packaged but not a black box — every agent and workflow is fully extensible, modular, and controllable.
 
-:::tip[NudgeBee is open source]
-The **Community** edition is free, Apache 2.0 licensed, and fully functional — self-host it from public images on `ghcr.io/nudgebee` with no license key. See [Editions](./editions.md) for the Community / Enterprise / Cloud comparison.
+:::tip[Open Architecture & Licensing]
+The **Community** edition is a free, source-available self-hosted edition containing the complete core monitoring, troubleshooting, optimization, workflow, and BYOM experience. The Server is licensed under **BSL 1.1** (converting to Apache 2.0 on its stated change date), and Agents are licensed under **Apache 2.0**. See [Editions & Capabilities](./editions.md) for the Community / Enterprise / Cloud comparison.
 :::
 
 <div style={{position: "relative", paddingBottom: "62.5%", height: 0}}><iframe src="https://www.loom.com/embed/0691f374484541468dcfb6d71fedd817?sid=970a6eb4-c0e9-40a2-b2c9-9ba145231f54" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
 
 ---
 
----
+## Choose Your Deployment Path
 
-## Get Started in 3 Steps: Fork in the Road
+Select the path that matches your evaluation and security requirements:
 
-Choose your path to get up and running:
-
-<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', margin: '1.5rem 0' }}>
-  <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.25rem', backgroundColor: '#fbfbfb' }}>
-    <h3 style={{ marginTop: 0 }}>⚡ Option A: Cloud SaaS (5 mins)</h3>
-    <p>Zero infrastructure to manage. Evaluated and ready instantly.</p>
-    <ol>
-      <li>Sign up at <a href="https://app.nudgebee.com">app.nudgebee.com</a>.</li>
-      <li><a href="./installation/agent/installation/">Install the Agent</a> on your cluster (or connect your cloud account).</li>
-      <li>Connect <a href="./integrations/Notifications/slack">Slack</a> and start exploring AI insights.</li>
-    </ol>
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', margin: '1.5rem 0' }}>
+  <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.25rem', backgroundColor: '#fbfbfb', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <div>
+      <h3 style={{ marginTop: 0 }}>⚡ Cloud SaaS</h3>
+      <p style={{ fontSize: '0.9rem', color: '#555' }}><strong>Best for:</strong> Quickest evaluation with zero control plane infrastructure to manage.</p>
+      <p style={{ fontSize: '0.85rem', color: '#666' }}><strong>Estimated time:</strong> 5–10 minutes</p>
+      <ol style={{ paddingLeft: '1.2rem', fontSize: '0.9rem' }}>
+        <li>Sign up at <a href="https://app.nudgebee.com">app.nudgebee.com</a>.</li>
+        <li><a href="./installation/agent/installation/">Install the Agent</a> on your target Kubernetes cluster.</li>
+        <li>Connect <a href="./integrations/Notifications/slack">Slack</a> and run your first NuBi investigation.</li>
+      </ol>
+    </div>
+    <a href="https://app.nudgebee.com" className="button button--primary button--block" style={{ marginTop: '1rem' }}>Start Free Cloud Trial →</a>
   </div>
-  <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.25rem', backgroundColor: '#fbfbfb' }}>
-    <h3 style={{ marginTop: 0 }}>🛡️ Option B: Self-Hosted / On-Prem</h3>
-    <p>Complete data isolation inside your own Kubernetes environment.</p>
-    <ol>
-      <li><a href="./installation/server/">Deploy NudgeBee Server</a> on your Kubernetes cluster via Helm.</li>
-      <li>Configure your <a href="./integrations/LLM/">BYOM LLM provider</a> (or local Ollama/vLLM).</li>
-      <li><a href="./installation/agent/installation/">Install the Agent</a> on monitored clusters.</li>
-    </ol>
+
+  <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.25rem', backgroundColor: '#fbfbfb', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <div>
+      <h3 style={{ marginTop: 0 }}>🚀 Community (Self-Hosted)</h3>
+      <p style={{ fontSize: '0.9rem', color: '#555' }}><strong>Best for:</strong> Engineers testing on local or dev clusters (Kind, Minikube, EKS, GKE, AKS).</p>
+      <p style={{ fontSize: '0.85rem', color: '#666' }}><strong>Estimated time:</strong> 20–30 minutes</p>
+      <ol style={{ paddingLeft: '1.2rem', fontSize: '0.9rem' }}>
+        <li><a href="./installation/server/">Deploy NudgeBee Server</a> using the default Helm chart.</li>
+        <li>Connect your <a href="./integrations/LLM/">BYOM model provider</a> (OpenAI, Bedrock, Ollama).</li>
+        <li><a href="./installation/agent/installation/">Install the Agent</a> on your monitored cluster.</li>
+      </ol>
+    </div>
+    <a href="./installation/server/" className="button button--secondary button--block" style={{ marginTop: '1rem' }}>Community Quick Start →</a>
+  </div>
+
+  <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.25rem', backgroundColor: '#fbfbfb', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <div>
+      <h3 style={{ marginTop: 0 }}>🏢 Enterprise (Self-Hosted)</h3>
+      <p style={{ fontSize: '0.9rem', color: '#555' }}><strong>Best for:</strong> Production-grade deployments requiring SAML SSO, high availability, and compliance.</p>
+      <p style={{ fontSize: '0.85rem', color: '#666' }}><strong>Estimated time:</strong> 30–60+ minutes</p>
+      <ol style={{ paddingLeft: '1.2rem', fontSize: '0.9rem' }}>
+        <li>Choose bundled dependencies for evaluation, or external PostgreSQL & RabbitMQ for HA.</li>
+        <li>Deploy Server with <a href="./installation/server/">Enterprise Helm values</a> and license key.</li>
+        <li>Optionally configure <a href="./integrations/Authentication/SAML">SAML 2.0 SSO</a> and air-gapped SLMs.</li>
+      </ol>
+    </div>
+    <a href="./installation/server/" className="button button--secondary button--block" style={{ marginTop: '1rem' }}>Enterprise Setup Guide →</a>
   </div>
 </div>
 
@@ -61,13 +82,13 @@ Choose your path to get up and running:
 
 ## Deployment Models
 
-NudgeBee is available in two deployment models — and self-hosted comes in two **editions** (free Community and licensed Enterprise — see [Editions](./editions.md)). Choose what fits your organization's requirements:
+NudgeBee is available in two deployment models — and self-hosted comes in two **editions** (free Community and licensed Enterprise — see [Editions & Capabilities](./editions.md)). Choose what fits your organization's requirements:
 
 | | **Cloud SaaS** | **Self-Hosted (On-Prem)** |
 |---|---|---|
-| **How it works** | NudgeBee hosts and manages the server for you. You connect your infrastructure to the NudgeBee cloud. | You install the NudgeBee server on your own Kubernetes cluster. Available as the free open-source **Community** edition or the licensed **Enterprise** edition. |
+| **How it works** | NudgeBee hosts and manages the server for you. You connect your infrastructure to the NudgeBee cloud. | You install the NudgeBee server on your own Kubernetes cluster. Available as the free Community edition (BSL 1.1) or the licensed Enterprise edition. |
 | **Best for** | SRE, CloudOps, and Support teams that want to get started quickly without managing additional infrastructure. | Organizations with strict data residency, compliance, or air-gapped environment requirements — or anyone who wants a free, fully-functional self-hosted deployment. |
-| **Security** | SOC 2 Type II and ISO 27001 certified. | Full data control within your own infrastructure. No telemetry — see [Telemetry & Privacy](./telemetry.md). |
+| **Security & Telemetry** | SOC 2 Type II and ISO 27001 certified. | No product analytics or phone-home telemetry is sent to NudgeBee. Operational telemetry collected from your workloads remains strictly within your self-hosted environment. See [Telemetry & Privacy](./telemetry.md). |
 | **Get started** | Sign up at [app.nudgebee.com](https://app.nudgebee.com) | Follow the [Server Installation Guide](./installation/server/) |
 
 ---
@@ -84,7 +105,7 @@ NudgeBee has two components, both packaged as Helm charts that deploy natively o
 | **[NudgeBee Agent](./installation/agent/installation/index.md)** | Lightweight collector that runs inside each cluster you want to monitor. Collects workload data and sends it to the server. | **Everyone** — both SaaS and self-hosted users. |
 
 :::info Infrastructure Prerequisite
-**Self-hosted users**: You need a dedicated Kubernetes cluster (or namespace) to run the NudgeBee Server before connecting your monitored clusters. Sizing typically requires a 2-node cluster with 16 GB RAM and 4 cores per node. If you do not have Kubernetes clusters to run the server on, choose **Cloud SaaS**.
+**Self-hosted users**: You need a Kubernetes cluster (or namespace) to run the NudgeBee Server. Sizing requires **12 GB RAM and 4 CPU cores total** with bundled dependencies (PostgreSQL, RabbitMQ, Redis), or **8 GB RAM and 2 CPU cores total** with externally managed databases. See the [Server Installation Sizing Table](./installation/server/index.md#system--sizing-requirements) for details.
 :::
 
 ### Architecture at a Glance
@@ -135,14 +156,14 @@ SaaS users get a NudgeBee-managed LLM by default. The [LLM integration section](
 
 ## What You Can Do with NudgeBee
 
-NudgeBee ships with 30+ pre-built Cloud-Ops Agents and 30+ integrations. Capabilities grow as you connect more of your stack. The table below shows what each integration unlocks.
+NudgeBee ships with 30+ pre-built Cloud-Ops Agents and 30+ integrations. Capabilities grow as you connect more of your stack. The table below shows what each integration unlocks:
 
-| Integration | What It Unlocks | Required? |
+| Integration | What It Unlocks | When It's Needed |
 |---|---|---|
-| **[Kubernetes cluster](./installation/agent/installation/index.md)** or **[Cloud account](./features/Cloud/index.md)** | Core monitoring, [Semantic Knowledge Graph](./features/knowledge-graph.md), [cost optimizations](./features/optimizations.md) | **Required** (one of the two) |
-| **[Observability source](./integrations/Observability/index.md)** (Prometheus, Datadog, New Relic, etc.) | Metrics, [SLOs](./features/slo.md), alerting, [troubleshooting](./features/troubleshooting/index.md) | **Required** |
-| **[LLM connection](./integrations/LLM/index.md)** | NuBi AI agent, AI-powered troubleshooting, pre-built agents, [auto-runbooks](./features/autopilot/auto_runbook/index.md) | Recommended |
-| **[IM channel](./integrations/Notifications/index.md)** (Slack, Teams, Google Chat) | [Notifications](./features/notifications.md), interactive alerts, ChatOps | Recommended |
+| **[Kubernetes cluster](./installation/agent/installation/index.md)** or **[Cloud account](./features/Cloud/index.md)** | Core monitoring, [Semantic Knowledge Graph](./features/knowledge-graph.md), [cost optimizations](./features/optimizations.md) | **Required for infrastructure visibility** |
+| **[Observability source](./integrations/Observability/index.md)** (Prometheus, Datadog, New Relic, etc.) | Metrics, [SLOs](./features/slo.md), alerting, [troubleshooting](./features/troubleshooting/index.md) | **Required for metrics, SLOs, and utilization graphs** |
+| **[LLM connection](./integrations/LLM/index.md)** (BYOM) | NuBi AI agent, natural-language triage, [auto-runbooks](./features/autopilot/auto_runbook/index.md) | **Required for NuBi and AI-powered features** |
+| **[IM channel](./integrations/Notifications/index.md)** (Slack, Teams, Google Chat) | [Notifications](./features/notifications.md), interactive alerts, ChatOps | **Optional; recommended for operational alerting** |
 | **Email** | Email notifications and daily reports | Optional |
 | **[GitHub](./integrations/Code%20Repository/GitHub/github-integration.md)** / **[GitLab](./integrations/Code%20Repository/GitLab/gitlab-integration.md)** | Auto-PRs for optimization recommendations, code-level troubleshooting | Optional |
 | **[CI/CD system](./integrations/CICD/argocd-integration.md)** (ArgoCD) | Deployment change correlation, rollback insights | Optional |
@@ -157,15 +178,15 @@ Follow these steps to go from zero to a working NudgeBee setup. The path differs
 
 | Step | Cloud SaaS | Self-Hosted |
 |---|---|---|
-| **1. Get access** | [Sign up at app.nudgebee.com](https://app.nudgebee.com) — no installation needed, you are ready in seconds. | [Install the NudgeBee Server](./installation/server/index.md) on a Kubernetes cluster. Takes 15–30 minutes. |
-| **2. Connect your clusters** | [Install the Agent](./installation/agent/installation/index.md) on each cluster, or [connect a cloud account](./features/Cloud/index.md) for auto-discovery. | Same — [install the Agent](./installation/agent/installation/index.md) or [connect a cloud account](./features/Cloud/index.md). |
-| **3. Connect observability** | Connect your existing monitoring tools (Prometheus, Datadog, New Relic, etc.). See [Observability Integrations](./integrations/Observability/index.md). | Same — connect your monitoring tools. |
-| **4. Enable AI** | Already included — a managed LLM is provided. Nothing to configure. | [Connect an LLM provider](./integrations/LLM/index.md) (BYOM) to enable NuBi and AI-powered troubleshooting. |
-| **5. Set up notifications** | Connect [Slack](./integrations/Notifications/slack.md), [Teams](./integrations/Notifications/msteams.md), or [Google Chat](./integrations/Notifications/google_chat.md). | Same — connect your messaging tool. |
-| **6. Explore** | You are ready! Check [Optimizations](./features/optimizations.md), [Troubleshooting](./features/troubleshooting/index.md), and the [Semantic Knowledge Graph](./features/knowledge-graph.md). | Same — start exploring the dashboard. |
+| **1. Get access** | [Sign up at app.nudgebee.com](https://app.nudgebee.com) — ready in seconds with zero infrastructure to manage. | [Install the NudgeBee Server](./installation/server/index.md) on a Kubernetes cluster. Takes 15–30 minutes. |
+| **2. Connect AI (LLM)** | Managed LLM included by default. Nothing to configure. | [Connect your BYOM model provider](./integrations/LLM/index.md) (OpenAI, Bedrock, Ollama) under Settings → AI / LLM. |
+| **3. Connect your clusters** | [Install the Agent](./installation/agent/installation/index.md) on each cluster, or [connect a cloud account](./features/Cloud/index.md). | Same — [install the Agent](./installation/agent/installation/index.md) on each monitored cluster. |
+| **4. Verify observability** | Ingest metrics from the agent or connect external tools ([Prometheus, Datadog](./integrations/Observability/index.md)). | Same — verify bundled Prometheus or connect your observability stack. |
+| **5. Run first investigation** | Open the **NuBi AI drawer** to run your first cluster health investigation. | Same — run your first natural-language triage investigation with NuBi. |
+| **6. Configure integrations** | Connect [Slack/Teams](./integrations/Notifications/) for alerts and [GitHub/GitLab](./integrations/Code%20Repository/GitHub/github-integration.md) for auto-PRs. | Same — configure notification channels, ticketing, and GitOps repositories. |
 
 :::tip
-Steps 3–5 can be done in any order. Each integration adds capabilities independently — you do not need to complete everything before you start seeing value.
+Steps 4–6 can be tailored to your workflow. Each integration expands platform capabilities independently.
 :::
 
 ---
@@ -186,15 +207,59 @@ After installation or sign-up, access the NudgeBee UI:
 
 ### Login Options
 
-NudgeBee supports multiple authentication methods:
+NudgeBee supports multiple authentication methods depending on your deployment:
 
-- **SSO (Single Sign-On)**: Log in with Google, Azure, Okta, or Auth0. Available when [authentication integration](./integrations/Authentication/) is configured.
-- **Magic Link**: Enter your email address and receive a one-time login link — no password needed. This is the default method when SSO is not configured.
-- **Admin Invite**: If your team admin has added you, you will receive an email invitation with a login link.
+- **Bootstrap Administrator Credentials**: For initial self-hosted installation, retrieve the auto-generated password from the `nudgebee` Kubernetes secret. Disable this in production after configuring SSO.
+- **SSO (Single Sign-On)**: Log in with Google, Microsoft/Azure AD, Okta, or Auth0 (all editions). SAML 2.0 with IdP group mapping is supported on Enterprise and Cloud.
+- **Magic Link**: Enter your email address and receive a one-time login link — no password needed (Cloud SaaS default).
+- **Admin Invite**: Accept an email invitation link sent by your organization administrator.
 
-:::info
-NudgeBee does not store passwords. Authentication is handled through SSO providers or magic email links, keeping your login secure and simple.
+:::info Authentication Privacy
+NudgeBee Cloud uses passwordless authentication. Self-hosted installations initially create a bootstrap administrator credential, which should be disabled after configuring production authentication.
 :::
+
+---
+
+## Progressive Capability Matrix
+
+NudgeBee delivers value in stages as you connect components of your stack:
+
+| Stage | Connected Component | What It Unlocks |
+|:---:|---|---|
+| **1** | **Server Only** | Control plane UI, admin settings, user management, and API access |
+| **2** | **K8s Agent Connected** | Real-time cluster inventory, pod health, node statuses, and Kubernetes event stream |
+| **3** | **Metrics & Observability** | CPU/memory utilization graphs, SLO tracking, rightsizing recommendations, and cost breakdown |
+| **4** | **LLM (BYOM) Connected** | NuBi AI Assistant, natural-language cluster queries, automated incident RCA, and runbook suggestions |
+| **5** | **Notifications (Slack / Teams)** | Incident alerting, interactive ChatOps triage buttons, and daily digest summaries |
+| **6** | **Git Repository (GitHub / GitLab)** | Automated PR generation for resource limit changes and GitOps reconciliation |
+
+---
+
+## Onboarding Troubleshooting Decision Tree
+
+If you encounter an issue during initial setup, use this decision tree to pinpoint the cause:
+
+```text
+1. Can you load the Web UI at http://localhost:3000 (or your ingress domain)?
+   ├── NO  → Check server pods: `kubectl get pods -n nudgebee`
+   │         See Server Troubleshooting: /docs/installation/server/#troubleshooting-installation-failures
+   └── YES → Proceed to step 2
+
+2. Does your Kubernetes cluster appear with a "Connected" badge in the UI?
+   ├── NO  → Check agent runner logs: `kubectl logs -n nudgebee-agent -l app=nudgebee-runner`
+   │         Ensure outbound TCP port 443 is permitted in your cluster NetworkPolicy.
+   └── YES → Proceed to step 3
+
+3. Are CPU and memory metric charts populating for workloads?
+   ├── NO  → Verify Prometheus URL: check `globalConfig.prometheus_url` in agent values.yaml.
+   └── YES → Proceed to step 4
+
+4. Does NuBi answer natural-language cluster questions?
+   ├── NO  → Verify BYOM model provider API key under Settings → AI / LLM.
+   └── YES → Setup is healthy and complete!
+```
+
+---
 
 ### What to Do After Your First Login
 
