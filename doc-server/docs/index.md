@@ -44,8 +44,8 @@ Select the path that matches your evaluation and security requirements:
       <p style={{ fontSize: '0.85rem', color: '#666' }}><strong>Estimated time:</strong> 20–30 minutes</p>
       <ol style={{ paddingLeft: '1.2rem', fontSize: '0.9rem' }}>
         <li><a href="./installation/server/">Deploy NudgeBee Server</a> using the default Helm chart.</li>
-        <li><a href="./installation/agent/installation/">Install the Agent</a> on your monitored cluster.</li>
         <li>Connect your <a href="./integrations/LLM/">BYOM model provider</a> (OpenAI, Bedrock, Ollama).</li>
+        <li><a href="./installation/agent/installation/">Install the Agent</a> on your monitored cluster.</li>
       </ol>
     </div>
     <a href="./installation/server/" className="button button--secondary button--block" style={{ marginTop: '1rem' }}>Community Quick Start →</a>
@@ -105,7 +105,7 @@ NudgeBee has two components, both packaged as Helm charts that deploy natively o
 | **[NudgeBee Agent](./installation/agent/installation/index.md)** | Lightweight collector that runs inside each cluster you want to monitor. Collects workload data and sends it to the server. | **Everyone** — both SaaS and self-hosted users. |
 
 :::info Infrastructure Prerequisite
-**Self-hosted users**: You need a Kubernetes cluster (or namespace) to run the NudgeBee Server. Sizing requires **~4 CPU cores and 8–12 GB RAM total** with bundled dependencies (PostgreSQL, RabbitMQ, Redis), or **~2–4 CPU cores and 4–8 GB RAM** with externally managed databases. See the [Server Installation Sizing Table](./installation/server/index.md#system--sizing-requirements) for details.
+**Self-hosted users**: You need a Kubernetes cluster (or namespace) to run the NudgeBee Server. Sizing requires **12 GB RAM and 4 CPU cores total** with bundled dependencies (PostgreSQL, RabbitMQ, Redis), or **8 GB RAM and 2 CPU cores total** with externally managed databases. See the [Server Installation Sizing Table](./installation/server/index.md#system--sizing-requirements) for details.
 :::
 
 ### Architecture at a Glance
@@ -156,14 +156,14 @@ SaaS users get a NudgeBee-managed LLM by default. The [LLM integration section](
 
 ## What You Can Do with NudgeBee
 
-NudgeBee ships with 30+ pre-built Cloud-Ops Agents and 30+ integrations. Capabilities grow as you connect more of your stack. The table below shows what each integration unlocks.
+NudgeBee ships with 30+ pre-built Cloud-Ops Agents and 30+ integrations. Capabilities grow as you connect more of your stack. The table below shows what each integration unlocks:
 
-| Integration | What It Unlocks | Required? |
+| Integration | What It Unlocks | When It's Needed |
 |---|---|---|
-| **[Kubernetes cluster](./installation/agent/installation/index.md)** or **[Cloud account](./features/Cloud/index.md)** | Core monitoring, [Semantic Knowledge Graph](./features/knowledge-graph.md), [cost optimizations](./features/optimizations.md) | **Required** (one of the two) |
-| **[Observability source](./integrations/Observability/index.md)** (Prometheus, Datadog, New Relic, etc.) | Metrics, [SLOs](./features/slo.md), alerting, [troubleshooting](./features/troubleshooting/index.md) | **Required** |
-| **[LLM connection](./integrations/LLM/index.md)** | NuBi AI agent, AI-powered troubleshooting, pre-built agents, [auto-runbooks](./features/autopilot/auto_runbook/index.md) | Recommended |
-| **[IM channel](./integrations/Notifications/index.md)** (Slack, Teams, Google Chat) | [Notifications](./features/notifications.md), interactive alerts, ChatOps | Recommended |
+| **[Kubernetes cluster](./installation/agent/installation/index.md)** or **[Cloud account](./features/Cloud/index.md)** | Core monitoring, [Semantic Knowledge Graph](./features/knowledge-graph.md), [cost optimizations](./features/optimizations.md) | **Required for infrastructure visibility** |
+| **[Observability source](./integrations/Observability/index.md)** (Prometheus, Datadog, New Relic, etc.) | Metrics, [SLOs](./features/slo.md), alerting, [troubleshooting](./features/troubleshooting/index.md) | **Required for metrics, SLOs, and utilization graphs** |
+| **[LLM connection](./integrations/LLM/index.md)** (BYOM) | NuBi AI agent, natural-language triage, [auto-runbooks](./features/autopilot/auto_runbook/index.md) | **Required for NuBi and AI-powered features** |
+| **[IM channel](./integrations/Notifications/index.md)** (Slack, Teams, Google Chat) | [Notifications](./features/notifications.md), interactive alerts, ChatOps | **Optional; recommended for operational alerting** |
 | **Email** | Email notifications and daily reports | Optional |
 | **[GitHub](./integrations/Code%20Repository/GitHub/github-integration.md)** / **[GitLab](./integrations/Code%20Repository/GitLab/gitlab-integration.md)** | Auto-PRs for optimization recommendations, code-level troubleshooting | Optional |
 | **[CI/CD system](./integrations/CICD/argocd-integration.md)** (ArgoCD) | Deployment change correlation, rollback insights | Optional |

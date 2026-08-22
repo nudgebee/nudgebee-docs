@@ -191,13 +191,13 @@ Look for log confirmation: `Connected to NudgeBee Relay successfully` and `Regis
    ```text
    List the namespaces, nodes, and visible workloads in this cluster with their health status and latest telemetry timestamp.
    ```
-   **Expected Result**: NuBi inspects live cluster state and returns a structured summary table listing detected namespaces, node capacities, active workload counts, and recent telemetry heartbeat timestamps.
+   **Expected Result**: NuBi identifies the connected cluster and returns current namespaces, nodes, and visible workloads grounded in recent telemetry. Exact formatting may vary depending on the configured model.
 3. **Follow-Up Diagnostic Prompt** (for incident triage):
    ```text
    Which workloads in this cluster have restarted, entered CrashLoopBackOff, or experienced OOMKills in the last 24 hours?
    ```
-   **Expected Result**: On a healthy cluster, NuBi confirms 0 active restart anomalies. On clusters with issues, it provides a ranked list with exit codes and remediation suggestions.
-4. **Success Verification**: When you receive structured responses grounded in your cluster's live workloads, your agent telemetry pipeline is verified and fully operational.
+   **Expected Result**: On a healthy cluster, NuBi confirms no active restart anomalies are detected. On clusters with issues, it provides affected workloads with exit codes and recommended remediation steps.
+4. **Success Verification**: When you receive responses grounded in your cluster's live workloads and node statuses, your agent telemetry pipeline is verified and fully operational.
 
 ---
 

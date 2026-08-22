@@ -134,6 +134,25 @@ The NudgeBee server relies on core backend services. You can run them bundled in
 | **Registry Access** | `ghcr.io/nudgebee` (Community) or `registry.nudgebee.com` (Enterprise) | Same | Air-gapped environments can mirror images internally |
 | **NudgeBee License Key** | Enterprise only | Enterprise only | Community edition does not require a key |
 
+### Preflight Cluster Validation
+
+Before deploying, run this quick check in your terminal to verify your cluster meets the version, capacity, and storage requirements:
+
+```bash
+# 1. Verify kubectl context and Kubernetes server version (v1.27+)
+kubectl config current-context
+kubectl version --short 2>/dev/null || kubectl version
+
+# 2. Verify Helm version (v3.10+)
+helm version --short
+
+# 3. Check allocatable CPU and memory across your nodes
+kubectl get nodes -o custom-columns=NAME:.metadata.name,STATUS:.status.conditions[-1].type,ALLOCATABLE_CPU:.status.allocatable.cpu,ALLOCATABLE_MEM:.status.allocatable.memory
+
+# 4. Verify default StorageClass exists for persistent volumes
+kubectl get storageclass
+```
+
 ### Network Requirements & Decision Rationale
 
 Your cluster needs the following network access. Understanding why each rule exists helps you configure firewalls with least privilege:
