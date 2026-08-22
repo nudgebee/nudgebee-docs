@@ -185,9 +185,21 @@ Look for log confirmation: `Connected to NudgeBee Relay successfully` and `Regis
 2. Navigate to **Kubernetes**.
 3. Your cluster should display with a **Connected** badge, and nodes and workload pods will start populating within 2 minutes.
 
+### 4. Run Your First Investigation with NuBi (First Successful Outcome)
+1. In the NudgeBee dashboard, click the **NuBi AI drawer** on the right side of the screen.
+2. Run a concrete diagnostic prompt:
+   ```text
+   Which workloads in this cluster have restarted or experienced OOMKills in the last 24 hours?
+   ```
+3. **Expected Result**: NuBi queries live telemetry from the connected agent, correlates the Kubernetes event stream and Prometheus metrics, and returns:
+   - A ranked list of affected workloads, namespaces, and pod names.
+   - Specific failure reasons (e.g. `OOMKilled exit code 137` or failed readiness probes).
+   - Recommended rightsizing actions or direct links to inspect pod logs.
+4. **Success Verification**: When you receive a structured response grounded in your cluster's live workloads, your agent telemetry pipeline is verified and fully operational.
+
 ---
 
-## 3. Troubleshooting Agent Installation Errors
+## 4. Troubleshooting Agent Installation Errors
 
 Use this diagnostic reference to resolve common agent deployment and communication issues.
 
@@ -201,7 +213,6 @@ Use this diagnostic reference to resolve common agent deployment and communicati
 | **`node-agent CrashLoopBackOff` (eBPF load failure)** | Kernel < 4.2 or non-standard distro (Bottlerocket, Talos, GKE COS) | Check kernel with `uname -r`. Ensure `/sys/kernel/debug` is accessible, or disable eBPF with `--set nodeAgent.ebpf.enabled=false`. |
 | **`WebSocket Dial Timeout / EOF`** | Outbound firewall or NetworkPolicy blocking TCP 443 | Verify egress to `wss://relay.nudgebee.com` (SaaS) or your relay Ingress. Ensure port 443 is open. |
 | **`Prometheus connection refused / empty metrics`** | Wrong Prometheus service URL or missing KSM | Point `globalConfig.prometheus_url` to valid service DNS (e.g. `http://<service>.<namespace>.svc:9090`). |
-| **OpenCost shows $0.00 / Missing Cost Data** | Missing cloud provider pricing API key | Provide `--set opencost.opencost.exporter.cloudProviderApiKey="<KEY>"` or AWS CUR integration. |
 | **`CRD / Webhook timeout error`** | Prometheus operator CRDs not yet established | Wait 30 seconds and re-run the `helm upgrade` command. |
 
 ---

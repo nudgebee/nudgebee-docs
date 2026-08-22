@@ -157,6 +157,23 @@ Check the agent logs for confirmation:
 
 The datasource should now appear as **Healthy** in the NudgeBee Integrations page.
 
+## Step 6: Run Your First Database Investigation with NuBi
+
+Verify end-to-end proxy connectivity through your firewall by asking NuBi to inspect the database:
+
+1. In the NudgeBee UI, open the **NuBi AI drawer** on the right side.
+2. Run a concrete diagnostic query:
+   ```text
+   Check the connected PostgreSQL database: show me the top 5 largest tables, table bloat, and any long-running transactions.
+   ```
+3. **Expected Result**: NuBi securely relays the query through the Proxy Agent to your database without exposing any open inbound firewall ports, and returns:
+   - A markdown table listing the top 5 tables by disk footprint (table size + index size).
+   - Bloat estimates and dead tuple percentages.
+   - Active database connections, locks, and cache hit ratios.
+4. **Success Verification**: When you receive live table metrics, your Proxy Agent tunnel is fully established and secure.
+
+---
+
 ## What's Next
 
 You're done! You can now ask NudgeBee questions about your database — it will query through the proxy agent automatically.

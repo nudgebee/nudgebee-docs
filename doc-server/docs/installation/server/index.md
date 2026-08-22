@@ -324,9 +324,13 @@ You should receive an `HTTP/1.1 200 OK` (or `307 Temporary Redirect` to `/auth/s
 
 ---
 
-## 4. Access the UI
+## 4. Access the UI & Authenticate
 
-### Without Ingress (Port-Forwarding)
+### Understanding Authentication by Deployment Mode
+- **Cloud SaaS (`app.nudgebee.com`)**: Completely passwordless — users sign in using OAuth SSO (Google, GitHub, Okta, Microsoft) or email magic links. No passwords are stored or generated.
+- **Self-Hosted Community & Enterprise**: Initializes with a secure bootstrap admin password stored in an in-cluster Kubernetes secret so administrators can complete initial setup and configure SSO.
+
+### Accessing Without Ingress (Port-Forwarding)
 
 Forward the NudgeBee UI to your local machine:
 
@@ -334,11 +338,11 @@ Forward the NudgeBee UI to your local machine:
 kubectl port-forward svc/app 3000:80 -n nudgebee --kube-context $KUBE_CONTEXT
 ```
 
-Then open [http://localhost:3000](http://localhost:3000) in your browser. You should see the NudgeBee login page.
+Then open [http://localhost:3000](http://localhost:3000) in your browser to view the login screen.
 
-Log in with the admin email address configured during installation (for Enterprise, this is the email associated with your NudgeBee license). The initial password is auto-generated during installation and stored in a Kubernetes secret.
+### Retrieving the Bootstrap Admin Credentials
 
-Retrieve the password by decoding the secret:
+Retrieve the auto-generated bootstrap password from the `nudgebee` secret:
 
 ```shell
 kubectl get secret nudgebee -n nudgebee \
@@ -347,25 +351,32 @@ kubectl get secret nudgebee -n nudgebee \
 echo
 ```
 
-Use the decoded password along with the admin email to sign in.
+Use your admin email (e.g. `admin@nudgebee.local` or the email provided during install) and the decoded password to sign in.
 
 :::caution Production Security
-**The dummy credentials provider is intended for initial evaluation only.** For production environments, configure a proper identity provider (SSO, SAML, or LDAP) and disable dummy credentials. See [Authentication Integrations](../../integrations/Authentication/) for details.
+**The bootstrap credentials provider is intended for initial onboarding and evaluation only.** For production, configure an enterprise identity provider (SAML 2.0 or OAuth SSO) and disable dummy credentials. See [Authentication Integrations](../../integrations/Authentication/) for details.
 :::
-
-:::info
-**Relay and Collector URLs for Agent Installation**: When you install the NudgeBee Agent later, you will need these internal service URLs:
-- **Relay Server URL**: `ws://relay-server.nudgebee.svc:8080`
-- **Collector Server URL**: `http://k8s-collector.nudgebee.svc`
-:::
-
-### With Ingress (Public URL)
-
-If you configured Ingress (see next section), navigate to the URL you set as `BASE_URL` — for example, `https://nudgebee.yourcompany.com`.
 
 ---
 
-## 5. Add Ingress and SSL (Recommended for Production)
+## 5. Verify Your First Successful Outcome with NuBi
+
+Once logged into the dashboard, verify end-to-end intelligence by running your first AI-SRE investigation:
+
+1. **Open the NuBi AI Drawer**: Click the **NuBi** icon in the right-hand sidebar or navigation bar.
+2. **Run a Concrete Diagnostic Prompt**:
+   ```text
+   What workloads in this cluster have experienced restarts or OOMKills in the last 24 hours?
+   ```
+3. **Expected Result**: NuBi inspects live telemetry, queries the Kubernetes event stream, and responds with:
+   - A structured list of affected workloads, namespaces, and pod names.
+   - Exact exit codes (e.g. `137 OOMKilled` or `CrashLoopBackOff`).
+   - Root cause hypothesis and recommended next steps (e.g. memory request adjustments or inspecting application stack traces).
+4. **Success Verification**: When you receive a structured response with direct links to the relevant workloads, your NudgeBee Control Plane and AI engine are verified and healthy!
+
+---
+
+## 6. Add Ingress and SSL (Recommended for Production)
 
 The minimal installation above works with port-forwarding, but for production use you should expose NudgeBee via Ingress with SSL. This enables:
 

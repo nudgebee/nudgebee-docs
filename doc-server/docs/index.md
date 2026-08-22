@@ -10,38 +10,59 @@ NudgeBee is an **AI Agents & Agentic Workflow Platform for SRE, CloudOps, and Su
 
 NudgeBee's Semantic Knowledge Graph correlates logs, metrics, traces, and code to give your team Cloud-Ops Intelligence that reduces MTTR from hours to minutes. Pre-packaged but not a black box — every agent and workflow is fully extensible, modular, and controllable.
 
-:::tip[NudgeBee is open source]
-The **Community** edition is free, Apache 2.0 licensed, and fully functional — self-host it from public images on `ghcr.io/nudgebee` with no license key. See [Editions](./editions.md) for the Community / Enterprise / Cloud comparison.
+:::tip[Open Architecture & Licensing]
+The **Community** edition is free and fully functional for internal production and operations — server licensed under **BSL 1.1** and agents under **Apache 2.0**. See [Editions & Capabilities](./editions.md) for the Community / Enterprise / Cloud comparison.
 :::
 
 <div style={{position: "relative", paddingBottom: "62.5%", height: 0}}><iframe src="https://www.loom.com/embed/0691f374484541468dcfb6d71fedd817?sid=970a6eb4-c0e9-40a2-b2c9-9ba145231f54" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
 
 ---
 
----
+## Choose Your Deployment Path
 
-## Get Started in 3 Steps: Fork in the Road
+Select the path that matches your evaluation and security requirements:
 
-Choose your path to get up and running:
-
-<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', margin: '1.5rem 0' }}>
-  <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.25rem', backgroundColor: '#fbfbfb' }}>
-    <h3 style={{ marginTop: 0 }}>⚡ Option A: Cloud SaaS (5 mins)</h3>
-    <p>Zero infrastructure to manage. Evaluated and ready instantly.</p>
-    <ol>
-      <li>Sign up at <a href="https://app.nudgebee.com">app.nudgebee.com</a>.</li>
-      <li><a href="./installation/agent/installation/">Install the Agent</a> on your cluster (or connect your cloud account).</li>
-      <li>Connect <a href="./integrations/Notifications/slack">Slack</a> and start exploring AI insights.</li>
-    </ol>
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', margin: '1.5rem 0' }}>
+  <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.25rem', backgroundColor: '#fbfbfb', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <div>
+      <h3 style={{ marginTop: 0 }}>⚡ Cloud SaaS</h3>
+      <p style={{ fontSize: '0.9rem', color: '#555' }}><strong>Best for:</strong> Quickest evaluation with zero control plane infrastructure to manage.</p>
+      <p style={{ fontSize: '0.85rem', color: '#666' }}><strong>Estimated time:</strong> 5–10 minutes</p>
+      <ol style={{ paddingLeft: '1.2rem', fontSize: '0.9rem' }}>
+        <li>Sign up at <a href="https://app.nudgebee.com">app.nudgebee.com</a>.</li>
+        <li><a href="./installation/agent/installation/">Install the Agent</a> on your target Kubernetes cluster.</li>
+        <li>Connect <a href="./integrations/Notifications/slack">Slack</a> and run your first NuBi investigation.</li>
+      </ol>
+    </div>
+    <a href="https://app.nudgebee.com" className="button button--primary button--block" style={{ marginTop: '1rem' }}>Start Free Cloud Trial →</a>
   </div>
-  <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.25rem', backgroundColor: '#fbfbfb' }}>
-    <h3 style={{ marginTop: 0 }}>🛡️ Option B: Self-Hosted / On-Prem</h3>
-    <p>Complete data isolation inside your own Kubernetes environment.</p>
-    <ol>
-      <li><a href="./installation/server/">Deploy NudgeBee Server</a> on your Kubernetes cluster via Helm.</li>
-      <li>Configure your <a href="./integrations/LLM/">BYOM LLM provider</a> (or local Ollama/vLLM).</li>
-      <li><a href="./installation/agent/installation/">Install the Agent</a> on monitored clusters.</li>
-    </ol>
+
+  <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.25rem', backgroundColor: '#fbfbfb', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <div>
+      <h3 style={{ marginTop: 0 }}>🚀 Community (Self-Hosted)</h3>
+      <p style={{ fontSize: '0.9rem', color: '#555' }}><strong>Best for:</strong> Engineers testing on local or dev clusters (Kind, Minikube, EKS, GKE, AKS).</p>
+      <p style={{ fontSize: '0.85rem', color: '#666' }}><strong>Estimated time:</strong> 20–30 minutes</p>
+      <ol style={{ paddingLeft: '1.2rem', fontSize: '0.9rem' }}>
+        <li><a href="./installation/server/">Deploy NudgeBee Server</a> using the default Helm chart.</li>
+        <li>Connect your <a href="./integrations/LLM/">BYOM model provider</a> (OpenAI, Bedrock, Ollama).</li>
+        <li><a href="./installation/agent/installation/">Install the Agent</a> to start gathering cluster telemetry.</li>
+      </ol>
+    </div>
+    <a href="./installation/server/" className="button button--secondary button--block" style={{ marginTop: '1rem' }}>Community Quick Start →</a>
+  </div>
+
+  <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.25rem', backgroundColor: '#fbfbfb', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <div>
+      <h3 style={{ marginTop: 0 }}>🏢 Enterprise (Self-Hosted)</h3>
+      <p style={{ fontSize: '0.9rem', color: '#555' }}><strong>Best for:</strong> Production-grade deployments requiring SAML SSO, high availability, and compliance.</p>
+      <p style={{ fontSize: '0.85rem', color: '#666' }}><strong>Estimated time:</strong> 30–60+ minutes</p>
+      <ol style={{ paddingLeft: '1.2rem', fontSize: '0.9rem' }}>
+        <li>Provision external PostgreSQL, Redis, and RabbitMQ.</li>
+        <li>Deploy the Server with <a href="./installation/server/">Enterprise Helm values</a> and license key.</li>
+        <li>Configure <a href="./integrations/Authentication/SAML">SAML 2.0 SSO</a> and air-gapped SLMs.</li>
+      </ol>
+    </div>
+    <a href="./installation/server/" className="button button--secondary button--block" style={{ marginTop: '1rem' }}>Enterprise Setup Guide →</a>
   </div>
 </div>
 

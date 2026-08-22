@@ -1,41 +1,37 @@
-# Website
+# NudgeBee Documentation
 
-This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+This repository hosts the official documentation for [NudgeBee](https://nudgebee.com), built using [Docusaurus 3](https://docusaurus.io/).
 
-### Installation
+## Prerequisites
 
-```
-$ npm install
-```
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
 
-### Local Development
+## Local Development
 
-```
-$ npm start
-```
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+2. **Start the local dev server**:
+   ```bash
+   npm start
+   ```
+   This command starts the local development server at `http://localhost:3000` (or `http://localhost:4000`). Edits in `docs/` reflect live via hot-reloading.
 
-### Build
+## Production Build
 
-```
-$ npm run build
-```
+To verify and generate static assets:
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-### Deployment
-
-Using SSH:
-
-```
-$ USE_SSH=true npm run deploy
+```bash
+npm run build
 ```
 
-Not using SSH:
+The compiled output will be generated inside the `build/` directory.
 
-```
-$ GIT_USER=<Your GitHub username> npm run deploy
-```
+To preview the production build locally:
 
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+```bash
+npm run serve
+```
