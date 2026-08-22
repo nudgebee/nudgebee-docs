@@ -17,10 +17,10 @@ The NudgeBee Server is the central control plane of the NudgeBee platform. It ho
 :::
 
 :::tip[Choosing an edition]
-The self-hosted server comes in two editions (see [Editions](../../editions.md) for the full comparison):
+The self-hosted server comes in two editions (see [Editions & Capabilities](../../editions.md) for the full comparison):
 
-- **Community** <Community/> — free and open source (Apache 2.0), fully functional. Images are pulled from the public `ghcr.io/nudgebee` registry. **No license key required.** OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), magic-link email, and credentials login are all included.
-- **Enterprise** <Enterprise/> — adds **SAML 2.0** SSO, NudgeBee's managed models (`nb-llm`, `nb-slm`), and commercial support. Images are pulled from `registry.nudgebee.com` and require a license key.
+- **Community** <Community/> — free, source-available self-hosted edition. The Server is licensed under **BSL 1.1** (converting to Apache 2.0 on its stated change date); Agents are **Apache 2.0**. Images are pulled from the public `ghcr.io/nudgebee` registry. **No license key required.** OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), magic-link email, and credentials login are all included.
+- **Enterprise** <Enterprise/> — adds **SAML 2.0** SSO, NudgeBee's managed models (`nb-llm`, `nb-slm`), and commercial SLA support. Images are pulled from `registry.nudgebee.com` and require a license key.
 
 The installation steps below use tabs — pick your edition in each step.
 :::
@@ -262,13 +262,17 @@ Replace `<your-license-key>` with your NudgeBee license key and generate
 ### Step 3: Run the Helm Install
 
 ```shell
+# 1. Set your target Kubernetes context (or omit --kube-context if already using current context):
+export KUBE_CONTEXT="$(kubectl config current-context)"
+
+# 2. Deploy NudgeBee Server:
 helm upgrade nudgebee $NUDGEBEE_CHART \
   -f values.yaml \
   --install \
   --namespace nudgebee \
   --create-namespace \
   --wait \
-  --kube-context $KUBE_CONTEXT
+  --kube-context "$KUBE_CONTEXT"
 ```
 
 To install a specific version, add `--version $CHART_VERSION` to the command. See the [Server Releases](../../releases/server/) page for available versions.
@@ -335,7 +339,7 @@ You should receive an `HTTP/1.1 200 OK` (or `307 Temporary Redirect` to `/auth/s
 Forward the NudgeBee UI to your local machine:
 
 ```shell
-kubectl port-forward svc/app 3000:80 -n nudgebee --kube-context $KUBE_CONTEXT
+kubectl port-forward svc/app 3000:80 -n nudgebee
 ```
 
 Then open [http://localhost:3000](http://localhost:3000) in your browser to view the login screen.
@@ -346,8 +350,7 @@ Retrieve the auto-generated bootstrap password from the `nudgebee` secret:
 
 ```shell
 kubectl get secret nudgebee -n nudgebee \
-  -o jsonpath='{.data.NEXTAUTH_DUMMY_CREDS_PASSWORD}' \
-  --kube-context $KUBE_CONTEXT | base64 -d
+  -o jsonpath='{.data.NEXTAUTH_DUMMY_CREDS_PASSWORD}' | base64 -d
 echo
 ```
 
@@ -359,20 +362,15 @@ Use your admin email (e.g. `admin@nudgebee.local` or the email provided during i
 
 ---
 
-## 5. Verify Your First Successful Outcome with NuBi
+## 5. Verify Control Plane Health & Next Steps
 
-Once logged into the dashboard, verify end-to-end intelligence by running your first AI-SRE investigation:
+Once logged into the dashboard, complete your initial control plane verification:
 
-1. **Open the NuBi AI Drawer**: Click the **NuBi** icon in the right-hand sidebar or navigation bar.
-2. **Run a Concrete Diagnostic Prompt**:
-   ```text
-   What workloads in this cluster have experienced restarts or OOMKills in the last 24 hours?
-   ```
-3. **Expected Result**: NuBi inspects live telemetry, queries the Kubernetes event stream, and responds with:
-   - A structured list of affected workloads, namespaces, and pod names.
-   - Exact exit codes (e.g. `137 OOMKilled` or `CrashLoopBackOff`).
-   - Root cause hypothesis and recommended next steps (e.g. memory request adjustments or inspecting application stack traces).
-4. **Success Verification**: When you receive a structured response with direct links to the relevant workloads, your NudgeBee Control Plane and AI engine are verified and healthy!
+1. **Verify UI & Dashboard Navigation**: Navigate through **Kubernetes**, **Troubleshoot**, and **Optimizations** to confirm all views load without errors.
+2. **Connect an LLM Provider (BYOM)**: Navigate to **Settings → AI / LLM** and configure your API key ([OpenAI, AWS Bedrock, or Ollama](../../integrations/LLM/)) to enable NuBi AI investigations and automated RCA.
+3. **Next Step: Install the K8s Agent**: The NudgeBee Server is the control plane. To begin ingesting real-time pod telemetry, logs, and metrics from your target clusters, proceed to:
+
+👉 **[Install the NudgeBee Agent on Your Cluster](../agent/installation/index.md)**
 
 ---
 

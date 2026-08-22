@@ -11,7 +11,7 @@ NudgeBee is an **AI Agents & Agentic Workflow Platform for SRE, CloudOps, and Su
 NudgeBee's Semantic Knowledge Graph correlates logs, metrics, traces, and code to give your team Cloud-Ops Intelligence that reduces MTTR from hours to minutes. Pre-packaged but not a black box — every agent and workflow is fully extensible, modular, and controllable.
 
 :::tip[Open Architecture & Licensing]
-The **Community** edition is free and fully functional for internal production and operations — server licensed under **BSL 1.1** and agents under **Apache 2.0**. See [Editions & Capabilities](./editions.md) for the Community / Enterprise / Cloud comparison.
+The **Community** edition is a free, source-available self-hosted edition containing the complete core monitoring, troubleshooting, optimization, workflow, and BYOM experience. The Server is licensed under **BSL 1.1** (converting to Apache 2.0 on its stated change date), and Agents are licensed under **Apache 2.0**. See [Editions & Capabilities](./editions.md) for the Community / Enterprise / Cloud comparison.
 :::
 
 <div style={{position: "relative", paddingBottom: "62.5%", height: 0}}><iframe src="https://www.loom.com/embed/0691f374484541468dcfb6d71fedd817?sid=970a6eb4-c0e9-40a2-b2c9-9ba145231f54" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
@@ -44,8 +44,8 @@ Select the path that matches your evaluation and security requirements:
       <p style={{ fontSize: '0.85rem', color: '#666' }}><strong>Estimated time:</strong> 20–30 minutes</p>
       <ol style={{ paddingLeft: '1.2rem', fontSize: '0.9rem' }}>
         <li><a href="./installation/server/">Deploy NudgeBee Server</a> using the default Helm chart.</li>
+        <li><a href="./installation/agent/installation/">Install the Agent</a> on your monitored cluster.</li>
         <li>Connect your <a href="./integrations/LLM/">BYOM model provider</a> (OpenAI, Bedrock, Ollama).</li>
-        <li><a href="./installation/agent/installation/">Install the Agent</a> to start gathering cluster telemetry.</li>
       </ol>
     </div>
     <a href="./installation/server/" className="button button--secondary button--block" style={{ marginTop: '1rem' }}>Community Quick Start →</a>
@@ -57,9 +57,9 @@ Select the path that matches your evaluation and security requirements:
       <p style={{ fontSize: '0.9rem', color: '#555' }}><strong>Best for:</strong> Production-grade deployments requiring SAML SSO, high availability, and compliance.</p>
       <p style={{ fontSize: '0.85rem', color: '#666' }}><strong>Estimated time:</strong> 30–60+ minutes</p>
       <ol style={{ paddingLeft: '1.2rem', fontSize: '0.9rem' }}>
-        <li>Provision external PostgreSQL, Redis, and RabbitMQ.</li>
-        <li>Deploy the Server with <a href="./installation/server/">Enterprise Helm values</a> and license key.</li>
-        <li>Configure <a href="./integrations/Authentication/SAML">SAML 2.0 SSO</a> and air-gapped SLMs.</li>
+        <li>Choose bundled dependencies for evaluation, or external PostgreSQL & RabbitMQ for HA.</li>
+        <li>Deploy Server with <a href="./installation/server/">Enterprise Helm values</a> and license key.</li>
+        <li>Optionally configure <a href="./integrations/Authentication/SAML">SAML 2.0 SSO</a> and air-gapped SLMs.</li>
       </ol>
     </div>
     <a href="./installation/server/" className="button button--secondary button--block" style={{ marginTop: '1rem' }}>Enterprise Setup Guide →</a>
@@ -82,13 +82,13 @@ Select the path that matches your evaluation and security requirements:
 
 ## Deployment Models
 
-NudgeBee is available in two deployment models — and self-hosted comes in two **editions** (free Community and licensed Enterprise — see [Editions](./editions.md)). Choose what fits your organization's requirements:
+NudgeBee is available in two deployment models — and self-hosted comes in two **editions** (free Community and licensed Enterprise — see [Editions & Capabilities](./editions.md)). Choose what fits your organization's requirements:
 
 | | **Cloud SaaS** | **Self-Hosted (On-Prem)** |
 |---|---|---|
-| **How it works** | NudgeBee hosts and manages the server for you. You connect your infrastructure to the NudgeBee cloud. | You install the NudgeBee server on your own Kubernetes cluster. Available as the free open-source **Community** edition or the licensed **Enterprise** edition. |
+| **How it works** | NudgeBee hosts and manages the server for you. You connect your infrastructure to the NudgeBee cloud. | You install the NudgeBee server on your own Kubernetes cluster. Available as the free Community edition (BSL 1.1) or the licensed Enterprise edition. |
 | **Best for** | SRE, CloudOps, and Support teams that want to get started quickly without managing additional infrastructure. | Organizations with strict data residency, compliance, or air-gapped environment requirements — or anyone who wants a free, fully-functional self-hosted deployment. |
-| **Security** | SOC 2 Type II and ISO 27001 certified. | Full data control within your own infrastructure. No telemetry — see [Telemetry & Privacy](./telemetry.md). |
+| **Security & Telemetry** | SOC 2 Type II and ISO 27001 certified. | No product analytics or phone-home telemetry is sent to NudgeBee. Operational telemetry collected from your workloads remains strictly within your self-hosted environment. See [Telemetry & Privacy](./telemetry.md). |
 | **Get started** | Sign up at [app.nudgebee.com](https://app.nudgebee.com) | Follow the [Server Installation Guide](./installation/server/) |
 
 ---
@@ -105,7 +105,7 @@ NudgeBee has two components, both packaged as Helm charts that deploy natively o
 | **[NudgeBee Agent](./installation/agent/installation/index.md)** | Lightweight collector that runs inside each cluster you want to monitor. Collects workload data and sends it to the server. | **Everyone** — both SaaS and self-hosted users. |
 
 :::info Infrastructure Prerequisite
-**Self-hosted users**: You need a dedicated Kubernetes cluster (or namespace) to run the NudgeBee Server before connecting your monitored clusters. Sizing typically requires a 2-node cluster with 16 GB RAM and 4 cores per node. If you do not have Kubernetes clusters to run the server on, choose **Cloud SaaS**.
+**Self-hosted users**: You need a Kubernetes cluster (or namespace) to run the NudgeBee Server. Sizing requires **~4 CPU cores and 8–12 GB RAM total** with bundled dependencies (PostgreSQL, RabbitMQ, Redis), or **~2–4 CPU cores and 4–8 GB RAM** with externally managed databases. See the [Server Installation Sizing Table](./installation/server/index.md#system--sizing-requirements) for details.
 :::
 
 ### Architecture at a Glance
@@ -207,15 +207,59 @@ After installation or sign-up, access the NudgeBee UI:
 
 ### Login Options
 
-NudgeBee supports multiple authentication methods:
+NudgeBee supports multiple authentication methods depending on your deployment:
 
-- **SSO (Single Sign-On)**: Log in with Google, Azure, Okta, or Auth0. Available when [authentication integration](./integrations/Authentication/) is configured.
-- **Magic Link**: Enter your email address and receive a one-time login link — no password needed. This is the default method when SSO is not configured.
-- **Admin Invite**: If your team admin has added you, you will receive an email invitation with a login link.
+- **Bootstrap Administrator Credentials**: For initial self-hosted installation, retrieve the auto-generated password from the `nudgebee` Kubernetes secret. Disable this in production after configuring SSO.
+- **SSO (Single Sign-On)**: Log in with Google, Microsoft/Azure AD, Okta, or Auth0 (all editions). SAML 2.0 with IdP group mapping is supported on Enterprise and Cloud.
+- **Magic Link**: Enter your email address and receive a one-time login link — no password needed (Cloud SaaS default).
+- **Admin Invite**: Accept an email invitation link sent by your organization administrator.
 
-:::info
-NudgeBee does not store passwords. Authentication is handled through SSO providers or magic email links, keeping your login secure and simple.
+:::info Authentication Privacy
+NudgeBee Cloud uses passwordless authentication. Self-hosted installations initially create a bootstrap administrator credential, which should be disabled after configuring production authentication.
 :::
+
+---
+
+## Progressive Capability Matrix
+
+NudgeBee delivers value in stages as you connect components of your stack:
+
+| Stage | Connected Component | What It Unlocks |
+|:---:|---|---|
+| **1** | **Server Only** | Control plane UI, admin settings, user management, and API access |
+| **2** | **K8s Agent Connected** | Real-time cluster inventory, pod health, node statuses, and Kubernetes event stream |
+| **3** | **Metrics & Observability** | CPU/memory utilization graphs, SLO tracking, rightsizing recommendations, and cost breakdown |
+| **4** | **LLM (BYOM) Connected** | NuBi AI Assistant, natural-language cluster queries, automated incident RCA, and runbook suggestions |
+| **5** | **Notifications (Slack / Teams)** | Incident alerting, interactive ChatOps triage buttons, and daily digest summaries |
+| **6** | **Git Repository (GitHub / GitLab)** | Automated PR generation for resource limit changes and GitOps reconciliation |
+
+---
+
+## Onboarding Troubleshooting Decision Tree
+
+If you encounter an issue during initial setup, use this decision tree to pinpoint the cause:
+
+```text
+1. Can you load the Web UI at http://localhost:3000 (or your ingress domain)?
+   ├── NO  → Check server pods: `kubectl get pods -n nudgebee`
+   │         See Server Troubleshooting: /docs/installation/server/#troubleshooting-installation-failures
+   └── YES → Proceed to step 2
+
+2. Does your Kubernetes cluster appear with a "Connected" badge in the UI?
+   ├── NO  → Check agent runner logs: `kubectl logs -n nudgebee-agent -l app=nudgebee-runner`
+   │         Ensure outbound TCP port 443 is permitted in your cluster NetworkPolicy.
+   └── YES → Proceed to step 3
+
+3. Are CPU and memory metric charts populating for workloads?
+   ├── NO  → Verify Prometheus URL: check `globalConfig.prometheus_url` in agent values.yaml.
+   └── YES → Proceed to step 4
+
+4. Does NuBi answer natural-language cluster questions?
+   ├── NO  → Verify BYOM model provider API key under Settings → AI / LLM.
+   └── YES → Setup is healthy and complete!
+```
+
+---
 
 ### What to Do After Your First Login
 

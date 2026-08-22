@@ -10,7 +10,7 @@ documentation — this page is the source of truth for what each one includes.
 
 | | **Community** <Community/> | **Enterprise** <Enterprise/> | **Cloud** <Cloud/> |
 |---|---|---|---|
-| **What it is** | Free self-hosted edition. Server is licensed under **BSL 1.1**; Agents are **Apache 2.0**. Fully functional. | Self-hosted with a commercial license. Adds enterprise features and SLA support. | Fully managed SaaS, hosted and operated by NudgeBee. |
+| **What it is** | Free, source-available self-hosted edition. The Server is licensed under **BSL 1.1** (converting to Apache 2.0 on change date); Agents are **Apache 2.0**. | Self-hosted with a commercial license. Adds enterprise features, SAML SSO, and SLA support. | Fully managed SaaS, hosted and operated by NudgeBee. |
 | **Where it runs** | Your own Kubernetes cluster | Your own Kubernetes cluster | [app.nudgebee.com](https://app.nudgebee.com) |
 | **Container images** | Public — `ghcr.io/nudgebee` (no authentication) | Licensed — `registry.nudgebee.com` | Managed for you |
 | **License key** | Not required | Required | Managed in cloud account |
@@ -19,16 +19,12 @@ documentation — this page is the source of truth for what each one includes.
 | **Support** | Community ([GitHub Issues & Discussions](https://github.com/nudgebee)) | Commercial support (SLA) | Commercial support (SLA) |
 
 :::tip
-Not sure where to start? The **Community** edition is fully functional and free
-— monitoring, the Semantic Knowledge Graph, cost optimizations, troubleshooting,
-the Workflow Builder, and Autopilot all work out of the box. You can move to
-Enterprise or Cloud later without losing your configuration.
+Not sure where to start? The **Community** edition is a production-capable self-hosted edition containing the complete core monitoring, troubleshooting, optimization, workflow, and BYOM experience — the Semantic Knowledge Graph, cost optimizations, alerting, the Workflow Builder, and Autopilot all work out of the box. You can move to Enterprise or Cloud later without losing your configuration.
 :::
 
 ## What's in the Community edition
 
-The Community edition is **fully functional** for self-hosted Kubernetes
-operations. It includes:
+The Community edition provides a comprehensive foundation for self-hosted Kubernetes operations. It includes:
 
 - The NudgeBee **Server** (control plane, UI, API) and **Agent**
 - The **Semantic Knowledge Graph**
