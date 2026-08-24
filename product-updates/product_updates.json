@@ -1,5 +1,15 @@
 [
   {
+    "slug": "2026-08-1_6_update",
+    "title": "NudgeBee 1.6.0 is Here",
+    "body": "Here's a quick overview of the latest updates and improvements we've made to NudgeBee.",
+    "category": "announcement",
+    "url": "https://docs.nudgebee.com/docs/installation/server/release/1.6.0/",
+    "highlight": true,
+    "is_active": true,
+    "published_at": "2026-08-20T00:00:00Z"
+  },
+  {
     "slug": "2026-08-1_5_update",
     "title": "NudgeBee 1.5.0 is Here",
     "body": "Here's a quick overview of the latest updates and improvements we've made to NudgeBee.",
