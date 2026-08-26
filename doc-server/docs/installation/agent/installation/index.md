@@ -89,7 +89,7 @@ Choose your Kubernetes environment:
 helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
 helm repo update
 
-# 2. Install Prometheus (skip if already running in cluster)
+# 2. Install Prometheus (already have one? see the note below - do not just skip)
 helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-stack \
   --namespace nudgebee-agent --create-namespace \
   --set nodeExporter.enabled=true \
@@ -112,7 +112,7 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
 helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
 helm repo update
 
-# 2. Install Prometheus (skip if already running in cluster)
+# 2. Install Prometheus (already have one? see the note below - do not just skip)
 helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-stack \
   --namespace nudgebee-agent --create-namespace \
   --set nodeExporter.enabled=true \
@@ -165,15 +165,39 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
 
 ### Step 3: Send Your Alerts to the Agent
 
-NudgeBee raises alert-driven events only if your Alertmanager posts alerts to the agent. If you installed Prometheus with the values file above, that receiver is already in it and there is nothing more to do here.
+NudgeBee raises alert-driven events only if your Alertmanager posts alerts to the agent. If you installed Prometheus using the values file in Step 2, that receiver is already configured.
 
-Otherwise you have to add it yourself, and it is easy to forget: with no receiver pointing at the agent, the pods stay healthy, nothing logs an error, and no alerts ever arrive. Alerts go to:
+:::caution Already running Prometheus? Configure Alertmanager to push alerts
+Skipping the Prometheus install is fine—the agent **queries** metrics, so it only needs a reachable URL.
 
+Alerts are different: they are **pushed**, and the values file in Step 2 is what configures Alertmanager to send them. If you skip Step 2 without wiring Alertmanager, NudgeBee gets metrics and traces but never an alert, with nothing reporting an error.
+
+Add this receiver to your existing Alertmanager configuration:
+
+```yaml
+route:
+  routes:
+    - receiver: nudgebee-agent
+      group_by: ['...']
+      group_wait: 1s
+      group_interval: 1s
+      repeat_interval: 4h
+      continue: true
+receivers:
+  - name: nudgebee-agent
+    webhook_configs:
+      - url: http://<release>-runner.<agent-namespace>.svc/api/alerts
+        send_resolved: true
 ```
-http://<release>-runner.<agent-namespace>.svc/api/alerts
-```
 
-[Alert Forwarding](../connect/alertmanager.md) walks through each setup: an existing kube-prometheus-stack, an operator-managed Alertmanager (what Thanos-based stacks usually run), a plain Alertmanager, VictoriaMetrics, and an Alertmanager outside the cluster.
+- **Receiver URL**: `helm install` prints the exact URL for your release. For default installations in `nudgebee-agent`, this is `http://nudgebee-agent-runner.nudgebee-agent.svc/api/alerts`.
+- **`continue: true`**: Keep this enabled so your existing receivers (Slack, PagerDuty, email) continue to receive alerts.
+- **`AlertmanagerConfig` CR caveat**: Do not use an unscoped `AlertmanagerConfig` Custom Resource without root routing, as Prometheus Operator scopes them to their own namespace by default.
+- **External Alertmanager**: If your Alertmanager runs outside this cluster (Grafana Cloud, Chronosphere, or a central instance), the in-cluster service URL is unreachable—use the [Prometheus Alertmanager webhook integration](/docs/integrations/Webhooks/) instead.
+- **Verification**: A `Watchdog` event appearing in NudgeBee proves delivery end to end. If `AlertmanagerFailedToSendAlerts` appears in your Prometheus alerts, the webhook URL is unreachable.
+:::
+
+For complete configuration instructions across kube-prometheus-stack, VictoriaMetrics, and standalone setups, see the [Alert Forwarding Guide](../connect/alertmanager.md).
 
 ---
 
