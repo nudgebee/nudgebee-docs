@@ -188,7 +188,7 @@ kubectl create secret generic metrics-datasource-secret \
   -n nudgebee-agent
 ```
 
-If your backend uses basic auth or AWS SigV4 instead, use the matching VMAlert flag (`datasource.basicAuth`, `datasource.awsSigv4`) in place of the bearer token below. None of this involves the NudgeBee agent, which only receives what VMAlertmanager forwards.
+If your backend uses basic auth or OAuth2 instead, VMAlert takes `datasource.basicAuth` or `datasource.oauth2` in place of the bearer token below. None of this involves the NudgeBee agent, which only receives what VMAlertmanager forwards.
 
 ### 2. Install
 
@@ -247,13 +247,9 @@ vmalert:
   enabled: true
   spec:
     datasource:
-      url: "https://YOUR_CHRONOSPHERE_DOMAIN.chronosphere.io/data/metrics"
+      url: "<your-metrics-query-endpoint>"
     notifiers:
     - url: http://vmalertmanager-vma-victoria-metrics-k8s-stack.svc:9093
-    remoteRead:
-      url: "https://YOUR_CHRONOSPHERE_DOMAIN.chronosphere.io/data/metrics/api/v1/prom/remote/read"
-    remoteWrite:
-      url: "https://YOUR_CHRONOSPHERE_DOMAIN.chronosphere.io/data/metrics/api/v1/prom/remote/write"
     selectAllByDefault: true
     evaluationInterval: 20s
     extraArgs:
@@ -263,7 +259,7 @@ vmalert:
       - name: VM_datasource_bearerToken
         valueFrom:
           secretKeyRef:
-            name: chronosphere-secret
+            name: metrics-datasource-secret
             key: api-token
 
 vmauth:
@@ -293,6 +289,8 @@ kubeScheduler:
 kubeProxy:
   enabled: false
 ```
+
+VMAlert only needs `datasource` and `notifiers` to evaluate rules and route what fires. Add `remoteWrite` and `remoteRead` pointing at your backend's remote-write and remote-read endpoints if you also want recording-rule results persisted and alert state restored across restarts; neither is required for forwarding to NudgeBee.
 
 The token stays out of the manifest: `-envflag.enable` with prefix `VM_` makes VictoriaMetrics read `VM_datasource_bearerToken` from the environment, which comes from the Secret.
 
