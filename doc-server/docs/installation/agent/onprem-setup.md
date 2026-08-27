@@ -6,14 +6,14 @@ sidebar_position: 4
 
 ## Introduction
 
-Following is example configuration for using NudgeBee-agent with On-Prem Server
+Example configuration for pointing the agent at a self-hosted NudgeBee server.
 
-## Prerequisute
+## Prerequisites
 - Onprem Collector-Server Url
 - Onprem Relay-Server Url
 - Agent Keys
 - Review [Metrics Provider](./connect/metrics.md)
-- Review [Loggin Providers](./connect/logging/index.md)
+- Review [Logging Providers](./connect/logging/index.md)
 
 
 ### Installation
