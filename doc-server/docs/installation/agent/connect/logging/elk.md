@@ -7,9 +7,7 @@ sidebar_position: 2
 If you have existing ELK stack you can integrate using below config
 
 ## NudgeBee Agent Configuration
-By default ELK stack flag is disabled and to enabled same and provide config use below config
-
-You can configure nudgebee using API Key or with Basic Auth
+Elasticsearch is off by default. Turn it on and point the agent at your cluster, authenticating with either an API key or basic auth:
 
 ```yaml
 runner:
