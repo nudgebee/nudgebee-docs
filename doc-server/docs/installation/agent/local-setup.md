@@ -41,7 +41,7 @@ In [app.nudgebee.com](https://app.nudgebee.com), go to **Admin → Integrations*
 ## 3. Install the agent
 
 ```bash
-wget https://raw.githubusercontent.com/nudgebee/k8s-agent/refs/heads/prod/installation.sh
+wget https://raw.githubusercontent.com/nudgebee/k8s-agent/main/installation.sh
 sh installation.sh -a <agent-key> -d true
 ```
 
