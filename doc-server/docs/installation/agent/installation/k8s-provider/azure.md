@@ -1,3 +1,7 @@
+---
+sidebar_position: 3
+---
+
 # NudgeBee Integration with Azure Monitor (Traces + Prometheus)
 
 This guide explains how to integrate **Azure Monitor** with **NudgeBee** to collect **traces and Prometheus metrics** securely using an **Azure AD App**/**Service Principal**.  
@@ -101,21 +105,23 @@ To integrate NudgeBee with Prometheus metrics from Azure Monitor, you need to ob
 
 ---
 
-### Adding the Instrumentation Key to NudgeBee
+### Adding the App Credentials to NudgeBee
 
-You can add your App credentials to your values file as,
+Put the service principal in `runner.prometheus.auth`, alongside the Prometheus query endpoint you copied above:
 
 ```yaml
-additional_env_vars:
-    - name: AZURE_TENANT_ID
-      value: "<your-tenant-id>"
-    - name: AZURE_CLIENT_ID
-      value: "<app-client-id>"
-    - name: AZURE_CLIENT_SECRET
-      value: "<app-secret-key>"
-    - name: PROMETHEUS_SSL_ENABLED
-      values: true
+globalConfig:
+  prometheus_url: "<prometheus-query-endpoint>"
+
+runner:
+  prometheus:
+    auth:
+      azureClientId: "<app-client-id>"
+      azureClientSecret: "<app-secret-key>"
+      azureTenantId: "<your-tenant-id>"
 ```
+
+On a cluster with a managed identity assigned instead of a client secret, drop `azureClientSecret` and set `azureUseManagedId: "true"` with the same client and tenant IDs.
 
 ## Instrumentation Key in Application Insights
 

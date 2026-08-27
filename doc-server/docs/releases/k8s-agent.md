@@ -16,5 +16,5 @@ The **NudgeBee K8s Agent** runs inside your Kubernetes clusters as a central Run
 ## Installation & Upgrade
 
 - **Installation Guide**: [Deploy K8s Agent across EKS, GKE, AKS, and Local Clusters](../installation/agent/installation/index.md)
-- **Helm Values Reference**: [Full Chart Configuration Reference](../installation/agent/installation/helm_values.md)
+- **Helm Values Reference**: [Full Chart Configuration Reference](../installation/agent/operate/helm_values.md)
 - **Upgrade Guide**: [Upgrading Existing K8s Agents](../installation/agent/installation/upgrade.md)

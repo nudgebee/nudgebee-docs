@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 # Cluster Autoscaler
 
 NudgeBee supports [Karpenter](https://karpenter.sh/) out of the box for managing cluster-nodes scaling.

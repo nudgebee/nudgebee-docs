@@ -16,6 +16,36 @@ const config = {
       onBrokenMarkdownImages: 'warn',
     },
   },
+  plugins: [
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        // Agent docs were regrouped into install / connect / operate.
+        // Keep the old URLs alive: they are linked from the Helm chart's
+        // ArtifactHub entry, `helm install` output, and customer bookmarks.
+        redirects: [
+          { from: '/docs/installation/agent/installation/alertmanager', to: '/docs/installation/agent/connect/alertmanager' },
+          { from: '/docs/installation/agent/installation/metrics', to: '/docs/installation/agent/connect/metrics' },
+          { from: '/docs/installation/agent/installation/multi_tenant_metrics', to: '/docs/installation/agent/connect/multi_tenant_metrics' },
+          { from: '/docs/installation/agent/installation/grafana', to: '/docs/installation/agent/connect/grafana' },
+          { from: '/docs/installation/agent/installation/logging', to: '/docs/installation/agent/connect/logging' },
+          { from: '/docs/installation/agent/installation/logging/loki', to: '/docs/installation/agent/connect/logging/loki' },
+          { from: '/docs/installation/agent/installation/logging/elk', to: '/docs/installation/agent/connect/logging/elk' },
+          { from: '/docs/installation/agent/installation/logging/signoz', to: '/docs/installation/agent/connect/logging/signoz' },
+          { from: '/docs/installation/agent/installation/logging/last9', to: '/docs/installation/agent/connect/logging/last9' },
+          { from: '/docs/installation/agent/installation/logging/logz.io', to: '/docs/installation/agent/connect/logging/logz.io' },
+          { from: '/docs/installation/agent/installation/tracing', to: '/docs/installation/agent/connect/tracing' },
+          { from: '/docs/installation/agent/installation/tracing/clickhouse-tracing', to: '/docs/installation/agent/connect/tracing/clickhouse-tracing' },
+          { from: '/docs/installation/agent/installation/tracing/gcp-tracing', to: '/docs/installation/agent/connect/tracing/gcp-tracing' },
+          { from: '/docs/installation/agent/installation/helm_values', to: '/docs/installation/agent/operate/helm_values' },
+          { from: '/docs/installation/agent/installation/node-agent-configs', to: '/docs/installation/agent/operate/node-agent-configs' },
+          { from: '/docs/installation/agent/installation/cluster-autoscaler', to: '/docs/installation/agent/operate/cluster-autoscaler' },
+          { from: '/docs/installation/agent/installation/cluster-autoscaler/aks_kaarpenter_installation', to: '/docs/installation/agent/operate/cluster-autoscaler/aks_kaarpenter_installation' },
+        ],
+      },
+    ],
+  ],
+
   themes: [
     '@docusaurus/theme-mermaid',
     [

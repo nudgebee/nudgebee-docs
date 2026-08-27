@@ -19,8 +19,11 @@ runner:
     apiKey: "my-api-key"
     username: ""
     password: ""
-    headers: ""
+    # verify the server certificate on https URLs
+    sslVerify: false
 ```
+
+Both `enabled: true` and `url` are required; setting only the URL leaves Elasticsearch off. `apiKey` takes precedence over `username`/`password` when both are set.
 
 To generate new API key use below steps:
 1. Generate api key using steps mentioned in [documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-api-key.html)

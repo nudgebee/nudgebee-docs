@@ -1,18 +1,10 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
-# Google Kubernentes Engine
+# Google Kubernetes Engine
 
-To enable NudgeBee cost model to fetch pricing information from your GCP project, you must generate an API key to replace the default key in the CLOUD_PROVIDER_API_KEY environment variable. You will need to follow the instructions provided in Get Google Cloud pricing information:
+GKE needs no special agent values. Install the agent the same way as anywhere else: [Agent Installation](../index.md).
 
-1. [Activate the Cloud Billing API](https://console.cloud.google.com/apis/enableflow?apiid=cloudbilling.googleapis.com&pli=1).
-2. [Generate an API key with the appropriate access permissions](https://cloud.google.com/docs/authentication/api-keys#create).
+## Cost and pricing data
 
-Optionally, you can edit the key to restrict its access to the Cloud Billing API.
-Add the GCP API Key to NudgeBee agent values
-```
-opencost:
-  opencost:
-    exporter:
-      cloudProviderApiKey: "<your-gcp-billing-api-key>"
-```
+Pricing comes from the NudgeBee server, not from the agent, so there is nothing to configure in the cluster. Connect the GCP project once and every GKE cluster in it gets cost data: [GCP Account Integration](../../../../features/Cloud/GCP.md).

@@ -1,0 +1,8 @@
+{
+  "label": "Connect Data Sources",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Point the agent at the metrics, logs, traces, and alerts you already collect."
+  }
+}

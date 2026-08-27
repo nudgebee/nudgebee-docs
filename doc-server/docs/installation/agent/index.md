@@ -17,15 +17,31 @@ If you connected a cloud account (AWS, Azure, or GCP), NudgeBee can auto-discove
 
 ### What You Will Find in This Section
 
-- **[Installation](./installation/)** — Step-by-step guide to deploy the agent using Helm, including prerequisites and system requirements. Typically takes 5–10 minutes per cluster.
-- **[Helm Values](./installation/helm_values.md)** — Complete reference for agent Helm chart configuration values.
-- **[Upgrade](./installation/upgrade.md)** — How to upgrade an existing agent to a newer version.
-- **[Kubernetes Provider Setup](./installation/k8s-provider/)** — Provider-specific instructions for GKE, AKS, and other managed Kubernetes services.
-- **[Logging Integration](./installation/logging/)** — Connect log sources (ELK, Loki, SignalFx, etc.) to the agent.
-- **[Tracing Integration](./installation/tracing/)** — Connect tracing backends (ClickHouse, GCP) for distributed tracing.
-- **[Proxy Agent](../proxy-agent/)** — Deploy agents through a proxy for restricted or air-gapped environments.
-- **[Local Setup](./local-setup.md)** — Run NudgeBee locally for development and testing.
-- **[On-Prem Setup](./onprem-setup.md)** — Additional configuration for air-gapped or on-premises environments.
+**Install** — getting the agent running, 5–10 minutes per cluster.
+
+- **[Install the agent](./installation/)** — prerequisites, Helm install, and how to verify it connected.
+- **[Kubernetes providers](./installation/k8s-provider/)** — extra steps for GKE and AKS.
+- **[Upgrade](./installation/upgrade.md)** — moving an existing agent to a newer version.
+
+**Connect data sources** — what the agent reads once it is running.
+
+- **[Alert forwarding](./connect/alertmanager.md)** — point your Alertmanager at the agent. Without this NudgeBee never sees an alert.
+- **[Metrics](./connect/metrics.md)** — Prometheus, Thanos, VictoriaMetrics, Chronosphere, and other backends.
+- **[Logs](./connect/logging/)** — Loki, Elasticsearch, SigNoz, Last9.
+- **[Traces](./connect/tracing/)** — the bundled OTel collector and ClickHouse, or Google Cloud Trace.
+- **[Grafana](./connect/grafana.md)** and **[multi-tenant Prometheus](./connect/multi_tenant_metrics.md)**.
+
+**Operate** — tuning and reference for a running agent.
+
+- **[Helm values](./operate/helm_values.md)** — every value you are likely to set, including access modes and sizing.
+- **[Node agent configuration](./operate/node-agent-configs.md)** — eBPF collector tuning.
+- **[Cluster autoscaler](./operate/cluster-autoscaler/)** — Karpenter support.
+
+**Other environments**
+
+- **[Proxy Agent](../proxy-agent/)** — deploy through a proxy for restricted or air-gapped networks.
+- **[Local setup](./local-setup.md)** — run against a local KinD cluster.
+- **[On-prem setup](./onprem-setup.md)** — values for a self-hosted server.
 
 ## Architecture
 
@@ -87,10 +103,10 @@ The Runner facilitates workload discovery, coordinates data aggregation from met
 - Maintains an outbound-only WebSocket connection to the Relay Server.
 - Executes diagnostic runbooks and remediation commands safely inside the cluster.
 
-### [Logging Integration](./installation/logging/) - Log Stream Collection
+### [Logging Integration](./connect/logging/) - Log Stream Collection
 Collects and aggregates application, system, and container logs from Loki, OpenObserve, Elasticsearch, CloudWatch, or Fluent Bit for AI-driven root cause analysis and anomaly detection.
 
-### [Tracing Integration](./installation/tracing/) - Distributed Tracing & APM
+### [Tracing Integration](./connect/tracing/) - Distributed Tracing & APM
 Leverages the OpenTelemetry Collector and backends (ClickHouse, Jaeger, Tempo, GCP Cloud Trace) to capture distributed transaction traces, map service dependencies, and pinpoint latency bottlenecks.
 
 ### Recommendation & Diagnostic Jobs

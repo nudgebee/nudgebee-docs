@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 2
 ---
 # OTel Clickhouse Tracing
 <div style={{position: "relative", paddingBottom: "64.86%", height: 0}}><iframe src="https://www.loom.com/embed/04aab9e5e77648a1aabbf159bc6d0ef5?sid=dc467079-1af2-41e3-bb7b-7bf93d226387" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
@@ -37,19 +37,18 @@ ClickHouse serves as the storage backend for the collected tracing data. It is a
 3. **OpenTelemetry Collector**: Collects tracing data from the Node Agent.
 4. **ClickHouse**: Tracing data is forwarded to ClickHouse by the OpenTelemetry collector for storage and analysis.
 
-## Installation
-By default tracing is enabled, To disable traces collection add below config in values.yaml
+## Turning it off
+
+Tracing is on by default. To stop collecting and storing traces:
+
 ```yaml
 runner:
   clickhouse_enabled: false
-
-nodeAgent:
-    enabled: false
 
 opentelemetry-collector:
   enabled: false
 ```
 
-## Conclusion
+That also removes the bundled ClickHouse, since the ClickHouse subchart is conditioned on `opentelemetry-collector.enabled`.
 
-The Kubernetes Node Agent, in conjunction with eBPF probes and the OpenTelemetry collector, provides a robust solution for collecting and analyzing tracing data from Kubernetes clusters. By leveraging these components, organizations can gain valuable insights into application performance and behavior, facilitating efficient troubleshooting and optimization efforts.
+Leave `nodeAgent.enabled` alone unless you want to lose eBPF network metrics too. Without the collector the node agent has nowhere to send spans, but it keeps producing the network and latency metrics NudgeBee uses elsewhere.
