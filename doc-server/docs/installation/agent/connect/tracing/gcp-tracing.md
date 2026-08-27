@@ -82,9 +82,9 @@ runner:
     - name: CLICKHOUSE_PORT
       value: "8123"
     - name: CLICKHOUSE_USER
-      value: default
+      value: "default"
     - name: CLICKHOUSE_DB
-      value: default
+      value: "default"
 ```
 
 :::note
@@ -137,8 +137,8 @@ gcloud container node-pools describe [NODE_POOL_NAME] \
 Check the runner can reach BigQuery with the identity you bound:
 
 ```bash
-kubectl run bigquery-test --image=google/cloud-sdk:slim \
-  -n nudgebee-agent --serviceaccount=nudgebee-agent-runner-service-account \
+kubectl run bigquery-test --image=google/cloud-sdk:slim -n nudgebee-agent \
+  --overrides='{"spec":{"serviceAccountName":"nudgebee-agent-runner-service-account"}}' \
   --restart=Never --rm -it -- bash
 
 # inside the pod

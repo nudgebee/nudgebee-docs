@@ -249,7 +249,7 @@ vmalert:
     datasource:
       url: "<your-metrics-query-endpoint>"
     notifiers:
-    - url: http://vmalertmanager-vma-victoria-metrics-k8s-stack.svc:9093
+    - url: http://vmalertmanager-vma-victoria-metrics-k8s-stack.nudgebee-agent.svc:9093
     selectAllByDefault: true
     evaluationInterval: 20s
     extraArgs:
