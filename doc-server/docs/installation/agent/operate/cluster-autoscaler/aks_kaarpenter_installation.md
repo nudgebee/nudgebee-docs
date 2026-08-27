@@ -13,23 +13,32 @@ Before installing the Karpenter, make sure you have the following prerequisites:
 ### Installation Steps
 Follow these steps to install the Karpenter:
 
-#### Create Identity for Karpenter
-Get cluster details to create config for karpenter
+#### Set the variables the rest of the steps use
+
 ```shell
-AKS_JSON=$(az aks show --name <CLUSTER_NAME> -g <AZ_RESOURCE_GROUP>)
+export CLUSTER_NAME=<your-aks-cluster>
+export RG=<your-resource-group>
+export KARPENTER_NAMESPACE=karpenter
+export KARPENTER_IDENTITY=karpentermsi
 ```
 
-#### Create Identity for Karpenter
+#### Read the cluster details
+
 ```shell
-KMSI_JSON=$(az identity create --name karpentermsi --resource-group <AZ_RESOURCE_GROUP>)
+AKS_JSON=$(az aks show --name "${CLUSTER_NAME}" -g "${RG}")
+```
+
+#### Create the managed identity for Karpenter
+```shell
+KMSI_JSON=$(az identity create --name "${KARPENTER_IDENTITY}" --resource-group "${RG}")
 ```
 
 #### Create Karpernter Service Account Auth
 Create federated credential linked to the karpenter service account for auth usage:
 ```shell
-az identity federated-credential create --name KARPENTER_FID --identity-name karpentermsi --resource-group <AZ_RESOURCE_GROUP> \
+az identity federated-credential create --name KARPENTER_FID --identity-name "${KARPENTER_IDENTITY}" --resource-group "${RG}" \
   --issuer "$(jq -r ".oidcIssuerProfile.issuerUrl" <<< "$AKS_JSON")" \
-  --subject system:serviceaccount:<KARPENTER_NAMESPACE>:karpenter-sa \
+  --subject "system:serviceaccount:${KARPENTER_NAMESPACE}:karpenter-sa" \
   --audience api://AzureADTokenExchange
 ```
 
@@ -53,14 +62,13 @@ The script interrogates the AKS cluster and generates the values file, using kar
 (The script fetches the template automatically.)
 ```shell
 curl -sO https://raw.githubusercontent.com/Azure/karpenter-provider-azure/main/hack/deploy/configure-values.sh
-chmod +x ./configure-values.sh && ./configure-values.sh <CLUSTER_NAME> ${RG} karpenter-sa KarpenterIdentity
+chmod +x ./configure-values.sh && ./configure-values.sh "${CLUSTER_NAME}" "${RG}" karpenter-sa "${KARPENTER_IDENTITY}" false
 ```
 
 
 #### Install Karpenter
 ```shell
-export KARPENTER_VERSION=0.5.1
-export KARPENTER_NAMESPACE=<KARPENTER_NAMESPACE>
+export KARPENTER_VERSION=0.5.1   # check the releases page for a newer one
 
 helm upgrade --install karpenter oci://mcr.microsoft.com/aks/karpenter/karpenter \
   --version "${KARPENTER_VERSION}" \

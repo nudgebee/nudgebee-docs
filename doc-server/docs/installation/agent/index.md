@@ -61,10 +61,12 @@ flowchart TB
             RUNNER["<b>NudgeBee Runner</b> (Deployment)<br/><small>• Aggregates telemetry signals<br/>• Executes in-cluster diagnostic & remediation tasks<br/>• Outbound WSS tunnel</small>"]:::runner
             KUBEWATCH["<b>Event Watcher (Kubewatch)</b><br/><small>Streams resource changes & pod events</small>"]:::collector
             NODE_AGENT["<b>Node Agent</b> (DaemonSet)<br/><small>eBPF network metrics, latency & packet telemetry</small>"]:::collector
-            PROM["<b>Metrics Engine (Prometheus / KSM)</b><br/><small>Scrapes workload metrics & ServiceMonitors</small>"]:::collector
-            LOGS["<b>Logs Engine</b><br/><small>Loki • OpenObserve • Elasticsearch • Fluentbit</small>"]:::collector
-            TRACES["<b>Distributed Tracing (OTel Collector)</b><br/><small>OTLP spans • ClickHouse • Jaeger • Tempo</small>"]:::collector
+            OTEL["<b>OTel Collector + ClickHouse</b><br/><small>Installed by the chart, stores eBPF spans</small>"]:::collector
         end
+
+        PROM["<b>Prometheus / VictoriaMetrics</b><br/><small>Yours, not installed by the agent</small>"]:::k8s
+        AM["<b>Alertmanager</b><br/><small>Yours — needs a receiver pointing at the agent</small>"]:::k8s
+        LOGS["<b>Log store</b><br/><small>Loki • Elasticsearch • SigNoz</small>"]:::k8s
     end
 
     subgraph BACKEND["NudgeBee Server Control Plane"]
@@ -74,12 +76,13 @@ flowchart TB
 
     API_SERVER -->|Watch Events| KUBEWATCH
     KUBEWATCH -->|Forward Events| RUNNER
-    NODE_AGENT -->|eBPF Metrics| PROM
-    NODE_AGENT -->|OTLP Spans| TRACES
+    NODE_AGENT -->|Scraped by| PROM
+    NODE_AGENT -->|OTLP Spans| OTEL
+    AM -->|"POST /api/alerts"| RUNNER
 
     RUNNER -->|Query Metrics| PROM
     RUNNER -->|Query Logs| LOGS
-    RUNNER -->|Query Traces| TRACES
+    RUNNER -->|Query Traces| OTEL
 
     RUNNER -->|"Outbound WSS :443"| RELAY
     RUNNER -->|"HTTPS Telemetry :443"| COLLECTOR
@@ -103,15 +106,17 @@ The Runner facilitates workload discovery, coordinates data aggregation from met
 - Maintains an outbound-only WebSocket connection to the Relay Server.
 - Executes diagnostic runbooks and remediation commands safely inside the cluster.
 
-### [Logging Integration](./connect/logging/) - Log Stream Collection
-Collects and aggregates application, system, and container logs from Loki, OpenObserve, Elasticsearch, CloudWatch, or Fluent Bit for AI-driven root cause analysis and anomaly detection.
+### [Logs](./connect/logging/) - Read From Your Existing Log Store
+The runner queries logs where they already are rather than shipping a second copy. Supported backends are Loki (including Last9, which exposes Loki APIs), Elasticsearch and OpenSearch-compatible services, SigNoz, and Google Cloud Logging.
 
-### [Tracing Integration](./connect/tracing/) - Distributed Tracing & APM
-Leverages the OpenTelemetry Collector and backends (ClickHouse, Jaeger, Tempo, GCP Cloud Trace) to capture distributed transaction traces, map service dependencies, and pinpoint latency bottlenecks.
+### [Traces](./connect/tracing/) - Distributed Tracing
+The node agent produces spans from eBPF and sends them to the OpenTelemetry collector the chart installs, which writes to the bundled ClickHouse. The runner can also read traces from Jaeger, Chronosphere, Apache Pinot, or Google Cloud Trace via BigQuery instead.
+
+### Metrics
+Metrics come from a Prometheus-compatible backend you already run — Prometheus, Thanos, VictoriaMetrics, Grafana Mimir, Chronosphere, Amazon Managed Prometheus, Azure Monitor. The chart does not install one; the quick-install script will add kube-prometheus-stack if the cluster has none.
 
 ### Recommendation & Diagnostic Jobs
-NudgeBee runs scheduled container jobs for specialized analysis:
-- **[Security Vulnerabilities](https://github.com/aquasecurity/trivy)**: Scans container images for CVEs using Trivy.
-- **[Workload Rightsizing](https://github.com/robusta-dev/krr)**: Analyzes CPU and memory usage patterns for FinOps recommendations.
-- **[Cluster Best Practices](https://github.com/derailed/popeye)**: Inspects Kubernetes configurations for misconfigurations and anti-patterns.
-- **[Prometheus](https://github.com/prometheus/prometheus)** (or VictoriaMetrics): Scrapes and indexes real-time workload metrics.
+The runner launches short-lived Jobs for analysis that needs its own tooling:
+- **[Trivy](https://github.com/aquasecurity/trivy)**: scans container images for CVEs.
+- **[KRR](https://github.com/robusta-dev/krr)**: analyses CPU and memory usage for rightsizing recommendations.
+- **[Popeye](https://github.com/derailed/popeye)**: inspects cluster configuration for misconfigurations and anti-patterns.
