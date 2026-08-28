@@ -151,10 +151,11 @@ Required for deploying own-app on slack and using that for NudgeBee integration
 
 ### MS Teams App
 
-Required for integrating with MSteams
+Required for integrating with MS Teams. See the [MS Teams on-prem setup guide](../../integrations/Notifications/msteams.md#how-to-configure-ms-teams-in-your-on-prem-nudgebee) for how to create the Microsoft Entra ID app registration and Azure Bot these values come from.
 
-- **`MS_TEAMS_CLIENT_ID`**: Client ID for Microsoft teams Auth.
-- **`MS_TEAMS_CLIENT_SECRET`**: Client secret for Microsoft teams Auth.
+- **`MS_TEAMS_CLIENT_ID`**: The Application (client) ID of your Microsoft Entra ID app registration.
+- **`MS_TEAMS_CLIENT_SECRET`**: The client secret of your Microsoft Entra ID app registration.
+- **`MS_TEAMS_AUTHORITY`**: (Optional) The Microsoft login authority URL used for OAuth sign-in and token exchange. Defaults to `https://login.microsoftonline.com/common`, which works for multi-tenant app registrations. Required if your app registration is single-tenant — set it to `https://login.microsoftonline.com/<your-tenant-id>`.
 
 ### GChat App
 

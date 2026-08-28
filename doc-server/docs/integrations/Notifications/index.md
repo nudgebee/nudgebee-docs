@@ -28,6 +28,8 @@ NudgeBee currently supports the following notification channels:
     *   [Slack Setup for Cloud SaaS](./slack.md#how-to-configure-slack-in-your-nudgebee-account)
     * [Slack Setup for On-Prem](./slack.md#how-to-configure-slack-in-your-on-prem-nudgebee)
 *   **[Microsoft Teams](./msteams.md)**: Integrate with Microsoft Teams to receive notifications in your team channels.
+    *   [MS Teams Setup for Cloud SaaS](./msteams.md#how-to-configure-ms-teams-in-your-nudgebee-account)
+    *   [MS Teams Setup for On-Prem](./msteams.md#how-to-configure-ms-teams-in-your-on-prem-nudgebee)
 *   **[Google Chat](./google_chat.md)**: Get notifications in your Google Chat rooms.
 
 :::info
