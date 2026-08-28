@@ -151,7 +151,7 @@ Required for deploying own-app on slack and using that for NudgeBee integration
 
 ### MS Teams App
 
-Required for integrating with MS Teams. See the [MS Teams on-prem setup guide](../../integrations/Notifications/msteams.md#how-to-configure-ms-teams-in-your-on-prem-nudgebee) for how to create the Microsoft Entra ID app registration and Azure Bot these values come from.
+Required for integrating with MS Teams. See the [MS Teams on-prem setup guide](../../integrations/Notifications/msteams.md#how-to-configure-ms-teams-in-your-on-prem-nudgebee) for how to create the Microsoft Entra ID app registration these values come from.
 
 - **`MS_TEAMS_CLIENT_ID`**: The Application (client) ID of your Microsoft Entra ID app registration.
 - **`MS_TEAMS_CLIENT_SECRET`**: The client secret of your Microsoft Entra ID app registration.
