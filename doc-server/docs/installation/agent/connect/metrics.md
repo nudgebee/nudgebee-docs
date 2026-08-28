@@ -41,23 +41,14 @@ globalConfig:
   # 5️⃣ Chronosphere (hosted Prometheus API)
   # prometheus_url: "https://<your-org>.chronosphere.io/data/metrics"
   
-  # Additional query-string parameters appended to every PromQL request
-  # e.g. “?timeout=30s&dedup=true”
-  # prometheus_url_query_string: "timeout=30s"
+  # Custom headers sent with every query (comma-separated "Key: Value" pairs)
+  # prometheus_headers: "Authorization: Bearer <token>,X-Scope-OrgID: tenant-a"
 
-  # Custom headers for all API requests (semicolon-separated string)
-  # Format: "Key1: Value1;Key2: Value2"
-  # prometheus_headers: "Authorization: Bearer ${CHRONOSPHERE_API_TOKEN};X-Custom-Header: hello-world"
-
-
-opencost:
-  opencost:
-    prometheus:
-      external:
-        url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
-      #bearer_token: ""
-      #bearer_token_key: DB_BEARER_TOKEN
+  # Labels appended to every PromQL query (multi-cluster backends)
+  # prometheus_additional_labels: {k8s_cluster: aws-prod}
 ```
+
+A static header does not work for backends that sign each request. For Amazon Managed Prometheus, Azure Monitor, or Coralogix, fill in `runner.prometheus.auth` instead: see [Metrics backend](../operate/helm_values.md#metrics-backend).
 
 ---
 
@@ -74,6 +65,8 @@ opencost:
 
 ## 🚨 Need Alerting?
 
-If your setup doesn't have Prometheus Alertmanager installed, you'll need it for alert handling. Check out our [VMAlert and VMAlertmanager Setup guide](./alertmanager.md) for a lightweight alternative that works great with managed Prometheus services like Chronosphere.
+Alerts only reach NudgeBee if your Alertmanager is configured to forward them to the agent — see [Alert Forwarding](./alertmanager.md). That page covers kube-prometheus-stack, operator-managed Alertmanager (including Thanos-based stacks), plain Alertmanager, and external/central Alertmanagers.
+
+If your setup has no Alertmanager at all — common with managed metrics backends like Chronosphere — the same page's [VMAlert + VMAlertmanager](./alertmanager.md#vmalert--vmalertmanager) section covers a lightweight alternative.
 
 Enjoy metrics without the headaches—NudgeBee has you covered. 🚀

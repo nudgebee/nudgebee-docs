@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 1
 ---
 
 # Loki
@@ -20,7 +20,10 @@ If Loki is deployed as external service then need to provide external Loki URL a
 runner:
   loki:
     url: "http://loki:3100"
-    user: ""
+    username: ""
     password: ""
-    headers: "X-Scope-OrgID:tenant1"
+    # comma-separated "Key: Value" pairs
+    headers: "X-Scope-OrgID: tenant1"
 ```
+
+`username` and `password` are optional and only needed if Loki is behind basic auth. Multi-tenant Loki needs the `X-Scope-OrgID` header shown above.

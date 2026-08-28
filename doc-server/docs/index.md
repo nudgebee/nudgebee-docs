@@ -246,7 +246,7 @@ If you encounter an issue during initial setup, use this decision tree to pinpoi
    └── YES → Proceed to step 2
 
 2. Does your Kubernetes cluster appear with a "Connected" badge in the UI?
-   ├── NO  → Check agent runner logs: `kubectl logs -n nudgebee-agent -l app=nudgebee-runner`
+   ├── NO  → Check agent runner logs: `kubectl logs -n nudgebee-agent -l component=runner`
    │         Ensure outbound TCP port 443 is permitted in your cluster NetworkPolicy.
    └── YES → Proceed to step 3
 

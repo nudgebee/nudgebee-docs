@@ -30,7 +30,7 @@ NudgeBee uses deterministic statistical analysis over historical Prometheus metr
 ### Pricing Engine
 
 Cost figures are calculated using:
-- **In-Cluster OpenCost Engine**: Accurately accounts for node instance types, storage classes, and shared namespace allocations.
+- **Server-Side Cost Engine**: The NudgeBee server computes allocations from each cluster's metrics, accounting for node instance types, storage classes, and shared namespaces. No cost component runs in your cluster.
 - **Cloud Provider Pricing APIs**: Real-time integration with AWS Pricing API, GCP Cloud Billing, and Azure Retail Rates.
 - **Custom Discount Rates**: Support for enterprise discount agreements (EDP/MCA) and reserved instance commitments.
 

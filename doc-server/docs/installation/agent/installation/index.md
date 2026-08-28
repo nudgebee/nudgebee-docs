@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -7,7 +11,7 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 
 :::note[Do I need the Agent?]
 - **Connecting a Cloud Account** (AWS/Azure/GCP) provides high-level cloud inventory and cluster auto-discovery without installing software upfront.
-- **Installing the Agent** inside the cluster is **required for deep in-cluster telemetry**, live pod logs, kernel-level eBPF network metrics, OpenCost pricing analysis, and automated AI incident RCA.
+- **Installing the Agent** inside the cluster is **required for deep in-cluster telemetry**, live pod logs, kernel-level eBPF network metrics, and automated AI incident RCA.
 - Both **Cloud SaaS** and **Self-Hosted** deployments install the exact same agent into monitored clusters.
 :::
 
@@ -45,7 +49,7 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 | **Kubernetes cluster** | v1.27 or newer | The cluster you want to monitor |
 | **Helm** | v3.x installed and configured | [Install Helm](https://helm.sh/) if you don't have it |
 | **Linux Kernel** | v4.2 or newer on all nodes | Required for eBPF-based network metrics collection |
-| **NudgeBee Auth Key** | Generated from the NudgeBee UI | Go to **Kubernetes** → **Connect Cluster** |
+| **NudgeBee Auth Key** | Generated from the NudgeBee UI | **Admin → Integrations → Kubernetes Clusters → Add K8s Account** |
 | **Registry access** | Outbound access to `nudgebee.github.io` (Helm repo) and `ghcr.io/nudgebee` (agent images) | Air-gapped clusters can mirror images internally |
 | **Prometheus** | A running Prometheus instance in the cluster | If omitted, the installer can deploy a bundled instance |
 
@@ -65,9 +69,9 @@ The agent components are designed to be low overhead:
 ### Step 1: Generate Your Auth Key
 
 1. Log in to [app.nudgebee.com](https://app.nudgebee.com) (or your self-hosted NudgeBee UI).
-2. Navigate to **Kubernetes** → **Connect Cluster** in the left sidebar.
-3. Enter a friendly name for your cluster and click **Connect**.
-4. Copy the generated **Auth Key** (`<YOUR_AUTH_KEY>`).
+2. Go to **Admin → Integrations**, open the **Kubernetes Clusters** card, and click **Add K8s Account**.
+3. Name the account after the cluster, mark it Production or Non-production, and click **Next**.
+4. The **Finish Setup** step gives you the install command with your **Auth Key** (`<YOUR_AUTH_KEY>`) in it. Copy the key.
 
 :::caution Blast Radius of Auth Key
 Your Auth Key authorizes your agent to send data to your NudgeBee control plane. Store it securely in a secret manager or Kubernetes Secret — never commit it in cleartext.
@@ -91,7 +95,7 @@ helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-
   --set nodeExporter.enabled=true \
   --set alertmanager.enabled=true \
   --set kubeStateMetrics.enabled=true \
-  -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
+  -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/kube-prometheus-stack-values.yaml
 
 # 3. Deploy NudgeBee Agent
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
@@ -114,7 +118,7 @@ helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-
   --set nodeExporter.enabled=true \
   --set alertmanager.enabled=true \
   --set kubeStateMetrics.enabled=true \
-  -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/extra-scrape-config.yaml
+  -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/kube-prometheus-stack-values.yaml
 
 # 3. Deploy NudgeBee Agent
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
@@ -159,6 +163,18 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
 </TabItem>
 </Tabs>
 
+### Step 3: Send Your Alerts to the Agent
+
+NudgeBee raises alert-driven events only if your Alertmanager posts alerts to the agent. If you installed Prometheus with the values file above, that receiver is already in it and there is nothing more to do here.
+
+Otherwise you have to add it yourself, and it is easy to forget: with no receiver pointing at the agent, the pods stay healthy, nothing logs an error, and no alerts ever arrive. Alerts go to:
+
+```
+http://<release>-runner.<agent-namespace>.svc/api/alerts
+```
+
+[Alert Forwarding](../connect/alertmanager.md) walks through each setup: an existing kube-prometheus-stack, an operator-managed Alertmanager (what Thanos-based stacks usually run), a plain Alertmanager, VictoriaMetrics, and an Alertmanager outside the cluster.
+
 ---
 
 ## 3. Verify the Installation (Checklist) {#3-verify-the-installation}
@@ -169,14 +185,14 @@ After running the install command, verify that the agent is communicating with t
 ```bash
 kubectl get pods -n nudgebee-agent
 ```
-**Expected Output:**
-- `nudgebee-runner-*`: `1/1 Running`
-- `nudgebee-node-agent-*` (DaemonSet): `1/1 Running` on every worker node
-- `nudgebee-event-watcher-*`: `1/1 Running`
+**Expected Output** (names follow the release name, `nudgebee-agent` here):
+- `nudgebee-agent-runner-*`: `1/1 Running`
+- `nudgebee-agent-node-agent-*` (DaemonSet): `1/1 Running` on every worker node
+- `nudgebee-agent-forwarder-*` (event watcher): `1/1 Running`
 
 ### 2. Inspect Agent Connection Logs
 ```bash
-kubectl logs -n nudgebee-agent -l app=nudgebee-runner --tail=50
+kubectl logs -n nudgebee-agent -l app=nudgebee-agent-runner --tail=50
 ```
 Look for log confirmation: `Connected to NudgeBee Relay successfully` and `Registration acknowledged`.
 
@@ -211,8 +227,9 @@ Use this diagnostic reference to resolve common agent deployment and communicati
 
 | Error Symptom | Cause | Resolution |
 |---|---|---|
-| **`401 Unauthorized / Invalid API Key`** | Incorrect or revoked Auth Key | Verify the key from **Kubernetes → Connect Cluster** and re-run `helm upgrade` with `--set runner.nudgebee.auth_secret_key="<KEY>"`. |
-| **`node-agent CrashLoopBackOff` (eBPF load failure)** | Kernel < 4.2 or non-standard distro (Bottlerocket, Talos, GKE COS) | Check kernel with `uname -r`. Ensure `/sys/kernel/debug` is accessible, or disable eBPF with `--set nodeAgent.ebpf.enabled=false`. |
+| **`401 Unauthorized / Invalid API Key`** | Incorrect or revoked Auth Key | Verify the key under **Admin → Integrations → Kubernetes Clusters** and re-run `helm upgrade` with `--set runner.nudgebee.auth_secret_key="<KEY>"`. |
+| **`node-agent CrashLoopBackOff` (eBPF load failure)** | Kernel < 4.2 or non-standard distro (Bottlerocket, Talos, GKE COS) | Check kernel with `uname -r` and ensure `/sys/kernel/debug` is accessible. As a last resort, drop the DaemonSet with `--set nodeAgent.enabled=false` (loses eBPF network metrics and profiling). |
+| **No alerts in NudgeBee, everything else working** | No Alertmanager receiver points at the agent | Add the receiver. See [Alert Forwarding](../connect/alertmanager.md). Nothing reports this on its own. |
 | **`WebSocket Dial Timeout / EOF`** | Outbound firewall or NetworkPolicy blocking TCP 443 | Verify egress to `wss://relay.nudgebee.com` (SaaS) or your relay Ingress. Ensure port 443 is open. |
 | **`Prometheus connection refused / empty metrics`** | Wrong Prometheus service URL or missing KSM | Point `globalConfig.prometheus_url` to valid service DNS (e.g. `http://<service>.<namespace>.svc:9090`). |
 | **`CRD / Webhook timeout error`** | Prometheus operator CRDs not yet established | Wait 30 seconds and re-run the `helm upgrade` command. |
@@ -226,18 +243,18 @@ If the `nudgebee-node-agent` DaemonSet pods enter `CrashLoopBackOff` or fail to 
 
 **Diagnose:**
 ```shell
-kubectl logs daemonset/nudgebee-node-agent -n nudgebee-agent
+kubectl logs daemonset/nudgebee-agent-node-agent -n nudgebee-agent
 ```
 
 **Resolution:**
 - Verify that your Kubernetes node kernel is version **4.2 or higher** (`uname -r`).
 - For container-optimized operating systems (e.g. AWS Bottlerocket or GKE COS), ensure debugfs and bpf filesystems are mounted.
-- If running on microVMs or kernels with restricted eBPF, disable kernel probe instrumentation while maintaining metric scraping:
+- If running on microVMs or kernels with restricted eBPF, disable the node agent entirely. The rest of the agent (inventory, events, metrics, alerts) keeps working; you lose eBPF network metrics and profiling:
   ```shell
   helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
     --namespace nudgebee-agent \
     --reuse-values \
-    --set nodeAgent.ebpf.enabled=false
+    --set nodeAgent.enabled=false
   ```
 
 #### 2. Prometheus Metric Discovery & Zero Metrics
@@ -246,7 +263,7 @@ If the cluster connects in the UI but workload CPU and memory graphs remain empt
 **Diagnose:**
 ```shell
 # Test Prometheus DNS resolution from inside the agent runner pod
-kubectl exec -it deployment/nudgebee-runner -n nudgebee-agent -- wget -qO- http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090/api/v1/query?query=up
+kubectl exec -it deployment/nudgebee-agent-runner -n nudgebee-agent -- wget -qO- http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090/api/v1/query?query=up
 ```
 
 **Resolution:**
@@ -327,34 +344,36 @@ Then follow [Verify the Installation](#3-verify-the-installation) above to confi
 
 These options are for specific environments or requirements. You can skip this section for a standard installation.
 
-### Using HTTP Instead of WebSocket
+### Access Modes (Read-Only vs Write)
 
-By default, the agent connects to the NudgeBee server via WebSocket. If your agent is publicly accessible and you want the relay to connect to the agent over HTTP instead, add these environment variables to your `values.yaml`:
+A default install can already delete and evict pods, cordon nodes, restart rollouts, scale workloads, apply rightsizing recommendations, and read Secrets. Two values move that boundary.
 
-```yaml
-runner:
-  additional_env_vars:
-    - name: WS_ENABLED
-      value: "false"
-    - name: AGENT_HTTP_URL
-      value: "http://localhost:5000"  # Agent HTTP endpoint
-  nudgebee:
-    auth_secret_key: "<YOUR_AUTH_KEY>"
-    endpoint: "https://<COLLECTOR_SERVER_URL>/"
+To also allow node deletion, workload and namespace creation, and writes to Services, Ingresses, NetworkPolicies and Secrets:
 
-globalConfig:
-  prometheus_url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+```bash
+helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
+  --namespace nudgebee-agent --reuse-values \
+  --set runner.enableWritePermissions=true
 ```
 
-This disables WebSocket connections and configures the agent to accept HTTP connections from the relay instead.
+To go the other way and leave the agent with `get`, `list`, `watch` and nothing else:
+
+```bash
+helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
+  --namespace nudgebee-agent --reuse-values \
+  --set runner.readOnly=true
+```
+
+Setting both fails the install. [Permissions and access mode](../operate/helm_values.md#permissions-and-access-mode) lists exactly what each one changes.
 
 ### Additional Configuration References
 
-- **[Helm Values Reference](./helm_values.md)** — Complete list of all configurable values for the agent Helm chart.
-- **[Node Agent Configuration](./node-agent-configs.md)** — Fine-tune the eBPF-based node agent.
+- **[Alert Forwarding](../connect/alertmanager.md)** — Point your Alertmanager at the agent. Without it NudgeBee gets no alerts.
+- **[Helm Values Reference](../operate/helm_values.md)** — Complete list of all configurable values for the agent Helm chart.
+- **[Node Agent Configuration](../operate/node-agent-configs.md)** — Fine-tune the eBPF-based node agent.
 - **[Kubernetes Provider Setup](./k8s-provider/)** — Provider-specific instructions for GKE, AKS, and other managed Kubernetes services.
-- **[Logging Integration](./logging/)** — Connect log sources (ELK, Loki, etc.) to the agent.
-- **[Tracing Integration](./tracing/)** — Connect tracing backends for distributed tracing.
+- **[Logging Integration](../connect/logging/)** — Connect log sources (ELK, Loki, etc.) to the agent.
+- **[Tracing Integration](../connect/tracing/)** — Connect tracing backends for distributed tracing.
 - **[Upgrade Guide](./upgrade.md)** — How to upgrade an existing agent to a newer version.
 
 ---

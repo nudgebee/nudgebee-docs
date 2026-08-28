@@ -41,7 +41,7 @@ The agent **never reads Secret data contents** (`get` or `list` on `secrets` is 
 | Traffic Flow | Direction | Protocol / Port | Destination | Purpose |
 |---|---|---|---|---|
 | **Agent to Server** | Outbound | TCP `443` (WSS / HTTPS) | `app.nudgebee.com` or self-hosted Ingress | Streaming metrics, events, and telemetry. |
-| **Agent to Cloud Pricing** | Outbound | TCP `443` (HTTPS) | AWS, GCP, Azure pricing endpoints | OpenCost pricing calculations. |
+| **Server to Cloud Pricing** | Outbound | TCP `443` (HTTPS) | AWS, GCP, Azure pricing endpoints | Cost calculations. Runs on the server; agents never call these. |
 | **Server to In-Cluster Relay** | Inbound / Internal | TCP `8080` (Internal ClusterIP) | `relay-server.nudgebee.svc` | Real-time agent relay communication. |
 
 ## Audit

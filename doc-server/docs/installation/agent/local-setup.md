@@ -4,28 +4,20 @@ sidebar_position: 3
 
 # Try Locally
 
-## Introduction
+Run the agent against a throwaway [KinD](https://kind.sigs.k8s.io/) cluster to see what NudgeBee looks like with real data, without touching a real cluster.
 
-This guide provides step-by-step instructions on how to install nudgebee agent with a Kubernetes cluster using KinD (Kubernetes in Docker) with multiple nodes.
+## What you get, and what you don't
 
-## Limitation
-
-- NudgeBee features like eBPF based tracing may not work using KiND.
+KinD nodes are containers sharing the host kernel, so the eBPF node agent generally cannot attach its probes. The install below turns it off. You still get workload inventory, events, metrics, and recommendations. You do not get network metrics, L7 traces, or profiling — those need a real node.
 
 ## Prerequisites
 
-Before you begin, ensure that you have the following prerequisites installed on your machine:
+- [Docker](https://docs.docker.com/get-docker/)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+- [KinD](https://kind.sigs.k8s.io/docs/user/quick-start/)
+- [Helm](https://helm.sh/docs/intro/install/)
 
-- Docker: [Install Docker](https://docs.docker.com/get-docker/)
-- kubectl: [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-- KinD: [Install KinD](https://kind.sigs.k8s.io/docs/user/quick-start/)
-- Helm: [Install Helm](https://helm.sh/docs/intro/install/)
-
-## Installation Steps
-
-### Step 1: Create and Launch KinD Cluster
-
-Run the following command to create and launch the KinD cluster with a multi-node configuration:
+## 1. Create the cluster
 
 ```bash
 kind create cluster --config <(cat <<EOF
@@ -37,33 +29,36 @@ nodes:
 - role: worker
 EOF
 )
-```
 
-### Step 2: Verify installation
-
-```bash
 kubectl cluster-info
 kubectl get nodes
 ```
 
+## 2. Get an auth key
 
-### Step 3: Generate nudgebee Agent Keys
+In [app.nudgebee.com](https://app.nudgebee.com), go to **Admin → Integrations**, open the **Kubernetes Clusters** card, and click **Add K8s Account**. Name it something you will recognise as disposable, mark it **Non-production**, and finish the wizard. Copy the auth key it gives you.
 
-Log in to [nudgebee](https://app.nudgebee.com), go to kubernetes, and then click "Add Account." Select "K8s" and provide the required details. Use the generated keys in the next step.
-
-### Step 4: Install nudgebee agent
+## 3. Install the agent
 
 ```bash
-wget https://raw.githubusercontent.com/nudgebee/k8s-agent/refs/heads/prod/installation.sh
+wget https://raw.githubusercontent.com/nudgebee/k8s-agent/main/installation.sh
 sh installation.sh -a <agent-key> -d true
 ```
 
-It will take upto 5 mintutes to collect data and upto 1 hour to generate recommendation
+`-d true` disables the node agent, which is what you want on KinD. The script installs everything else, including a Prometheus stack if the cluster has none.
 
+## 4. Wait
 
-### Step 5: Delete cluster
-After installation delete cluster using 
+Inventory and metrics show up in the UI within about 5 minutes. Rightsizing and cost recommendations need roughly an hour of history before they appear — a fresh cluster has nothing to recommend from yet.
+
+```bash
+kubectl get pods -n nudgebee-agent
+```
+
+## 5. Clean up
 
 ```bash
 kind delete cluster
 ```
+
+Also delete the Kubernetes account in **Admin → Integrations → Kubernetes Clusters**, otherwise it lingers in the UI as a cluster that stopped reporting.

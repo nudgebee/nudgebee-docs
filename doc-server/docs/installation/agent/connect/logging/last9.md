@@ -11,9 +11,7 @@ Last9 exposes Loki apis and can be configured using Loki integrations.
 ```yaml
 runner:
   loki:
-    enabled: true
     url: 'https://otlp-aps1.last9.io/loki'
     username: 'XXX'
     password: 'xxxx'
-    headers: ''
 ```

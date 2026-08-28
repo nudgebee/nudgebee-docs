@@ -1,16 +1,16 @@
 ---
-sidebar_position: 8
+sidebar_position: 2
 ---
 
 # Node Agent Configuration
 
-The NudgeBee **Node Agent** can be finely tuned using a set of environment variables that control its behavior. These are exposed as flags internally but can be set through the Helm `values.yaml` under the `nodeAgent.env` section.
+The node agent reads its configuration from environment variables, which you set through `nodeAgent.env` in your values file.
 
-This document lists the **relevant** configuration flags, what they do, and how to set them.
+Some of these have a dedicated chart value and are easier to set that way: `nodeAgent.scrapeInterval`, `nodeAgent.apiKey`, `nodeAgent.tracesEndpoint`, `nodeAgent.logsEndpoint`, `nodeAgent.metricsEndpoint`, `nodeAgent.profilesEndpoint`. The chart also passes `--cgroupfs-root /host/sys/fs/cgroup` as a command-line flag, which wins over `CGROUPFS_ROOT`, so leave that one alone.
 
 ---
 
-## 🌐 Network & Listening
+## Network and listening
 
 | Flag                   | Description                                         | Default          |
 | ---------------------- | --------------------------------------------------- | ---------------- |
@@ -21,7 +21,7 @@ This document lists the **relevant** configuration flags, what they do, and how 
 
 ---
 
-## 🔍 Metrics & Logs
+## Metrics and logs
 
 | Flag                            | Description                                 | Default  |
 | ------------------------------- | ------------------------------------------- | -------- |
@@ -35,17 +35,17 @@ This document lists the **relevant** configuration flags, what they do, and how 
 
 ---
 
-## 🛡 Sensitive Handling
+## Redaction
 
 | Flag                            | Description                                                  | Default                                 |
 | ------------------------------- | ------------------------------------------------------------ | --------------------------------------- |
 | `SANITIZE_HEADERS`              | Enable header sanitization                                   | `true`                                  |
 | `SENSITIVE_HEADERS`             | List of sensitive header names to sanitize (comma-separated) | `Authorization, Cookie, X-Action-Token` |
-| `DISABLE_SENSITIVE_LOG_PARSING` | Disable sensitive log parsing, default is disabled                                | `true`                                 |
+| `DISABLE_SENSITIVE_LOG_PARSING` | Stop parsing log lines that look like they carry secrets | `true` |
 
 ---
 
-## ☁ Cloud Labels
+## Cloud labels
 
 These enrich the `node_cloud_info` metric:
 
@@ -60,12 +60,12 @@ These enrich the `node_cloud_info` metric:
 
 ---
 
-## 🔗 External Endpoints
+## Endpoints
 
 | Flag                   | Description                             |
 | ---------------------- | --------------------------------------- |
 | `COLLECTOR_ENDPOINT`   | Base endpoint for all telemetry         |
-| `API_KEY`              | Coroot API key (if applicable)          |
+| `API_KEY`              | API key for the endpoints above. Set it with `nodeAgent.apiKey`. |
 | `METRICS_ENDPOINT`     | Specific metrics push endpoint          |
 | `TRACES_ENDPOINT`      | Specific traces push endpoint           |
 | `LOGS_ENDPOINT`        | Specific logs push endpoint             |
@@ -74,7 +74,7 @@ These enrich the `node_cloud_info` metric:
 
 ---
 
-## 🔄 Scraping & Storage
+## Scraping and storage
 
 | Flag              | Description                     | Default                  |
 | ----------------- | ------------------------------- | ------------------------ |
@@ -83,7 +83,7 @@ These enrich the `node_cloud_info` metric:
 
 ---
 
-## 🔧 Other Useful Flags
+## Other flags
 
 | Flag                   | Description                           | Default                                                                                        |
 | ---------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -93,15 +93,17 @@ These enrich the `node_cloud_info` metric:
 
 ---
 
-## 🚀 Applying Configurations
+## Applying configuration
 
 Here’s an example `values.yaml` with common flags explicitly set:
+
+:::warning Do not change `LISTEN`
+The DaemonSet declares container port 80 and the PodMonitor scrapes the port named `http`, which is that one. Moving the listener to another port leaves Prometheus scraping a port nothing is bound to, and network metrics go quiet with no error.
+:::
 
 ```yaml
 nodeAgent:
   env:
-    - name: LISTEN
-      value: ":8080"
     - name: DISABLE_LOG_PARSING
       value: "true"
     - name: LOG_PER_SECOND

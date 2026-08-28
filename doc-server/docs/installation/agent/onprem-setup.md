@@ -6,14 +6,14 @@ sidebar_position: 4
 
 ## Introduction
 
-Following is example configuration for using NudgeBee-agent with On-Prem Server
+Example configuration for pointing the agent at a self-hosted NudgeBee server.
 
-## Prerequisute
+## Prerequisites
 - Onprem Collector-Server Url
 - Onprem Relay-Server Url
 - Agent Keys
-- Review [Metrics Provider](../installation/metrics/)
-- Review [Loggin Providers](../installation/logging/)
+- Review [Metrics Provider](./connect/metrics.md)
+- Review [Logging Providers](./connect/logging/index.md)
 
 
 ### Installation
@@ -31,50 +31,12 @@ Installation steps are similar to SaaS. Only changes are required on Relay/Colle
 runner:
   relay_address: "wss://{relay-server-url}/register"
   clickhouse_enabled: true
-  nudgebee: 
+  nudgebee:
     auth_secret_key: "{agent_keys}"
     endpoint: "https://{collector-server-url}/"
 
-existingPrometheus:
-  url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
-
-opencost:
-  opencost:
-    prometheus:
-      external:
-        url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
-
-nodeAgent:
-  enabled: true
-
-opentelemetry-collector:
-  enabled: true
- ```
-
-### HTTP Configuration
-
-If your agent is available to connect with relay server and you want the relay to connect over HTTP instead of WebSocket:
-
-```yaml
-runner:
-  additional_env_vars:
-    - name: WS_ENABLED
-      value: "false"
-    - name: AGENT_HTTP_URL
-      value: "http://localhost:5000"
-  clickhouse_enabled: true
-  nudgebee: 
-    auth_secret_key: "{agent_keys}"
-    endpoint: "https://{collector-server-url}/"
-
-existingPrometheus:
-  url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
-
-opencost:
-  opencost:
-    prometheus:
-      external:
-        url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
+globalConfig:
+  prometheus_url: "http://prometheus-kube-prometheus-prometheus.prometheus.svc:9090"
 
 nodeAgent:
   enabled: true
@@ -82,3 +44,7 @@ nodeAgent:
 opentelemetry-collector:
   enabled: true
 ```
+
+### Alerts
+
+The values above do not wire up alerts. Add a receiver in your Alertmanager that posts to the agent, otherwise this cluster reports metrics and events but never an alert: [Alert Forwarding](./connect/alertmanager.md).

@@ -4,6 +4,7 @@ sidebar_position: 1
 
 # Kubernetes Providers
 
-This section includes instructions specific to cloud-provider.
+Most clusters need nothing provider-specific. These pages cover the two that do.
 
-* [GKE Specific Changes](./gke)
+* [Google Kubernetes Engine](./gke.md) — where cost data comes from on GKE.
+* [Azure Monitor](./azure.md) — reading Azure managed Prometheus and Application Insights.
