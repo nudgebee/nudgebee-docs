@@ -36,6 +36,4 @@ Explore everything NudgeBee offers for Cloud-Ops Intelligence, troubleshooting, 
 
 - **[Security & Authorization](./security.md)** — Role-based access control, encryption, least-privilege agent permissions, and audit trails.
 
-- **[Documentation Coverage Manifest](./coverage-manifest.md)** — Central mapping of capabilities, API/UI surfaces, troubleshooting decision trees, and NuBi tools.
-
 - **[User Management](./user-management.md)** — Invite team members, assign admin or read-only roles, and control access at both tenant and account level. New users get started instantly via email invite — no password setup needed.
