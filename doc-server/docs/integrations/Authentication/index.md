@@ -23,7 +23,6 @@ NudgeBee supports several authentication providers. Each provider requires speci
 -   [Dummy Credentials (For On-Prem Admin)](#dummy-credentials-for-on-prem-admin)
 -   [LDAP](#ldap)
 -   [SAML 2.0](#saml-20) <Enterprise/> <Cloud/> — For SAML-based SSO with automatic user provisioning and group mapping
--   **[RBAC & Permissions Matrix](./rbac-permissions-matrix.md)** — Role mapping across Tenant Admin, SRE, Operator, FinOps, and Viewer roles.
 
 ## SAML 2.0 <Enterprise/> <Cloud/> {#saml-20}
 

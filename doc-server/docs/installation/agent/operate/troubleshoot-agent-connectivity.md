@@ -69,7 +69,7 @@ Frequent status toggling usually indicates one of three root causes:
 - **Proxy Agent**: Runs in a bastion or jump-host environment. It is designed to bridge private, air-gapped VPCs/clusters or private databases where direct outbound agent installation is restricted. See [Proxy Agent Troubleshooting](../../proxy-agent/troubleshooting.md).
 
 ### Agent Version Compatibility
-NudgeBee agents maintain backward compatibility with NudgeBee backend versions across **3 minor releases**. However, older agent versions may lack probe definitions for newer features (e.g., OpenCost or custom log indices), leading to missing health fields in the UI.
+NudgeBee agents maintain broad backward compatibility with NudgeBee server releases. However, older agent versions may lack probe definitions for newer features (e.g., OpenCost or custom trace providers), leading to unpopulated health fields in the UI. Upgrading your agent alongside server updates is recommended.
 
 ---
 

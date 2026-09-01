@@ -18,8 +18,8 @@ NudgeBee does not store passwords. All authentication is handled through SSO pro
 - Credentials for external integrations are stored encrypted (AES-GCM) at rest using the `NUDGEBEE_ENCRYPTION_KEY` set at install time.
 
 ## Authorization & Access Control
-- NudgeBee provides role-based access control (RBAC) across tenants and accounts with pre-defined roles: **Tenant Admin**, **SRE / Platform**, **Operator**, **FinOps**, and **Viewer**.
-- See the complete **[RBAC & Permissions Matrix](../integrations/Authentication/rbac-permissions-matrix.md)** for a granular capability mapping across all console, API, and automation actions.
+- NudgeBee provides role-based access control (RBAC) across tenants and accounts with built-in roles: **Tenant Admin** (`tenant_admin`), **Tenant Admin Read-Only** (`tenant_admin_readonly`), **Account Admin** (`account_admin`), and **Account Admin Read-Only** (`account_admin_readonly`), alongside customizable permissions for user groups.
+- User access can be scoped to specific accounts or granted tenant-wide, with full audit logging for administrative changes.
 
 ## Kubernetes Agent RBAC & Least-Privilege Permissions
 

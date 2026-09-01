@@ -30,7 +30,7 @@ This manifest tracks documentation completeness across NudgeBee's core capabilit
 | **Notifications** | `notifications_rules` | [Notification Routing](./notifications.md) | [Notification Overview](../integrations/Notifications/index.md) | [Missing Notifications](./notifications.md#7-troubleshooting-why-did-a-notification-not-send) | `slack_post_message` | **P1** |
 | **Ticketing** | `tickets_create` | [Ticket Integrations](../integrations/Tickets/index.md) | [Tickets Overview](./tickets.md) | [Ticketing Troubleshooting](../integrations/Tickets/ticket-integrations-troubleshooting.md) | `tickets_create`, `tickets_comments_list` | **P2** |
 | **SLO Management** | `slo_create` / `list` | [SLO Operations](./slo-operations.md) | [SLO Overview](./slo.md) | [Burn Rate Triage](./slo-operations.md#4-multi-window-multi-burn-rate-alerting) | `slo_list`, `slo_get` | **P2** |
-| **RBAC & Security** | `auth_roles_list` | [Permissions Matrix](../integrations/Authentication/rbac-permissions-matrix.md) | [User Management](./user-management.md) | [RBAC Troubleshooting](../integrations/Authentication/rbac-permissions-matrix.md#2-exhaustive-permission-modules-matrix) | `auth_users_list`, `auth_roles_list` | **P2** |
+| **RBAC & Security** | `auth_roles_list` | [Security & Authorization](./security.md) | [User Management](./user-management.md) | [Access Control](./security.md#authorization--access-control) | `auth_users_list`, `auth_roles_list` | **P2** |
 
 ---
 

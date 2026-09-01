@@ -43,24 +43,24 @@ In the Cloud Accounts dashboard, each account displays an **Overall Connection S
 
 | Feature Module | Sync Cadence | What "Connected" Means | Failure Impact |
 | :--- | :--- | :--- | :--- |
-| **Spends** | Daily (Once every 24h) | The daily Cost and Usage Report (AWS CUR), Azure Cost Export, or GCP BigQuery Billing dataset was successfully ingested. | Spend charts stop updating; new resources are not matched against cost data. |
-| **Resources** | Hourly / Post-Spend | Cloud resource inventory (VMs, databases, storage buckets, networking) was successfully discovered via Cloud APIs. | Knowledge Graph topology becomes stale; newly created cloud resources are missing. |
-| **Recommendations** | Post-Resource Sync | Rightsizing, idle waste, and security posture algorithms completed analysis against the latest inventory. | Recommendations list does not reflect recent infrastructure changes. |
-| **Events** | Real-time / Event-driven | CloudWatch/EventBridge SQS, Azure Event Grid, or GCP Pub/Sub webhooks are actively delivering events. | Incidents and configuration changes are not alerted in real time. |
+| **Spends** | Periodic (Daily billing reports) | Cost and Usage Reports (AWS CUR), Azure Cost Export, or GCP BigQuery Billing datasets are actively ingested. | Spend charts stop updating; new resources are not matched against cost data. |
+| **Resources** | Periodic Resource Discovery | Cloud resource inventory (VMs, databases, storage buckets, networking) was successfully discovered via Cloud APIs. | Knowledge Graph topology becomes stale; newly created cloud resources are missing. |
+| **Recommendations** | Post-Resource Discovery | Rightsizing, idle waste, and security posture algorithms completed analysis against the latest inventory. | Recommendations list does not reflect recent infrastructure changes. |
+| **Events** | Real-time / Event-driven | CloudWatch/EventBridge SQS, Azure Event Grid, or GCP Monitoring webhooks are actively delivering events. | Incidents and configuration changes are not alerted in real time. |
 
 ### Overall Agent Status Logic
-The overall account connection badge in the database is evaluated as:
+The overall account connection badge is evaluated as:
 - **`CONNECTED`**: Spends and Resources are both healthy and communicating.
-- **`DEGRADED`**: The account credentials are valid, but an individual feature (e.g. Spends export) encountered a temporary error.
+- **`DEGRADED`**: Account credentials are valid, but an individual feature encountered a temporary error.
 - **`DISCONNECTED`**: Authentication failed (e.g., IAM role deleted, Service Principal expired, or cross-account access revoked).
 
 ---
 
 ## 3. Understanding "Last Sync" and "Next Sync"
 
-- **Last Sync**: The exact timestamp when the last successful data collection cycle completed for that feature module.
+- **Last Sync**: The timestamp when the last successful data collection cycle completed for that feature module.
 - **Next Sync**: The scheduled time when the NudgeBee Cloud Collector will run the next automated polling cycle.
-- **"Connected" on a Scheduled Feature**: For scheduled batch jobs (like Spends), `Connected` indicates that the most recent scheduled execution completed without errors, and credentials remain valid.
+- **"Connected" on a Scheduled Feature**: For scheduled batch jobs (like Spends), `Connected` indicates that the most recent execution completed without errors, and credentials remain valid.
 
 ---
 
@@ -73,8 +73,8 @@ The **Sync Now** button in the Console triggers an immediate out-of-band delta s
 - **After Updating IAM Roles or Secrets**: Validate that newly applied IAM permissions or rotated Service Principal credentials resolved a prior error.
 - **Post-Incident or Infrastructure Overhaul**: Force an immediate refresh of the Semantic Knowledge Graph after deploying major infrastructure changes.
 
-:::note Throttling Protection
-"Sync Now" requests are debounced. Triggering "Sync Now" multiple times within 5 minutes will enqueue a single synchronization job to prevent cloud API rate limits.
+:::note Asynchronous Execution
+"Sync Now" enqueues data collection jobs asynchronously in the background. Data will become available in the dashboard shortly after the background collector jobs complete.
 :::
 
 ---

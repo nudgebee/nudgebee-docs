@@ -34,7 +34,7 @@ Explore everything NudgeBee offers for Cloud-Ops Intelligence, troubleshooting, 
 
 - **[SLO Operations](./slo-operations.md)** — Define and track Service Level Objectives and multi-window burn rate alerts to ensure your services meet reliability targets.
 
-- **[Security & RBAC Matrix](../integrations/Authentication/rbac-permissions-matrix.md)** — Role-based access control matrix, approval workflows, and full audit trails for every action.
+- **[Security & Authorization](./security.md)** — Role-based access control, encryption, least-privilege agent permissions, and audit trails.
 
 - **[Documentation Coverage Manifest](./coverage-manifest.md)** — Central mapping of capabilities, API/UI surfaces, troubleshooting decision trees, and NuBi tools.
 

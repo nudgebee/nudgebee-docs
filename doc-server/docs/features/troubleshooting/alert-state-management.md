@@ -56,7 +56,7 @@ graph TD
   2. Click the **Snooze** button (clock icon).
   3. Select a duration: **30m**, **1h**, **4h**, **24h**, or enter a custom UTC date/time.
 - **Under the Hood**:
-  The backend writes `snoozed_until = <timestamp>` to the database. An automated background worker (`ProcessExpiredSnoozes`) checks active snoozes every minute; once `NOW() >= snoozed_until`, the event automatically flips back to `OPEN` and updates its audit history.
+  The backend writes `snoozed_until = <timestamp>` to the database. Once `NOW() >= snoozed_until`, the snoozed state expires, automatically returning the event to `OPEN` and updating its audit history.
 
 ---
 
@@ -101,15 +101,15 @@ graph TD
 
 ---
 
-## 3. Required RBAC Permissions Matrix
+## 3. Required Permissions
 
-| Action | Required Permission Module & Level | Role Required |
+| Action | Required Permission Grant | Built-in Role Equivalent |
 | :--- | :--- | :--- |
-| **Snooze / Unsnooze** | `events:Write` | Operator, SRE, Admin |
-| **Acknowledge / Resolve** | `events:Write` | Operator, SRE, Admin |
-| **Create Suppression Rule** | `triage_rules:Write` | SRE, Admin |
-| **Disable Notification Rule** | `notifications:Write` | Admin |
-| **Mute Notification Channel** | `notifications:Write` | Admin |
+| **Snooze / Unsnooze** | `events:Write` | `account_admin`, `tenant_admin` |
+| **Acknowledge / Resolve** | `events:Write` | `account_admin`, `tenant_admin` |
+| **Create Suppression Rule** | `triage_rules:Write` | `account_admin`, `tenant_admin` |
+| **Disable Notification Rule** | `notifications:Write` | `account_admin`, `tenant_admin` |
+| **Mute Notification Channel** | `notifications:Write` | `account_admin`, `tenant_admin` |
 
 ---
 
