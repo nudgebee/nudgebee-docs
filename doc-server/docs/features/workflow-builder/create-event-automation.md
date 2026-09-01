@@ -108,8 +108,8 @@ To confirm the automation ran:
 
 ---
 
-## 8. NuBi Prompts for Event Automations
+## 8. NuBi Documentation Search
 
-Ask NuBi:
-- *"Create a workflow that notifies Slack #prod-alerts whenever an OOMKilled event occurs in namespace backend."*
-- *"Show all workflow executions triggered by event [event-id]."*
+Ask NuBi in chat for guided event automation assistance:
+- *"How do I map event payload fields into downstream workflow tasks?"*
+- *"How do I configure an Approval Gate in an event-triggered workflow?"*

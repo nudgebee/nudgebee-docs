@@ -98,8 +98,8 @@ NudgeBee maintains strict separation between **Draft** and **Live** versions:
 
 ---
 
-## 6. NuBi Prompts for Dry Run & Testing
+## 6. NuBi Documentation Search
 
-Ask NuBi:
-- *"Dry run workflow [workflow-name] with a mock OOMKilled event for namespace payments."*
-- *"Validate the template expressions in my draft workflow."*
+Ask NuBi in chat for guided workflow validation assistance:
+- *"How do I test a workflow using Dry Run simulation before publishing?"*
+- *"How does template syntax validation work in Workflow Builder?"*

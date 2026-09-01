@@ -109,9 +109,8 @@ flowchart TD
 
 ---
 
-## 4. NuBi Diagnostic Prompts
+## 4. NuBi Documentation Search
 
-Ask NuBi in chat:
-- *"Why didn't workflow [workflow-name] trigger on the incident at 10:45 UTC?"*
-- *"Check if workflow [workflow-id] has an active Live version published."*
-- *"Show the trigger evaluation log for the last pod crash event."*
+Ask NuBi in chat for guided workflow troubleshooting assistance:
+- *"How do I debug why an event automation workflow did not trigger?"*
+- *"What is the difference between Draft and Live workflow versions?"*

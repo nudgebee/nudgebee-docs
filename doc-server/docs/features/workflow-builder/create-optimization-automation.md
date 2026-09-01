@@ -88,8 +88,8 @@ To avoid service disruptions during business hours:
 
 ---
 
-## 6. NuBi Prompts for Optimization Automations
+## 6. NuBi Documentation Search
 
-Ask NuBi:
-- *"Build a workflow that automatically rightsizes development workloads when monthly savings exceed $20."*
-- *"Show all optimizations applied by workflows in the past 30 days."*
+Ask NuBi in chat for guided optimization automation assistance:
+- *"How do I configure a workflow to auto-apply rightsizing recommendations?"*
+- *"How do I set savings thresholds and maintenance windows in optimization workflows?"*

@@ -82,9 +82,8 @@ To eliminate false alarms from short transient spikes while promptly paging on s
 
 ---
 
-## 5. NuBi Prompts for SLOs
+## 5. NuBi Documentation Search
 
-Ask NuBi in chat:
-- *"What is the remaining error budget for the checkout-service SLO?"*
-- *"Which service had the fastest error budget burn rate this week?"*
-- *"Create a 99.9% availability SLO for service auth-api using Prometheus metrics."*
+Ask NuBi in chat for guided SLO and reliability assistance:
+- *"How do I configure a multi-window burn rate alert for a 99.9% availability SLO?"*
+- *"What is the difference between ratio-based and threshold-based SLIs in NudgeBee?"*

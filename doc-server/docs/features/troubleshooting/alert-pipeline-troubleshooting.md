@@ -147,9 +147,8 @@ graph LR
 
 ---
 
-## 4. NuBi Prompts for Alert Pipeline Diagnostics
+## 4. NuBi Documentation Search
 
-Ask NuBi in the console:
-- *"Why didn't alert [alert-name] send a Slack notification?"*
-- *"Show the evaluation log for notification rule [rule-name] on event [event-id]."*
-- *"Check if any active suppression rules match service [service-name]."*
+Ask NuBi in chat for guided alert pipeline troubleshooting:
+- *"How do I troubleshoot why an alert did not send a Slack notification?"*
+- *"What is the difference between snoozing and suppressing an alert in NudgeBee?"*

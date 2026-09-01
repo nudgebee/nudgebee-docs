@@ -85,9 +85,8 @@ Rather than looking at an alert in isolation:
 
 ---
 
-## 3. NuBi Prompts for Managing Events
+## 3. NuBi Documentation Search
 
-Ask NuBi in chat:
-- *"Show the full timeline and recurrence history for event [event-id]."*
-- *"Which services are affected downstream by this pod failure?"*
-- *"Classify all alerts matching fingerprint [fingerprint] as expected maintenance for the next 2 hours."*
+Ask NuBi in chat for guided event lifecycle and triage assistance:
+- *"How does NudgeBee deduplicate repeated alerts using fingerprints?"*
+- *"What happens when an event is classified as a false positive?"*

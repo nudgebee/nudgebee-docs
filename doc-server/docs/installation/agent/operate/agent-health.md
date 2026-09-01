@@ -157,9 +157,8 @@ Below is the complete reference of every field displayed on the Agent Health car
 
 ---
 
-## 4. NuBi Diagnostic Prompts
+## 4. NuBi Documentation Search
 
-Ask NuBi to run instant health checks:
-- *"Show me the status of all datasources connected to the production Kubernetes cluster."*
-- *"Why is Node Agent count reporting 0 on cluster dev-east?"*
-- *"Test connectivity from agent to Loki and Prometheus."*
+Ask NuBi in chat for guided subsystem setup and troubleshooting:
+- *"How does the Kubernetes agent probe Prometheus and Loki health?"*
+- *"What does it mean when Node Agent count shows 0 in Agent Health?"*

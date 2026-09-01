@@ -213,9 +213,8 @@ echo "Diagnostics saved to $OUT_FILE. Safe to share with support."
 
 ---
 
-## 7. Useful NuBi Diagnostic Prompts
+## 7. NuBi Documentation Search
 
-You can ask **NuBi** directly in the console:
-- *"Why is cluster [cluster-name] showing disconnected?"*
-- *"Check the latest heartbeat and relay status for agent in namespace nudgebee."*
-- *"Show the last 5 error messages reported by the Kubernetes agent telemetry loop."*
+Ask NuBi in chat for guided connectivity troubleshooting:
+- *"How do I troubleshoot a disconnected Kubernetes agent in NudgeBee?"*
+- *"How do I generate a sanitized agent diagnostic bundle for support?"*

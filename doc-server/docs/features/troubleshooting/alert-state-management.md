@@ -113,10 +113,8 @@ graph TD
 
 ---
 
-## 4. NuBi Prompts for Managing Alert States
+## 4. NuBi Documentation Search
 
-You can command NuBi directly in chat or Slack:
-- *"Snooze event [event-id] for 2 hours."*
-- *"Show all currently snoozed events across production clusters."*
-- *"List all active suppression triage rules created in the last 7 days."*
-- *"Acknowledge incident [incident-id] and assign it to me."*
+Ask NuBi in chat for guided alert state management:
+- *"How do I configure time-limited alert suppression in NudgeBee?"*
+- *"What permissions are required to snooze an alert or disable notification rules?"*

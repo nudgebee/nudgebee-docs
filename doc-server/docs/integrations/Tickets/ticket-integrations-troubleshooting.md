@@ -69,9 +69,8 @@ flowchart TD
 
 ---
 
-## 3. NuBi Prompts for Ticketing Diagnostics
+## 3. NuBi Documentation Search
 
-Ask NuBi in chat:
-- *"Diagnose why ticket creation failed for incident [incident-id]."*
-- *"Show the raw API error returned by Jira during the last ticket creation attempt."*
-- *"Test ticket creation in project PROD using the Jira integration."*
+Ask NuBi in chat for guided ticketing integration assistance:
+- *"How do I fix Jira API Error 400 when mandatory custom fields are missing?"*
+- *"What ServiceNow permissions are required for incident creation?"*

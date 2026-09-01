@@ -170,9 +170,8 @@ Telemetry status is updated on each 60-second heartbeat. After applying changes 
 
 ---
 
-## 4. NuBi Prompts for Prometheus Diagnostics
+## 4. NuBi Documentation Search
 
-Ask NuBi to verify Prometheus health:
-- *"Test the Prometheus connection for cluster [cluster-name] and show the raw query output."*
-- *"Why did the last Prometheus probe fail in namespace nudgebee?"*
-- *"Check if kube-state-metrics and node-exporter are being scraped properly."*
+Ask NuBi in chat for guided troubleshooting assistance:
+- *"How do I debug a Prometheus 401 Unauthorized error in NudgeBee?"*
+- *"How do I configure X-Scope-OrgID headers for Thanos or Mimir in Helm values?"*

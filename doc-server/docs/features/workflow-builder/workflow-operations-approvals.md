@@ -90,9 +90,8 @@ Every workflow execution records immutable provenance data answering **who or wh
 
 ---
 
-## 5. NuBi Prompts for Workflow Operations
+## 5. NuBi Documentation Search
 
-Ask NuBi:
-- *"Show all workflows currently awaiting approval in production."*
-- *"Replay the failed task in execution [execution-id]."*
-- *"Who triggered workflow [workflow-name] at 14:20 UTC?"*
+Ask NuBi in chat for guided workflow operations assistance:
+- *"How do I replay a failed workflow execution from a specific task step?"*
+- *"How do Approval Gates work in NudgeBee workflows?"*

@@ -95,9 +95,8 @@ graph TD
 
 ---
 
-## 6. NuBi Prompts for Recommendations & FinOps
+## 6. NuBi Documentation Search
 
-Ask NuBi in chat:
-- *"Show all top 5 memory rightsizing recommendations for cluster prod-east."*
-- *"Why does NudgeBee recommend reducing CPU on deployment checkout-service?"*
-- *"Rollback the rightsizing patch applied to auth-api yesterday."*
+Ask NuBi in chat for guided recommendations & FinOps assistance:
+- *"How does NudgeBee calculate CPU and memory rightsizing savings?"*
+- *"What is the difference between dismissing and snoozing a recommendation?"*

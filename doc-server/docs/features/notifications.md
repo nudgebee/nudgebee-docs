@@ -119,9 +119,8 @@ If a notification was expected but not received:
 
 ---
 
-## 8. NuBi Prompts for Notifications
+## 8. NuBi Documentation Search
 
-Ask NuBi:
-- *"Which notification rule routed incident [incident-id]?"*
-- *"Show all notification rules directing alerts to Slack channel #general-alerts."*
-- *"Create a notification rule for all critical database alerts in production."*
+Ask NuBi in chat for guided notification routing assistance:
+- *"How does notification rule precedence work when multiple rules match?"*
+- *"How do I route critical alerts to a dedicated Slack channel?"*
