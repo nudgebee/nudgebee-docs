@@ -93,9 +93,8 @@ flowchart TD
 
 ---
 
-## 4. NuBi Cloud Diagnostic Prompts
+## 4. NuBi Documentation Search
 
-Ask NuBi in chat:
-- *"Diagnose why spends data is missing for AWS account [account-id]."*
-- *"Test assume role permissions for cloud account [account-name]."*
-- *"Check BigQuery billing dataset connectivity for GCP project [project-id]."*
+Ask NuBi in chat for guided troubleshooting steps:
+- *"How do I fix missing AWS CUR billing data in NudgeBee?"*
+- *"What IAM permissions are required for GCP BigQuery billing export?"*

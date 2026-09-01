@@ -34,7 +34,7 @@ If you connected a cloud account (AWS, Azure, or GCP), NudgeBee can auto-discove
 
 **Operate & Troubleshoot** — tuning, health monitoring, and diagnostics for a running agent.
 
-- **[Troubleshoot Agent Connectivity](./operate/troubleshoot-agent-connectivity.md)** — diagnose disconnected agents, heartbeat staleness (60s tick / 3m timeout), flapping, and safe log bundles.
+- **[Troubleshoot Agent Connectivity](./operate/troubleshoot-agent-connectivity.md)** — diagnose disconnected agents, periodic heartbeat staleness, flapping, and safe log bundles.
 - **[Agent Health & Subsystem Probes](./operate/agent-health.md)** — field-by-field reference for Relay, Prometheus, Logs, Traces, OpenCost, and Node Agent probes.
 - **[Helm values](./operate/helm_values.md)** — every value you are likely to set, including access modes and sizing.
 - **[Node agent configuration](./operate/node-agent-configs.md)** — eBPF collector tuning.

@@ -97,13 +97,13 @@ A single Google Cloud Service Account created at the **Organization** or **Folde
 
 ## 5. Initial Synchronization Expectations & Timelines
 
-When onboarding a cloud fleet, data arrives in three distinct phases:
+When onboarding a cloud fleet, data populates progressively across three phases (exact durations are approximate and depend on cloud provider export delivery schedules and account fleet size):
 
-| Phase | Expected Duration | What Becomes Available |
+| Phase | Typical Duration (Approximate) | What Becomes Available |
 | :--- | :--- | :--- |
-| **1. Resource Discovery** | 5 – 15 minutes | Cloud inventory (EC2, RDS, VMs, Buckets, Subnets) populates the Semantic Knowledge Graph. |
-| **2. Spends Ingestion** | 1 – 4 hours | Historical billing data from CUR / BigQuery is aggregated into cost breakdown charts. |
-| **3. Recommendations** | 2 – 6 hours | Rightsizing, idle waste, and security posture algorithms complete analysis across the fleet. |
+| **1. Resource Discovery** | Initial discovery sweep (~minutes) | Cloud inventory (VMs, databases, buckets, networking) populates the Knowledge Graph. |
+| **2. Spends Ingestion** | Dependent on provider billing export availability | Billing reports (CUR / Cost Export / BigQuery) aggregate into cost breakdown charts. |
+| **3. Recommendations** | Follows resource and spend processing | Rightsizing, idle waste, and cost optimization algorithms complete analysis. |
 
 ---
 

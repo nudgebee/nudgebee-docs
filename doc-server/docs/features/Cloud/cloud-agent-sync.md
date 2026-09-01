@@ -48,11 +48,11 @@ In the Cloud Accounts dashboard, each account displays an **Overall Connection S
 | **Recommendations** | Post-Resource Discovery | Rightsizing, idle waste, and security posture algorithms completed analysis against the latest inventory. | Recommendations list does not reflect recent infrastructure changes. |
 | **Events** | Real-time / Event-driven | CloudWatch/EventBridge SQS, Azure Event Grid, or GCP Monitoring webhooks are actively delivering events. | Incidents and configuration changes are not alerted in real time. |
 
-### Overall Agent Status Logic
-The overall account connection badge is evaluated as:
-- **`CONNECTED`**: Spends and Resources are both healthy and communicating.
-- **`DEGRADED`**: Account credentials are valid, but an individual feature encountered a temporary error.
-- **`DISCONNECTED`**: Authentication failed (e.g., IAM role deleted, Service Principal expired, or cross-account access revoked).
+### Overall Account Status
+The overall cloud account status badge conceptually reflects health across its configured features:
+- **`CONNECTED`**: Data collection is active and cloud credentials are functioning.
+- **`DEGRADED`**: Account credentials remain valid, but an individual feature module encountered a collection issue or rate limiting.
+- **`DISCONNECTED`**: Authentication or authorization failed (e.g., cross-account IAM role inaccessible, Service Principal expired, or permissions revoked).
 
 ---
 
@@ -66,7 +66,7 @@ The overall account connection badge is evaluated as:
 
 ## 4. When to Use "Sync Now"
 
-The **Sync Now** button in the Console triggers an immediate out-of-band delta synchronization for that cloud account:
+The **Sync Now** button in the Console triggers an immediate synchronization request for that cloud account:
 
 ### Appropriate Use Cases for "Sync Now":
 - **Immediately After Onboarding**: Run an initial discovery sweep right after adding a new AWS account, Azure subscription, or GCP project.
@@ -114,9 +114,9 @@ The **Sync Now** button in the Console triggers an immediate out-of-band delta s
 
 ---
 
-## 6. NuBi Cloud Diagnostic Prompts
+## 6. NuBi Cloud Prompts
 
-Ask NuBi to inspect your cloud sync health:
-- *"What is the sync status of AWS account [account-id]?"*
-- *"Why is spends synchronization failing on my GCP billing account?"*
-- *"Show the last sync error reported by Azure collector for subscription [subscription-id]."*
+Ask NuBi in chat to query connected cloud accounts or find troubleshooting guidance:
+- *"List all connected cloud accounts."*
+- *"Show details for cloud account [account-name]."*
+- *"How does cloud synchronization work across AWS and GCP?"*
