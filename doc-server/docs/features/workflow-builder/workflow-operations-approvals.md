@@ -44,7 +44,7 @@ sequenceDiagram
 ### Configuring an Approval Gate:
 1. Drag **Core $\rightarrow$ Approval Gate** onto the canvas between your trigger/prep steps and the mutating action.
 2. Configure parameters:
-   - **Allowed Roles / Groups**: Select required approver roles (e.g. `sre-leads`, `platform-admins`).
+   - **Allowed Roles / Groups**: Select required approver roles or user groups (e.g. `tenant_admin`, `account_admin`, or custom user groups).
    - **Destination Channel**: Specify `#prod-change-approvals` or direct Slack DM.
    - **Timeout Window**: Duration before auto-expiring (e.g. `30m`, `2h`).
    - **On Timeout Action**: `Reject & Abort` or `Escalate to Secondary Channel`.

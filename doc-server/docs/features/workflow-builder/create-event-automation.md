@@ -81,7 +81,7 @@ When an event fires, its full payload is injected into the workflow execution co
 
 2. **Add Human-in-the-Loop Approval Gate** *(Optional)*:
    - Drag **Core $\rightarrow$ Approval Gate** onto the canvas.
-   - Configure approver roles (`sre`, `admin`) and Slack notification channel `#oncall-sre`.
+   - Configure approver roles (`account_admin`, `tenant_admin`) and Slack notification channel `#oncall-sre`.
    - Set timeout to `30m`.
 
 3. **Add Kubernetes Remediation Task**:

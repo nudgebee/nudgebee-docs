@@ -27,9 +27,9 @@ sequenceDiagram
     participant Backend as NudgeBee API Server & DB
     participant UI as NudgeBee Console / NuBi
 
-    Agent->>Relay: Establish WebSocket / gRPC Reverse Tunnel
+    Agent->>Relay: Establish WebSocket / gRPC Tunnel
     Relay-->>Agent: Tunnel Established & Authenticated
-    loop Every 60s (TELEMETRY_PERIOD)
+    loop Periodic Telemetry Tick (Default 60s)
         Agent->>Agent: Probe Local Subsystems (Prometheus, Logs, Traces, Node Agent)
         Agent->>Backend: POST /v1/telemetry (Heartbeat + Datasource Health)
         Backend->>Backend: Update agent.last_connected_at & connection_status
@@ -39,30 +39,29 @@ sequenceDiagram
 
 ### Connectivity Status States
 
-| Status | Badge Color | Meaning |
+| Status | Badge | Meaning |
 | :--- | :--- | :--- |
-| **Connected** | 🟢 Green | The agent has sent a valid telemetry heartbeat within the last **3 minutes** and the Relay tunnel is active. |
-| **Disconnected** | 🔴 Red | No telemetry heartbeat has been received for more than **3 minutes**, or the Relay connection has dropped. |
+| **Connected** | 🟢 Green | The agent is actively reporting telemetry and sending periodic heartbeats. |
+| **Not Connected** | 🔴 Red | No telemetry heartbeat has been received within the connection threshold, or the agent process is stopped. |
 | **Degraded / Warning** | 🟡 Yellow | The core agent is connected, but one or more critical subsystems (e.g., Prometheus, Logs, Traces) failed their local health probe. |
-| **Pending / Initializing** | ⚪ Gray | The agent registration has been created in the database, but the first heartbeat has not yet been received. |
+| **Pending / Initializing** | ⚪ Gray | The agent registration has been created, but the initial heartbeat has not yet been received. |
 
 ---
 
 ## 2. Key Connectivity Concepts
 
 ### What Does "Last Connected" Mean?
-`Last Connected` represents the exact UTC timestamp when the NudgeBee backend last received and validated a telemetry payload or heartbeat ping from the agent.
+`Last Connected` represents the exact UTC timestamp when the NudgeBee backend last received and validated a telemetry payload or heartbeat ping from the agent (`last_connected_at`).
 
-### Heartbeat Staleness & Grace Period
-- **Heartbeat Interval**: By default, the Kubernetes agent posts telemetry every **60 seconds** (`TELEMETRY_PERIOD`).
-- **Disconnection Threshold**: If the backend misses **3 consecutive heartbeats** (~180 seconds / 3 minutes), the cluster/account status automatically flips to `DISCONNECTED`.
-- **Automatic Recovery**: As soon as the agent recovers and delivers a successful heartbeat tick, the backend automatically transitions the status back to `CONNECTED` without requiring manual intervention or cluster restarts.
+### Heartbeat Staleness & Recovery
+- **Heartbeat Interval**: By default, the Kubernetes agent posts telemetry periodically every **60 seconds** (`TELEMETRY_PERIOD`).
+- **Automatic Recovery**: As soon as the agent recovers and delivers a successful heartbeat tick, the backend automatically transitions the status back to `Connected` without requiring manual intervention or cluster restarts.
 
-### Why Does an Agent Alternate (Flap) Between Connected and Disconnected?
+### Why Does an Agent Alternate (Flap) Between Connected and Not Connected?
 Frequent status toggling usually indicates one of three root causes:
 1. **Pod OOMKills / Restarts**: The agent pod is repeatedly crashing and restarting due to memory pressure during large cluster discovery sweeps.
-2. **Network Jitter / Proxy Timeouts**: Intermediate firewalls, HTTP proxies, or cloud NAT gateways are dropping idle WebSocket/gRPC connections before the agent's keepalive ping.
-3. **Telemetry Probes Timeout**: A local datasource probe (such as a slow Prometheus query) exceeds the internal 30s probe budget, delaying the heartbeat post past the 3-minute staleness window.
+2. **Network Jitter / Proxy Timeouts**: Intermediate firewalls, HTTP proxies, or cloud NAT gateways are dropping idle connections before the agent's keepalive ping.
+3. **Telemetry Probes Timeout**: A local datasource probe (such as a slow Prometheus query) exceeds the internal probe budget, delaying the heartbeat post.
 
 ### Agent vs. Proxy Agent
 - **Direct Kubernetes Agent**: Runs inside your target Kubernetes cluster. It directly scrapes local endpoints (`http://prometheus-server...`) and opens an outbound connection to NudgeBee.

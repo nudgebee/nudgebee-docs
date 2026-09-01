@@ -87,16 +87,11 @@ graph TD
 
 ---
 
-## 5. Rollback Safety & Failure Recovery
+## 5. Rollback Safety & Reversion
 
-### Automatic Health Verification:
-After applying a workload change, NudgeBee monitors the workload for **10 minutes**:
-- If the pod enters `CrashLoopBackOff` or encounters an `OOMKilled` event, NudgeBee automatically triggers an **Immediate Auto-Rollback**, restoring the previous container limits.
-
-### Manual One-Click Rollback:
-1. Navigate to **Optimizations $\rightarrow$ History**.
-2. Locate the applied recommendation and click **Rollback**.
-3. The previous manifest specification is reapplied within seconds.
+### Manifest Tracking & Reversion:
+- When changes are applied via GitOps PRs or automated workflows, the previous configuration remains recorded in version control and execution logs.
+- If a workload requires adjustment after rightsizing, engineers can revert the PR or re-apply the prior resource specification directly from the workload management interface.
 
 ---
 

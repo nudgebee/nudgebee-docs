@@ -89,11 +89,11 @@ A single notification rule can dispatch to **multiple destination channels simul
 
 ---
 
-## 5. Channel Watches & Thread Management
+## 5. Thread Management & Interactive Actions
 
 To prevent alert fatigue and channel spam:
-- **Intelligent Threading**: When an incident generates follow-up events or resolves, NudgeBee automatically posts updates **in the same Slack/Teams thread** as the original notification.
-- **Channel Watches**: You can configure a channel watch to monitor specific channels for human reactions (such as `:eyes:` to acknowledge or `:white_check_mark:` to resolve) and sync state back to NudgeBee automatically.
+- **Intelligent Threading**: When an incident generates follow-up events or resolves, NudgeBee automatically posts updates in the same Slack/Teams thread as the original notification.
+- **Interactive Action Buttons**: Notification cards in Slack include interactive buttons (such as **Acknowledge**, **Snooze**, or **Resolve**) allowing on-call engineers to update incident states directly from chat without opening the web console.
 
 ---
 
