@@ -101,6 +101,6 @@ Looking for infrastructure, agent, cloud, or integration troubleshooting?
 - **Kubernetes Subsystems & Health Probes**: See [Kubernetes Agent Health & Subsystems](../../installation/agent/operate/agent-health.md).
 - **Prometheus Metrics Connection**: See [Why is Prometheus Disconnected?](../../installation/agent/connect/prometheus-troubleshooting.md).
 - **Cloud Account Sync (AWS, Azure, GCP)**: See [Cloud Sync Troubleshooting](../Cloud/troubleshooting.md).
-- **Integrations Health**: See [Troubleshoot Integrations](../../integrations/troubleshooting.md).
+- **Integrations Health**: See [Integration Health & Lifecycle](../../integrations/index.md#integration-health-states--lifecycle).
 - **Ticketing Integrations**: See [Troubleshoot Ticketing Integrations](../../integrations/Tickets/ticket-integrations-troubleshooting.md).
 

@@ -34,10 +34,58 @@ Some integrations are **required** for NudgeBee to function (Kubernetes cluster 
 
 ---
 
-## Operational & Diagnostic Guides
+## Integration Health States & Lifecycle
 
-* **[Troubleshoot Integrations & Health States](./troubleshooting.md)** — Shared health state taxonomy (*Configured*, *Connected*, *Healthy*, *Partially Working*, *Authentication Expired*) and diagnostic procedures across all providers.
-* **[Troubleshoot Ticketing Integrations](./Tickets/ticket-integrations-troubleshooting.md)** — Diagnose mandatory custom field errors, assignee permissions, and bidirectional status synchronization.
+In the NudgeBee Console under **Settings $\rightarrow$ Integrations**, each configured integration displays an operational status badge:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Configured: Secrets / URL Saved
+    Configured --> Enabled: Toggle Switched On
+    Enabled --> ConnectionTestPassed: Test Connection Clicked
+    ConnectionTestPassed --> Connected: API Handshake Verified
+    Connected --> Healthy: Active Telemetry Received < 15m
+    Healthy --> PartiallyWorking: Rate Limiting / Scopes Missing
+    Healthy --> AuthenticationExpired: Token Revoked / Key Rotated
+    Healthy --> DataStale: No Data Received > 24h
+```
+
+### Health State Definitions
+
+| State | Badge Color | Meaning & Criteria | Operational Implication |
+| :--- | :--- | :--- | :--- |
+| **Configured** | ⚪ Gray | Credentials and endpoints have been saved, but the integration is not yet enabled for active workloads. | Inactive; no traffic is routed. |
+| **Enabled** | 🔵 Blue | The integration is turned on, but an active health check has not yet completed. | Initializing. |
+| **Connection Test Passed** | 🟢 Green | An explicit interactive test (`Test Connection`) succeeded against the vendor's API. | Credentials and network routes are valid. |
+| **Connected** | 🟢 Green | Continuous bidirectional communication or polling is active. | Normal baseline operations. |
+| **Healthy** | 🟢 Green | Telemetry or events have been actively received within the expected window (last 15 minutes). | Full end-to-end functionality working. |
+| **Partially Working** | 🟡 Yellow | Basic authentication succeeded, but secondary features failed due to missing sub-scopes. | Partial degradation. Inspect permission scopes. |
+| **Authentication Expired** | 🔴 Red | API key revoked, OAuth token expired, or private key rejected (`401 Unauthorized`). | Action required immediately: re-authenticate. |
+| **Data Stale** | 🟠 Orange | Credentials are valid, but no new telemetry has arrived for over 24 hours. | Check source telemetry pipeline. |
+
+---
+
+## Step-by-Step Credential Rotation & Reconnection
+
+When rotating credentials or recovering an expired integration:
+
+1. Navigate to **Settings $\rightarrow$ Integrations**.
+2. Locate the failing integration and click the **Three Dots Menu (...) $\rightarrow$ Edit Configuration**.
+3. Enter the updated API key, client secret, or upload the new JSON service key.
+4. Click **Test Connection** to verify connectivity.
+5. Click **Save Changes**. The backend immediately queues a validation run and clears any `Authentication Expired` status badge.
+
+---
+
+## Provider-Specific Troubleshooting Guides
+
+For troubleshooting specific integration providers, refer directly to the provider documentation:
+
+- **Observability**: [Datadog](./Observability/datadog.md#troubleshooting-datadog-integration), [New Relic](./Observability/newrelic.md#troubleshooting-new-relic-integration), [Dynatrace](./Observability/dynatrace.md#troubleshooting-dynatrace-integration)
+- **Notifications**: [Slack](./Notifications/slack.md#troubleshooting-slack-integration), [MS Teams](./Notifications/msteams.md#troubleshooting-ms-teams-integration), [Google Chat](./Notifications/google_chat.md#troubleshooting-google-chat-integration)
+- **Tickets**: [Jira](./Tickets/jira.md#troubleshooting-jira-integration), [ServiceNow](./Tickets/servicenow.md#troubleshooting-servicenow-integration), [PagerDuty](./Tickets/pagerduty.md#troubleshooting-pagerduty-integration), [Ticketing Diagnostic Guide](./Tickets/ticket-integrations-troubleshooting.md)
+- **Cloud**: [AWS](../features/Cloud/AWS.md#troubleshooting-aws-integration), [Azure](../features/Cloud/Azure.md#troubleshooting-azure-integration), [GCP](../features/Cloud/GCP.md#troubleshooting-gcp-integration), [Cloud Sync Troubleshooting](../features/Cloud/troubleshooting.md)
+- **LLM**: [OpenAI](./LLM/OpenAI/index.md#troubleshooting-openai-integration), [AWS Bedrock](./LLM/Aws/bedrock.md#troubleshooting-amazon-bedrock-integration)
 
 :::tip
 **Recommended setup order**: Observability source first, then a notification channel, then an LLM provider. This gives you monitoring, alerts, and AI-powered insights right away.
