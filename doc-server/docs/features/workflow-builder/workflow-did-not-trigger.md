@@ -22,7 +22,7 @@ flowchart TD
     Start[Workflow Did Not Trigger] --> Q1{1. Is Workflow Status ACTIVE & LIVE?}
     Q1 -->|No: Draft or Paused| Fix1[Publish Draft to LIVE and set Status to ACTIVE]
     Q1 -->|Yes: Active| Q2{2. What is the Trigger Type?}
-    
+
     Q2 -->|Event Trigger| Q3{3. Did Event Ingest into NudgeBee?}
     Q3 -->|No| Fix2[Check Alert Ingestion & Agent Connectivity]
     Q3 -->|Yes| Q4{4. Do Filter Conditions Match Event Labels?}
@@ -30,11 +30,11 @@ flowchart TD
     Q4 -->|Matched| Q5{5. Was Event Snoozed or Suppressed?}
     Q5 -->|Yes| Fix4[Event Dropped by Active Snooze / Triage Rule]
     Q5 -->|No| Q6{6. Is Another Execution Currently In-Flight?}
-    
+
     Q2 -->|Schedule Trigger| Q7{7. Is Cron Time in UTC?}
     Q7 -->|Timezone Offset| Fix5[Adjust Cron Expression for UTC Timezone]
     Q7 -->|Correct Time| Q6
-    
+
     Q6 -->|Yes: Running| Fix6[Check Overlap Policy: 'Skip' or 'Buffer']
     Q6 -->|No: Idle| Q8[Check API Server / Workflow Server Logs]
 ```

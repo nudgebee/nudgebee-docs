@@ -3,7 +3,7 @@ sidebar_position: 3
 ---
 # Google Chat
 
-## How to configure Google Chat in your NudgeBee Account 
+## How to configure Google Chat in your NudgeBee Account
 
 - This loom below shows how to configure Google Chat in your account for notifications.
 
@@ -23,7 +23,7 @@ Steps to add redirect URI:
 3. Under OAuth 2.0 Client IDs, click on the client used for NudgeBee authentication.
 4. In section as *Authorised redirect URIs*  → click *Add URI*
 5. Enter the following URI and click *Save*
-    
+
     ``` https://your-base-url.com/api/integrations/callback/google```
 
 Replace your-base-url with the actual domain where NudgeBee is hosted.

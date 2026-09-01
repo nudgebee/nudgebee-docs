@@ -3,7 +3,7 @@ sidebar_position: 1
 ---
 # Slack
 
-## How to configure Slack in your NudgeBee Account 
+## How to configure Slack in your NudgeBee Account
 
 - This loom below shows how to configure Slack in your account for notifications.
 

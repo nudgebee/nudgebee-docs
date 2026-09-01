@@ -47,13 +47,13 @@ Azure OpenAI Service provides REST API access to OpenAI's powerful language mode
 ## Integrating with LLM Server
 
 1. **Configure Azure OpenAI in LLM Server**:
-   
+
    Add the following configuration to your LLM Server settings:
-   
+
 ```bash
 LLM_PROVIDER=azure
 LLM_MODEL_NAME=<Model name in Azure AI Foundry> # e.g., "gpt-4o"
-LLM_PROVIDER_API_KEY=<Azure authentication token> 
+LLM_PROVIDER_API_KEY=<Azure authentication token>
 LLM_PROVIDER_API_VERSION=<API version> # e.g., "2023-05-15"
 LLM_PROVIDER_API_ENDPOINT=<Base URL for Azure AI Foundry> # e.g., "https://your-resource-name.openai.azure.com"
 ```
@@ -64,7 +64,7 @@ LLM_PROVIDER_API_ENDPOINT=<Base URL for Azure AI Foundry> # e.g., "https://your-
 1. **Configure Azure OpenAI in RAG Server**:
 
    Add the following configuration to your RAG Server settings:
-   
+
 ```bash
 EMBEDDINGS_PROVIDER=azure
 EMBEDDINGS_MODEL_NAME=<Model name in Azure AI Foundry> # e.g., "gpt-4o"

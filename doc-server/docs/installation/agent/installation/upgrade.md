@@ -17,7 +17,7 @@ Before upgrading your NudgeBee Agent, ensure the following:
 
 ### 1. Backup Current Configuration
 
-1. **Export current Helm values**  
+1. **Export current Helm values**
    ```bash
    helm get values nudgebee-agent \
      --namespace nudgebee-agent > current-values.yaml
@@ -78,12 +78,12 @@ helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
 
 ### 4. Verify the Upgrade
 
-1. **Monitor rollout status**  
+1. **Monitor rollout status**
    ```bash
    kubectl rollout status deployment nudgebee-agent-runner \
      --namespace nudgebee-agent
    ```
-2. **Check logs**  
+2. **Check logs**
    ```bash
    kubectl logs -l app.kubernetes.io/name=nudgebee-agent \
      --namespace nudgebee-agent

@@ -20,17 +20,17 @@ This guide provides targeted troubleshooting steps when cloud accounts in **AWS*
 ```mermaid
 flowchart TD
     Start[Cloud Account Issue] --> Problem{What is the primary symptom?}
-    
+
     Problem -->|Spends Missing / $0| S1{Check Billing Export}
     S1 -->|AWS| S2[Verify S3 CUR Bucket Path & Parquet Format]
     S1 -->|Azure| S3[Verify Cost Management Export Scope & Blob SAS]
     S1 -->|GCP| S4[Verify BigQuery Billing Export Dataset & IAM]
-    
+
     Problem -->|Resources Missing| R1{Check IAM Permissions}
     R1 -->|AWS| R2[Test sts:AssumeRole from NudgeBee Backend Role]
     R1 -->|Azure| R3[Check Reader Role on Subscription / MG]
     R1 -->|GCP| R4[Check roles/viewer on Project / Org]
-    
+
     Problem -->|Sync Degraded / Slow| T1{Check Cloud Throttling}
     T1 --> T2[Check CloudWatch / Azure Monitor for 429 & Throttling Limits]
 ```

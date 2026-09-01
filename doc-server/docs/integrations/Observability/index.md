@@ -24,7 +24,7 @@ You can connect multiple observability tools simultaneously. For example, use Pr
 
 ## Supported Integrations
 
-NudgeBee supports integration with a wide range of observability tools across logs, metrics, and traces.  
+NudgeBee supports integration with a wide range of observability tools across logs, metrics, and traces.
 You can connect any combination of the following platforms:
 
 ### 📊 **Metrics Integrations**
@@ -74,21 +74,21 @@ You can connect any combination of the following platforms:
 
 ## Typical Workflow
 
-1. **Integrate Your Observability Tools**  
+1. **Integrate Your Observability Tools**
    Connect Prometheus, Elastic, Jaeger, or others via API or agent connectors.
 
-2. **Ingest Telemetry Data**  
+2. **Ingest Telemetry Data**
    NudgeBee securely pulls relevant logs, metrics, and traces on demand or through scheduled syncs.
 
-3. **Correlate & Analyze**  
+3. **Correlate & Analyze**
    The platform automatically links related signals (e.g., high CPU → increased latency → service errors).
 
-4. **Troubleshoot with AI Assistance**  
-   Use NudgeBee's conversational or visual interface to ask natural language questions like:  
-   > "Why did latency spike on checkout-service at 2:45 PM?"  
+4. **Troubleshoot with AI Assistance**
+   Use NudgeBee's conversational or visual interface to ask natural language questions like:
+   > "Why did latency spike on checkout-service at 2:45 PM?"
    > "Show all errors correlated with high memory usage on auth-service."
 
-5. **Resolve & Learn**  
+5. **Resolve & Learn**
    Generate AI summaries, RCA reports, and recommended actions for future prevention.
 
 ---

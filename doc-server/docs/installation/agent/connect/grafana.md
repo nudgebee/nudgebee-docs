@@ -8,7 +8,7 @@ NudgeBee can integrate with Grafana to surface dashboards directly in the NudgeB
 
 ## Configuration
 
-1. **Fetch Grafana admin password**  
+1. **Fetch Grafana admin password**
    ```bash
    kubectl get secret grafana \
      -n <grafana-namespace> \
@@ -16,7 +16,7 @@ NudgeBee can integrate with Grafana to surface dashboards directly in the NudgeB
      | base64 --decode && echo
    ```
 
-2. **Create or update your `values.yaml`**  
+2. **Create or update your `values.yaml`**
    ```yaml
    runner:
      grafana:
@@ -29,12 +29,12 @@ NudgeBee can integrate with Grafana to surface dashboards directly in the NudgeB
 
    Setting `url` is what enables the integration; there is no `enabled` flag.
 
-3. **Apply configuration and upgrade the agent**  
-   - **Using shell script**:  
+3. **Apply configuration and upgrade the agent**
+   - **Using shell script**:
      ```bash
      sh installation.sh -a <NUDBGEE_AUTH_KEY> -f values.yaml
      ```
-   - **Using Helm**:  
+   - **Using Helm**:
      ```bash
      helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
      helm repo update
@@ -44,4 +44,4 @@ NudgeBee can integrate with Grafana to surface dashboards directly in the NudgeB
        -f values.yaml
      ```
 
-> Replace `<GRAFANA_PASSWORD>` and `<NUDBGEE_AUTH_KEY>` with your actual values, and adjust the Grafana namespace if it differs from `grafana`.  
+> Replace `<GRAFANA_PASSWORD>` and `<NUDBGEE_AUTH_KEY>` with your actual values, and adjust the Grafana namespace if it differs from `grafana`.

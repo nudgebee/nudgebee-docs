@@ -24,15 +24,15 @@ graph TD
     Trigger[Scheduled Cron / 'Sync Now'] --> S1[1. Daily Spends Sync<br/>CUR / Cost Export / BigQuery]
     S1 -->|Completes DB Write| S2[2. Resource Inventory ETL<br/>EC2, RDS, Disks, Subscriptions]
     S2 -->|Refreshes Entities| S3[3. Recommendations & Scanners<br/>Idle Waste, Rightsizing, Security]
-    
+
     subgraph Event Stream [Continuous / Real-Time]
         E1[CloudWatch / EventBridge / Azure Activity / GCP Webhooks] --> E2[Events Ingestion & Triage]
     end
 ```
 
 ### Why Do Resources and Recommendations Run After Spends?
-The **Spends Sync** (`StoreUsage`) establishes the authoritative list of active cloud accounts, business units, and billed resource identifiers. 
-Once the spends database write completes, the **Post-Report Resource Job** triggers to enrich these resource IDs with cloud metadata (tags, instance families, CPU/RAM utilization). 
+The **Spends Sync** (`StoreUsage`) establishes the authoritative list of active cloud accounts, business units, and billed resource identifiers.
+Once the spends database write completes, the **Post-Report Resource Job** triggers to enrich these resource IDs with cloud metadata (tags, instance families, CPU/RAM utilization).
 Finally, **Scanners and Recommendation Engines** evaluate the updated inventory to produce cost-optimization and security findings.
 
 ---

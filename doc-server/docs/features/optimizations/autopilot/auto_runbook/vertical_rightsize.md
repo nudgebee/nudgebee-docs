@@ -47,7 +47,7 @@ The following user inputs are required to configure the VerticalRightsize action
 
 1. **Scale Direction**:
    - **Toggle Button**: Indicates whether the user wants to scale the resources up or down.
-   
+
 2. **Resource Sections**:
    - The UI is divided into two sections: one for CPU and the other for Memory.
 
@@ -69,10 +69,10 @@ The following user inputs are required to configure the VerticalRightsize action
 
 The VerticalRightsize action interface is designed for ease of use and clarity. Here’s how each part works:
 
-- **Scale Direction Toggle**: 
+- **Scale Direction Toggle**:
   - **Scale Down**: Decreases the resource allocation.
   - **Scale Up**: Increases the resource allocation.
-  
+
 - **CPU Section**:
   - **Increase/Decrease**: Use this to specify the percentage by which to increase or decrease the CPU resources.
   - **Minimum/Maximum Values**: These fields allow you to set bounds for how low or high the CPU resources can be adjusted. This ensures that the resource allocation remains within a safe and efficient range.

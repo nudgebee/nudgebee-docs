@@ -29,7 +29,7 @@ sequenceDiagram
 
     Agent->>Relay: Establish WebSocket / gRPC Tunnel
     Relay-->>Agent: Tunnel Established & Authenticated
-    loop Periodic Telemetry Tick (Default 60s)
+    loop Periodic Telemetry Tick
         Agent->>Agent: Probe Local Subsystems (Prometheus, Logs, Traces, Node Agent)
         Agent->>Backend: POST /v1/telemetry (Heartbeat + Datasource Health)
         Backend->>Backend: Update agent.last_connected_at & connection_status
@@ -54,7 +54,7 @@ sequenceDiagram
 `Last Connected` represents the exact UTC timestamp when the NudgeBee backend last received and validated a telemetry payload or heartbeat ping from the agent (`last_connected_at`).
 
 ### Heartbeat Staleness & Recovery
-- **Heartbeat Interval**: By default, the Kubernetes agent posts telemetry periodically every **60 seconds** (configurable via `TELEMETRY_PERIOD` environment variable).
+- **Heartbeat Interval**: The Kubernetes agent periodically posts telemetry snapshots to the backend.
 - **Automatic Recovery**: As soon as the agent recovers and delivers a successful heartbeat tick, the backend automatically transitions the status back to `Connected` without requiring manual intervention or cluster restarts.
 
 ### Why Does an Agent Alternate (Flap) Between Connected and Not Connected?

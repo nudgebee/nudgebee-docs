@@ -85,9 +85,9 @@ When calling models on Amazon Bedrock, the model name you provide depends on you
 ## Integrating with LLM Server
 
 1. **Configure Bedrock in LLM Server**:
-   
+
    Add the following configuration to your LLM Server settings:
-   
+
 ```sh
 LLM_PROVIDER=bedrock
 LLM_PROVIDER_REGION=<AWS_Region> # e.g., us-west-2
@@ -99,14 +99,14 @@ LLM_MODEL_NAME=<Inference_Profile_ID_or_Provisioned_ARN> # e.g., us.meta.llama3-
 1. **Configure Bedrock in RAG Server**:
 
    Add the following configuration to your RAG Server settings:
-   
+
 ```sh
 EMBEDDINGS_PROVIDER=bedrock
 EMBEDDINGS_PROVIDER_REGION=<AWS_Region> # e.g., us-west-2
 EMBEDDINGS_MODEL_NAME=<Inference_Profile_ID_or_Provisioned_ARN> # e.g., us.amazon.titan-embed-text-v2:0
 ```
 
-#### To deploy NudgeBee AI models on AWS Bedrock and integrate [NudgeBee Model Deployment](./aws_bedrock_custom_model.md) 
+#### To deploy NudgeBee AI models on AWS Bedrock and integrate [NudgeBee Model Deployment](./aws_bedrock_custom_model.md)
 
 ---
 
@@ -131,4 +131,4 @@ EMBEDDINGS_MODEL_NAME=<Inference_Profile_ID_or_Provisioned_ARN> # e.g., us.amazo
 ### 3. `ThrottlingException: Rate exceeded`
 * **Symptom**: API calls fail with `ThrottlingException: Rate exceeded for Bedrock InvokeModel`.
 * **Remediation**:
-  Request a Service Quotas increase for `InvokeModel requests per minute` in your AWS Bedrock region. 
+  Request a Service Quotas increase for `InvokeModel requests per minute` in your AWS Bedrock region.

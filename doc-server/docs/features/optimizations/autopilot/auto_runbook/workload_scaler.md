@@ -28,8 +28,8 @@ Users can specify the number of replicas to downscale to during the specified ti
     - Scale Up Cron Expression: `0 7 * * *` (Every morning at 7 AM UTC)
     - Scale Down Replica: `0` (Set replicas to 0)
     - Remember to change UTC time to your local time while configuration
-        
-        ex:- If user is in IST(Indian standard time) 
+
+        ex:- If user is in IST(Indian standard time)
         the above cron will change accordingly.
         apply 30 18 * * * to get same effect as 12:00 am (IST)
 

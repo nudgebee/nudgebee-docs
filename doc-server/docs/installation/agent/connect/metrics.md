@@ -40,7 +40,7 @@ globalConfig:
 
   # 5️⃣ Chronosphere (hosted Prometheus API)
   # prometheus_url: "https://<your-org>.chronosphere.io/data/metrics"
-  
+
   # Custom headers sent with every query (comma-separated "Key: Value" pairs)
   # prometheus_headers: "Authorization: Bearer <token>,X-Scope-OrgID: tenant-a"
 
@@ -54,11 +54,11 @@ A static header does not work for backends that sign each request. For Amazon Ma
 
 ## 🚀 Installation Flow
 
-1. **Auto-Discovery**  
-   If you leave all providers commented, the installer will scan your cluster for a Prometheus instance.  
-2. **Manual Override**  
-   Uncomment the block for your chosen backend and paste in your real endpoint (and token).  
-3. **Deploy & Go!**  
+1. **Auto-Discovery**
+   If you leave all providers commented, the installer will scan your cluster for a Prometheus instance.
+2. **Manual Override**
+   Uncomment the block for your chosen backend and paste in your real endpoint (and token).
+3. **Deploy & Go!**
    Run your Helm install/upgrade and watch NudgeBee start pulling metrics—and surfacing insights—instantly!
 
 ---

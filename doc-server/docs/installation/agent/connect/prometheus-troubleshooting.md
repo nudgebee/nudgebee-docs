@@ -21,7 +21,7 @@ This guide provides a systematic **10-step decision tree** to identify and resol
 
 The NudgeBee agent does **not** rely on static HTTP checks or `/healthy` admin endpoints (which are often disabled or inaccessible in multi-tenant environments such as Chronosphere, Thanos, Grafana Mimir, or Amazon Managed Prometheus).
 
-Instead, during each 60-second telemetry heartbeat tick, the agent runs an authenticated PromQL instant query:
+Instead, during each periodic telemetry heartbeat tick, the agent runs an authenticated PromQL instant query:
 
 ```promql
 vector(1)
@@ -38,28 +38,28 @@ vector(1)
 flowchart TD
     Step1{1. Is Main K8s Agent Connected?} -->|No| Fix1[Resolve Core Agent Pod & Relay Connectivity]
     Step1 -->|Yes| Step2{2. Is Prometheus URL Configured?}
-    
+
     Step2 -->|No| Fix2[Set config.prometheusURL in Helm Values]
     Step2 -->|Yes| Step3{3. Can Agent Resolve & Reach URL?}
-    
+
     Step3 -->|No| Fix3[Check CoreDNS, K8s Service Name & NetworkPolicies]
     Step3 -->|Yes| Step4{4. Is URL Path Correct?}
-    
+
     Step4 -->|No| Fix4[Ensure Base URL without trailing subpaths]
     Step4 -->|Yes| Step5{5. Is Authentication Required?}
-    
+
     Step5 -->|Failing Auth| Fix5[Configure Basic Auth / Bearer Token / AWS SigV4]
     Step5 -->|Auth OK| Step6{6. Is Endpoint Prometheus-Compatible?}
-    
+
     Step6 -->|No| Fix6[Verify Endpoint Implements Prometheus HTTP API v1]
     Step6 -->|Yes| Step7{7. Multi-Tenant Headers Required?}
-    
+
     Step7 -->|Missing Headers| Fix7[Set PROMETHEUS_HEADERS / X-Scope-OrgID]
     Step7 -->|Headers OK| Step8{8. Are Metrics Queries Returning Data?}
-    
+
     Step8 -->|No Data| Fix8[Check Prometheus Scrape Targets & Node Exporters]
     Step8 -->|Data OK| Step9{9. Is Retention Sufficient?}
-    
+
     Step9 -->|Retention Low| Fix9[Adjust Storage Retention in Prometheus]
     Step9 -->|Retention OK| Step10[10. Verify Telemetry Heartbeat Cycle]
 ```
@@ -166,7 +166,7 @@ NudgeBee displays the detected metric retention period. If retention is less tha
 ---
 
 ### Step 10: Is the UI Showing Stale Status?
-Telemetry status is updated on each 60-second heartbeat. After applying changes to your Prometheus configuration or Helm values, allow up to **90 seconds** for the next heartbeat tick to register in the Console.
+Telemetry status is updated on each periodic heartbeat tick. After applying changes to your Prometheus configuration or Helm values, allow time for the next telemetry heartbeat to register in the Console.
 
 ---
 

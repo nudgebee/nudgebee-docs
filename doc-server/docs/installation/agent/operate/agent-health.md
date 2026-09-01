@@ -17,7 +17,7 @@ The **Agent Health** view in the NudgeBee Console provides real-time visibility 
 
 ## 1. Agent Health Dashboard Overview
 
-Every 60 seconds (`TELEMETRY_PERIOD`), the agent runner executes local lightweight probes against all configured datasources and reports their state to the NudgeBee backend.
+On each periodic telemetry tick, the agent runner executes local lightweight probes against all configured datasources and reports their state to the NudgeBee backend.
 
 ```mermaid
 graph LR

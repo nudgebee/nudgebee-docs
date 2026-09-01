@@ -20,7 +20,7 @@ NudgeBee integrates with **Jira**, **ServiceNow**, **GitHub Issues**, **GitLab**
 ```mermaid
 flowchart TD
     Start[Ticket Creation / Sync Failed] --> ErrorType{Inspect Error Message}
-    
+
     ErrorType -->|Field is required / Missing value| F1[1. Mandatory Custom Field Missing]
     ErrorType -->|401 / 403 Unauthorized| F2[2. Token Expired or Insufficient Project Permissions]
     ErrorType -->|Reporter / Assignee Invalid| F3[3. User Not Assignable in Target Project]

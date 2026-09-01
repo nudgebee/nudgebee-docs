@@ -11,7 +11,7 @@ error_codes: [EVENT_SNOOZED, EVENT_SUPPRESSED, EVENT_ACKNOWLEDGED, EVENT_RESOLVE
 
 # Snooze, Suppress, Disable, Acknowledge, Resolve, or Mute Alerts
 
-NudgeBee provides granular operational controls to manage alert fatigue, filter out known transient issues, and track incident remediation ownership. 
+NudgeBee provides granular operational controls to manage alert fatigue, filter out known transient issues, and track incident remediation ownership.
 
 This guide defines the distinct alert lifecycle states, their scopes, expiration behaviors, undo procedures, and required permissions.
 

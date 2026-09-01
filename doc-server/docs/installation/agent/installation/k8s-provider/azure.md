@@ -4,16 +4,16 @@ sidebar_position: 3
 
 # NudgeBee Integration with Azure Monitor (Traces + Prometheus)
 
-This guide explains how to integrate **Azure Monitor** with **NudgeBee** to collect **traces and Prometheus metrics** securely using an **Azure AD App**/**Service Principal**.  
+This guide explains how to integrate **Azure Monitor** with **NudgeBee** to collect **traces and Prometheus metrics** securely using an **Azure AD App**/**Service Principal**.
 
 ---
 
 ## Prerequisites
 
-- **Azure Monitor** enabled  
-- **Prometheus Query endpoint** in Azure Monitor *(See the “[How to Find the Prometheus Endpoint](#how-to-find-the-prometheus-endpoint)” section below for more detail.)*  
-- **Instrumentation Key** in Application Insights for traces *(See the “[How to Find the Instrumentation Key](#how-to-find-the-instrumentation-key)” section below for more detail.)*  
-- **App Registration** in Azure for access *(If you don't have an app already, see [this guide](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/api/register-app-for-token?tabs=portal))*  
+- **Azure Monitor** enabled
+- **Prometheus Query endpoint** in Azure Monitor *(See the “[How to Find the Prometheus Endpoint](#how-to-find-the-prometheus-endpoint)” section below for more detail.)*
+- **Instrumentation Key** in Application Insights for traces *(See the “[How to Find the Instrumentation Key](#how-to-find-the-instrumentation-key)” section below for more detail.)*
+- **App Registration** in Azure for access *(If you don't have an app already, see [this guide](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/api/register-app-for-token?tabs=portal))*
 
 ---
 
@@ -36,45 +36,45 @@ The NudgeBee integration requires the Azure AD App to have the correct **role as
 ---
 
 ### 1. Permissions for Traces (Application Insights)
-- **Role needed**: `Monitoring Reader`  
-- **Scope**: Application Insights resource  
+- **Role needed**: `Monitoring Reader`
+- **Scope**: Application Insights resource
 
 **Steps:**
-1. Go to the **Azure Portal** → **Application Insights** resource.  
-2. Navigate to **Access Control (IAM)** → **Add role assignment**.  
-3. Select:  
-   - **Role**: `Monitoring Reader`  
-   - **Assign access to**: User, group, or service principal  
-   - **Select**: The app you created in **App Registrations** (search by name or service principal ID)  
-4. Click **Save**.  
+1. Go to the **Azure Portal** → **Application Insights** resource.
+2. Navigate to **Access Control (IAM)** → **Add role assignment**.
+3. Select:
+   - **Role**: `Monitoring Reader`
+   - **Assign access to**: User, group, or service principal
+   - **Select**: The app you created in **App Registrations** (search by name or service principal ID)
+4. Click **Save**.
 
 ---
 
 ### 2. Permissions for Prometheus Metrics (Azure Monitor)
-- **Role needed**: `Monitoring Reader` (for read-only access to metrics)  
-- **Scope**: Azure Monitor workspace (or resource group)  
+- **Role needed**: `Monitoring Reader` (for read-only access to metrics)
+- **Scope**: Azure Monitor workspace (or resource group)
 
 **Steps:**
-1. Go to the **Azure Portal** → **Monitor** → **Metrics (Prometheus-enabled workspace)**.  
-2. Navigate to **Access Control (IAM)** → **Add role assignment**.  
-3. Select:  
-   - **Role**: `Monitoring Reader`  
-   - **Assign access to**: User, group, or service principal  
-   - **Select**: The app you created (search by name or service principal ID)  
-4. Click **Save**.  
+1. Go to the **Azure Portal** → **Monitor** → **Metrics (Prometheus-enabled workspace)**.
+2. Navigate to **Access Control (IAM)** → **Add role assignment**.
+3. Select:
+   - **Role**: `Monitoring Reader`
+   - **Assign access to**: User, group, or service principal
+   - **Select**: The app you created (search by name or service principal ID)
+4. Click **Save**.
 
 ---
 
 ### 3. Resource Group-Level Access (Optional but Recommended)
-To simplify management, you can assign the role at the **resource group level** (instead of each resource).  
+To simplify management, you can assign the role at the **resource group level** (instead of each resource).
 
 **Steps:**
-1. Go to the **Azure Portal** → **Resource groups** → Select your resource group.  
-2. Open **Access Control (IAM)**.  
-3. Add role assignment:  
-   - **Role**: `Monitoring Reader`  
-   - **Assign access to**: Service principal (the app)  
-4. Click **Save**.  
+1. Go to the **Azure Portal** → **Resource groups** → Select your resource group.
+2. Open **Access Control (IAM)**.
+3. Add role assignment:
+   - **Role**: `Monitoring Reader`
+   - **Assign access to**: Service principal (the app)
+4. Click **Save**.
 
 ---
 
@@ -88,8 +88,8 @@ To simplify management, you can assign the role at the **resource group level** 
 
 ---
 
-**Important**:  
-- If you only assign permissions at the **resource level**, ensure you do it for **both Application Insights and Azure Monitor Workspace**.  
+**Important**:
+- If you only assign permissions at the **resource level**, ensure you do it for **both Application Insights and Azure Monitor Workspace**.
 
 ---
 
@@ -98,10 +98,10 @@ To simplify management, you can assign the role at the **resource group level** 
 To integrate NudgeBee with Prometheus metrics from Azure Monitor, you need to obtain your workspace's Prometheus **query endpoint**.
 
 ### How to Find the Prometheus Endpoint
-1. Go to your **Azure Monitor Workspace** in the Azure portal.  
-2. Click on your monitoring workspace name.  
-3. Open the **Overview** page.  
-4. Copy the **"Prometheus query endpoint"** URL—this will be used as the `Prometheus URL` in NudgeBee.  
+1. Go to your **Azure Monitor Workspace** in the Azure portal.
+2. Click on your monitoring workspace name.
+3. Open the **Overview** page.
+4. Copy the **"Prometheus query endpoint"** URL—this will be used as the `Prometheus URL` in NudgeBee.
 
 ---
 
@@ -128,9 +128,9 @@ On a cluster with a managed identity assigned instead of a client secret, drop `
 To collect **traces**, you’ll need the **Instrumentation Key** from Application Insights.
 
 ### How to Find the Instrumentation Key
-1. Navigate to your **Application Insights** resource in the Azure portal.  
-2. Open the **Overview** page.  
-3. Copy the **Instrumentation Key**.  
+1. Navigate to your **Application Insights** resource in the Azure portal.
+2. Open the **Overview** page.
+3. Copy the **Instrumentation Key**.
 
 ---
 

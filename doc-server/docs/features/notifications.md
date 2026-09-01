@@ -30,7 +30,7 @@ graph TD
     Event[Incoming Incident Event] --> Filter{Is Event Snoozed or Suppressed?}
     Filter -->|Yes| Drop[No Notification Sent]
     Filter -->|No| Matcher[Rule Matcher & Precedence Engine]
-    
+
     Matcher --> R1{Specific Rule Match?<br/>Cluster + Namespace + Severity}
     R1 -->|Match| Dispatch1[Dispatch to Specific Channel e.g. #prod-payments]
     R1 -->|No Match| R2{Account / Environment Rule Match?}
