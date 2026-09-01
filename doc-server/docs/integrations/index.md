@@ -32,6 +32,13 @@ Some integrations are **required** for NudgeBee to function (Kubernetes cluster 
 
 * **[Authentication](./Authentication/)** — Integrate NudgeBee with an existing identity provider — OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), LDAP, Teleport, or SAML 2.0. OAuth SSO and friends are available in every edition; SAML 2.0 is **Enterprise** and **Cloud** only. **Optional**.
 
+---
+
+## Operational & Diagnostic Guides
+
+* **[Troubleshoot Integrations & Health States](./troubleshooting.md)** — Shared health state taxonomy (*Configured*, *Connected*, *Healthy*, *Partially Working*, *Authentication Expired*) and diagnostic procedures across all providers.
+* **[Troubleshoot Ticketing Integrations](./Tickets/ticket-integrations-troubleshooting.md)** — Diagnose mandatory custom field errors, assignee permissions, and bidirectional status synchronization.
+
 :::tip
 **Recommended setup order**: Observability source first, then a notification channel, then an LLM provider. This gives you monitoring, alerts, and AI-powered insights right away.
 :::

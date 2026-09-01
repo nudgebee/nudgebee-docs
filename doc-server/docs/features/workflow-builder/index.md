@@ -532,3 +532,14 @@ Pause and Resume are only available for workflows with Schedule, Webhook, or Eve
 
 **What does the "Completed with Errors" status mean?**
 The workflow finished running all tasks, but some tasks encountered errors along the way. Check the execution details to see which tasks had issues.
+
+---
+
+## Task-Oriented Automation Guides
+
+- **[Create an Automation When an Event Occurs](./create-event-automation.md)** — Step-by-step walkthrough for building incident-driven automations and auto-remediation.
+- **[Create an Automation from an Optimization Recommendation](./create-optimization-automation.md)** — Automatically rightsize workloads and eliminate cloud waste.
+- **[Test and Validate an Automation (Dry Run & Validation)](./workflow-dry-run-validation.md)** — Simulate workflow runs with mock payloads before publishing.
+- **[Troubleshooting: Why Didn't My Workflow Trigger?](./workflow-did-not-trigger.md)** — Pinpoint trigger mismatches, draft statuses, and timezone issues.
+- **[Workflow Operations: Approvals, Replays, Cancellations & Auditing](./workflow-operations-approvals.md)** — Manage human approval gates, replay failed steps, and inspect audit logs.
+- **[Choosing Between Event Playbooks, Workflows, and AutoOptimize](./automation-architecture-guide.md)** — Architectural decision guide across NudgeBee's automation engines.

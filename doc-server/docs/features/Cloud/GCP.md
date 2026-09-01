@@ -224,3 +224,45 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member="serviceAccount:nudgebee-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/monitoring.editor"
 ```
+
+---
+
+## Troubleshooting GCP Integration
+
+### 1. `Invalid JSON Key / Authentication Failed`
+* **Symptom**: Pasting the Service Account JSON key in Step 1 returns `Invalid Service Account JSON key format or private key error`.
+* **Root Cause**: The JSON string was truncated during copy-paste or contains escaped newlines in the `private_key` field.
+* **Remediation**:
+  Ensure you download the complete, raw `.json` file generated from Google Cloud Console $\rightarrow$ IAM $\rightarrow$ Service Accounts $\rightarrow$ Keys.
+
+---
+
+### 2. `0 Projects Discovered` in Step 2
+* **Symptom**: Step 1 succeeds, but no projects appear in the Projects selection list.
+* **Root Cause**: The Service Account has not been granted `roles/viewer` or `roles/browser` at the Project or Google Cloud Organization / Folder level.
+* **Remediation**:
+  Run:
+  ```bash
+  gcloud projects add-iam-policy-binding <PROJECT_ID> \
+    --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL>" \
+    --role="roles/viewer"
+  ```
+
+---
+
+### 3. Missing Spends Data (`BigQuery Dataset Not Found / Access Denied`)
+* **Symptom**: GCP resources are discovered, but the Spends chart shows `$0`.
+* **Root Causes**:
+  * Cloud Billing Export to BigQuery has not been enabled in the Google Cloud Billing console.
+  * The Service Account lacks `roles/bigquery.dataViewer` and `roles/bigquery.jobUser` on the billing export dataset project.
+* **Remediation**:
+  1. In GCP Billing $\rightarrow$ **Billing export**, verify that **Standard usage cost** and **Detailed usage cost** exports are active.
+  2. Grant the Service Account BigQuery permissions on the project hosting the dataset:
+     ```bash
+     gcloud projects add-iam-policy-binding <BILLING_PROJECT_ID> \
+       --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL>" \
+       --role="roles/bigquery.dataViewer"
+     gcloud projects add-iam-policy-binding <BILLING_PROJECT_ID> \
+       --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL>" \
+       --role="roles/bigquery.jobUser"
+     ```

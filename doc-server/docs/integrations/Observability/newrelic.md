@@ -87,3 +87,32 @@ NudgeBee supports the full range of NRQL operators for filtering: `=`, `!=`, `LI
 - Log queries are limited to 2000 results per request. Use filters to narrow results.
 - Metric queries support both instant and time-series modes with configurable intervals.
 - Field names from Fluent Bit, Fluentd, and New Relic's own K8s integration are all supported automatically.
+
+---
+
+## Troubleshooting New Relic Integration
+
+### 1. `401 Unauthorized: Invalid API Key`
+* **Symptom**: Connection validation query fails with `401 Unauthorized`.
+* **Root Causes**:
+  * **Ingest / License Key Provided**: A New Relic Ingest Key (used by agents to ship data) was provided instead of a **User API Key** (used by NerdGraph to query data).
+  * **Key Revoked**: The user who created the API key left the organization or key was deleted.
+* **Remediation**:
+  1. Go to New Relic $\rightarrow$ User Menu (bottom-left) $\rightarrow$ **API Keys**.
+  2. Click **Create a key** and select **User** as the key type.
+  3. Update the API key in NudgeBee.
+
+---
+
+### 2. `Region Mismatch / Account Not Found`
+* **Symptom**: NerdGraph returns `Account <ID> does not exist`.
+* **Root Cause**: The New Relic account is in the EU region (`api.eu.newrelic.com`), but the region was set to `us`.
+* **Remediation**:
+  If your New Relic login URL starts with `one.eu.newrelic.com`, set the **Region** dropdown to `eu`.
+
+---
+
+### 3. NRQL Query Timed Out
+* **Symptom**: Incident investigation logs show `NRQL query execution timeout exceeded`.
+* **Remediation**:
+  Narrow the query time window or filter by specific attributes (`k8s.podName`, `service.name`) to reduce the data volume scanned in New Relic.

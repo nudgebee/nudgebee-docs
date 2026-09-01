@@ -47,7 +47,7 @@ graph LR
 NudgeBee is designed with strict enterprise safety controls:
 
 - **Default Mode (Human-in-the-Loop)**: NuBi produces diagnostic conclusions and generates exact remediation commands (e.g. `kubectl patch`, rollback commands, or secret creations). NuBi **never runs destructive commands automatically** without explicit human one-click approval in the UI or Slack.
-- **Autopilot Mode (Policy-Gated)**: If you enable [Autopilot](../autopilot/autopilot.md), safe non-destructive operations (such as pod restarts, vertical right-sizing, or node drains) can be executed automatically according to rules and schedules you define.
+- **Autopilot Mode (Policy-Gated)**: If you enable [Autopilot](../optimizations/autopilot/autopilot.md), safe non-destructive operations (such as pod restarts, vertical right-sizing, or node drains) can be executed automatically according to rules and schedules you define.
 - **Audit Logging**: Every action proposed, approved, or executed is logged with user attribution for compliance.
 
 ---
@@ -84,10 +84,23 @@ Click **Apply Fix** in the UI to create the secret, or click **Create Jira Ticke
 
 <div style={{position: "relative", paddingBottom: "56.25%", height: 0}}><iframe src="https://www.loom.com/embed/46381390d75c40d09a77e9ab0f5b4a98?sid=95ee4109-b754-4584-8cba-a5111db775f4" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
 
-### What You Will Find in This Section
+### Incident Triage, Events & Playbooks
 
+- **[Understand & Manage the Event Lifecycle](./event-lifecycle.md)** — 6-stage lifecycle from raw ingestion to fingerprint deduplication, triage classification, Knowledge Graph correlation, and resolution.
+- **[Snooze, Suppress, Disable, Acknowledge, Resolve, or Mute Alerts](./alert-state-management.md)** — Complete taxonomy of alert states, scopes, auto-expiry mechanics, and RBAC permissions.
+- **[Why Am I Not Receiving Alerts?](./alert-pipeline-troubleshooting.md)** — End-to-end diagnosis of the alert delivery pipeline from monitoring source to Slack/Teams/PagerDuty.
+- **[Alerting & Action Customisation](./alerting.md)** — Configure custom alerting rules and attach playbook actions for auto-triage.
 - **[Event Playbooks vs Workflows](./event-playbooks-vs-workflows.md)** — Conceptual guide to the two automation surfaces and when to use each.
-- **[Alerting](./alerting.md)** — Configure custom alerting rules and attach playbook actions for auto-triage.
 - **[Playbook Catalog](./playbook-catalog.md)** — Full reference of every event-playbook action and its parameters, including custom data-collection (proxy DB query, cloud CLI, SSH, kubectl).
 - **[Templating & Best Practices](./templating.md)** — Use gonja (Jinja-style) templates in action parameters, with patterns for labels, outputs, conditionals, and `for_each` loops.
+
+### Infrastructure & Operational Diagnostics
+
+Looking for infrastructure, agent, cloud, or integration troubleshooting?
+- **Agent Connectivity & Heartbeat**: See [Troubleshoot Agent Connectivity](../../installation/agent/operate/troubleshoot-agent-connectivity.md).
+- **Kubernetes Subsystems & Health Probes**: See [Kubernetes Agent Health & Subsystems](../../installation/agent/operate/agent-health.md).
+- **Prometheus Metrics Connection**: See [Why is Prometheus Disconnected?](../../installation/agent/connect/prometheus-troubleshooting.md).
+- **Cloud Account Sync (AWS, Azure, GCP)**: See [Cloud Sync Troubleshooting](../Cloud/troubleshooting.md).
+- **Integrations Health**: See [Troubleshoot Integrations](../../integrations/troubleshooting.md).
+- **Ticketing Integrations**: See [Troubleshoot Ticketing Integrations](../../integrations/Tickets/ticket-integrations-troubleshooting.md).
 

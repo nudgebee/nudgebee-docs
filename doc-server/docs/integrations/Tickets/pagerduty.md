@@ -102,3 +102,32 @@ When an incident is created, it triggers PagerDuty's on-call schedule, notificat
 - PagerDuty incidents are created in a **triggered** state, which activates on-call notifications.
 - The username/email field is used as the `From` header in PagerDuty API calls (required by PagerDuty for incident creation).
 - PagerDuty also supports a separate **webhook integration** for receiving PagerDuty alerts into NudgeBee. See the webhook configuration in **Integrations** > **Webhooks**.
+
+---
+
+## Troubleshooting PagerDuty Integration
+
+### 1. `400 Bad Request: 'From' header is required`
+* **Symptom**: Incident creation fails with a missing `From` header error.
+* **Root Cause**: The PagerDuty REST API v2 requires the email address of a registered PagerDuty user in the `From` header for write operations.
+* **Remediation**:
+  1. Go to **Settings $\rightarrow$ Integrations $\rightarrow$ Tickets $\rightarrow$ PagerDuty**.
+  2. Verify that the **Username / Email** field is populated with a valid user email that exists in your PagerDuty account.
+
+---
+
+### 2. `401 Unauthorized: Invalid Token`
+* **Symptom**: Connection test returns `401 Unauthorized`.
+* **Root Cause**: The API key is a scoped or user personal token that was revoked, or an Events API Integration Key was provided instead of a REST API Key.
+* **Remediation**:
+  1. Ensure you generated a **General Access REST API Key** (v2) from **Integrations $\rightarrow$ Developer Tools $\rightarrow$ API Access Keys**, not a service-specific Events API routing key.
+  2. If your organization uses European PagerDuty service data residency, set the URL to `api.eu.pagerduty.com`.
+
+---
+
+### 3. Incident Not Triggering Escalation Policy
+* **Symptom**: Incident appears in PagerDuty but on-call engineers are not alerted.
+* **Remediation**:
+  1. In PagerDuty, open the target **Service**.
+  2. Verify that the service is linked to an active **Escalation Policy** and not in `Maintenance Mode`.
+  3. Ensure the service's Incident Creation setting is set to **Create Incidents** (not alerts only).

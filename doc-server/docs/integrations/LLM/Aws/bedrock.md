@@ -107,3 +107,28 @@ EMBEDDINGS_MODEL_NAME=<Inference_Profile_ID_or_Provisioned_ARN> # e.g., us.amazo
 ```
 
 #### To deploy NudgeBee AI models on AWS Bedrock and integrate [NudgeBee Model Deployment](./aws_bedrock_custom_model.md) 
+
+---
+
+## Troubleshooting Amazon Bedrock Integration
+
+### 1. `AccessDeniedException: Model access not granted`
+* **Symptom**: NuBi fails with `AccessDeniedException: Your account is not authorized to invoke this model`.
+* **Root Cause**: The model has not been enabled in the AWS Bedrock Model Access console in that specific AWS region.
+* **Remediation**:
+  1. Open AWS Console $\rightarrow$ Amazon Bedrock $\rightarrow$ **Model access**.
+  2. Click **Modify model access**, check the target model (e.g. Anthropic Claude, Meta Llama, Amazon Titan), and click **Save changes**.
+
+---
+
+### 2. `ValidationException: Invocation requires inference profile`
+* **Symptom**: Error when invoking cross-region models (e.g. Anthropic Claude 3.5 Sonnet).
+* **Remediation**:
+  Use the regional cross-region inference profile ID prefix (e.g. `us.anthropic.claude-3-5-sonnet-20241022-v2:0`) instead of bare model names.
+
+---
+
+### 3. `ThrottlingException: Rate exceeded`
+* **Symptom**: API calls fail with `ThrottlingException: Rate exceeded for Bedrock InvokeModel`.
+* **Remediation**:
+  Request a Service Quotas increase for `InvokeModel requests per minute` in your AWS Bedrock region. 

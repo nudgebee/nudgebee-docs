@@ -27,12 +27,15 @@ If you connected a cloud account (AWS, Azure, or GCP), NudgeBee can auto-discove
 
 - **[Alert forwarding](./connect/alertmanager.md)** — point your Alertmanager at the agent. Without this NudgeBee never sees an alert.
 - **[Metrics](./connect/metrics.md)** — Prometheus, Thanos, VictoriaMetrics, Chronosphere, and other backends.
+- **[Why is Prometheus Disconnected?](./connect/prometheus-troubleshooting.md)** — 10-step decision tree for debugging metrics connectivity and authentication.
 - **[Logs](./connect/logging/)** — Loki, Elasticsearch, SigNoz, Last9.
 - **[Traces](./connect/tracing/)** — the bundled OTel collector and ClickHouse, or Google Cloud Trace.
 - **[Grafana](./connect/grafana.md)** and **[multi-tenant Prometheus](./connect/multi_tenant_metrics.md)**.
 
-**Operate** — tuning and reference for a running agent.
+**Operate & Troubleshoot** — tuning, health monitoring, and diagnostics for a running agent.
 
+- **[Troubleshoot Agent Connectivity](./operate/troubleshoot-agent-connectivity.md)** — diagnose disconnected agents, heartbeat staleness (60s tick / 3m timeout), flapping, and safe log bundles.
+- **[Agent Health & Subsystem Probes](./operate/agent-health.md)** — field-by-field reference for Relay, Prometheus, Logs, Traces, OpenCost, and Node Agent probes.
 - **[Helm values](./operate/helm_values.md)** — every value you are likely to set, including access modes and sizing.
 - **[Node agent configuration](./operate/node-agent-configs.md)** — eBPF collector tuning.
 - **[Cluster autoscaler](./operate/cluster-autoscaler/)** — Karpenter support.

@@ -96,11 +96,44 @@ When **Sync Knowledge Base** is enabled, NudgeBee imports your ServiceNow Knowle
 
 ---
 
-## Troubleshooting
+## Troubleshooting ServiceNow Integration
 
-| Issue | Resolution |
-|-------|------------|
-| Authentication fails on save | Verify your instance URL, username, and password are correct. Ensure the user has permissions to query the incident table. |
-| Incidents not being created | Confirm the ServiceNow integration is active and the user account has `incident_create` permissions. |
-| Knowledge Base articles not syncing | Ensure the **Sync Knowledge Base** checkbox is enabled and the user has read access to the Knowledge Base tables. |
-| Work notes not appearing | Verify the user account has permissions to update incidents and add work notes. |
+### 1. Authentication Fails on Save / Connection Test
+* **Symptom**: `401 Unauthorized` or `User not authenticated` when clicking **Save**.
+* **Root Causes**:
+  * ServiceNow instance requires **OAuth 2.0 / Web Service Access Only** flags.
+  * Multi-Factor Authentication (MFA) is enforced on the service user account (ServiceNow REST APIs require either basic auth with an exclusion or an OAuth client).
+* **Remediation**:
+  1. Test authentication directly using `curl`:
+     ```bash
+     curl -u username:password \
+       -H "Accept: application/json" \
+       https://your-instance.service-now.com/api/now/table/incident?sysparm_limit=1
+     ```
+  2. In ServiceNow User Administration $\rightarrow$ Users $\rightarrow$ Select user, check **Web service access only** to bypass interactive SSO/MFA policies for service integration accounts.
+
+---
+
+### 2. Incident Creation Fails (`403 Forbidden` / Missing Table ACLs)
+* **Symptom**: NudgeBee fails to create tickets with `ACL exception: User not authorized to insert into incident table`.
+* **Root Cause**: The service user lacks the necessary ServiceNow roles.
+* **Remediation**:
+  Assign the following standard roles to the service user in ServiceNow:
+  - `itil` or `incident_manager` — Grants create/read/update permissions on the `incident` and `sys_user` tables.
+  - `knowledge_admin` or `knowledge` — Required if **Sync Knowledge Base** is enabled.
+
+---
+
+### 3. Missing Mandatory Fields on Incident Table
+* **Symptom**: Incident creation fails with `Mandatory field 'caller_id' or 'category' is missing`.
+* **Remediation**:
+  1. In ServiceNow System Definition $\rightarrow$ Tables $\rightarrow$ `incident`, check which columns have `Mandatory = true`.
+  2. Configure default fallback values in NudgeBee ServiceNow Settings (e.g. setting a default Caller ID or Category).
+
+---
+
+### 4. Knowledge Base Articles Not Syncing
+* **Symptom**: KB articles are not indexed in NuBi RCA investigations.
+* **Remediation**:
+  1. Ensure **Sync Knowledge Base** is toggled **On** in NudgeBee.
+  2. Verify that the service user has read access to the `kb_knowledge` table and that the target KB Base has `Workflow state = published`.

@@ -257,4 +257,40 @@ az role assignment create \
   --scope "/subscriptions/<subscription-id>"
 ```
 
-<!-- assets verified -->
+---
+
+## Troubleshooting Azure Integration
+
+### 1. `AuthenticationFailed: Invalid client secret` on Step 1
+* **Symptom**: Step 1 validation fails with `Invalid client secret or secret has expired`.
+* **Root Cause**: The client secret string was entered incorrectly, or the secret expired in Entra ID.
+* **Remediation**:
+  1. In Azure Portal $\rightarrow$ Microsoft Entra ID $\rightarrow$ App registrations $\rightarrow$ Select app $\rightarrow$ **Certificates & secrets**.
+  2. Click **New client secret**, copy the **Value** column (not the Secret ID), and paste into NudgeBee.
+
+---
+
+### 2. No Subscriptions Listed in Step 2 (`0 Subscriptions Discovered`)
+* **Symptom**: Step 1 succeeds, but Step 2 discovers 0 subscriptions.
+* **Root Cause**: The Service Principal has not been granted the **Reader** role on the subscriptions or Management Group.
+* **Remediation**:
+  Run the following Azure CLI command for each target subscription:
+  ```bash
+  az role assignment create \
+    --assignee <SERVICE_PRINCIPAL_APP_ID> \
+    --role "Reader" \
+    --scope "/subscriptions/<SUBSCRIPTION_ID>"
+  ```
+
+---
+
+### 3. Missing Cost Management Data (`Cost Management Reader Required`)
+* **Symptom**: Resources appear in NudgeBee, but Spends shows `$0`.
+* **Remediation**:
+  Ensure the Service Principal is assigned the **Cost Management Reader** role at the subscription or Billing Account scope:
+  ```bash
+  az role assignment create \
+    --assignee <SERVICE_PRINCIPAL_APP_ID> \
+    --role "Cost Management Reader" \
+    --scope "/subscriptions/<SUBSCRIPTION_ID>"
+  ```

@@ -3,7 +3,7 @@ sidebar_position: 9
 ---
 # Tickets
 
-NudgeBee integrates with popular ticketing systems so you can create tickets for errors, events, optimization recommendations, and log entries — either manually through the UI or automatically using [Autopilot](./autopilot/autopilot.md).
+NudgeBee integrates with popular ticketing systems so you can create tickets for errors, events, optimization recommendations, and log entries — either manually through the UI or automatically using [Autopilot](./optimizations/autopilot/autopilot.md).
 
 ![NudgeBee Tickets page showing total and per-priority ticket counts and a filterable list of tickets with their tool, title, priority, status, and account](./img/tickets-list.png)
 

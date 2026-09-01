@@ -184,6 +184,33 @@ Dynatrace Grail  ←──  NudgeBee queries via DQL
 
 ---
 
+## Troubleshooting Dynatrace Integration
+
+### 1. `403 Forbidden: Missing Scope`
+* **Symptom**: Connection test returns `403 Forbidden` on save.
+* **Root Cause**: The API token lacks Grail permissions (`storage:logs:read`, `storage:spans:read`, or `storage:metrics:read`).
+* **Remediation**:
+  1. In Dynatrace $\rightarrow$ **Access Tokens**, edit your token.
+  2. Ensure `storage:logs:read`, `storage:spans:read`, and `storage:metrics:read` are all checked.
+  3. Re-enter the updated token in NudgeBee.
+
+---
+
+### 2. DQL Query Timeout (`Query timed out after 120s`)
+* **Symptom**: Querying logs or traces across large clusters times out.
+* **Remediation**:
+  1. Add more restrictive time window filters (`timeframe: -15m` instead of `-24h`).
+  2. Filter by specific Kubernetes namespace or deployment (`k8s.namespace.name = 'production'`).
+
+---
+
+### 3. Missing Kubernetes Telemetry in Grail
+* **Symptom**: Dynatrace connects successfully, but queries return `0 records`.
+* **Remediation**:
+  Verify that the Dynatrace Operator is running in your target cluster and that `oneAgent.cloudNativeFullStack` is active in your `DynaKube` custom resource.
+
+---
+
 ## Helpful Links
 
 - [Create and manage Dynatrace access tokens](https://docs.dynatrace.com/docs/manage/access-control/access-tokens)

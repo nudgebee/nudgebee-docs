@@ -57,3 +57,36 @@ The integration reads the following data from Datadog:
 ---
 
 After filling in all the required fields, click the "Save" or "Connect" button (not fully visible) to complete the integration.
+
+---
+
+## Troubleshooting Datadog Integration
+
+### 1. `403 Forbidden` / Connection Test Failed
+* **Symptom**: Clicking **Test Connection** fails with `403 Forbidden: Invalid API or Application Key`.
+* **Root Causes**:
+  * **API Key vs App Key Inversion**: The API Key and Application Key fields were swapped in the form.
+  * **Missing Scopes**: The Datadog Application Key was created with restricted scopes and lacks `metrics_read`, `logs_read_data`, or `apm_read`.
+* **Remediation**:
+  1. Test authentication with Datadog API directly:
+     ```bash
+     curl -X GET "https://api.datadoghq.com/api/v1/validate" \
+       -H "DD-API-KEY: <YOUR_API_KEY>"
+     ```
+  2. Verify that the Application Key has the **Datadog Standard** or **Datadog Read Only** role in Datadog $\rightarrow$ Organization Settings $\rightarrow$ Application Keys.
+
+---
+
+### 2. Site / Region Endpoint Mismatch
+* **Symptom**: Connection test hangs or fails with `Account not found`.
+* **Root Cause**: The Datadog site was set to `app.datadoghq.com` (US1), but your organization is hosted on EU (`app.datadoghq.eu`), US3 (`us3.datadoghq.com`), or US5 (`us5.datadoghq.com`).
+* **Remediation**:
+  Check your browser URL when logged into Datadog and select the matching site in the **Site** dropdown.
+
+---
+
+### 3. Metric Evidence Not Appearing in Incident Triage
+* **Symptom**: Datadog is connected, but incident evidence cards show `No metrics found in Datadog for this workload`.
+* **Root Cause**: The Kubernetes cluster name or namespace tag in Datadog (`kube_cluster_name`, `cluster_name`) differs from the cluster name registered in NudgeBee.
+* **Remediation**:
+  Ensure your Datadog Agent `datadog.yaml` contains `tags: ["kube_cluster_name:<CLUSTER_NAME>"]` matching the cluster identifier in NudgeBee.
