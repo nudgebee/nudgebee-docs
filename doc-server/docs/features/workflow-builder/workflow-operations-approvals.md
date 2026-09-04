@@ -6,92 +6,51 @@ sidebar_position: 6
 keywords: [workflow approvals, approval gate, replay workflow, cancel execution, workflow auditing, who invoked workflow, execution history]
 intent: change
 provider: all
-error_codes: [WORKFLOW_APPROVAL_TIMEOUT, WORKFLOW_CANCELLED, WORKFLOW_REPLAY_FAILED]
 ---
 
 # Workflow Operations: Approvals, Replays, Cancellations & Auditing
 
-Enterprise operational workflows require strong safety controls, human-in-the-loop sign-offs, fault tolerance, and comprehensive auditability. This guide covers how to manage approval gates, replay failed executions from specific task steps, cancel in-flight runs, and trace invocation attribution.
+Use execution details to inspect task outcomes, respond to approvals, retry a run, or request cancellation.
 
----
+## Approval tasks
 
-## 1. Interactive Human-in-the-Loop Approval Gates
+Add the **Core → Approval** task before an action that needs human review. Configure:
 
-When a workflow performs a potentially disruptive or sensitive action (e.g. database schema change, node drain, scaling down production instances), insert an **Approval Gate** task to pause execution until authorized personnel sign off.
+| Parameter | Purpose |
+| --- | --- |
+| Message | Explain the proposed action, target, and impact |
+| Approval type | `in_app`, `instant_message`, or `email` |
+| IM provider and channel | For instant messages, select Slack and its destination channel ID |
+| Email recipients | Required when using email |
+| Approval options | Defaults to `approve` and `reject` |
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Engine as Workflow Server
-    participant Gate as Approval Gate Node
-    participant Chat as Slack / Teams Channel
-    participant SRE as On-Call Engineer / Admin
+The default `in_app` mode waits for a response from the execution view without sending a notification. Configure the workflow's branching to handle the returned decision before running a mutating task. See [Core Tasks](./core-tasks.md).
 
-    Engine->>Gate: Reach Approval Step (Status: AWAITING_APPROVAL)
-    Gate->>Chat: Post Interactive Approval Card with Context
-    alt SRE Approves
-        SRE->>Chat: Click 'Approve' (or Approve in Web UI)
-        Chat->>Engine: Resume Workflow Execution
-        Engine->>Engine: Run Next Downstream Tasks
-    else SRE Rejects
-        SRE->>Chat: Click 'Reject'
-        Chat->>Engine: Terminate Execution (Status: REJECTED)
-    else Timeout Window Expires (e.g. 30m)
-        Gate->>Engine: Timeout Fallback (Status: TIMED_OUT)
-    end
-```
+The approval task does not provide per-task allowed-role/group selectors or automatic escalation to a secondary channel. Access to execution actions depends on the user's configured permissions.
 
-### Configuring an Approval Gate:
-1. Drag **Core $\rightarrow$ Approval Gate** onto the canvas between your trigger/prep steps and the mutating action.
-2. Configure parameters:
-   - **Allowed Roles / Groups**: Select required approver roles or user groups (e.g. `tenant_admin`, `account_admin`, or custom user groups).
-   - **Destination Channel**: Specify `#prod-change-approvals` or direct Slack DM.
-   - **Timeout Window**: Duration before auto-expiring (e.g. `30m`, `2h`).
-   - **On Timeout Action**: `Reject & Abort` or `Escalate to Secondary Channel`.
+## Retry or replay an execution
 
----
+A retry starts a **new execution of the workflow from the beginning**. It does not resume at the failed task or reuse completed task outputs.
 
-## 2. Replaying Failed Executions
+1. Open the original execution and inspect the failure and any actions that already succeeded.
+2. Correct the underlying problem and review the inputs for the new execution.
+3. Retry the run. Original inputs are reused, with any supplied overrides.
+4. Inspect the new execution and verify its external effects.
 
-When a workflow fails midway (e.g. due to a transient API network timeout or missing credentials that were subsequently fixed), you do not need to rerun the entire workflow from scratch.
+The server prefers the version used by the original run. If that version is unavailable, such as for an older run without version metadata or a pruned version, it falls back to the live version. Review the selected definition before retrying.
 
-### Replay from Failed Task Step:
-1. Navigate to **Workflow $\rightarrow$ Executions**.
-2. Open the failed execution details.
-3. Click on the failed task node.
-4. Click **Replay from this Step**.
-5. All upstream task outputs are preserved from the original run, and execution resumes directly from the selected step.
+:::warning Repeated actions
+Earlier tasks can execute again, including ticket creation, notifications, and infrastructure changes. Check whether those actions are safe to repeat before retrying.
+:::
 
----
+## Cancel an execution
 
-## 3. Cancelling In-Flight Executions
+Use the cancellation action in execution details to request cancellation. The server sends a cancellation request to the workflow engine; it does not expose a choice between graceful cancellation and force termination.
 
-If an ongoing workflow needs to be stopped immediately:
-1. In the execution details view, click the **Cancel Execution** button in the top right header.
-2. Select cancellation mode:
-   - **Graceful Cancel**: Allows currently active task to finish, but prevents downstream tasks from starting.
-   - **Force Terminate**: Immediately aborts running tasks (e.g. terminates running bash scripts or pod execs).
-3. The execution status transitions to `CANCELLED` and logs the user who initiated the abort.
+Cancellation does not undo completed actions or guarantee that an external command has stopped immediately. Inspect the final task states and check the target system before retrying or starting recovery.
 
----
+## Execution history and attribution
 
-## 4. Invocation Attribution & Audit Logging
+Inspect the execution's version, inputs, task outputs, errors, and status. Workflow operations also emit audit events, including cancellation. Available attribution depends on how the workflow was invoked; do not assume every run contains a client IP, token name, AI conversation ID, or recommendation savings value.
 
-Every workflow execution records immutable provenance data answering **who or what invoked the workflow**:
-
-| Invocation Source | Provenance Fields Recorded in Audit Log |
-| :--- | :--- |
-| **Event Trigger** | Event ID, Alert Name, Cluster, Ingested Timestamp, Triggering Fingerprint |
-| **Optimization Trigger** | Recommendation ID, Resource Name, Projected Savings |
-| **Schedule Trigger** | Cron Expression, Scheduled Execution Time, Catchup Window |
-| **Manual UI Run** | User ID, User Email, Client IP Address, Input Parameters JSON |
-| **API Webhook / Token** | API Token Name, Origin IP, Request ID |
-| **Autonomous NuBi Agent** | AI Conversation ID, Incident RCA Reference, Reason for Proposed Plan |
-
----
-
-## 5. NuBi Documentation Search
-
-Ask NuBi in chat for guided workflow operations assistance:
-- *"How do I replay a failed workflow execution from a specific task step?"*
-- *"How do Approval Gates work in NudgeBee workflows?"*
+For recovery, record the original and retry execution IDs, the version used, the affected resources, and any manual corrective actions.

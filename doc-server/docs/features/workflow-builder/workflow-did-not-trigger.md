@@ -6,111 +6,36 @@ sidebar_position: 5
 keywords: [workflow not triggering, automation failed to start, trigger mismatch, workflow draft, cron not running, workflow troubleshooting]
 intent: diagnose
 provider: all
-error_codes: [WORKFLOW_TRIGGER_NOT_MATCHED, WORKFLOW_NOT_ACTIVE, OVERLAP_POLICY_SKIPPED, EVENT_FILTERED]
 ---
 
 # Troubleshooting: Why Didn't My Workflow Trigger?
 
-If an event fired, a schedule passed, or an optimization was created, but your workflow did not start, use this guide and diagnostic decision tree to identify why the workflow was skipped or blocked.
+First distinguish a workflow that never started from one that started and failed. Check execution history for the expected time and inspect errors if a run exists.
 
----
+## 1. Check the live version
 
-## 1. Diagnostic Decision Tree
+Confirm that a version is published, made live, and Active. Saving draft edits does not publish them, and having draft changes does not stop an existing active live version. See [Workflow Versioning](./workflow-versioning.md).
 
-```mermaid
-flowchart TD
-    Start[Workflow Did Not Trigger] --> Q1{1. Is Workflow Status ACTIVE & LIVE?}
-    Q1 -->|No: Draft or Paused| Fix1[Publish Draft to LIVE and set Status to ACTIVE]
-    Q1 -->|Yes: Active| Q2{2. What is the Trigger Type?}
+## 2. Check the trigger input and lifecycle phase
 
-    Q2 -->|Event Trigger| Q3{3. Did Event Ingest into NudgeBee?}
-    Q3 -->|No| Fix2[Check Alert Ingestion & Agent Connectivity]
-    Q3 -->|Yes| Q4{4. Do Filter Conditions Match Event Labels?}
-    Q4 -->|Mismatch| Fix3[Fix Case-Sensitivity or Missing Label Filter]
-    Q4 -->|Matched| Q5{5. Was Event Snoozed or Suppressed?}
-    Q5 -->|Yes| Fix4[Event Dropped by Active Snooze / Triage Rule]
-    Q5 -->|No| Q6{6. Is Another Execution Currently In-Flight?}
+For an Event Trigger, confirm the event exists in Troubleshoot. Compare its actual event type, account, namespace, source, and priority with the configured filters. Structured filters combine with AND. Advanced expressions must render to `true` or `1`.
 
-    Q2 -->|Schedule Trigger| Q7{7. Is Cron Time in UTC?}
-    Q7 -->|Timezone Offset| Fix5[Adjust Cron Expression for UTC Timezone]
-    Q7 -->|Correct Time| Q6
+Check the selected lifecycle phase when available: `event.created`, `event.triaged`, and `investigation.completed` are distinct. A trigger listening for investigation completion does not match the creation phase.
 
-    Q6 -->|Yes: Running| Fix6[Check Overlap Policy: 'Skip' or 'Buffer']
-    Q6 -->|No: Idle| Q8[Check API Server / Workflow Server Logs]
-```
+Review event classification and suppression to understand which lifecycle processing occurred. Do not assume that a notification suppression rule globally disables every workflow trigger.
 
----
+## 3. Check recommendation matching
 
-## 2. Seven Common Root Causes & Step-by-Step Solutions
+Optimization triggers run for new recommendations matching their cluster, category, and rule filters. Inspect the actual `Inputs.event` payload and the [Optimization Trigger reference](./triggers.md#optimization-trigger). Editing a workflow does not imply older recommendations will be replayed.
 
----
+## 4. Check schedule timing and overlap
 
-### Cause 1: Workflow is in `DRAFT` or `PAUSED` State
-- **Explanation**: Workflows that have uncommitted changes or are in `DRAFT` status will never execute in response to production events. Only the designated `LIVE` version runs.
-- **How to Check**: On the Workflow listing page, check the status column:
-  - 🟢 `Active (Live: v1)`: Normal running state.
-  - 🟡 `Draft`: Editing mode; triggers are inactive.
-  - ⏸️ `Paused`: Temporarily halted by an administrator.
-- **Solution**: Open the editor and click **Make Live** $\rightarrow$ **Activate**.
+Scheduled times use UTC. Review the cron expression, catchup window, and schedule overlap policy. For example, Skip can omit a scheduled run while an earlier run remains active; Buffer One queues one pending scheduled run. These schedule policies should not be assumed to govern all event-triggered executions.
 
----
+See [Schedule Trigger](./triggers.md#schedule-trigger) for supported values.
 
-### Cause 2: Trigger Filter Condition Mismatch (Case Sensitivity or Label Keys)
-- **Explanation**: Event trigger conditions use exact string matching for cluster names, namespaces, and severity levels.
-- **Common Mistakes**:
-  - Filtering for `namespace: Payments` when Kubernetes label is lowercase `payments`.
-  - Filtering for `severity: CRITICAL` when Prometheus alert sends `severity: critical`.
-  - Filtering for a specific cluster name that differs from the cluster name registered in NudgeBee.
-- **How to Check**: Open the fired event in **Troubleshoot $\rightarrow$ All Events** and expand the **Labels** JSON payload. Compare each key-value pair against your trigger node configuration.
+## 5. Collect evidence for a missing run
 
----
+Record the workflow ID, live version, account, trigger configuration, event or recommendation ID, and expected UTC time. If no execution exists, ask the administrator to inspect workflow-server trigger/consumer logs for that time and account. A missing execution is not itself proof of a filter mismatch.
 
-### Cause 3: The Event was Snoozed or Suppressed
-- **Explanation**: If an incident is snoozed or matched by an active suppression triage rule, NudgeBee drops downstream notifications and automated workflow triggers to prevent cascading alert storms.
-- **Solution**: Verify event status in the Troubleshoot view. If marked `SNOOZED` or `SUPPRESSED`, remove the suppression rule or wait for the snooze window to lapse. See [Alert State Management](../troubleshooting/alert-state-management.md).
-
----
-
-### Cause 4: Overlap Policy Skipped the Execution
-- **Explanation**: For Schedule triggers and recurring events, if a previous execution is still running when a new trigger arrives, the configured **Overlap Policy** determines the behavior:
-  - `Skip` *(Default)*: Drops the new execution entirely.
-  - `BufferOne`: Queues at most one pending run.
-  - `AllowAll`: Runs concurrent executions in parallel.
-- **How to Check**: Go to **Workflow $\rightarrow$ Executions** and check if a previous run is in status `RUNNING` or stuck in an `Awaiting Approval` gate.
-
----
-
-### Cause 5: Schedule Trigger Timezone Mismatch (UTC vs Local)
-- **Explanation**: All cron schedules in NudgeBee execute in **UTC (Coordinated Universal Time)**.
-- **Example**: If you configure `0 9 * * *` expecting 9:00 AM EST (UTC-5), the workflow will actually execute at 4:00 AM EST (9:00 AM UTC).
-- **Solution**: Convert your desired local time into UTC when configuring the cron expression.
-
----
-
-### Cause 6: Trigger Limit or Concurrency Throttling Reached
-- **Explanation**: To prevent runaway execution loops (e.g. a flapping alert firing 100 times a minute), NudgeBee imposes an account-level rate limit on concurrent workflow executions.
-- **Solution**: Inspect **Workflow $\rightarrow$ Executions** for executions flagged as `THROTTLED`.
-
----
-
-## 3. How to Inspect Trigger Evaluation Logs
-
-1. Navigate to **Workflow $\rightarrow$ Executions**.
-2. Toggle the filter to **All / Skipped Triggers**.
-3. Locate the event timestamp to view the evaluation trace:
-   ```json
-   {
-     "trigger_type": "EVENT_TRIGGER",
-     "event_id": "evt-77b819",
-     "matched": false,
-     "reason": "Filter 'event.labels.severity == critical' evaluated false (actual: 'warning')"
-   }
-   ```
-
----
-
-## 4. NuBi Documentation Search
-
-Ask NuBi in chat for guided workflow troubleshooting assistance:
-- *"How do I debug why an event automation workflow did not trigger?"*
-- *"What is the difference between Draft and Live workflow versions?"*
+If a run exists, inspect its task errors and approval state. See [Workflow Operations](./workflow-operations-approvals.md) before retrying or cancelling it.

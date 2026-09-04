@@ -60,7 +60,7 @@ graph LR
 
 ## In This Section
 
-- **[Recommendations & AutoOptimize Lifecycle](./recommendations-lifecycle.md)** — Complete lifecycle of recommendations: discovery, one-click apply, dismiss, snooze, approval policies, and single-click rollbacks.
+- **[Recommendations & AutoOptimize Lifecycle](./recommendations-lifecycle.md)** — Review recommendation evidence, configure supported automation, and verify or recover resource changes.
 - **[Autopilot Overview](./autopilot/autopilot.md)** — Policy-gated self-healing automation engine.
 - **[Auto-Optimize](./autopilot/auto_optimize/)** — Automated continuous rightsizing rules and execution schedules.
 - **[Auto-Runbooks Catalog](./autopilot/auto_runbook/)** — Ready-to-use runbooks for pod restarts, vertical/horizontal rightsizing, node shutdowns, and custom scripts.

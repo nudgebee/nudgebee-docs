@@ -112,12 +112,12 @@ EMBEDDINGS_MODEL_NAME=<Inference_Profile_ID_or_Provisioned_ARN> # e.g., us.amazo
 
 ## Troubleshooting Amazon Bedrock Integration
 
-### 1. `AccessDeniedException: Model access not granted`
-* **Symptom**: NuBi fails with `AccessDeniedException: Your account is not authorized to invoke this model`.
-* **Root Cause**: The model has not been enabled in the AWS Bedrock Model Access console in that specific AWS region.
-* **Remediation**:
-  1. Open AWS Console $\rightarrow$ Amazon Bedrock $\rightarrow$ **Model access**.
-  2. Click **Modify model access**, check the target model (e.g. Anthropic Claude, Meta Llama, Amazon Titan), and click **Save changes**.
+### 1. `AccessDeniedException` When Invoking a Model
+
+Check the exact error and the IAM identity, model or inference-profile ID, and region configured in NudgeBee. Access denial can result from IAM or organization policies as well as model onboarding requirements.
+
+AWS now enables serverless foundation model access automatically when the required permissions are present. For applicable third-party models, first invocation can require AWS Marketplace permissions/subscription setup. Anthropic models also require first-time-use information. Follow [AWS model access documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) for the selected model instead of relying on the former manual **Modify model access** workflow.
+
 
 ---
 

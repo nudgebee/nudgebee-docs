@@ -39,10 +39,10 @@ Note:
   1. Check the required fields for the issue type by hitting the Jira Create Metadata API:
      ```bash
      curl -u user@example.com:<API_TOKEN> \
-       https://your-domain.atlassian.net/rest/api/3/issue/createmeta?projectKeys=PROD&expand=projects.issuetypes.fields
+       "https://your-domain.atlassian.net/rest/api/3/issue/createmeta?projectKeys=PROD&expand=projects.issuetypes.fields"
      ```
   2. Navigate to **Settings $\rightarrow$ Integrations $\rightarrow$ Tickets $\rightarrow$ Jira**.
-  3. Under **Custom Field Mappings**, map the required Jira fields to default values or dynamic template expressions (e.g., `{{ event.labels.environment }}`).
+  3. Inspect the ticket creation form or workflow ticket task and supply the fields required by the selected project and issue type. Use the available field metadata; do not assume every field accepts workflow template expressions.
 
 ---
 
@@ -55,11 +55,12 @@ Note:
 
 ---
 
-### 4. Bidirectional Status Sync Not Updating NudgeBee
-* **Symptom**: Resolving a Jira issue in Jira does not update the linked incident in NudgeBee.
-* **Remediation**:
-  1. In Jira $\rightarrow$ Settings $\rightarrow$ System $\rightarrow$ **WebHooks**, verify a webhook is registered pointing to:
-     ```
-     https://<your-nudgebee-host>/api/webhooks/jira/status_sync
-     ```
-  2. Ensure the webhook events include `Issue: updated` and `Issue: resolved`.
+### 4. Jira Ticket Status Is Stale
+
+The ticket server synchronizes Jira ticket details by fetching the linked issues and updating NudgeBee ticket records. There is no `/api/webhooks/jira/status_sync` endpoint to configure for this flow.
+
+1. Confirm the issue is accessible using the integration's configured account.
+2. Check the linked ticket ID and integration configuration.
+3. Ask an administrator to inspect ticket-server synchronization errors and the sync job if the record remains stale.
+
+A synchronized ticket status is separate from the linked event's NudgeBee triage status. Do not assume closing a Jira issue automatically resolves that event.

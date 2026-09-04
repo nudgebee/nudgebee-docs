@@ -6,110 +6,54 @@ sidebar_position: 2
 keywords: [event automation, event trigger, workflow trigger, automated incident response, event remediation]
 intent: setup
 provider: all
-error_codes: [WORKFLOW_EVENT_TRIGGER_FAILED, EVENT_FILTER_MISMATCH]
 ---
 
 # Create an Automation When an Event Occurs
 
-Event-triggered automations allow you to automatically react when NudgeBee detects an incident, Kubernetes event, or cloud anomaly. Typical use cases include auto-creating Jira tickets with full investigation payloads, notifying specific on-call channels, scaling workloads, or executing graceful pod restarts.
+Start with a narrowly filtered notification workflow, verify the event input, and then add ticket creation or remediation.
 
----
+## Prerequisites
 
-## 1. End-to-End User Journey
+You need a connected event source, permission to create and run workflows, and a configured test notification destination. Confirm that a representative event is visible in Troubleshoot before configuring the trigger.
 
-```mermaid
-graph LR
-    E[1. Kubernetes / Cloud Event<br/>CrashLoopBackOff] --> T[2. Event Trigger Node<br/>Matches Severity & Namespace]
-    T --> A[3. Approval Gate<br/>Interactive Slack / UI]
-    A -->|Approved| R[4. Remediation Tasks<br/>kubectl restart / ticket creation]
-    A -->|Rejected| N[5. Audit Log Updated]
-    R --> V[6. Execution Verified]
+## Configure the event trigger
+
+Create a workflow and add an **Event Trigger**. Configure at least one filter: event type, cluster, namespace, source, priority, or an advanced expression. Structured filters combine with AND; priorities are `HIGH`, `MEDIUM`, `LOW`, `INFO`, and `DEBUG`.
+
+For advanced matching, use a Jinja expression such as:
+
+```jinja
+{{ event.priority == "HIGH" and event.source == "prometheus" }}
 ```
 
----
+Select the lifecycle phase appropriate to your operation when that option is available. Creation, triage, and investigation completion are distinct phases; an event-created trigger should not assume AI analysis is already present.
 
-## 2. Step 1: Create a New Workflow Canvas
+See [Configuring Triggers](./triggers.md#event-trigger) for the form and filtering rules.
 
-1. In the NudgeBee Console, click **Workflow** in the left navigation sidebar.
-2. Click **Create Workflow** in the top right corner.
-3. Give your workflow a descriptive name (e.g. `Auto-Remediate CrashLoopBackOff`) and select optional tags (e.g. `production`, `kubernetes`, `incident-response`).
-4. Click **Create**. The visual workflow canvas opens.
+## Map the event into tasks
 
----
+The event payload is passed as `Inputs.event`. Inspect a real execution input before referencing optional source-specific fields.
 
-## 3. Step 2: Configure the Event Trigger Node
+| Expression | Meaning |
+| --- | --- |
+| `{{ Inputs.event.event_type }}` | Event type |
+| `{{ Inputs.event.subject_namespace }}` | Subject namespace |
+| `{{ Inputs.event.subject_name }}` | Subject name |
+| `{{ Inputs.event.priority }}` | Priority |
+| `{{ Inputs.event.source }}` | Ingestion source |
 
-1. In the left task sidebar, expand **Triggers** and drag an **Event Trigger** node onto the canvas.
-2. Click the Event Trigger node to open its configuration panel:
+A subject is not necessarily a Pod. Validate the resource kind and account before using it in a Kubernetes action. Do not assume `labels.pod_name`, `annotations.cluster_name`, or `rca.summary` exist on every event.
 
-| Field | Configuration | Example Value |
-| :--- | :--- | :--- |
-| **Cluster** | Select target cluster or `*` for all clusters | `production-us-east` |
-| **Namespace** | Specific namespace filter | `payments` |
-| **Event Type** | Filter by Kubernetes or platform event type | `Warning` / `CrashLoopBackOff` |
-| **Severity / Priority** | Minimum severity threshold | `critical` |
-| **Filter Expression** | Optional CEL/JSON expression for fine-grained matching | `event.labels.app == 'checkout-service'` |
+## Test a notification
 
----
+1. Add an appropriate [Notification Task](./notification-tasks.md), connected to the trigger.
+2. Select a test channel and include the event type, priority, and subject in the message.
+3. Validate the workflow, then test using a representative sanitized input. Follow [Dry Run & Validation](./workflow-dry-run-validation.md); Dry Run can send actual messages.
+4. Inspect task inputs and outputs and confirm the message reached the intended destination.
+5. Publish an Active version and make it live. Confirm that a new matching event produces an execution.
 
-## 4. Step 3: Map Event Context into Workflow Tasks
+## Add operational actions
 
-When an event fires, its full payload is injected into the workflow execution context. You can access event fields inside downstream tasks using template expressions:
+After matching and payload mapping are verified, add a [Ticket Task](./ticket-tasks.md) or [Kubernetes Task](./kubernetes-tasks.md) with its required parameters. Place an [Approval](./workflow-operations-approvals.md) before changes that require review and configure decision handling before remediation.
 
-- `{{ event.title }}` — Event summary title (e.g. *Pod payments-auth-7f9b is CrashLoopBackOff*).
-- `{{ event.labels.namespace }}` — Target namespace.
-- `{{ event.labels.pod_name }}` — Target pod name.
-- `{{ event.annotations.cluster_name }}` — Target cluster name.
-- `{{ event.rca.summary }}` — AI-generated root cause analysis summary from NuBi.
-
----
-
-## 5. Step 4: Add Action Nodes (Tickets, Notifications & Remediation)
-
-1. **Add Jira Ticket Task**:
-   - Drag **Tickets $\rightarrow$ Create Jira Ticket** onto the canvas.
-   - Connect the Event Trigger node to the Jira task.
-   - Configure **Project Key**: `PROD` and **Issue Type**: `Incident`.
-   - In the Summary field, enter: `[Auto-Incident] {{ event.title }}`.
-   - In the Description field, enter:
-     ```markdown
-     *Incident Summary*: {{ event.title }}
-     *Cluster*: {{ event.annotations.cluster_name }}
-     *Namespace*: {{ event.labels.namespace }}
-     *AI Root Cause*: {{ event.rca.summary }}
-     ```
-
-2. **Add Human-in-the-Loop Approval Gate** *(Optional)*:
-   - Drag **Core $\rightarrow$ Approval Gate** onto the canvas.
-   - Configure approver roles (`account_admin`, `tenant_admin`) and Slack notification channel `#oncall-sre`.
-   - Set timeout to `30m`.
-
-3. **Add Kubernetes Remediation Task**:
-   - Drag **Kubernetes $\rightarrow$ Delete / Restart Pod** onto the canvas.
-   - Connect the Approval Gate output to the Remediation task.
-   - Set Namespace to `{{ event.labels.namespace }}` and Pod Name to `{{ event.labels.pod_name }}`.
-
----
-
-## 6. Step 5: Test and Publish
-
-1. Click **Dry Run** in the top toolbar to simulate execution with a sample event payload. Verify that all template variables resolve properly.
-2. Click **Save Draft**.
-3. When ready for production, click **Make Live**. The workflow transitions to status `ACTIVE` and listens for matching events.
-
----
-
-## 7. Step 6: Verify Automation Execution
-
-To confirm the automation ran:
-1. Navigate to **Workflow $\rightarrow$ Executions**.
-2. Select your workflow to view execution logs, task-level inputs/outputs, and duration.
-3. In the event details view under **Troubleshoot**, check the **Automations** tab to see the linked workflow execution run.
-
----
-
-## 8. NuBi Documentation Search
-
-Ask NuBi in chat for guided event automation assistance:
-- *"How do I map event payload fields into downstream workflow tasks?"*
-- *"How do I configure an Approval Gate in an event-triggered workflow?"*
+Inspect completed actions before retrying a failed workflow: retry starts the workflow again, including earlier tasks. Record a recovery procedure for changes to infrastructure.

@@ -6,12 +6,11 @@ sidebar_position: 4
 keywords: [aws organizations onboarding, bulk azure subscriptions, bulk gcp projects, multi-account onboarding, cloud fleet, management group]
 intent: setup
 provider: cloud
-error_codes: [ORG_ONBOARDING_FAILED, SUBSCRIPTION_DISCOVERY_FAILED, PROJECT_DISCOVERY_FAILED]
 ---
 
 # Cloud Fleet Onboarding (AWS Organizations, Bulk Azure & GCP)
 
-Enterprise organizations typically operate tens or hundreds of cloud accounts across AWS, Azure, and GCP. Rather than manually onboarding individual accounts one at a time, NudgeBee provides automated **Fleet Onboarding** via AWS Organizations, Azure Management Groups, and GCP Organizations.
+Enterprise organizations typically operate tens or hundreds of cloud accounts across AWS, Azure, and GCP. NudgeBee supports AWS Organization onboarding and lets Azure and GCP users discover the subscriptions or projects accessible to the credentials they provide.
 
 ---
 
@@ -23,12 +22,12 @@ graph TD
         AWSMgmt[Management / Payer Account<br/>CloudFormation StackSet] -->|Auto-Deploy IAM Role| AWSMembers[All Member Accounts (Auto-Discovered)]
     end
 
-    subgraph Azure Fleet [Azure Management Groups]
-        AzureMG[Root Management Group<br/>Enterprise App / Service Principal] -->|Inherited Reader Role| AzureSubs[All Subscriptions (Bulk Onboarded)]
+    subgraph Azure Fleet [Azure subscriptions]
+        AzureSP[Microsoft Entra service principal] -->|Discover accessible subscriptions| AzureSubs[Selected subscriptions]
     end
 
-    subgraph GCP Fleet [GCP Resource Hierarchy]
-        GCPOrg[GCP Organization / Folder<br/>Org-Level Service Account] -->|BigQuery Billing Export| GCPProjects[All Projects (Auto-Discovered)]
+    subgraph GCP Fleet [GCP projects]
+        GCPSA[GCP service account] -->|Discover accessible projects| GCPProjects[Selected projects]
     end
 
     AWSFleet -->|Continuous Ingestion| NB[NudgeBee Cloud Collector]
@@ -43,7 +42,7 @@ graph TD
 ### How It Works
 1. You deploy a primary CloudFormation stack in your AWS **Management (Payer) Account**.
 2. An AWS CloudFormation **StackSet** automatically provisions the NudgeBee Cross-Account IAM Role across all existing and newly created AWS member accounts.
-3. An Amazon SNS Topic and SQS queue stream real-time account lifecycle events to NudgeBee. When a new AWS account is created in your AWS Organization, NudgeBee automatically registers it without manual steps.
+3. NudgeBee uses the organization setup to discover and onboard member accounts. Check the organization status in the Console after the StackSet deployment completes.
 
 ### Step-by-Step Setup:
 1. In NudgeBee Console, go to **Cloud $\rightarrow$ Add Cloud Account $\rightarrow$ AWS Organization**.
@@ -57,12 +56,12 @@ graph TD
 ## 3. Bulk Azure Subscriptions Onboarding
 
 ### How It Works
-By granting permissions at the **Management Group** root level, the NudgeBee Microsoft Entra (Azure AD) Enterprise Application automatically inherits visibility across all linked Azure subscriptions.
+NudgeBee lists the subscriptions that the supplied Microsoft Entra service principal can access. The scope at which you grant its roles determines which subscriptions appear.
 
 ### Step-by-Step Setup:
 1. Go to **Cloud $\rightarrow$ Add Cloud Account $\rightarrow$ Azure**.
-2. Select **Bulk Subscription Discovery (Management Group)**.
-3. Follow the Azure Cloud Shell script to register the Service Principal:
+2. Enter the tenant ID, client ID, and client secret for the service principal.
+3. Grant the service principal the required roles at each subscription, or at a parent scope whose permissions are inherited by those subscriptions. For example, at a management-group scope:
    ```bash
    # Assign Reader and Cost Management Reader at the Management Group scope
    az role assignment create \
@@ -82,16 +81,16 @@ By granting permissions at the **Management Group** root level, the NudgeBee Mic
 ## 4. Bulk GCP Projects Onboarding
 
 ### How It Works
-A single Google Cloud Service Account created at the **Organization** or **Folder** level allows NudgeBee to discover all active GCP projects and stream BigQuery billing export records.
+NudgeBee lists projects accessible to the supplied Google Cloud service-account key. Granting roles at an organization or folder can make those roles available to descendant projects, subject to your Google Cloud IAM policy.
 
 ### Step-by-Step Setup:
 1. Go to **Cloud $\rightarrow$ Add Cloud Account $\rightarrow$ GCP**.
-2. Select **Organization / Multi-Project**.
-3. Grant the required roles to the NudgeBee Service Account at the Organization node:
+2. Paste the service-account JSON key and use **Check Permissions**.
+3. Grant the required roles at the appropriate project or inherited parent scope:
    - `roles/viewer` (Resource Discovery)
    - `roles/billing.viewer` (Billing Data)
    - `roles/bigquery.dataViewer` (on the BigQuery Billing export dataset)
-4. Upload the Service Account private key JSON and click **Verify & Discover Projects**.
+4. Click **Next**, then **Discover Projects** and select the projects to monitor. You can also enter project IDs manually.
 
 ---
 
@@ -109,5 +108,5 @@ When onboarding a cloud fleet, data populates progressively across three phases 
 
 ## 6. Safe Resynchronization & Offboarding
 
-- **Resyncing an Account**: If an account reports stale data or was temporarily offline, click **Sync Now** on the account card in the console.
-- **Decommissioning an Account**: When an AWS member account is closed or Azure subscription deleted, NudgeBee automatically marks it as `ARCHIVED`, preserving historical cost data while halting live API queries.
+- **Resyncing an Account**: If an account reports stale data or was temporarily offline, open **Agent Health** for that cloud account and click **Sync Now**.
+- **Decommissioning an Account**: Remove or disable the account in NudgeBee when it should no longer be queried. Do not rely on cloud-provider deletion alone to change its NudgeBee status.

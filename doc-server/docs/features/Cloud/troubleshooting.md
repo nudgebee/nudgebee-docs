@@ -6,7 +6,6 @@ sidebar_position: 9
 keywords: [cloud sync troubleshooting, missing billing data, aws assume role failed, cur missing, azure cost missing, gcp bigquery error, cloud throttling]
 intent: diagnose
 provider: cloud
-error_codes: [CLOUD_ASSUME_ROLE_FAILED, CUR_BUCKET_ACCESS_DENIED, BIGQUERY_DATASET_NOT_FOUND, CLOUD_RATE_LIMITED]
 ---
 
 # Cloud Synchronization & Missing Data Troubleshooting
@@ -22,7 +21,7 @@ flowchart TD
     Start[Cloud Account Issue] --> Problem{What is the primary symptom?}
 
     Problem -->|Spends Missing / $0| S1{Check Billing Export}
-    S1 -->|AWS| S2[Verify S3 CUR Bucket Path & Parquet Format]
+    S1 -->|AWS| S2[Verify S3 CUR Bucket Path & Daily CSV Format]
     S1 -->|Azure| S3[Verify Cost Management Export Scope & Blob SAS]
     S1 -->|GCP| S4[Verify BigQuery Billing Export Dataset & IAM]
 
@@ -44,28 +43,11 @@ flowchart TD
 ### A. AWS Cost & Usage Report (CUR) Missing or Unread
 * **Symptom**: Cloud Account details show resources and events, but the Spends chart shows `$0` or `No Spends Data Available`.
 * **Root Causes**:
-  1. **S3 Bucket Policy**: The S3 bucket storing CUR parquet files lacks read permissions for the NudgeBee Cloud Collector IAM role.
-  2. **CUR Compression / Format**: NudgeBee requires CUR format set to **Parquet (GZIP / Snappy)** with Athena/Glue integration. Legacy CSV CUR files cannot be parsed.
+  1. **S3 Bucket Policy**: The S3 bucket storing CUR CSV files lacks read permissions for the NudgeBee Cloud Collector IAM role.
+  2. **CUR Compression / Format**: The collector selects **daily CSV (`textORcsv`)** reports and supports GZIP and ZIP-compressed CSV input. Parquet reports are not supported by this ingestion path.
 * **Remediation**:
-  1. In AWS Billing Console $\rightarrow$ Cost and Usage Reports, ensure report format is **Parquet**.
-  2. Add the following statement to the S3 CUR bucket policy:
-     ```json
-     {
-       "Sid": "AllowNudgeBeeCURRead",
-       "Effect": "Allow",
-       "Principal": {
-         "AWS": "arn:aws:iam::<NUDGEBEE_ACCOUNT_ID>:role/nudgebee-cloud-collector"
-       },
-       "Action": [
-         "s3:GetObject",
-         "s3:ListBucket"
-       ],
-       "Resource": [
-         "arn:aws:s3:::<YOUR_CUR_BUCKET_NAME>",
-         "arn:aws:s3:::<YOUR_CUR_BUCKET_NAME>/*"
-       ]
-     }
-     ```
+  1. In AWS Billing Console $\rightarrow$ Cost and Usage Reports, ensure report format is **CSV** and time granularity is **Daily**.
+  2. Verify that the role configured for the cloud account has `s3:ListBucket` on the report bucket and `s3:GetObject` on its report objects. For cross-account access, review the bucket policy against the actual configured principal rather than copying a fixed NudgeBee role ARN.
 
 ---
 
@@ -84,12 +66,16 @@ flowchart TD
 * **Root Causes**:
   1. **External ID Mismatch**: If an `ExternalId` condition was specified during onboarding, it must match the account's registered secret in NudgeBee.
   2. **Trust Policy Condition**: The IAM Role's trust policy restricts access to an outdated NudgeBee backend ARN.
-* **Verification Command** (run from AWS CLI with administrator privileges):
+* **Verification Command** (run using the same caller identity as the collector; an unrelated administrator identity does not test the collector's trust relationship):
   ```bash
   aws sts assume-role \
     --role-arn "arn:aws:iam::<TARGET_ACCOUNT_ID>:role/NudgeBeeCrossAccountRole" \
-    --role-session-name "NudgeBeeTestSession"
+    --role-session-name "NudgeBeeTestSession" \
+    --external-id "<CONFIGURED_EXTERNAL_ID>" \
+    --query 'AssumedRoleUser.Arn' --output text
   ```
+
+Omit `--external-id` only if the configured role does not require one. The query prints the assumed role ARN without printing temporary credentials.
 
 ---
 

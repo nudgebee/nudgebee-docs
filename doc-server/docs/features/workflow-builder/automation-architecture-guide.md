@@ -10,71 +10,26 @@ provider: all
 
 # Choosing Between Event Playbooks, Workflows, and AutoOptimize
 
-NudgeBee provides three distinct automation engines designed for different stages of the incident and infrastructure lifecycle. Understanding the architectural differences ensures you choose the right tool for each operational scenario.
+Choose the mechanism according to the work you need to perform and the controls available for that action.
 
----
+| Mechanism | Use it for | What to verify |
+| --- | --- | --- |
+| Event playbooks | Attaching diagnostic actions and evidence to event investigations | The configured actions, permissions, and their possible side effects |
+| Workflows | Multi-step orchestration using event, optimization, schedule, webhook, or manual triggers | Trigger input, task parameters, approvals, retry behavior, and recovery |
+| AutoOptimize | Supported scheduled optimization actions | Target resources, algorithm/settings, schedule, and approval configuration |
 
-## 1. The Three Automation Mechanisms at a Glance
+## Investigation
 
-```mermaid
-graph TD
-    subgraph Phase 1: Investigation
-        A[Incoming Alert / Incident] --> P[Event Playbook<br/><i>Evidence Collection</i>]
-        P -->|Fetches Logs, Metrics, SQL Snapshots| E[Evidence Attached to Event]
-        E --> N[NuBi AI Root Cause Analysis]
-    end
+Use diagnostic actions to collect relevant metrics, logs, or resource information. Review each action before enabling it: a script or query is not made read-only merely because it is part of a diagnostic playbook.
 
-    subgraph Phase 2: Post-Incident Action & Orchestration
-        N --> W[Workflow Engine<br/><i>Orchestration & Remediation</i>]
-        W -->|Multi-Step Logic| J[Jira Ticket]
-        W -->|Approval Gate| S[Slack Notification]
-        W -->|Gated Action| R[Restart / Patch Workload]
-    end
+## Operational response
 
-    subgraph Continuous Operations: Autopilot
-        O[Continuous Resource Monitoring] --> AO[AutoOptimize / Autopilot<br/><i>Policy-Gated Rightsizing</i>]
-        AO -->|Within Policy Thresholds| K[Continuous Rightsize Workloads]
-    end
-```
+Use a workflow when you need branching, notifications, tickets, or changes across multiple steps. Select the trigger lifecycle phase that provides the required input. If a task needs completed investigation results, do not assume an event-created trigger already contains them.
 
----
+See [Event-Triggered Automation](./create-event-automation.md) and [Approvals and Operations](./workflow-operations-approvals.md).
 
-## 2. Detailed Comparative Feature Matrix
+## Scheduled optimization
 
-| Dimension | Event Playbooks | Workflows (Workflow Builder) | AutoOptimize (Autopilot) |
-| :--- | :--- | :--- | :--- |
-| **Primary Goal** | **Gather Evidence** for the AI agent before root-cause analysis begins. | **Orchestrate Actions** across tools, create tickets, page teams, and execute multi-step fixes. | **Continuously Optimize** workload resources and clean up idle cloud infrastructure. |
-| **Execution Timing** | Immediately when an alert or event is ingested (pre-triage). | Post-incident formation, on a cron schedule, on optimization detection, or manual trigger. | Continuous background loop (hourly/daily policy evaluations). |
-| **Typical Actions** | Query Prometheus metrics, fetch pod logs, execute read-only SQL, run kubectl describe, fetch cloud CLI stats. | Open Jira/ServiceNow tickets, interactive Slack approval gates, call REST APIs, scale pods, multi-service rollback. | Vertical pod autoscaling (VPA), PVC resizing, idle node drains, unattached disk deletion. |
-| **Human in the Loop** | Read-only; no approval needed. | Supports interactive Approval Gates (Slack / UI / Webhook). | Policy-gated with predefined safety guardrails and maintenance windows. |
-| **Visual Interface** | Action stack in Alert Configuration. | Full visual drag-and-drop node graph canvas. | Autopilot Policy Rules table. |
-| **Mutates Resources?** | **No** (Strictly read-only evidence collection). | **Yes** (when configured with remediation or ticketing tasks). | **Yes** (within approved policy boundaries). |
+Use [Auto Optimize](../optimizations/autopilot/auto_optimize/index.md) for the optimization categories supported by its configuration form. Use a recommendation-triggered workflow for custom follow-up logic, starting with a notification and verifying the payload before adding changes.
 
----
-
-## 3. Decision Framework: When to Use Which?
-
-### Use an **Event Playbook** when:
-- You want NuBi AI to automatically have deep diagnostic context (e.g. database `pg_stat_activity` queries or container stderr logs) attached to an event before alerting the team.
-- You need automated context gathering without taking any mutating actions.
-
-### Use a **Workflow** when:
-- You need a multi-step sequence with branching logic (e.g. *If severity is Critical $\rightarrow$ Page On-Call $\rightarrow$ Request Approval $\rightarrow$ Restart Pod*).
-- You want to integrate multiple third-party tools (Jira, Slack, GitHub, Datadog, AWS CLI).
-- You need human-in-the-loop sign-off before running changes.
-- You need a scheduled maintenance task (e.g. weekly backup validation).
-
-### Use **AutoOptimize** when:
-- You want routine, non-breaking resource rightsizing (e.g. reducing CPU requests on over-provisioned staging pods) to happen automatically without opening manual tickets.
-- You have clear organizational guardrails (e.g. *Auto-apply rightsizing only if estimated monthly savings are between $10 and $200 and error rate is 0%*).
-
----
-
-## 4. End-to-End Synergy Example
-
-In a mature enterprise deployment, all three engines work together seamlessly:
-
-1. **AutoOptimize** runs continuously, keeping 90% of non-critical workloads right-sized and eliminating idle cloud waste.
-2. When an unexpected traffic spike triggers a `HighLatency` alert, an **Event Playbook** immediately collects live trace spans and database slow-query logs.
-3. NuBi ingests the evidence cards and pinpoints a hung database lock.
-4. An **Event Workflow** triggers, notifies the database team in Slack with the evidence, requests a 1-click approval from the DBA, and gracefully terminates the blocking query.
+Resource changes can affect availability. Establish verification and recovery steps before enabling them; neither workflow history nor a previous workflow version provides a universal automatic infrastructure rollback.

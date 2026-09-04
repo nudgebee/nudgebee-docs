@@ -6,7 +6,6 @@ sidebar_position: 4
 keywords: [cloud agent sync, aws sync, azure sync, gcp sync, spends sync, resources sync, recommendations sync, sync now, throttling]
 intent: inspect
 provider: cloud
-error_codes: [CLOUD_AUTH_EXPIRED, CLOUD_THROTTLED, SPENDS_SYNC_FAILED, RESOURCES_SYNC_FAILED]
 ---
 
 # Cloud Agent Synchronization (AWS, Azure, GCP)
@@ -17,13 +16,13 @@ NudgeBee continuously synchronizes cloud telemetry across **AWS**, **Azure**, an
 
 ## 1. Cloud Synchronization Architecture & Dependency Pipeline
 
-Cloud synchronization is not a single monolithic job. It runs as a **strictly ordered pipeline of feature workers**:
+Cloud synchronization is not a single monolithic job. It runs as a billing job followed by asynchronous post-report work:
 
 ```mermaid
 graph TD
     Trigger[Scheduled Cron / 'Sync Now'] --> S1[1. Daily Spends Sync<br/>CUR / Cost Export / BigQuery]
     S1 -->|Completes DB Write| S2[2. Resource Inventory ETL<br/>EC2, RDS, Disks, Subscriptions]
-    S2 -->|Refreshes Entities| S3[3. Recommendations & Scanners<br/>Idle Waste, Rightsizing, Security]
+    S2 -->|Then attempts| S3[3. Recommendations & Scanners<br/>Idle Waste, Rightsizing, Security]
 
     subgraph Event Stream [Continuous / Real-Time]
         E1[CloudWatch / EventBridge / Azure Activity / GCP Webhooks] --> E2[Events Ingestion & Triage]
@@ -32,8 +31,8 @@ graph TD
 
 ### Why Do Resources and Recommendations Run After Spends?
 The **Spends Sync** (`StoreUsage`) establishes the authoritative list of active cloud accounts, business units, and billed resource identifiers.
-Once the spends database write completes, the **Post-Report Resource Job** triggers to enrich these resource IDs with cloud metadata (tags, instance families, CPU/RAM utilization).
-Finally, **Scanners and Recommendation Engines** evaluate the updated inventory to produce cost-optimization and security findings.
+After billing processing schedules post-report work, the **Post-Report Resource Job** triggers to enrich these resource IDs with cloud metadata (tags, instance families, CPU/RAM utilization).
+The post-report worker attempts resource discovery, recommendation synchronization, metrics synchronization, and event-rule synchronization in order. Individual steps can fail while later steps still run, so inspect each feature separately. Accounts without a configured CUR can still proceed with resource discovery; missing billing data is not proof that inventory cannot sync.
 
 ---
 
@@ -48,11 +47,9 @@ In the Cloud Accounts dashboard, each account displays an **Overall Connection S
 | **Recommendations** | Post-Resource Discovery | Rightsizing, idle waste, and security posture algorithms completed analysis against the latest inventory. | Recommendations list does not reflect recent infrastructure changes. |
 | **Events** | Real-time / Event-driven | CloudWatch/EventBridge SQS, Azure Event Grid, or GCP Monitoring webhooks are actively delivering events. | Incidents and configuration changes are not alerted in real time. |
 
-### Overall Account Status
-The overall cloud account status badge conceptually reflects health across its configured features:
-- **`CONNECTED`**: Data collection is active and cloud credentials are functioning.
-- **`DEGRADED`**: Account credentials remain valid, but an individual feature module encountered a collection issue or rate limiting.
-- **`DISCONNECTED`**: Authentication or authorization failed (e.g., cross-account IAM role inaccessible, Service Principal expired, or permissions revoked).
+### Inspect feature results separately
+
+Read each feature's latest result and error. An overall connection indicator does not prove that billing, inventory, recommendations, and events are all current. Status labels vary by feature and deployment version; use the reported error to distinguish authentication failure, missing billing configuration, and provider throttling.
 
 ---
 
@@ -92,7 +89,7 @@ The **Sync Now** button in the Console triggers an immediate synchronization req
 ---
 
 ### Failure 2: Cloud API Throttling (`RequestLimitExceeded` / `429 Too Many Requests`)
-- **Symptom**: Feature status shows `Degraded` with message `Rate limit exceeded; backoff active`.
+- **Symptom**: A feature reports a provider throttling or rate-limit error.
 - **Cause**: Cloud provider rate limits reached due to high API volume across many accounts in the same organization.
 - **Remediation**:
   - NudgeBee Cloud Collector automatically activates exponential backoff and jitter for throttled accounts.
@@ -104,7 +101,7 @@ The **Sync Now** button in the Console triggers an immediate synchronization req
 ### Failure 3: Missing Cost & Usage Report or Billing Export
 - **Symptom**: Resources are `Connected`, but Spends shows `Disconnected` with `S3 bucket / dataset not found`.
 - **Cause**:
-  - **AWS**: The Cost and Usage Report (CUR) has not been configured to write parquet files to the designated S3 bucket.
+  - **AWS**: The Cost and Usage Report (CUR) has not been configured to write daily CSV reports to the designated S3 bucket.
   - **GCP**: Billing Export to BigQuery has not been enabled in the Google Cloud Billing console.
 - **Remediation**:
   Follow the cloud billing setup guides:

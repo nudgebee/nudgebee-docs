@@ -6,7 +6,6 @@ sidebar_position: 2
 keywords: [agent disconnected, agent heartbeat, agent flapping, last connected, proxy agent, agent health, agent status]
 intent: diagnose
 provider: all
-error_codes: [AGENT_DISCONNECTED, HEARTBEAT_STALE, RELAY_DISCONNECTED, TLS_HANDSHAKE_FAILED]
 ---
 
 # Troubleshoot NudgeBee Agent Connectivity
@@ -146,8 +145,8 @@ For GCP connections:
   ```bash
   helm upgrade --install nudgebee-agent nudgebee/nudgebee-agent \
     --namespace nudgebee \
-    --set config.backendEndpoint="https://api.nudgebee.yourdomain.com" \
-    --set config.authSecretKey="<CORRECT_SECRET_KEY>" \
+    --set runner.nudgebee.endpoint="https://api.nudgebee.yourdomain.com" \
+    --set runner.nudgebee.auth_secret_key="<CORRECT_SECRET_KEY>" \
     --reuse-values
   ```
 
@@ -171,45 +170,53 @@ For GCP connections:
 - **Remediation**:
   Increase resource limits in `values.yaml`:
   ```yaml
-  resources:
-    limits:
-      cpu: "1000m"
-      memory: "2Gi"
-    requests:
-      cpu: "200m"
-      memory: "512Mi"
+  runner:
+    resources:
+      limits:
+        cpu: "1000m"
+        memory: "2Gi"
+      requests:
+        cpu: "200m"
+        memory: "512Mi"
   ```
 
 ---
 
-## 6. Safe Support Escalation & Log Bundle
+## 6. Support Escalation & Diagnostic Bundle
 
-When reporting connectivity issues to support or attaching diagnostics in an issue, run the sanitized log bundle script below. It extracts relevant diagnostic indicators while automatically redacting sensitive tokens and credentials:
+Collect the affected account, UTC time range, pod status, recent Kubernetes events, and relevant agent logs. Confirm your namespace and pod/container names before running the commands.
+
+The example below requires Bash, Python 3, and kubectl. It stores diagnostics with owner-only permissions and redacts common credential formats. Redaction is best-effort: review the complete file locally before sharing it, including URLs, event messages, customer identifiers, and application-specific secrets.
 
 ```bash
 #!/usr/bin/env bash
-# Generate sanitized NudgeBee Agent Diagnostic Bundle
+set -euo pipefail
+umask 077
 
-OUT_FILE="nudgebee-agent-diagnostics-$(date +%s).log"
-echo "=== NUDGEBEE AGENT DIAGNOSTICS ===" > "$OUT_FILE"
-echo "Generated at: $(date -u)" >> "$OUT_FILE"
+OUT_FILE="$(mktemp ./nudgebee-agent-diagnostics.XXXXXX)"
+{
+  date -u
+  kubectl version --client -o yaml
+  kubectl get pods -n nudgebee -o wide
+  kubectl get events -n nudgebee --sort-by='.metadata.creationTimestamp' | tail -n 30
+  kubectl logs -n nudgebee -l app.kubernetes.io/name=nudgebee-agent -c runner --tail=200
+} 2>&1 | python3 -c '
+import re
+import sys
+text = sys.stdin.read()
+text = re.sub(r"(?i)\b(Bearer|Basic)\s+[^\s\"\x27,;]+", r"\1 [REDACTED]", text)
+text = re.sub(
+    r"(?i)([\"\x27]?(?:authorization|authSecretKey|secret|password|token|api[_-]?key|access[_-]?key|secret[_-]?key)[\"\x27]?\s*[:=]\s*)(\"[^\"]*\"|\x27[^\x27]*\x27|[^\s,;&}]+)",
+    r"\1[REDACTED]", text,
+)
+sys.stdout.write(text)
+' > "$OUT_FILE"
 
-echo -e "\n--- CLUSTER INFO ---" >> "$OUT_FILE"
-kubectl version --short >> "$OUT_FILE" 2>&1
-
-echo -e "\n--- POD STATUS ---" >> "$OUT_FILE"
-kubectl get pods -n nudgebee -o wide >> "$OUT_FILE" 2>&1
-
-echo -e "\n--- RECENT EVENTS ---" >> "$OUT_FILE"
-kubectl get events -n nudgebee --sort-by='.metadata.creationTimestamp' | tail -n 30 >> "$OUT_FILE" 2>&1
-
-echo -e "\n--- AGENT RUNNER LOGS (SANITIZED) ---" >> "$OUT_FILE"
-kubectl logs -n nudgebee -l app.kubernetes.io/name=nudgebee-agent -c runner --tail=200 2>&1 \
-  | sed -E 's/(authSecretKey|secret|password|token|bearer|key)=[^ ]+/\1=[REDACTED]/gI' \
-  >> "$OUT_FILE"
-
-echo "Diagnostics saved to $OUT_FILE. Safe to share with support."
+echo "Diagnostics saved to $OUT_FILE. Review locally before sharing."
 ```
+
+If collection fails, inspect the partial output locally and correct the namespace, selector, container name, or permissions. Do not attach unreviewed raw logs as a workaround.
+
 
 ---
 

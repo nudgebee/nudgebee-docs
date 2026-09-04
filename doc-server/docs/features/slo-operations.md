@@ -6,7 +6,6 @@ sidebar_position: 8
 keywords: [slo, sli, error budget, burn rate alerts, multi-window burn rate, reliability engineering, prometheus slo]
 intent: setup
 provider: all
-error_codes: [SLO_BURN_RATE_EXCEEDED, SLI_METRIC_UNAVAILABLE, ERROR_BUDGET_DEPLETED]
 ---
 
 # SLO Creation, Error Budget Burn Rates & Alerting
@@ -28,7 +27,7 @@ graph LR
 - **Service Level Indicator (SLI)**: The actual measurement of service health (e.g., `Good Requests / Total Requests` or `% of API responses < 200ms`).
 - **Service Level Objective (SLO)**: The target reliability threshold over a rolling time window (e.g., `99.9% over 30 days`).
 - **Error Budget**: The allowable unreliability ($100\% - 99.9\% = 0.1\%$).
-- **Burn Rate**: The rate at which the error budget is consumed. A burn rate of `1x` consumes 100% of the budget exactly at the end of 30 days; a burn rate of `14.4x` burns 10% of the 30-day budget in just 1 hour.
+- **Burn Rate**: The rate at which the error budget is consumed. A burn rate of `1x` consumes 100% of the budget exactly at the end of 30 days; a burn rate of `14.4x` burns 2% of the 30-day budget in 1 hour.
 
 ---
 
@@ -75,10 +74,10 @@ To eliminate false alarms from short transient spikes while promptly paging on s
 
 | Severity | Burn Rate | Short Window | Long Window | % Budget Consumed | Notification Action |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Critical (Page)** | **14.4x** | 5 minutes | 1 hour | 2% in 1 hour | Immediate PagerDuty page & Slack incident bridge |
-| **Critical (Page)** | **6x** | 30 minutes | 6 hours | 5% in 6 hours | Immediate PagerDuty page |
-| **Warning (Ticket)** | **3x** | 2 hours | 24 hours | 10% in 24 hours | Jira / ServiceNow Ticket opened for sprint triage |
-| **Info (Email)** | **1x** | 6 hours | 3 days | 10% in 3 days | Daily summary report |
+| **Critical** | **14.4x** | 5 minutes | 1 hour | 2% in 1 hour | Delivery depends on configured notification rules |
+| **Critical** | **6x** | 30 minutes | 6 hours | 5% in 6 hours | Delivery depends on configured notification rules |
+| **Warning** | **3x** | 2 hours | 24 hours | 10% in 24 hours | Configure ticket creation separately if needed |
+| **Info** | **1x** | 6 hours | 3 days | 10% in 3 days | Delivery depends on configured notification rules |
 
 ---
 

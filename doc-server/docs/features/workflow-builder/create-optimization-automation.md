@@ -6,90 +6,50 @@ sidebar_position: 3
 keywords: [optimization trigger, auto rightsizing, cost optimization automation, idle resource cleanup, finops automation]
 intent: setup
 provider: all
-error_codes: [WORKFLOW_OPTIMIZATION_TRIGGER_FAILED, OPTIMIZATION_POLICY_BLOCKED]
 ---
 
 # Create an Automation from an Optimization Recommendation
 
-Optimization-triggered workflows enable continuous, policy-driven cost and performance optimization. Whenever NudgeBee identifies an over-provisioned workload, idle cloud disk, or sub-optimal instance family, a workflow can automatically evaluate approval policies, notify resource owners, and execute remediation safely.
+Start with a notification workflow so you can verify recommendation matching before adding remediation.
 
----
+## Prerequisites
 
-## 1. Architecture: From Recommendation to Automated Remediation
+- A connected account producing recommendations.
+- Permission to create and run workflows.
+- A configured notification destination for the test.
 
-```mermaid
-graph LR
-    O[1. Optimization Detected<br/>CPU/RAM Overprovisioned] --> T[2. Optimization Trigger<br/>Filters: Category, Min Savings]
-    T --> P{3. Policy Guardrail<br/>Savings > $100/mo?}
-    P -->|Yes - High Impact| A[4. Human Approval Gate<br/>Slack / Jira Approval]
-    P -->|No - Safe Limit| D[5. Automated Direct Patch<br/>K8s Vertical Rightsize]
-    A -->|Approved| D
-    D --> V[6. Verify & Audit Log]
-```
+## Configure the trigger
 
----
+Create a workflow and add an **Optimization Trigger**. Select a Cluster, Category, and Rule Name as needed. An empty configuration matches every recommendation; use a narrow filter for your first workflow. See the [Optimization Trigger reference](./triggers.md#optimization-trigger) for supported values.
 
-## 2. Step 1: Add the Optimization Trigger Node
+The structured trigger does not expose minimum-savings or environment-tag fields. If you need additional logic, evaluate the available payload fields in the workflow before performing an action.
 
-1. In the Workflow Builder canvas, drag the **Optimization Trigger** node from the Triggers category.
-2. Click the node to configure matching criteria:
+## Use the actual recommendation payload
 
-| Field | Description | Example |
-| :--- | :--- | :--- |
-| **Cluster / Account** | Filter by cluster name or cloud account | `prod-cluster-01` |
-| **Category** | Optimization category | `Vertical Rightsize`, `Idle Disk`, `Node Consolidation` |
-| **Minimum Estimated Savings** | Only trigger if monthly savings exceed threshold | `$50.00 / month` |
-| **Environment Tag** | Target environment | `staging`, `development` |
+Recommendations arrive under `Inputs.event` in downstream task parameters:
 
----
+| Expression | Value |
+| --- | --- |
+| `{{ Inputs.event.recommendation_id }}` | Recommendation ID |
+| `{{ Inputs.event.resource_id }}` | Resource identifier |
+| `{{ Inputs.event.account_id }}` | Cloud account ID |
+| `{{ Inputs.event.category }}` | Recommendation category |
+| `{{ Inputs.event.rule_name }}` | Recommendation rule |
+| `{{ Inputs.event.estimated_savings }}` | Savings value supplied by the recommendation |
+| `{{ Inputs.event.cluster }}` | Cluster value |
 
-## 3. Step 2: Access Recommendation Parameters
+The payload also contains `event_type`, `cloud_account_id`, `tenant_id`, `severity`, and `status`. It does not include an `optimization` object or proposed CPU/memory request fields. Retrieve and inspect the recommendation details before configuring a rightsizing action; do not treat the resource ID as a Kubernetes workload name.
 
-Downstream tasks can read structured recommendation metadata:
-- `{{ optimization.id }}` — Unique recommendation identifier.
-- `{{ optimization.resource_name }}` — Name of the target Deployment/StatefulSet/VM.
-- `{{ optimization.namespace }}` — Kubernetes namespace.
-- `{{ optimization.estimated_monthly_savings }}` — Projected monthly cost reduction.
-- `{{ optimization.proposed_cpu_request }}` — Recommended CPU request value (e.g. `250m`).
-- `{{ optimization.proposed_memory_request }}` — Recommended Memory request value (e.g. `512Mi`).
+## Add a notification and verify
 
----
+1. Add a notification task from [Notification Tasks](./notification-tasks.md) and select a test destination.
+2. Include the recommendation ID, resource ID, category, and savings value in the message.
+3. Test with a representative payload using the [validation guide](./workflow-dry-run-validation.md). Dry Run can send real notifications.
+4. Publish an Active version and make it live.
+5. When a new matching recommendation arrives, inspect the execution inputs and confirm the notification contains the expected identifiers.
 
-## 4. Step 3: Configure Remediation Actions & Guardrails
+## Add remediation after validating the inputs
 
-### A. Non-Destructive Rightsizing (Kubernetes)
-1. Drag **Kubernetes $\rightarrow$ Vertical Rightsize Workload** onto the canvas.
-2. Connect the Optimization Trigger to this node.
-3. Configure parameters:
-   - **Workload Type**: `Deployment`
-   - **Workload Name**: `{{ optimization.resource_name }}`
-   - **Namespace**: `{{ optimization.namespace }}`
-   - **CPU Request**: `{{ optimization.proposed_cpu_request }}`
-   - **Memory Request**: `{{ optimization.proposed_memory_request }}`
+Choose a task appropriate to the recommendation and explicitly supply its required account, resource, and action parameters. Insert an [Approval](./workflow-operations-approvals.md) task where review is needed, and verify decision handling before the change task.
 
-### B. Notify Team via Slack
-1. Drag **Notifications $\rightarrow$ Send Slack Message**.
-2. Set Channel to `#finops-optimizations`.
-3. Format message:
-   ```markdown
-   🎉 *Automated Workload Rightsizing Applied*
-   *Workload*: `{{ optimization.resource_name }}` (`{{ optimization.namespace }}`)
-   *Estimated Monthly Savings*: `${{ optimization.estimated_monthly_savings }}`
-   *New Limits*: CPU: `{{ optimization.proposed_cpu_request }}`, Memory: `{{ optimization.proposed_memory_request }}`
-   ```
-
----
-
-## 5. Step 4: Safety Controls & Approval Policies
-
-To avoid service disruptions during business hours:
-- **Maintenance Windows**: Insert a **Time Window Filter** task that only allows execution between 01:00 UTC and 05:00 UTC.
-- **Rollback Safety**: NudgeBee captures the previous workload specification before applying any patch, allowing instant single-click rollbacks from the workflow execution history.
-
----
-
-## 6. NuBi Documentation Search
-
-Ask NuBi in chat for guided optimization automation assistance:
-- *"How do I configure a workflow to auto-apply rightsizing recommendations?"*
-- *"How do I set savings thresholds and maintenance windows in optimization workflows?"*
+Use [Auto Optimize](../optimizations/autopilot/auto_optimize/index.md) for supported scheduled optimization configurations. Before direct changes, record the previous resource settings and the recovery procedure. Workflow history does not provide a universal one-click infrastructure rollback.

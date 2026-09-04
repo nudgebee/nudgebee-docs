@@ -166,7 +166,7 @@ The recommendation payload is exposed in the workflow as `event` — use `{{ eve
 
 ## Event Payload Schema
 
-The Event and Optimization triggers receive the same shaped payload. Use these fields when writing filter expressions or referencing the payload from downstream tasks.
+The fields below describe platform event payloads; availability depends on the event source. Optimization recommendations use a different payload, documented in [Optimization-Triggered Automation](./create-optimization-automation.md#use-the-actual-recommendation-payload). Inspect the actual execution input before referencing optional fields.
 
 | Field | Type | Notes |
 |-------|------|-------|

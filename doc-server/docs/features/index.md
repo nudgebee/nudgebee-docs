@@ -22,7 +22,7 @@ Explore everything NudgeBee offers for Cloud-Ops Intelligence, troubleshooting, 
 
 - **[Event Lifecycle & Triage](./troubleshooting/event-lifecycle.md)** — Complete lifecycle management from raw ingestion to fingerprint deduplication, triage classification, and resolution.
 
-- **[Alert State Management](./troubleshooting/alert-state-management.md)** — Snooze, suppress, disable, acknowledge, resolve, or mute alerts with clear scopes and auto-expiry mechanics.
+- **[Alert State Management](./troubleshooting/alert-state-management.md)** — Distinguish event snooze, suppression, resolution, notification-rule controls, and local chat muting.
 
 - **[Semantic Knowledge Graph](./knowledge-graph.md)** — See how everything connects across your entire infrastructure. The Semantic Knowledge Graph correlates logs, metrics, traces, and code into a single visual map of services, workloads, and dependencies — powering NudgeBee's AI analysis.
 

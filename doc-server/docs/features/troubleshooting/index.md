@@ -87,7 +87,7 @@ Click **Apply Fix** in the UI to create the secret, or click **Create Jira Ticke
 ### Incident Triage, Events & Playbooks
 
 - **[Understand & Manage the Event Lifecycle](./event-lifecycle.md)** — 6-stage lifecycle from raw ingestion to fingerprint deduplication, triage classification, Knowledge Graph correlation, and resolution.
-- **[Snooze, Suppress, Disable, Acknowledge, Resolve, or Mute Alerts](./alert-state-management.md)** — Complete taxonomy of alert states, scopes, auto-expiry mechanics, and RBAC permissions.
+- **[Snooze, Suppress, Disable, and Resolve Alerts](./alert-state-management.md)** — Event triage states, suppression scope, snooze expiry, and notification controls.
 - **[Why Am I Not Receiving Alerts?](./alert-pipeline-troubleshooting.md)** — End-to-end diagnosis of the alert delivery pipeline from monitoring source to Slack/Teams/PagerDuty.
 - **[Alerting & Action Customisation](./alerting.md)** — Configure custom alerting rules and attach playbook actions for auto-triage.
 - **[Event Playbooks vs Workflows](./event-playbooks-vs-workflows.md)** — Conceptual guide to the two automation surfaces and when to use each.
@@ -101,6 +101,6 @@ Looking for infrastructure, agent, cloud, or integration troubleshooting?
 - **Kubernetes Subsystems & Health Probes**: See [Kubernetes Agent Health & Subsystems](../../installation/agent/operate/agent-health.md).
 - **Prometheus Metrics Connection**: See [Why is Prometheus Disconnected?](../../installation/agent/connect/prometheus-troubleshooting.md).
 - **Cloud Account Sync (AWS, Azure, GCP)**: See [Cloud Sync Troubleshooting](../Cloud/troubleshooting.md).
-- **Integrations Health**: See [Integration Health & Lifecycle](../../integrations/index.md#integration-health-states--lifecycle).
+- **Integrations Health**: See [Integration Verification](../../integrations/index.md#verify-an-integration-after-setup-or-credential-rotation).
 - **Ticketing Integrations**: See [Troubleshoot Ticketing Integrations](../../integrations/Tickets/ticket-integrations-troubleshooting.md).
 

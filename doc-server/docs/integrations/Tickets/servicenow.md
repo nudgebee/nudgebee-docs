@@ -110,7 +110,7 @@ When **Sync Knowledge Base** is enabled, NudgeBee imports your ServiceNow Knowle
        -H "Accept: application/json" \
        https://your-instance.service-now.com/api/now/table/incident?sysparm_limit=1
      ```
-  2. In ServiceNow User Administration $\rightarrow$ Users $\rightarrow$ Select user, check **Web service access only** to bypass interactive SSO/MFA policies for service integration accounts.
+  2. Review the instance's REST authentication policy with its administrator. **Web service access only** restricts interactive UI login; it is not a general-purpose bypass for authentication policies. See [ServiceNow REST authentication](https://www.servicenow.com/docs/r/api-reference/rest-api-explorer/c_RESTAPI.html).
 
 ---
 
