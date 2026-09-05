@@ -41,12 +41,12 @@ All integrations are configured from **Admin** > **Integrations**, where they ar
 ### Data Stores
 
 * **[Databases](./Databases/)** — PostgreSQL, MySQL, ClickHouse, SQL Server and Oracle connections power [database health analysis](../features/ai/use-cases/database-health.md) and the [database tasks](../features/workflow-builder/database-tasks.md) available in workflows. **Optional**.
-* **Messaging Queue — RabbitMQ** and **In-Memory — Redis** — Queue depth, consumer lag and cache health as first-class signals, and the corresponding [message queue tasks](../features/workflow-builder/message-queue-tasks.md) in workflows. **Optional**.
-* **Docs — Confluence** — Connect a Confluence space so runbooks and internal documentation become retrievable context for NuBi and AI troubleshooting. **Optional**.
+* **[Messaging Queue — RabbitMQ](./Messaging%20Queue/rabbitmq.md)** and **[In-Memory — Redis](./In-Memory/redis.md)** — Inspect queues, consumers and cache state, and drive them from workflows with the [message queue](../features/workflow-builder/message-queue-tasks.md) and [database](../features/workflow-builder/database-tasks.md) tasks. **Optional**.
+* **[Docs — Confluence](./Docs/confluence.md)** — Index a Confluence space so runbooks and internal documentation become retrievable context for NuBi and AI troubleshooting. **Optional**.
 
 ### Access & Execution
 
-* **Servers** — **SSH** credentials for remote command execution (used by [`execute_bash`](../features/optimizations/autopilot/auto_runbook/execute_bash.md) runbooks and workflow scripting tasks), and the **[Proxy Agent](../installation/proxy-agent/)** for reaching private, on-prem or air-gapped endpoints. **Optional**.
+* **Servers** — **[SSH](./Servers/ssh.md)** credentials for running commands on remote hosts from workflows, and the **[Proxy Agent](../installation/proxy-agent/)** for reaching private, on-prem or air-gapped endpoints. **Optional**.
 
 ### AI
 
