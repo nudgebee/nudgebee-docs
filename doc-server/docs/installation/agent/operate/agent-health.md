@@ -108,7 +108,15 @@ Below is the complete reference of every field displayed on the Agent Health car
 
 ---
 
-### 7. Node Agent Count
+### 7. OpenCost
+* **Purpose**: Collects real-time container, pod, and node cost allocations and idle waste metrics.
+* **Healthy State**: `Connected` (Green).
+* **Probe Mechanism**: Probes the OpenCost `/healthz` endpoint.
+* **Failure Causes**: OpenCost pod not running, or agent lacks RBAC to query OpenCost service.
+
+---
+
+### 8. Node Agent Count
 * **Purpose**: Reports the number of healthy NudgeBee Node Agent daemonset pods collecting low-level eBPF / host metrics.
 * **Healthy State**: A count greater than zero marks the Node Agent connected. The Console displays the reported count; it does not compare it with the Kubernetes node count.
 * **Probe Mechanism**: Evaluates the PromQL query:
@@ -116,18 +124,20 @@ Below is the complete reference of every field displayed on the Agent Health car
   up{job=~"(.+/)?nudgebee(-.*)?-node-agent"}
   ```
 * **Failure Causes**:
-  * Node Agent DaemonSet has not been deployed.
+  * Node Agent DaemonSet has not been deployed or pods were rejected by Pod Security Standards (PSA/SCC).
   * Node taints or tolerations prevent Node Agent from scheduling on specific worker nodes.
+  * Prometheus has not selected the PodMonitor or the node agent is scraped under a different `job` name.
+  * See [Why is Prometheus Disconnected?](../connect/prometheus-troubleshooting.md#step-9-why-is-node-agent-count-zero-or-disconnected-in-agent-health) and [Troubleshooting Node Agent Failures](./node-agent-configs.md#troubleshooting-node-agent-failures).
 
 ---
 
-### 8. Kubernetes Provider & Version
+### 9. Kubernetes Provider & Version
 * **Purpose**: Displays the detected cloud provider runtime (`EKS`, `GKE`, `AKS`, `BareMetal`) and Kubernetes server version.
 * **Detection Mechanism**: Probed automatically at startup via Kubernetes Discovery API (`ServerVersion()`) and node provider IDs.
 
 ---
 
-### 9. Agent Version & Latest Version
+### 10. Agent Version & Latest Version
 * **Purpose**: Displays the currently running agent container image tag compared against the latest stable release published by NudgeBee.
 * **Upgrade Recommended**: The Console asks you to update whenever the running version differs from the latest version returned by the server.
 
@@ -139,10 +149,11 @@ Below is the complete reference of every field displayed on the Agent Health car
 | :--- | :--- | :--- | :--- |
 | **Relay** | `Relay: Disconnected` | `kubectl logs -n nudgebee-agent deploy/nudgebee-agent-runner \| grep -i relay` | Verify `runner.relay_address` and `runner.nudgebee.auth_secret_key`. Ensure egress on port 443 is open. |
 | **Prometheus** | `Prometheus: Disconnected` | Query `<prometheus-url>/api/v1/query?query=vector(1)` with the configured authentication. | Verify `globalConfig.prometheus_url`, headers, and managed-provider auth. See [Prometheus Guide](../connect/prometheus-troubleshooting.md). |
-| **Alertmanager** | `Alertmanager: Disconnected` | `kubectl get svc -A \| grep alertmanager` | Check the configured `ALERTMANAGER_URL` in the runner Secret/environment and verify the service is reachable. |
+| **Alertmanager** | `Alertmanager: Disconnected` | `kubectl get svc -A \| grep alertmanager` | Check configured URL and verify webhook forwarding. See [Alertmanager Troubleshooting](../connect/alertmanager.md#verify). |
 | **Logs (Loki/ES)** | `Logs: Disconnected` | `kubectl run -n nudgebee-agent health-check --rm -i --restart=Never --image=curlimages/curl -- curl -fsS http://loki:3100/ready` | Verify `runner.loki.url`, `runner.es.url`, or `runner.signoz.url` and the relevant credentials. |
-| **Traces** | `Traces: Disconnected` | `kubectl run -n nudgebee-agent health-check --rm -i --restart=Never --image=curlimages/curl -- curl -fsS http://clickhouse:8123/ping` | Verify ClickHouse health and the trace-provider configuration. |
-| **Node Agent** | `Node Agent: 0` | `kubectl get ds -n nudgebee-agent` | Inspect scheduling and Prometheus target discovery. See [Node Agent Configuration](./node-agent-configs.md). |
+| **Traces** | `Traces: Disconnected` | `kubectl run -n nudgebee-agent health-check --rm -i --restart=Never --image=curlimages/curl -- curl -fsS http://clickhouse:8123/ping` | Verify ClickHouse health and trace pipeline. See [Storage, ClickHouse & OTel Guide](./storage-and-pvcs.md#2-troubleshooting-clickhouse-restart--crash-loops). |
+| **OpenCost** | `OpenCost: Disconnected` | `kubectl get pods -n nudgebee-agent -l app.kubernetes.io/name=opencost` | Verify `opencost.enabled` and RBAC permissions. |
+| **Node Agent** | `Node Agent: 0` | `kubectl get ds -n nudgebee-agent` | Inspect scheduling, PSA privileges, and Prometheus scrape jobs. See [Node Agent Configuration](./node-agent-configs.md#troubleshooting-node-agent-failures) and [Prometheus Scrapes](../connect/prometheus-troubleshooting.md#step-9-why-is-node-agent-count-zero-or-disconnected-in-agent-health). |
 
 ---
 
