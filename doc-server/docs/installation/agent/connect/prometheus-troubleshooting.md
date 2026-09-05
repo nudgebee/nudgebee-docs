@@ -10,7 +10,7 @@ provider: kubernetes
 
 # Troubleshooting: Why is Prometheus Disconnected?
 
-When the NudgeBee Console displays **Prometheus: Disconnected**, the agent is unable to successfully query your cluster's Prometheus-compatible metrics backend.
+When the NudgeBee Console displays **Prometheus: Disconnected**, the runner could not successfully query the configured Prometheus-compatible backend.
 
 This guide provides a systematic **10-step decision tree** to identify and resolve the root cause.
 
@@ -18,16 +18,13 @@ This guide provides a systematic **10-step decision tree** to identify and resol
 
 ## 1. How the Agent Tests Prometheus Connectivity
 
-The NudgeBee agent does **not** rely on static HTTP checks or `/healthy` admin endpoints (which are often disabled or inaccessible in multi-tenant environments such as Chronosphere, Thanos, Grafana Mimir, or Amazon Managed Prometheus).
-
-Instead, during each periodic telemetry heartbeat tick, the agent runs an authenticated PromQL instant query:
+During each telemetry cycle, the runner executes this PromQL instant query through the same authenticated client used for metrics operations:
 
 ```promql
 vector(1)
 ```
 
-- **Pass Criteria**: HTTP `200 OK` with JSON response `{"status":"success", ...}` within **5 seconds**.
-- **Fail Criteria**: HTTP 4xx/5xx, connection timeout, DNS lookup failure, or non-success payload.
+The check uses `globalConfig.prometheus_headers` and managed-provider authentication under `runner.prometheus.auth`, with a five-second timeout. It reports connected only when the HTTP request succeeds, the response is valid JSON, and its Prometheus API `status` is `success`. This supports query-only endpoints such as Thanos Query, Mimir, Chronosphere, and Amazon Managed Prometheus without requiring `/-/healthy`.
 
 ---
 
@@ -70,7 +67,7 @@ flowchart TD
 ### Step 1: Is the Main Kubernetes Agent Connected?
 If the primary agent itself is disconnected, all subsystem badges will show disconnected.
 ```bash
-kubectl get pods -n nudgebee -l app.kubernetes.io/name=nudgebee-agent
+kubectl get pods -n nudgebee-agent -l app.kubernetes.io/name=nudgebee-agent
 ```
 *If pod is crashlooping or not running, resolve [Agent Connectivity](../operate/troubleshoot-agent-connectivity.md) first.*
 
@@ -79,7 +76,7 @@ kubectl get pods -n nudgebee -l app.kubernetes.io/name=nudgebee-agent
 ### Step 2: Is the Prometheus URL Configured in Helm Values?
 Verify what URL the agent was configured with:
 ```bash
-helm get values nudgebee-agent -n nudgebee -o json | jq '.globalConfig.prometheus_url'
+helm get values nudgebee-agent -n nudgebee-agent -o json | jq '.globalConfig.prometheus_url'
 ```
 *If empty or null, update your `values.yaml` with your in-cluster or external Prometheus service URL.*
 
@@ -88,7 +85,7 @@ helm get values nudgebee-agent -n nudgebee -o json | jq '.globalConfig.prometheu
 ### Step 3: Can the Agent Pod Resolve and Reach the Endpoint?
 Exec into the agent runner container and test direct reachability:
 ```bash
-kubectl run -n nudgebee nudgebee-connectivity-check --rm -i --restart=Never \
+kubectl run -n nudgebee-agent nudgebee-connectivity-check --rm -i --restart=Never \
   --image=curlimages/curl -- curl -fsS --max-time 5 \
   http://<PROMETHEUS_SERVICE_HOST>:<PORT>/-/ready
 ```
@@ -106,11 +103,11 @@ The agent automatically appends `/api/v1/query` to the configured base URL.
 ---
 
 ### Step 5: Is Authentication Required (Bearer Token or Basic Auth)?
-If your Prometheus is behind Grafana Agent, Thanos Gateway, or an OAuth2 proxy, the unauthenticated health probe will fail with `401 Unauthorized` or `403 Forbidden`.
+If your Prometheus is behind Thanos Gateway, an OAuth2 proxy, or another protected endpoint, a missing or invalid query credential can fail with `401 Unauthorized` or `403 Forbidden`. Test the same query with the authentication that NudgeBee uses:
 
 Test with authentication headers:
 ```bash
-kubectl run -n nudgebee nudgebee-connectivity-check --rm -i --restart=Never \
+kubectl run -n nudgebee-agent nudgebee-connectivity-check --rm -i --restart=Never \
   --image=curlimages/curl -- curl -fsS -H "Authorization: Bearer <TOKEN>" \
   "http://<PROMETHEUS_HOST>:9090/api/v1/query?query=vector(1)"
 ```
@@ -125,9 +122,9 @@ globalConfig:
 ---
 
 ### Step 6: Is the Endpoint Prometheus-Compatible?
-After the `/healthy` probe succeeds, use a simple query to confirm that the endpoint also serves the Prometheus query API:
+Use the same simple query as the agent to confirm that the endpoint serves the Prometheus query API:
 ```bash
-kubectl run -n nudgebee nudgebee-connectivity-check --rm -i --restart=Never \
+kubectl run -n nudgebee-agent nudgebee-connectivity-check --rm -i --restart=Never \
   --image=curlimages/curl -- curl -fsS \
   "http://<PROMETHEUS_HOST>:9090/api/v1/query?query=vector(1)"
 ```
@@ -143,7 +140,7 @@ kubectl run -n nudgebee nudgebee-connectivity-check --rm -i --restart=Never \
 For multi-tenant systems like Grafana Mimir, Cortex, or Chronosphere, the `X-Scope-OrgID` header is mandatory:
 ```yaml
 globalConfig:
-  prometheus_headers: "X-Scope-OrgID: tenant-primary,Authorization: Basic <BASE64_CREDS>"
+  prometheus_headers: "X-Scope-OrgID: tenant-primary; Authorization: Basic <BASE64_CREDS>"
 ```
 
 ---
@@ -151,11 +148,44 @@ globalConfig:
 ### Step 8: Are Metrics Actually Available for Node & Container Queries?
 Verify that standard Kubernetes metrics are actively scraped and stored:
 ```bash
-kubectl run -n nudgebee nudgebee-connectivity-check --rm -i --restart=Never \
+kubectl run -n nudgebee-agent nudgebee-connectivity-check --rm -i --restart=Never \
   --image=curlimages/curl -- curl -fsS \
   "http://<PROMETHEUS_HOST>:9090/api/v1/query?query=count(node_cpu_seconds_total)"
 ```
 *If `result` array is empty, your Prometheus is running but node exporters or kube-state-metrics scrape targets are down.*
+
+### Prometheus is connected, but agent targets or default rules are missing
+
+The health badge checks the query endpoint. It does not prove that Prometheus selected the monitoring objects created by the agent chart.
+
+| Object | Purpose | Chart control |
+|---|---|---|
+| `ServiceMonitor` | Scrapes runner metrics | `enableServiceMonitors` |
+| `PodMonitor` | Scrapes every node-agent pod | `nodeAgent.podmonitor.enabled` |
+| `PrometheusRule` | Loads NudgeBee's default alert rules | `alertmanager.create_nb_default_rules` |
+
+First check that the objects rendered and exist:
+
+```bash
+kubectl get servicemonitor,podmonitor,prometheusrule -n nudgebee-agent
+```
+
+Existence is not selection. Prometheus Operator selects these objects by metadata labels and, separately, by namespace. Compare the Prometheus resource with one agent object:
+
+```bash
+kubectl get prometheus -A -o yaml | grep -A8 -E 'serviceMonitorSelector:|podMonitorSelector:|ruleSelector:'
+kubectl get podmonitor nudgebee-agent-node-agent -n nudgebee-agent -o yaml
+```
+
+For kube-prometheus-stack, the selector commonly requires `release: <prometheus-release>`. Apply that label to all monitoring objects with:
+
+```yaml
+prometheusStack:
+  selectorLabels:
+    release: nudgebee-prometheus
+```
+
+The Prometheus resource's `serviceMonitorNamespaceSelector`, `podMonitorNamespaceSelector`, and `ruleNamespaceSelector` must also allow the `nudgebee-agent` namespace. After upgrading, inspect Prometheus **Targets** and **Rules**; Kubernetes accepting a CR does not prove Prometheus loaded it.
 
 ---
 

@@ -129,3 +129,64 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   -f values.yaml
 ```
+
+## Node agents are running but Agent Health shows zero
+
+Agent Health derives the count from Prometheus, not directly from the DaemonSet. A healthy pod is therefore only the first check.
+
+The node agent runs privileged with `hostPID: true` and mounts `/sys/fs/cgroup` and `/sys/kernel/debug` from every node. Pod Security Admission, Gatekeeper/Kyverno policy, or an OpenShift SCC can reject it even when the runner and forwarder install normally. Inspect the DaemonSet events before changing Prometheus configuration:
+
+```bash
+kubectl describe daemonset -n nudgebee-agent nudgebee-agent-node-agent
+kubectl get events -n nudgebee-agent --sort-by=.lastTimestamp | tail -30
+```
+
+```bash
+# Desired versus ready pods
+kubectl get daemonset -n nudgebee-agent nudgebee-agent-node-agent
+
+# Pod state and node placement
+kubectl get pods -n nudgebee-agent -l app=nudgebee-node-agent -o wide
+
+# Does a PodMonitor exist?
+kubectl get podmonitor -n nudgebee-agent
+```
+
+The runner counts this Prometheus series:
+
+```promql
+up{job=~"(.+/)?nudgebee(-.*)?-node-agent"}
+```
+
+Run it in the same Prometheus configured through `globalConfig.prometheus_url`. Interpret the result as follows:
+
+| Result | What to check |
+|---|---|
+| No series | Prometheus did not select the PodMonitor, or no equivalent scrape job exists. |
+| Series exist with value `0` | Prometheus selected the target but cannot scrape it; inspect target errors and NetworkPolicies. |
+| Fewer series than DaemonSet pods | Compare the missing pod's node, endpoint, and target labels with healthy targets. |
+| Query works, Agent Health remains zero | Confirm the runner uses the same Prometheus URL and headers, then wait for the next telemetry cycle or inspect runner logs. |
+
+For Prometheus Operator, the most common cause is a selector mismatch. Compare the labels required by the Prometheus resource with the rendered PodMonitor:
+
+```bash
+kubectl get prometheus -A -o yaml | grep -A8 -E 'podMonitorSelector:|podMonitorNamespaceSelector:'
+kubectl get podmonitor -n nudgebee-agent -o yaml
+```
+
+Add labels that satisfy `podMonitorSelector`:
+
+```yaml
+prometheusStack:
+  selectorLabels:
+    release: kube-prometheus-stack
+
+nodeAgent:
+  podmonitor:
+    additionalLabels:
+      release: kube-prometheus-stack
+```
+
+`prometheusStack.selectorLabels` is applied to the chart's monitoring resources. Use `nodeAgent.podmonitor.namespaceSelector` only to control which pod namespaces the PodMonitor selects; Prometheus' separate `podMonitorNamespaceSelector` controls whether it discovers the PodMonitor object itself.
+
+If you intentionally disable `nodeAgent.podmonitor.enabled`, add an equivalent scrape job. Disabling only the PodMonitor does not disable the node-agent pods.

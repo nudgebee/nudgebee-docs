@@ -9,6 +9,16 @@ NudgeBee investigates the alerts you already have. To get them, your Alertmanage
 
 If you skip it, nothing breaks visibly. Metrics are pulled, so a bad Prometheus URL shows up right away. Alerts are pushed, so when no receiver targets the agent, all the pods stay healthy, no error is logged, and NudgeBee just never raises an alert-driven event. If your cluster shows metrics and workloads but no alerts, start here.
 
+There are three independent checks:
+
+| Check | What it proves | Where to diagnose |
+|---|---|---|
+| **Alertmanager Connected** in Agent Health | The runner can reach the configured Alertmanager `/-/healthy` endpoint. | Agent configuration, service discovery, authentication, and NetworkPolicy. |
+| NudgeBee receiver appears in the loaded Alertmanager route tree | Alertmanager accepted the routing configuration. | The generated Alertmanager config and route ordering. |
+| A firing alert appears in NudgeBee | Alertmanager matched the route and delivered the webhook to the correct agent/account. | Alertmanager delivery logs, receiver URL, network path, and agent logs. |
+
+A green Agent Health status proves only the first check. It does not prove that Alertmanager is configured to send alerts to NudgeBee.
+
 ## The address alerts go to
 
 ```

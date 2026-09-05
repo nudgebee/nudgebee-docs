@@ -67,7 +67,7 @@ Frequent status toggling usually indicates one of three root causes:
 - **Proxy Agent**: Runs in a bastion or jump-host environment. It is designed to bridge private, air-gapped VPCs/clusters or private databases where direct outbound agent installation is restricted. See [Proxy Agent Troubleshooting](../../proxy-agent/troubleshooting.md).
 
 ### Agent Version Compatibility
-NudgeBee agents maintain broad backward compatibility with NudgeBee server releases. However, older agent versions may lack probe definitions for newer features (e.g., OpenCost or custom trace providers), leading to unpopulated health fields in the UI. Upgrading your agent alongside server updates is recommended.
+NudgeBee agents maintain broad backward compatibility with NudgeBee server releases. However, older agent versions may lack probe definitions for newer features or custom trace providers, leading to unpopulated health fields in the UI. Upgrading your agent alongside server updates is recommended.
 
 ---
 
@@ -96,14 +96,14 @@ graph TD
 Run the following commands to check agent pod health and logs:
 
 ```bash
-# 1. Check pod status across the nudgebee namespace
-kubectl get pods -n nudgebee -o wide
+# 1. Check pod status in the release namespace
+kubectl get pods -n nudgebee-agent -o wide
 
 # 2. Inspect recent agent pod events
-kubectl describe pod -l app.kubernetes.io/name=nudgebee-agent -n nudgebee
+kubectl describe deployment nudgebee-agent-runner -n nudgebee-agent
 
 # 3. Stream live logs from the agent runner
-kubectl logs -n nudgebee -l app.kubernetes.io/name=nudgebee-agent -c runner --tail=100 -f
+kubectl logs -n nudgebee-agent deploy/nudgebee-agent-runner -c runner --tail=100 -f
 ```
 
 **What to look for in logs:**
@@ -143,8 +143,8 @@ For GCP connections:
 - **Cause**: The `authSecretKey` in the agent's Helm release does not match the secret key configured on the NudgeBee server.
 - **Remediation**:
   ```bash
-  helm upgrade --install nudgebee-agent nudgebee/nudgebee-agent \
-    --namespace nudgebee \
+  helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
+    --namespace nudgebee-agent \
     --set runner.nudgebee.endpoint="https://api.nudgebee.yourdomain.com" \
     --set runner.nudgebee.auth_secret_key="<CORRECT_SECRET_KEY>" \
     --reuse-values
@@ -157,7 +157,8 @@ For GCP connections:
   - Whitelist the NudgeBee backend domain and relay domain on port `443` (TCP).
   - If using an outbound corporate HTTP proxy, configure `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` in the agent's `values.yaml`:
     ```yaml
-    extraEnv:
+    runner:
+      additional_env_vars:
       - name: HTTPS_PROXY
         value: "http://proxy.internal:8080"
       - name: NO_PROXY
@@ -166,7 +167,7 @@ For GCP connections:
 
 ### Failure 3: Memory Exhaustion (OOMKilled) on Large Clusters
 - **Symptom**: Agent pod restarts frequently with `OOMKilled (Exit Code 137)`.
-- **Cause**: Cluster has 10,000+ pods or hundreds of nodes, exceeding the default 512Mi memory limit during discovery sweeps.
+- **Cause**: The runner's informer cache and discovery snapshot exceed its configured memory limit. Object count matters more than request traffic.
 - **Remediation**:
   Increase resource limits in `values.yaml`:
   ```yaml
@@ -174,10 +175,10 @@ For GCP connections:
     resources:
       limits:
         cpu: "1000m"
-        memory: "2Gi"
+        memory: "4Gi"
       requests:
         cpu: "200m"
-        memory: "512Mi"
+        memory: "2Gi"
   ```
 
 ---
@@ -197,9 +198,9 @@ OUT_FILE="$(mktemp ./nudgebee-agent-diagnostics.XXXXXX)"
 {
   date -u
   kubectl version --client -o yaml
-  kubectl get pods -n nudgebee -o wide
-  kubectl get events -n nudgebee --sort-by='.metadata.creationTimestamp' | tail -n 30
-  kubectl logs -n nudgebee -l app.kubernetes.io/name=nudgebee-agent -c runner --tail=200
+  kubectl get pods -n nudgebee-agent -o wide
+  kubectl get events -n nudgebee-agent --sort-by='.metadata.creationTimestamp' | tail -n 30
+  kubectl logs -n nudgebee-agent deploy/nudgebee-agent-runner -c runner --tail=200
 } 2>&1 | python3 -c '
 import re
 import sys

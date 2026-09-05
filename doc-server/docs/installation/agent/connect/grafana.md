@@ -32,7 +32,7 @@ NudgeBee can integrate with Grafana to surface dashboards directly in the NudgeB
 3. **Apply configuration and upgrade the agent**
    - **Using shell script**:
      ```bash
-     sh installation.sh -a <NUDBGEE_AUTH_KEY> -f values.yaml
+     sh installation.sh -a <NUDGEBEE_AUTH_KEY> -f values.yaml
      ```
    - **Using Helm**:
      ```bash
@@ -44,4 +44,4 @@ NudgeBee can integrate with Grafana to surface dashboards directly in the NudgeB
        -f values.yaml
      ```
 
-> Replace `<GRAFANA_PASSWORD>` and `<NUDBGEE_AUTH_KEY>` with your actual values, and adjust the Grafana namespace if it differs from `grafana`.
+> Replace `<GRAFANA_PASSWORD>` and `<NUDGEBEE_AUTH_KEY>` with your actual values, and adjust the Grafana namespace if it differs from `grafana`.

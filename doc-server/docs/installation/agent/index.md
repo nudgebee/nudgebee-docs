@@ -35,7 +35,9 @@ If you connected a cloud account (AWS, Azure, or GCP), NudgeBee can auto-discove
 **Operate & Troubleshoot** — tuning, health monitoring, and diagnostics for a running agent.
 
 - **[Troubleshoot Agent Connectivity](./operate/troubleshoot-agent-connectivity.md)** — diagnose disconnected agents, periodic heartbeat staleness, flapping, and safe log bundles.
-- **[Agent Health & Subsystem Probes](./operate/agent-health.md)** — field-by-field reference for Relay, Prometheus, Logs, Traces, OpenCost, and Node Agent probes.
+- **[Agent Health & Subsystem Probes](./operate/agent-health.md)** — field-by-field reference for Relay, Prometheus, Logs, Traces, and Node Agent probes.
+- **[Enable or Disable Agent Modules](./operate/module-configuration.md)** — module switches, feature impact, and verification steps.
+- **[Agent Storage and PVCs](./operate/storage-and-pvcs.md)** — default and custom StorageClasses, pending claims, expansion, and disabling bundled trace storage.
 - **[Helm values](./operate/helm_values.md)** — every value you are likely to set, including access modes and sizing.
 - **[Node agent configuration](./operate/node-agent-configs.md)** — eBPF collector tuning.
 - **[Cluster autoscaler](./operate/cluster-autoscaler/)** — Karpenter support.
@@ -123,3 +125,18 @@ The runner launches short-lived Jobs for analysis that needs its own tooling:
 - **[Trivy](https://github.com/aquasecurity/trivy)**: scans container images for CVEs.
 - **[KRR](https://github.com/robusta-dev/krr)**: analyses CPU and memory usage for rightsizing recommendations.
 - **[Popeye](https://github.com/derailed/popeye)**: inspects cluster configuration for misconfigurations and anti-patterns.
+
+## Component failure boundaries
+
+Use this table before changing several components at once:
+
+| Symptom | Most likely boundary | What can still work |
+|---|---|---|
+| Entire agent is disconnected | Runner-to-collector authentication or network path | In-cluster node-agent and forwarder pods may still be running. |
+| Live queries fail but telemetry heartbeat is current | Relay connection, request signing, or datasource configuration | Periodic inventory and health telemetry can continue. |
+| Workloads appear but no alert-driven events arrive | Alertmanager route and webhook delivery to `/api/alerts` | Prometheus queries and Kubernetes discovery continue. |
+| Prometheus is connected but node-agent count is zero | PodMonitor/scrape selection or node-agent target health | Other Prometheus queries can succeed. |
+| Kubernetes resource changes stop appearing | Forwarder configuration, RBAC, or runner event intake | Prometheus, logs, and traces queries can continue. |
+| Traces disappear | Node-agent trace export, OTel collector, ClickHouse, or external trace provider | Metrics, inventory, alerts, and logs continue. |
+
+See [Agent Health](./operate/agent-health.md) for the reported fields and [Troubleshoot Agent Connectivity](./operate/troubleshoot-agent-connectivity.md) for the runner-to-server path.
