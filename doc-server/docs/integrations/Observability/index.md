@@ -1,6 +1,6 @@
 # Observability Platform
 
-NudgeBee's Observability Platform connects to your existing monitoring and observability tools — such as Prometheus, Grafana, Elastic, Datadog, New Relic, or Azure Monitor — to bring together logs, metrics, and traces for faster issue diagnosis and intelligent insights.
+NudgeBee's Observability Platform connects to your existing monitoring and observability tools — such as Prometheus, Loki, Elasticsearch, OpenTelemetry, Datadog, New Relic, or Dynatrace — to bring together logs, metrics, and traces for faster issue diagnosis and intelligent insights.
 
 NudgeBee does not replace your current observability stack. Instead, it integrates with it to centralize context, automate analysis, and enhance incident response using AI and LLM-powered reasoning.
 
@@ -17,65 +17,56 @@ You need this integration as part of your initial NudgeBee setup. Connect your o
 - Monitor [SLOs](../../features/slo.md) and trigger alerts when thresholds are breached.
 
 :::tip
-You can connect multiple observability tools simultaneously. For example, use Prometheus for metrics, ELK for logs, and Jaeger for traces.
+You can connect multiple observability tools simultaneously. For example, use Prometheus for metrics, Loki for logs, and OpenTelemetry for traces.
 :::
 
 ---
 
 ## Supported Integrations
 
-NudgeBee supports integration with a wide range of observability tools across logs, metrics, and traces.
-You can connect any combination of the following platforms:
+NudgeBee reads telemetry from the platforms below. Connect any combination — for example Prometheus for metrics, Loki for logs and OpenTelemetry for traces.
 
-### 📊 **Metrics Integrations**
-- Prometheus
-- Grafana Cloud
-- [Datadog Metrics](./datadog.md)
-- [SolarWinds Metrics](./solarwinds.md)
-- [Dynatrace Metrics](./dynatrace.md)
-- Azure Monitor
-- Google Cloud Monitoring
-- [New Relic Metrics](./newrelic.md)
+| Provider | Signals NudgeBee reads | Setup guide |
+|----------|------------------------|-------------|
+| Prometheus | Metrics | [Connect Prometheus metrics](../../installation/agent/connect/metrics.md) |
+| Grafana Loki | Logs | [Connect Loki](../../installation/agent/connect/logging/loki.md) |
+| Elasticsearch / ELK | Logs | [Connect ELK](../../installation/agent/connect/logging/elk.md) |
+| SigNoz | Logs | [Connect SigNoz](../../installation/agent/connect/logging/signoz.md) |
+| OpenTelemetry (Otel) | Traces | [Connect traces](../../installation/agent/connect/tracing/) |
+| Datadog | Metrics, logs, traces | [Datadog](./datadog.md) |
+| New Relic | Metrics, logs, traces | [New Relic](./newrelic.md) |
+| Dynatrace | Metrics, logs, traces | [Dynatrace](./dynatrace.md) |
+| SolarWinds Observability | Metrics, logs, traces | [SolarWinds](./solarwinds.md) |
+| Azure Application Insights | Traces | [Azure App Insights](./azure_app_insights.md) |
+| Loggly | Logs | [Loggly](./loggly.md) |
+| Observe | Logs | [Observe](./observe.md) |
+| Splunk Observability Cloud | Metrics | Configure in **Admin** > **Integrations** > **Observability** |
+| Apache Pinot | Logs | Configure in **Admin** > **Integrations** > **Observability** |
+| Apache Hive | Logs | Configure in **Admin** > **Integrations** > **Observability** |
+| Chronosphere | Metrics | [Chronosphere](./chronosphere.md) |
+| Last9 | Metrics, logs | [Last9 logs](../../installation/agent/connect/logging/last9.md), [Last9 metrics](../../installation/agent/connect/metrics.md) |
+| Jaeger | Traces | Configure in **Admin** > **Integrations** > **Observability** |
+| Grafana Tempo | Traces | Configure in **Admin** > **Integrations** > **Observability** |
+| OpenObserve | Logs | Configure in **Admin** > **Integrations** > **Observability** |
 
-### 🪵 **Logs Integrations**
-- Elastic / ELK Stack
-- Grafana Loki
-- AWS CloudWatch Logs
-- Azure Log Analytics
-- Google Cloud Logging
-- [SolarWinds Logs](./solarwinds.md)
-- [Dynatrace Logs](./dynatrace.md)
-- [New Relic Logs](./newrelic.md)
+:::note
+Providers without a linked guide are configured directly from **Admin** > **Integrations** > **Observability**, where the configuration form documents each field inline.
+:::
 
-### 🔍 **Traces Integrations**
-- Jaeger
-- Tempo
-- OpenTelemetry
-- [Datadog APM](./datadog.md)
-- [SolarWinds APM](./solarwinds.md)
-- [Dynatrace APM](./dynatrace.md)
-- [Azure Application Insights](./azure_app_insights.md)
-- [New Relic APM](./newrelic.md)
+### Getting Alerts In
 
-### 🚨 **Alert & Incident Platforms**
-- [ServiceNow](../Tickets/servicenow.md)
-- [PagerDuty](../Tickets/pagerduty.md)
-- Opsgenie
-- [Slack](../Notifications/slack.md)
-- [Microsoft Teams](../Notifications/msteams.md)
-- [Datadog Webhook](../Webhooks/datadog_webhook.md)
-- [SolarWinds Webhook](../Webhooks/solarwinds_webhook.md)
-- [Dynatrace Webhook](../Webhooks/dynatrace_webhook.md)
-- [New Relic Webhook](../Webhooks/newrelic_webhook.md)
-- [ServiceNow Webhook](../Webhooks/servicenow_webhook.md)
-- [GCP Cloud Monitoring Webhook](../Webhooks/gcp_monitoring_webhook.md)
+Observability sources supply telemetry; alerts reach NudgeBee separately, through [inbound webhooks](../Webhooks/) or Alertmanager forwarding:
+
+- [Prometheus Alertmanager](../../installation/agent/connect/alertmanager.md) — forward alerts from kube-prometheus-stack, operator-managed, plain or external Alertmanagers
+- [Datadog](../Webhooks/datadog_webhook.md), [Dynatrace](../Webhooks/dynatrace_webhook.md), [New Relic](../Webhooks/newrelic_webhook.md), [SolarWinds](../Webhooks/solarwinds_webhook.md), [GCP Cloud Monitoring](../Webhooks/gcp_monitoring_webhook.md), [ServiceNow](../Webhooks/servicenow_webhook.md) and [PagerDuty](../Webhooks/pagerduty_webhook.md) webhooks
+- Azure Monitor, Grafana, Elasticsearch and Zenduty webhooks — see the [webhooks overview](../Webhooks/)
 
 ---
 
 ## Typical Workflow
 
 1. **Integrate Your Observability Tools**
-   Connect Prometheus, Elastic, Jaeger, or others via API or agent connectors.
+   Connect Prometheus, Elasticsearch, OpenTelemetry, or others via API or agent connectors.
 
 2. **Ingest Telemetry Data**
    NudgeBee securely pulls relevant logs, metrics, and traces on demand or through scheduled syncs.
@@ -96,7 +87,7 @@ You can connect any combination of the following platforms:
 ## Example Architecture
 
 ```text
-[Prometheus / Elastic / Jaeger / Datadog / New Relic]
+[Prometheus / Loki / Elasticsearch / OpenTelemetry / Datadog]
           │
           ▼
      [NudgeBee Integrations Layer]

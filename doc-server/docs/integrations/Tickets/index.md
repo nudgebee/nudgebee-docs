@@ -32,6 +32,7 @@ This integration is **optional**. NudgeBee works fully without a ticketing syste
 *   **[ServiceNow](./servicenow.md)** — Integrate with ServiceNow for enterprise ITSM workflows.
 *   **[PagerDuty](./pagerduty.md)** — Trigger and manage PagerDuty incidents.
 *   **[Zenduty](./zenduty.md)** — Integrate with Zenduty for incident management.
+*   **Freshdesk** — Create and track Freshdesk tickets from NudgeBee. Configure it from **Admin** > **Integrations** > **Ticketing** > **Freshdesk**; a dedicated setup guide is not published yet.
 
 ## Operational & Diagnostic Guides
 
