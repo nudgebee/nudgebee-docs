@@ -41,8 +41,8 @@ globalConfig:
   # 5️⃣ Chronosphere (hosted Prometheus API)
   # prometheus_url: "https://<your-org>.chronosphere.io/data/metrics"
 
-  # Custom headers sent with every query (comma-separated "Key: Value" pairs)
-  # prometheus_headers: "Authorization: Bearer <token>,X-Scope-OrgID: tenant-a"
+  # Custom headers sent with every query (semicolon-separated "Key: Value" pairs)
+  # prometheus_headers: "Authorization: Bearer <token>; X-Scope-OrgID: tenant-a"
 
   # Labels appended to every PromQL query (multi-cluster backends)
   # prometheus_additional_labels: {k8s_cluster: aws-prod}

@@ -15,6 +15,8 @@ The chart is open source at [`nudgebee/k8s-agent`](https://github.com/nudgebee/k
 | https://charts.bitnami.com/bitnami | clickhouse | 3.1.* | `opentelemetry-collector.enabled` |
 | https://open-telemetry.github.io/opentelemetry-helm-charts | opentelemetry-collector | 0.165.0 | `opentelemetry-collector.enabled` |
 
+For task-oriented guidance, see [Enable or Disable Agent Modules](./module-configuration.md) and [Agent Storage and PVCs](./storage-and-pvcs.md).
+
 ---
 
 ## Required
@@ -99,7 +101,7 @@ This is the relay's Ed25519 public key. The agent uses it to check that a reques
 | Key | Type | Default | Description |
 |---|---|---|---|
 | `globalConfig.prometheus_url` | string | `""` | Query URL for Prometheus, Thanos Query, Mimir, VictoriaMetrics, Chronosphere, AMP. |
-| `globalConfig.prometheus_headers` | string | `""` | Comma-separated `Header: value` pairs (static auth header). |
+| `globalConfig.prometheus_headers` | string | `""` | Semicolon-separated `Header: value` pairs (static auth headers). |
 | `globalConfig.prometheus_additional_labels` | object | `{}` | Labels appended to every PromQL query, e.g. `{k8s_cluster: aws-prod}`. |
 | `runner.prometheus.auth.coralogixToken` | string | `""` | Coralogix token (sent as the `token` header). |
 | `runner.prometheus.auth.awsAccessKey` / `awsSecretAccessKey` / `awsRegion` / `awsServiceName` | string | `""` | AWS SigV4 for Amazon Managed Prometheus. `serviceName` defaults to `aps`. |

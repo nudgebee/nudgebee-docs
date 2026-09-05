@@ -2,9 +2,43 @@
 sidebar_position: 6
 ---
 
-# Label-based Multitenant Prometheus Setup
+# Multi-cluster Prometheus Setup
 
-When several teams share one Prometheus or VictoriaMetrics, you usually do not want each NudgeBee cluster to be able to query all of it. [prom-label-proxy](https://github.com/prometheus-community/prom-label-proxy) solves that without splitting the backend: it sits in front of Prometheus and rewrites every incoming query so it can only match one label value.
+When several clusters share one Prometheus-compatible backend, every stored series must carry a stable cluster label. Each NudgeBee agent must also identify the label value for its own cluster, otherwise queries can combine identically named workloads from different clusters.
+
+## Choose the isolation model
+
+| Requirement | Configuration |
+|---|---|
+| Add the cluster selector to NudgeBee-generated PromQL | Set `globalConfig.prometheus_additional_labels` for each agent release. |
+| Enforce tenant isolation even if a query omits the selector | Put a label-enforcing proxy in front of the shared backend and give each agent its own proxy endpoint. |
+
+The chart-level label is query scoping, not a security boundary. The relay substitutes it into NudgeBee's cluster-aware query templates, but the shared Prometheus endpoint remains capable of answering unscoped queries. Use the proxy model when one cluster or tenant must never query another tenant's data.
+
+## Scope NudgeBee queries with an additional label
+
+For a backend whose series carry `cluster="prod-us-east-1"`:
+
+```yaml
+globalConfig:
+  prometheus_url: "https://shared-prometheus.example.com"
+  prometheus_additional_labels:
+    cluster: prod-us-east-1
+```
+
+Use a different value in every cluster's agent release. After upgrading, open **Agent Health** and confirm that **Additional Labels** shows the expected map.
+
+Before blaming the agent for empty results, verify the label exists upstream:
+
+```promql
+count by (cluster) (up)
+```
+
+If the remote-write pipeline uses a different label such as `k8s_cluster`, configure that exact name. Label names and values are case-sensitive.
+
+## Enforce isolation with prom-label-proxy
+
+[prom-label-proxy](https://github.com/prometheus-community/prom-label-proxy) sits in front of Prometheus and rewrites every incoming query so it can only match one label value.
 
 Point NudgeBee at the proxy instead of at Prometheus, and the cluster sees its own metrics and nothing else. Queries cannot escape the boundary, because the proxy injects the label selector after the query arrives.
 
@@ -45,7 +79,7 @@ globalConfig:
   prometheus_url: "http://label-proxy.prometheus.svc:8080"
 ```
 
-Nothing else in the agent changes. Every PromQL query the agent runs now goes through the proxy and comes back scoped to the one label value.
+Every PromQL query the agent runs now goes through the proxy and comes back scoped to the one label value. You can also set `prometheus_additional_labels` to the same label and value so Agent Health records the cluster scope explicitly; the proxy remains the enforcement layer.
 
 ## One proxy per tenant
 

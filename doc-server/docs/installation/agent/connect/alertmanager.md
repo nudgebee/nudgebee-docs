@@ -9,6 +9,16 @@ NudgeBee investigates the alerts you already have. To get them, your Alertmanage
 
 If you skip it, nothing breaks visibly. Metrics are pulled, so a bad Prometheus URL shows up right away. Alerts are pushed, so when no receiver targets the agent, all the pods stay healthy, no error is logged, and NudgeBee just never raises an alert-driven event. If your cluster shows metrics and workloads but no alerts, start here.
 
+There are three independent checks:
+
+| Check | What it proves | Where to diagnose |
+|---|---|---|
+| **Alertmanager Connected** in Agent Health | The runner can reach the configured Alertmanager `/-/healthy` endpoint. | Agent configuration, service discovery, authentication, and NetworkPolicy. |
+| NudgeBee receiver appears in the loaded Alertmanager route tree | Alertmanager accepted the routing configuration. | The generated Alertmanager config and route ordering. |
+| A firing alert appears in NudgeBee | Alertmanager matched the route and delivered the webhook to the correct agent/account. | Alertmanager delivery logs, receiver URL, network path, and agent logs. |
+
+A green Agent Health status proves only the first check. It does not prove that Alertmanager is configured to send alerts to NudgeBee.
+
 ## The address alerts go to
 
 ```
@@ -417,53 +427,242 @@ spec:
 
 Do not reach for `None` to fix this. It drops the namespace restriction for every `AlertmanagerConfig` in the cluster, not only yours.
 
-On an operator older than v0.84.0 that is not using `alertmanagerConfiguration`, there is no CR-based way to route cluster-wide — edit the base config Secret instead, as in [Operator-managed Alertmanager](#operator-managed-alertmanager).
+---
+
+## Troubleshooting: Why is NudgeBee Not Receiving Alerts? {#verify}
+
+If your cluster shows healthy metrics and active workloads in the Console but NudgeBee never generates alert-driven events or incident investigations, Alertmanager webhooks are not reaching the agent.
+
+Follow this systematic diagnostic checklist to locate and fix the blockage.
+
+```mermaid
+flowchart TD
+    A[Alert Firing in Alertmanager?] -->|No| B[Check Prometheus Alert Rules & PromQL]
+    A -->|Yes| C[Is nudgebee-agent Route Loaded?]
+    C -->|No| D[Check Alertmanager Config Syntax & Reload]
+    C -->|Yes| E[Is Route Swallowed by Prior Matcher?]
+    E -->|Yes| F[Add 'continue: true' to Preceding Routes]
+    E -->|No| G[Is AlertmanagerConfig Scoped to Agent Namespace?]
+    G -->|Yes| H[Move CR to AM Namespace or Update Strategy]
+    G -->|No| I[Can Alertmanager Resolve Runner Service?]
+    I -->|No| J[Fix Runner Service FQDN in Webhook URL]
+    I -->|Yes| K[Is NetworkPolicy Blocking Cross-Namespace Traffic?]
+    K -->|Yes| L[Allow Ingress on Runner Port 80/5000]
+    K -->|No| M[Check Runner Logs for /api/alerts Drops]
+```
 
 ---
 
-## Verify
+### Step 1: Verify the Alert is Firing in Alertmanager
+
+Confirm that Prometheus is actually triggering alerts and pushing them to Alertmanager:
 
 ```bash
-# 1. Is the route actually loaded? This reads the running config.
-kubectl -n <ns> exec sts/alertmanager-<am-name> -c alertmanager -- \
-  amtool config routes show --alertmanager.url=http://localhost:9093
-
-# 2. Can Alertmanager reach the agent? Catches NetworkPolicy blocks.
-#    A 202 means yes.
-kubectl -n <ns> exec sts/alertmanager-<am-name> -c alertmanager -- \
-  wget -S -qO- --post-data='{}' --header='Content-Type: application/json' \
-  http://nudgebee-agent-runner.nudgebee-agent.svc/api/alerts
-
-# 3. Is the agent receiving anything?
-kubectl -n nudgebee-agent logs deploy/nudgebee-agent-runner --tail=100 | grep -i alert
+# Check active alerts in Alertmanager
+kubectl -n <monitoring-namespace> exec sts/alertmanager-<name> -c alertmanager -- \
+  amtool alert --alertmanager.url=http://localhost:9093
 ```
 
-The most useful check is to push a synthetic alert through Alertmanager itself. It exercises the whole path — route matching, your receiver, the agent's intake — without waiting for something real to fire:
+- If no alerts are firing, verify that your `PrometheusRule` manifests are loaded in Prometheus: `kubectl get prometheusrule -A`.
+- If alerts are visible and firing in Alertmanager, proceed to Step 2.
+
+---
+
+### Step 2: Confirm the Route is Loaded and Not Swallowed
+
+Alertmanager evaluates routes sequentially from top to bottom. If a route matches an alert and does **not** include `continue: true`, Alertmanager delivers to that receiver and **halts evaluation immediately**.
+
+#### Inspect the Running Route Tree
+
+Dump the active route hierarchy in evaluation order:
 
 ```bash
-kubectl -n <ns> exec sts/alertmanager-<am-name> -c alertmanager -- \
+kubectl -n <monitoring-namespace> exec sts/alertmanager-<name> -c alertmanager -- \
+  amtool config routes show --alertmanager.url=http://localhost:9093
+```
+
+Verify that:
+1. The `nudgebee-agent` receiver appears in the route tree.
+2. Any route placed **above** `nudgebee-agent` that matches the same alerts (such as default PagerDuty or Slack routes) has `continue: true`.
+3. If an upstream route lacks `continue: true`, it swallows the alert before evaluation reaches NudgeBee.
+
+---
+
+### Step 3: Check for the `AlertmanagerConfig` CR Namespace Trap
+
+If you configured forwarding via an `AlertmanagerConfig` Custom Resource placed in the `nudgebee-agent` namespace:
+
+```bash
+kubectl get alertmanagerconfig -A
+```
+
+By default, Prometheus Operator configures `alertmanagerConfigMatcherStrategy: OnNamespace`. The operator automatically injects an enforced matcher:
+```yaml
+matchers:
+  - namespace: nudgebee-agent
+```
+into every route generated by that CR.
+
+**Impact:** The route will **only** deliver alerts originating from workloads in the `nudgebee-agent` namespace. All alerts from `default`, `production`, `ingress`, and other application namespaces are silently discarded!
+
+**Fix:**
+1. Check the operator's strategy:
+   ```bash
+   kubectl get alertmanager -A -o jsonpath='{.items[*].spec.alertmanagerConfigMatcherStrategy.type}'
+   ```
+2. If using Prometheus Operator v0.84.0+, set:
+   ```yaml
+   alertmanagerConfigMatcherStrategy:
+     type: OnNamespaceExceptForAlertmanagerNamespace
+   ```
+   and place the `AlertmanagerConfig` CR in the **Alertmanager's own namespace** (e.g. `monitoring`), not `nudgebee-agent`.
+3. Alternatively, define the route directly inside the main `alertmanager.config` in Helm values, bypassing the CR restriction entirely.
+
+---
+
+### Step 4: Verify Webhook URL Resolution and Delivery Failures
+
+Check Alertmanager's internal notification delivery metrics:
+
+```bash
+kubectl -n <monitoring-namespace> exec sts/alertmanager-<name> -c alertmanager -- \
+  wget -qO- http://localhost:9093/metrics | grep alertmanager_notifications
+```
+
+Look for:
+- `alertmanager_notifications_failed_total{receiver="nudgebee-agent"}`: If this counter is increasing, Alertmanager is attempting to send alerts to the runner but the HTTP POST is failing!
+- `alertmanager_notifications_total{receiver="nudgebee-agent"}`: Total delivery attempts.
+
+Next, inspect Alertmanager container logs for HTTP delivery errors:
+
+```bash
+kubectl logs -n <monitoring-namespace> -l app.kubernetes.io/name=alertmanager -c alertmanager --tail=100 | grep -i "notify"
+```
+
+Look for errors like:
+- `dial tcp: lookup nudgebee-agent-runner...: no such host`
+- `dial tcp ...: connect: connection refused`
+- `context deadline exceeded`
+
+#### Correcting the Webhook URL
+
+The receiver URL must match your agent release name and namespace:
+
+```
+http://<release-name>-runner.<agent-namespace>.svc.cluster.local/api/alerts
+```
+
+- If Alertmanager runs in a different namespace (e.g. `monitoring`) than the agent (`nudgebee-agent`), always supply the full `.svc.cluster.local` domain.
+- The runner Service listens on port **80** and routes to container port 5000. Do not append `:5000` to the Service URL.
+
+---
+
+### Step 5: Test Network Reachability (NetworkPolicies)
+
+If Alertmanager logs indicate connection timeouts or refused connections, verify cross-namespace network reachability directly from the Alertmanager pod:
+
+```bash
+kubectl -n <monitoring-namespace> exec sts/alertmanager-<name> -c alertmanager -- \
+  wget -S -qO- --post-data='{}' --header='Content-Type: application/json' \
+  http://nudgebee-agent-runner.nudgebee-agent.svc.cluster.local/api/alerts
+```
+
+- **Expected Response**: HTTP `202 Accepted` (or a response body from the runner).
+- **If the command hangs or times out**: A Kubernetes `NetworkPolicy` in `nudgebee-agent` is blocking ingress traffic from the monitoring namespace.
+
+#### Example NetworkPolicy to Allow Ingress
+
+If your cluster enforces default-deny ingress in `nudgebee-agent`, apply a policy allowing Alertmanager:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-alertmanager-to-runner
+  namespace: nudgebee-agent
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: nudgebee-agent
+      component: runner
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: <monitoring-namespace>
+      ports:
+        - protocol: TCP
+          port: 5000
+```
+
+---
+
+### Step 6: Test Runner Webhook Intake Directly
+
+You can test the agent runner's `/api/alerts` endpoint independently of Alertmanager to confirm it processes payloads and generates findings:
+
+1. Port-forward the runner Service:
+   ```bash
+   kubectl -n nudgebee-agent port-forward svc/nudgebee-agent-runner 8080:80
+   ```
+
+2. Send a synthetic Prometheus Alertmanager v4 JSON payload:
+   ```bash
+   curl -si -X POST http://localhost:8080/api/alerts \
+     -H 'Content-Type: application/json' \
+     -d '{
+       "version": "4",
+       "status": "firing",
+       "receiver": "nudgebee-agent",
+       "groupLabels": {"alertname": "TestAlert"},
+       "commonLabels": {"alertname": "TestAlert", "severity": "warning", "namespace": "default"},
+       "commonAnnotations": {"description": "Synthetic test alert"},
+       "alerts": [
+         {
+           "status": "firing",
+           "labels": {
+             "alertname": "TestAlert",
+             "severity": "warning",
+             "namespace": "default",
+             "pod": "test-pod"
+           },
+           "annotations": {
+             "description": "Manual intake test alert"
+           },
+           "startsAt": "2026-09-05T10:00:00Z"
+         }
+       ]
+     }'
+   ```
+
+3. The endpoint returns `HTTP 202 Accepted` immediately.
+
+4. Inspect the runner logs to confirm receipt and forwarding:
+   ```bash
+   kubectl logs -n nudgebee-agent deploy/nudgebee-agent-runner -c runner --tail=50
+   ```
+   Look for:
+   - `alertmanager: received alert`
+   - `forwarding finding to backend`
+   - Absence of `alertmanager: dropped alerts that failed to build`
+
+---
+
+### Step 7: Push an End-to-End Synthetic Alert via `amtool`
+
+To test the entire pipeline from Alertmanager routing to NudgeBee Console:
+
+```bash
+kubectl -n <monitoring-namespace> exec sts/alertmanager-<name> -c alertmanager -- \
   amtool alert add NudgeBeeDeliveryTest severity=warning namespace=default \
-    --annotation=summary='verifying alert delivery to NudgeBee' \
+    --annotation=summary='Verifying end-to-end alert delivery to NudgeBee' \
     --alertmanager.url=http://localhost:9093
 ```
 
-It should appear in NudgeBee within a minute or two. If it does not, run step 1 again and read the route tree in order: the first route that matches without `continue: true` is where the alert stopped.
-
-Clean up afterwards by expiring it, or leave it — Alertmanager drops an alert with no `endsAt` five minutes after it stops being refreshed.
-
-To test the agent by itself, POST an alert straight at it. The endpoint answers `202` as soon as it has read the body and forwards to NudgeBee in the background, so read the runner logs alongside it:
+Within 1-2 minutes, verify that the alert surfaces in the NudgeBee Console under **Events** or **Incidents**. Expire the alert when finished:
 
 ```bash
-kubectl -n nudgebee-agent port-forward svc/nudgebee-agent-runner 8080:80 &
-curl -si -XPOST localhost:8080/api/alerts -H 'Content-Type: application/json' -d '{
- "version":"4","status":"firing","receiver":"nudgebee-agent","groupLabels":{},
- "commonLabels":{},"commonAnnotations":{},"externalURL":"","alerts":[
- {"status":"firing","labels":{"alertname":"NudgeBeeIntakeTest","severity":"warning","namespace":"default","pod":"test"},
-  "annotations":{"description":"manual intake test"},"startsAt":"2024-01-01T00:00:00Z"}]}'
+kubectl -n <monitoring-namespace> exec sts/alertmanager-<name> -c alertmanager -- \
+  amtool alert expire alertname=NudgeBeeDeliveryTest --alertmanager.url=http://localhost:9093
 ```
 
-Delivery is confirmed when a real alert that is currently firing in Alertmanager also appears in NudgeBee. Compare the two: open Alertmanager's own UI, pick something firing now, and look for it in NudgeBee.
-
-If `AlertmanagerFailedToSendAlerts` is firing, Alertmanager is trying and failing to reach the receiver — the URL is wrong or blocked, and step 2 above will show it.
-
-One routing trap to rule out first: Alertmanager stops at the first matching route unless that route sets `continue: true`. If a route above yours matches the same alerts, yours never runs. `amtool config routes show` in step 1 prints the tree in evaluation order.
