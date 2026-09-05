@@ -22,6 +22,7 @@ Create any of these from **Admin** > **Integrations** > **Webhooks**.
 | [PagerDuty Webhook](./pagerduty_webhook.md) | Receive PagerDuty incident notifications and trigger NudgeBee troubleshooting workflows. |
 | [ServiceNow Webhook](./servicenow_webhook.md) | Receive ServiceNow incident notifications into NudgeBee. |
 | [GCP Cloud Monitoring Webhook](./gcp_monitoring_webhook.md) | Receive GCP Cloud Monitoring alert notifications with metric details and resource context. |
+| [Automation Webhook](./automation_webhook.md) | Trigger a NudgeBee workflow from any system that can send an HTTP request. |
 
 ### Also Available
 
@@ -34,7 +35,6 @@ These webhook types exist in the product and are configured the same way. Dedica
 | Grafana Webhook | Receive Grafana alerting notifications. See [Connect Grafana](../../installation/agent/connect/grafana.md) for the Grafana-side setup. |
 | Zenduty Webhook | Receive Zenduty incident notifications into NudgeBee. |
 | Elasticsearch Webhook | Receive alerts raised by Elasticsearch/Kibana watchers and rules. |
-| Automation Webhook | Trigger a NudgeBee [workflow](../../features/workflow-builder/) from any external system that can send an HTTP POST. See [workflow triggers](../../features/workflow-builder/triggers.md). |
 | OpenObserve Webhook | Receive OpenObserve alert notifications into NudgeBee. |
 | Splunk Webhook | Receive Splunk alert notifications into NudgeBee. |
 

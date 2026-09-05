@@ -40,7 +40,7 @@ All integrations are configured from **Admin** > **Integrations**, where they ar
 
 ### Data Stores
 
-* **Databases** — PostgreSQL, MySQL, ClickHouse, SQL Server and Oracle connections power [database health analysis](../features/ai/use-cases/database-health.md) and the [database tasks](../features/workflow-builder/database-tasks.md) available in workflows. **Optional**.
+* **[Databases](./Databases/)** — PostgreSQL, MySQL, ClickHouse, SQL Server and Oracle connections power [database health analysis](../features/ai/use-cases/database-health.md) and the [database tasks](../features/workflow-builder/database-tasks.md) available in workflows. **Optional**.
 * **Messaging Queue — RabbitMQ** and **In-Memory — Redis** — Queue depth, consumer lag and cache health as first-class signals, and the corresponding [message queue tasks](../features/workflow-builder/message-queue-tasks.md) in workflows. **Optional**.
 * **Docs — Confluence** — Connect a Confluence space so runbooks and internal documentation become retrievable context for NuBi and AI troubleshooting. **Optional**.
 
