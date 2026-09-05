@@ -32,7 +32,7 @@ NudgeBee reads telemetry from the platforms below. Connect any combination — f
 | Grafana Loki | Logs | [Connect Loki](../../installation/agent/connect/logging/loki.md) |
 | Elasticsearch / ELK | Logs | [Connect ELK](../../installation/agent/connect/logging/elk.md) |
 | SigNoz | Logs | [Connect SigNoz](../../installation/agent/connect/logging/signoz.md) |
-| OpenTelemetry (Otel) | Traces | [Connect traces](../../installation/agent/connect/tracing/) |
+| OpenTelemetry (Otel) | Traces | [OTel ClickHouse](../../installation/agent/connect/tracing/clickhouse-tracing.md) — created and managed by the agent |
 | Datadog | Metrics, logs, traces | [Datadog](./datadog.md) |
 | New Relic | Metrics, logs, traces | [New Relic](./newrelic.md) |
 | Dynatrace | Metrics, logs, traces | [Dynatrace](./dynatrace.md) |
@@ -42,10 +42,10 @@ NudgeBee reads telemetry from the platforms below. Connect any combination — f
 | Observe | Logs | [Observe](./observe.md) |
 | Splunk Observability Cloud | Metrics | Configure in **Admin** > **Integrations** > **Observability** |
 | Apache Pinot | Logs | Configure in **Admin** > **Integrations** > **Observability** |
-| Apache Hive | Logs | Configure in **Admin** > **Integrations** > **Observability** |
+| Apache Hive | Logs | [Apache Hive](./apache_hive.md) |
 | Chronosphere | Metrics | [Chronosphere](./chronosphere.md) |
 | Last9 | Metrics, logs | [Last9 logs](../../installation/agent/connect/logging/last9.md), [Last9 metrics](../../installation/agent/connect/metrics.md) |
-| Jaeger | Traces | Configure in **Admin** > **Integrations** > **Observability** |
+| Jaeger | Traces | [Jaeger](./jaeger.md) |
 | Grafana Tempo | Traces | Configure in **Admin** > **Integrations** > **Observability** |
 | OpenObserve | Logs | Configure in **Admin** > **Integrations** > **Observability** |
 

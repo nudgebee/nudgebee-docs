@@ -10,10 +10,10 @@ NudgeBee reads distributed traces to correlate latency and error spikes with the
 
 | Backend | How it connects |
 |---------|-----------------|
-| OpenTelemetry (Otel) | Point the agent at your OTel collector, or store spans in ClickHouse — see [OTel ClickHouse](./clickhouse-tracing.md). Configure from **Admin** > **Integrations** > **Observability** > **Otel**. |
+| OpenTelemetry (Otel) | Spans are stored in ClickHouse — see [OTel ClickHouse](./clickhouse-tracing.md). The **Otel** entry under **Admin** > **Integrations** > **Observability** is created and managed by the agent as part of that setup; there is no form to fill in. |
 | ClickHouse (OTel schema) | [OTel ClickHouse setup](./clickhouse-tracing.md) |
 | Google Cloud Trace | [Google Cloud Trace setup](./gcp-tracing.md) |
-| Jaeger | Configure from **Admin** > **Integrations** > **Observability** > **Jaeger**. |
+| Jaeger | [Jaeger integration](../../../../integrations/Observability/jaeger.md) |
 | Grafana Tempo | Configure from **Admin** > **Integrations** > **Observability** > **Grafana Tempo**. |
 | Datadog APM | [Datadog integration](../../../../integrations/Observability/datadog.md) |
 | Dynatrace | [Dynatrace integration](../../../../integrations/Observability/dynatrace.md) |

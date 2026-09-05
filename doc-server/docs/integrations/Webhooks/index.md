@@ -23,6 +23,11 @@ Create any of these from **Admin** > **Integrations** > **Webhooks**.
 | [ServiceNow Webhook](./servicenow_webhook.md) | Receive ServiceNow incident notifications into NudgeBee. |
 | [GCP Cloud Monitoring Webhook](./gcp_monitoring_webhook.md) | Receive GCP Cloud Monitoring alert notifications with metric details and resource context. |
 | [Automation Webhook](./automation_webhook.md) | Trigger a NudgeBee workflow from any system that can send an HTTP request. |
+| [ZenDuty Webhook](./zenduty_webhook.md) | Receive ZenDuty incident notifications into NudgeBee. |
+| [Azure Monitor Webhook](./azure_monitor_webhook.md) | Receive Azure Monitor alert notifications with resource and metric context. |
+| [Elasticsearch Webhook](./elasticsearch_webhook.md) | Receive alerts raised by Elasticsearch/Kibana rules and watchers. |
+| [OpenObserve Webhook](./openobserve_webhook.md) | Receive OpenObserve alert notifications into NudgeBee. |
+| [Splunk Webhook](./splunk_webhook.md) | Receive Splunk alert notifications into NudgeBee. |
 
 ### Also Available
 
@@ -31,12 +36,7 @@ These webhook types exist in the product and are configured the same way. Dedica
 | Integration | Description |
 |-------------|-------------|
 | Prometheus Alertmanager Webhook | Receive alerts forwarded from Alertmanager. See [Alert forwarding](../../installation/agent/connect/alertmanager.md) for the Alertmanager-side configuration. |
-| Azure Monitor Webhook | Receive Azure Monitor alert notifications with resource and metric context. |
 | Grafana Webhook | Receive Grafana alerting notifications. See [Connect Grafana](../../installation/agent/connect/grafana.md) for the Grafana-side setup. |
-| Zenduty Webhook | Receive Zenduty incident notifications into NudgeBee. |
-| Elasticsearch Webhook | Receive alerts raised by Elasticsearch/Kibana watchers and rules. |
-| OpenObserve Webhook | Receive OpenObserve alert notifications into NudgeBee. |
-| Splunk Webhook | Receive Splunk alert notifications into NudgeBee. |
 
 ---
 

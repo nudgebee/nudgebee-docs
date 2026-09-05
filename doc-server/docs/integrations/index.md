@@ -20,7 +20,7 @@ All integrations are configured from **Admin** > **Integrations**, where they ar
 
 * **[Kubernetes clusters](../features/Kubernetes/)** — EKS, AKS, GKE, OpenShift and self-managed clusters, connected through the [NudgeBee agent](../installation/agent/). **Required**.
 * **[AWS](../features/Cloud/AWS.md)**, **[Azure](../features/Cloud/Azure.md)**, **[GCP](../features/Cloud/GCP.md)** — Sync cloud accounts for cost, inventory and configuration context. See [Cloud fleet onboarding](../features/Cloud/cloud-fleet-onboarding.md). **Optional**.
-* **Self-Hosted VMs** and **Cloud Foundry** — Bring non-Kubernetes workloads under the same monitoring and optimization model. **Optional**.
+* **Self-Hosted VMs** and **[Cloud Foundry](../features/Cloud/CloudFoundry.md)** — Bring non-Kubernetes workloads under the same monitoring and optimization model. **Optional**.
 
 ### Observability
 
@@ -50,7 +50,7 @@ All integrations are configured from **Admin** > **Integrations**, where they ar
 
 ### AI
 
-* **[NudgeBee AI / LLM — BYOM](./LLM/)** — Integrate LLM models to power [NuBi](../features/ai/) and the pre-built AI agents for troubleshooting, root cause analysis, and agentic automation. SaaS users get a managed LLM by default; self-hosted users bring their own model (BYOM). An **LLM Gateway** integration is also available for routing model traffic through a single gateway endpoint. **Recommended**.
+* **[NudgeBee AI / LLM — BYOM](./LLM/)** — Integrate LLM models to power [NuBi](../features/ai/) and the pre-built AI agents for troubleshooting, root cause analysis, and agentic automation. SaaS users get a managed LLM by default; self-hosted users bring their own model (BYOM). An **[LLM Gateway](./LLM/Gateway/index.md)** integration is also available for holding several provider credentials side by side, including self-hosted OpenAI-compatible endpoints. **Recommended**.
 * **[MCP (Model Context Protocol)](./MCP/)** — Connect external or on-prem MCP servers so their tools become available to NudgeBee AI tasks (`llm.mcp_call`, NuBi). Supports direct HTTP and Forager-proxied (HTTP or stdio) modes. **Optional**.
 
 ### Identity
