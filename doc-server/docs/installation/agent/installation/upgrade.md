@@ -8,7 +8,6 @@ The Helm chart version and the agent application version are separate. Check bot
 
 ```bash
 helm list -n nudgebee-agent
-helm get metadata nudgebee-agent -n nudgebee-agent
 kubectl get deploy nudgebee-agent-runner -n nudgebee-agent \
   -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
 helm search repo nudgebee-agent/nudgebee-agent --versions

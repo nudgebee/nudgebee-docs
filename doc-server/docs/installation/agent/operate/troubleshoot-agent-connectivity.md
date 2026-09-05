@@ -159,6 +159,15 @@ For GCP connections:
     ```yaml
     runner:
       additional_env_vars:
+      # Note: If bundled ClickHouse is enabled, restate CLICKHOUSE_PORT, CLICKHOUSE_USER,
+      # and CLICKHOUSE_DB here, as Helm replaces lists instead of merging them.
+      # Do not manually set CLICKHOUSE_HOST as it is automatically injected by the chart.
+      - name: CLICKHOUSE_PORT
+        value: "8123"
+      - name: CLICKHOUSE_USER
+        value: "default"
+      - name: CLICKHOUSE_DB
+        value: "default"
       - name: HTTPS_PROXY
         value: "http://proxy.internal:8080"
       - name: NO_PROXY
