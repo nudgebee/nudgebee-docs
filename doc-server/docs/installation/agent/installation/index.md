@@ -167,12 +167,12 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
 
 NudgeBee raises alert-driven events only if your Alertmanager posts alerts to the agent. If you installed Prometheus using the values file in Step 2, that receiver is already configured.
 
-:::caution Already running Prometheus? Configure Alertmanager to push alerts
+:::caution[Already running Prometheus? Configure Alertmanager to push alerts]
 Skipping the Prometheus install is fine—the agent **queries** metrics, so it only needs a reachable URL.
 
 Alerts are different: they are **pushed**, and the values file in Step 2 is what configures Alertmanager to send them. If you skip Step 2 without wiring Alertmanager, NudgeBee gets metrics and traces but never an alert, with nothing reporting an error.
 
-Add this receiver to your existing Alertmanager configuration:
+Merge these definitions into your existing Alertmanager configuration (add the route to your `route.routes` list, and the receiver to your `receivers` list):
 
 ```yaml
 route:
@@ -190,7 +190,7 @@ receivers:
         send_resolved: true
 ```
 
-- **Receiver URL**: `helm install` prints the exact URL for your release. For default installations in `nudgebee-agent`, this is `http://nudgebee-agent-runner.nudgebee-agent.svc/api/alerts`.
+- **Receiver URL**: The Helm installation output prints the exact URL for your release. For default installations in `nudgebee-agent`, this is `http://nudgebee-agent-runner.nudgebee-agent.svc/api/alerts`.
 - **`continue: true`**: Keep this enabled so your existing receivers (Slack, PagerDuty, email) continue to receive alerts.
 - **`AlertmanagerConfig` CR caveat**: Do not use an unscoped `AlertmanagerConfig` Custom Resource without root routing, as Prometheus Operator scopes them to their own namespace by default.
 - **External Alertmanager**: If your Alertmanager runs outside this cluster (Grafana Cloud, Chronosphere, or a central instance), the in-cluster service URL is unreachable—use the [Prometheus Alertmanager webhook integration](/docs/integrations/Webhooks/) instead.
