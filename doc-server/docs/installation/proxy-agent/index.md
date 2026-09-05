@@ -92,7 +92,17 @@ Best for: Self-hosted deployments, GitOps workflows, infrastructure-as-code setu
 | `oracle` | Oracle Database |
 | `redis` | Redis 5+ |
 | `ssh` | Linux / Windows servers via SSH (OpenSSH) |
+| `rabbitmq` | RabbitMQ |
+| `mongodb_proxy` | MongoDB, including replica sets |
+| `kafka_proxy` | Apache Kafka |
+| `http_proxy` | Any HTTP endpoint Forager can reach — an internal Prometheus, an in-VPC API |
 | `mcp` | Model Context Protocol servers — HTTP or stdio. See [MCP integration guide](../../integrations/MCP/index.md). |
+
+### Proxy-only versus dual-mode
+
+Most types above are **dual-mode**: NudgeBee can reach them either through the in-cluster agent or through Forager, and you choose per integration with the connection mode. `postgresql`, `mysql`, `mssql`, `clickhouse`, `oracle`, `redis`, `ssh`, `mcp` and `rabbitmq` all work either way.
+
+`mongodb_proxy`, `kafka_proxy` and `http_proxy` are **proxy-only** — they have no in-cluster equivalent, so Forager is the only way to reach them.
 
 ## Next Steps
 

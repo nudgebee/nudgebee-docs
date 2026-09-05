@@ -73,6 +73,34 @@ datasources:
       username: default
       password: <YOUR_PASSWORD>
 
+  - name: orders-mongo
+    type: mongodb_proxy
+    host: 10.0.1.90
+    port: 27017
+    database: orders
+    auth_source: admin
+    replica_set: rs0
+    tls_enabled: true
+    credentials:
+      username: nudgebee
+      password: <YOUR_PASSWORD>
+
+  - name: events-kafka
+    type: kafka_proxy
+    brokers: 10.0.1.100:9092,10.0.1.101:9092
+    sasl_mechanism: SCRAM-SHA-512
+    tls_enabled: true
+    credentials:
+      sasl_username: nudgebee
+      sasl_password: <YOUR_PASSWORD>
+
+  - name: internal-prometheus
+    type: http_proxy
+    base_url: http://prometheus.internal:9090
+    auth_type: bearer
+    credentials:
+      bearer_token: <YOUR_TOKEN>
+
   # SSH — fixed host
   - name: web-server
     type: ssh
@@ -148,6 +176,13 @@ datasources:
 | `allowed_hosts` | No | List of CIDR ranges or hostnames for SSH dynamic mode (omit `host` to enable) |
 | `known_hosts` | No | SSH only. Path to an OpenSSH `known_hosts` file used to verify the server host key (see [host key verification](#ssh-datasource-notes)) |
 | `host_key` | No | SSH only. A single SSH public key in standard format (e.g. `ssh-ed25519 AAAAC3Nza...`) used to verify the server host key |
+| `brokers` | Yes (Kafka) | Comma-separated list of broker addresses (`host:port`) |
+| `sasl_mechanism` | No | Kafka SASL mechanism. Default `none` |
+| `replica_set` | No | MongoDB replica set name |
+| `auth_source` | No | MongoDB authentication database. Default `admin` |
+| `base_url` | Yes (HTTP) | Base URL of the endpoint, e.g. `http://prometheus.internal:9090` |
+| `auth_type` | No | HTTP auth method: `none` (default), `basic`, `bearer`, `custom_header` |
+| `tls_skip_verify` | No | HTTP only. Skip TLS certificate verification. Not recommended outside a lab |
 | `transport` | MCP only | `http` or `stdio` |
 | `url` | MCP HTTP | URL of the MCP server (Forager-reachable) |
 | `command` | MCP stdio | Absolute path to executable Forager runs |
@@ -163,6 +198,10 @@ These are the credential keys used by each datasource type:
 |------------|------|
 | `postgresql`, `mysql`, `mssql`, `clickhouse`, `oracle` | `username`, `password` |
 | `redis` | `password` (optional) |
+| `mongodb_proxy` | `username`, `password` |
+| `kafka_proxy` | `sasl_username`, `sasl_password` (when `sasl_mechanism` is not `none`) |
+| `http_proxy` | Depends on `auth_type`: `username`/`password` for basic, `bearer_token` for bearer, `custom_header_name`/`custom_header_value` for a custom header |
+| `rabbitmq` | `username`, `password` |
 | `ssh` | `username`, `private_key` (PEM format); optionally `password` or `passphrase` |
 | `mcp` (HTTP) | `auth_type` (`bearer`/`basic`/`api_key`/`custom_header`/`oauth2`) plus the matching auth fields: `bearer_token`, `username`/`password`, `custom_header_name`/`custom_header_value`, or `oauth_token_url`/`oauth_client_id`/`oauth_client_secret`/`oauth_scope`/`oauth_audience`. See the [MCP integration guide](../../integrations/MCP/index.md) for the full matrix. |
 
