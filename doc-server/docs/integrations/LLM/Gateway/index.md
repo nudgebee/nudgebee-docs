@@ -21,6 +21,8 @@ Use the Gateway when you want to:
 
 Navigate to **Admin** > **Integrations** > **LLM**, select **LLM Gateway**, then click **Add LLM Gateway Account**.
 
+![The LLM Gateway tile in the LLM tab of the integrations catalog](../../../../static/img/integrations/llm-gateway-card.png)
+
 * **Integration Config Name \*** (Required)
     * A name identifying this config, e.g. `qwen-hf` or `team-openai`.
 * **Provider \*** (Required)

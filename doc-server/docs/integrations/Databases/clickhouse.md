@@ -18,6 +18,8 @@ Connect a ClickHouse cluster so NudgeBee can query it from workflows and analyse
 
 Navigate to **Admin** > **Integrations** > **Databases** and select **Clickhouse**, then click **Add Clickhouse Account**.
 
+![The Clickhouse tile in the Databases tab of the integrations catalog](../../../static/img/integrations/db-clickhouse-card.png)
+
 ## Step 2: Choose a Connection Mode
 
 ### K8s

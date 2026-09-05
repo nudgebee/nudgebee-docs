@@ -19,6 +19,8 @@ This integration is **optional**. Connect Redis when you want to:
 
 Navigate to **Admin** > **Integrations** > **In-Memory** and select **Redis**, then click **Add Redis Account**.
 
+![The Redis tile in the In-Memory tab of the integrations catalog](../../../static/img/integrations/redis-card.png)
+
 * **Integration name \*** (Required) — How this instance is identified elsewhere in NudgeBee, e.g. `session-cache-prod`.
 * **Select Account \*** (Required) — The NudgeBee account this connection belongs to.
 

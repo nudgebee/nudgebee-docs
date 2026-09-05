@@ -59,6 +59,8 @@ kubectl create secret generic rabbit-secret \
 
 Navigate to **Admin** > **Integrations** > **Messaging Queue** and select **RabbitMQ**, then click **Add Rabbitmq Account**.
 
+![The RabbitMQ tile in the Messaging Queue tab of the integrations catalog](../../../static/img/integrations/rabbitmq-card.png)
+
 * **Name of RabbitMq \*** (Required) — How this broker is identified elsewhere in NudgeBee, e.g. `orders-broker-prod`.
 * **Select Account \*** (Required) — The NudgeBee account this connection belongs to. Selecting several lets one broker serve multiple clusters.
 * **Rabbitmq Secret in k8s \*** (Required) — The name of the secret created in Step 1.

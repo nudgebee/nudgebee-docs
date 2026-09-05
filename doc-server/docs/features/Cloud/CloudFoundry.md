@@ -17,6 +17,8 @@ Connect a Cloud Foundry foundation so its applications sit alongside your Kubern
 
 Navigate to **Admin** > **Integrations** > **Kubernetes & Cloud**, select **Cloud Foundry**, then click **Add Cloud Foundry Account**. The form walks through five steps.
 
+![The Cloud Foundry tile in the Kubernetes & Cloud tab of the integrations catalog](../../../static/img/integrations/cloud-foundry-card.png)
+
 * **Account Name \*** (Required)
     * A name for this foundation, e.g. `pcf-prod`.
 * **CF API URL \*** (Required)

@@ -23,6 +23,8 @@ For this integration to work correctly, the Hive table must be **partitioned by 
 
 Navigate to **Admin** > **Integrations** > **Observability**, select **Apache Hive**, then click **Add Hive Account**.
 
+![The Apache Hive tile in the Observability tab of the integrations catalog](../../../static/img/integrations/obs-apache-hive-card.png)
+
 * **Integration Config Name \*** (Required) — a name for this Hive integration, e.g. `app-logs-hive`.
 * **Account ID \*** (Required) — the NudgeBee account to link.
 * **Hive URL \*** (Required) — the HiveServer2 endpoint as host and port, e.g. `hiveserver2.hive.svc:10000`.

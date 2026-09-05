@@ -19,6 +19,8 @@ Use a dedicated agent account rather than a personal one. Tickets NudgeBee raise
 
 Navigate to **Admin** > **Integrations** > **Ticketing**, select **Freshdesk**, then click **Add Freshdesk Account**.
 
+![The Freshdesk tile in the Ticketing tab of the integrations catalog](../../../static/img/integrations/freshdesk-card.png)
+
 * **Name \*** (Required)
     * A unique name to identify this Freshdesk account configuration, e.g. `support-prod`.
 * **Freshdesk URL \*** (Required)

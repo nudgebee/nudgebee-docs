@@ -36,6 +36,8 @@ You can create it up front, or let the workflow editor create it for you.
 
 **From the integrations page** — Navigate to **Admin** > **Integrations** > **Webhooks**, select **Automation Webhook**, then click **Add Workflow Webhook Account**.
 
+![The Automation Webhook tile in the Webhooks tab of the integrations catalog](../../../static/img/integrations/webhook-automation-card.png)
+
 * **Name of Workflow Webhook \*** (Required)
     * The integration name, also used by the workflow's trigger. Must match `^[a-zA-Z0-9._-]+$` — letters, numbers, dots, hyphens and underscores only, maximum 200 characters.
     * Name it after the source system, e.g. `github_ci_webhook` or `jira-service-desk-wb`.

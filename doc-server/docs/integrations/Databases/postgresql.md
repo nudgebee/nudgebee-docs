@@ -33,6 +33,8 @@ GRANT pg_read_all_stats TO nudgebee;
 
 Navigate to **Admin** > **Integrations** > **Databases** and select **Postgresql**, then click **Add Postgres Account**.
 
+![The PostgreSQL tile in the Databases tab of the integrations catalog](../../../static/img/integrations/db-postgres-card.png)
+
 ## Step 2: Choose a Connection Mode
 
 ### K8s

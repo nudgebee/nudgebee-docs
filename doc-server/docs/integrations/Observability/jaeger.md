@@ -19,6 +19,8 @@ Connect Jaeger so NudgeBee can read distributed traces and correlate latency and
 
 Navigate to **Admin** > **Integrations** > **Observability**, select **Jaeger**, then click **Add Jaeger Account**.
 
+![The Jaeger tile in the Observability tab of the integrations catalog](../../../static/img/integrations/obs-jaeger-card.png)
+
 * **Account ID \*** (Required)
     * The NudgeBee account or accounts to link this Jaeger integration with.
 * **Default Traces Provider**

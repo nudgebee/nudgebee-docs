@@ -28,6 +28,8 @@ This is not what the Kubernetes [Execute Bash](../../features/optimizations/auto
 
 Navigate to **Admin** > **Integrations** > **Servers** and select **SSH**, then click **Add SSH Account**.
 
+![The SSH tile in the Servers tab of the integrations catalog](../../../static/img/integrations/ssh-card.png)
+
 * **Name of Ssh \*** (Required) — How this credential is identified when selecting an integration in a task, e.g. `billing-vms`.
 * **Select Account \*** (Required) — The NudgeBee account this belongs to.
 

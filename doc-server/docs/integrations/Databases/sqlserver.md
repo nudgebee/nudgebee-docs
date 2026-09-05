@@ -42,6 +42,8 @@ ALTER ROLE db_datareader ADD MEMBER nudgebee;
 
 Navigate to **Admin** > **Integrations** > **Databases** and select **SQL Server**, then click **Add Mssql Account**.
 
+![The SQL Server tile in the Databases tab of the integrations catalog](../../../static/img/integrations/db-sqlserver-card.png)
+
 ## Step 2: Fill In the Connection
 
 * **MSSQL host** — Hostname or IP, e.g. `db.example.com` or `10.0.1.5`. For a named instance, use the host and set the port explicitly rather than the `host\instance` form.

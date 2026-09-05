@@ -42,6 +42,8 @@ That last point matters: `SELECT_CATALOG_ROLE` alone lets NudgeBee analyse sessi
 
 Navigate to **Admin** > **Integrations** > **Databases** and select **Oracle**, then click **Add Oracle Account**.
 
+![The Oracle tile in the Databases tab of the integrations catalog](../../../static/img/integrations/db-oracle-card.png)
+
 ## Step 2: Fill In the Connection
 
 * **Oracle host** — Hostname or IP of the listener, e.g. `db.example.com` or `10.0.1.5`.

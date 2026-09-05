@@ -34,6 +34,8 @@ Nothing else is needed. In particular, NudgeBee does not read `performance_schem
 
 Navigate to **Admin** > **Integrations** > **Databases** and select **Mysql**, then click **Add Mysql Account**.
 
+![The MySql tile in the Databases tab of the integrations catalog](../../../static/img/integrations/db-mysql-card.png)
+
 ## Step 2: Choose a Connection Mode
 
 ### K8s

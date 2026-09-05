@@ -25,6 +25,8 @@ This integration is **optional**. Connect Confluence when the knowledge your tea
 
 Navigate to **Admin** > **Integrations** > **Docs** and select **Confluence**, then click **Add Confluence Account**.
 
+![The Confluence tile in the Docs tab of the integrations catalog](../../../static/img/integrations/confluence-card.png)
+
 ## Step 2: Fill In the Connection
 
 * **Name of Confluence Integration \*** (Required) — e.g. `sre-runbooks`.
