@@ -160,6 +160,20 @@ See [Tracing Integration](../connect/tracing/index.md).
 
 ---
 
+## Cost (OpenCost)
+
+Off by default. Turn it on to feed cluster cost allocation into the Optimize surfaces; without it, the OpenCost probe on the [Agent Health](./agent-health.md#7-opencost) page reports the subsystem as not deployed.
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `opencost.enabled` | bool | `false` | Deploys the bundled OpenCost exporter. |
+| `opencost.opencost.prometheus.external.url` | string | `""` | Prometheus the exporter queries. Leave empty to reuse the cluster's own; set it when metrics live outside the cluster. |
+| `opencost.opencost.prometheus.external.enabled` | bool | `true` | Use an external Prometheus rather than the one OpenCost would bundle. |
+| `opencost.opencost.prometheus.serviceMonitor.enabled` | bool | `true` | Scrape the exporter via a ServiceMonitor. Requires the Prometheus Operator CRDs. |
+| `opencost.opencost.ui.enabled` | bool | `false` | OpenCost's own web UI. NudgeBee reads the exporter directly and does not need it. |
+
+---
+
 ## Runner sizing
 
 If the runner is getting OOMKilled, this is the section you want. Its memory is dominated by the informer cache, so it scales with the number of objects in the cluster, not with traffic.
