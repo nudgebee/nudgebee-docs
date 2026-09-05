@@ -32,6 +32,8 @@ Navigate to **Admin** > **Integrations** > **Observability**, select **Apache Hi
 * **Hive Timestamp Col \*** (Required) — the column storing the log timestamp, as a numeric epoch or a formatted string.
 * The column storing the log message body is also required.
 
+![The Apache Hive configuration form, showing the HiveServer2 endpoint, table, and timestamp and message column settings](../../../static/img/integrations/obs-apache-hive.png)
+
 ## Step 2: Test and Save
 
 Click **Test Connection**, then **Save**.

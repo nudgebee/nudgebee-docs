@@ -32,6 +32,8 @@ Navigate to **Admin** > **Integrations** > **Observability**, select **Jaeger**,
 
 **Advanced Settings** holds optional tuning for this integration.
 
+![The Jaeger configuration form, showing the Query API URL, optional bearer token and default-trace-provider flag](../../../static/img/integrations/obs-jaeger.png)
+
 ## Step 2: Save
 
 Click **Save**.

@@ -63,6 +63,8 @@ Navigate to **Admin** > **Integrations** > **Messaging Queue** and select **Rabb
 * **Select Account \*** (Required) — The NudgeBee account this connection belongs to. Selecting several lets one broker serve multiple clusters.
 * **Rabbitmq Secret in k8s \*** (Required) — The name of the secret created in Step 1.
 
+![The RabbitMQ configuration form, which takes a Kubernetes secret and offers no Proxy Agent mode](../../../static/img/integrations/rabbitmq.png)
+
 ## Step 3: Test and Save
 
 Click **Test Connection**, then **Save**.

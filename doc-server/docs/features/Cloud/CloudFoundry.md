@@ -31,6 +31,8 @@ Navigate to **Admin** > **Integrations** > **Kubernetes & Cloud**, select **Clou
 * **Skip SSL Verification**
     * Enable only for foundations presenting self-signed certificates.
 
+![The Cloud Foundry configuration form, showing the five-step panel, the CF API URL and the bearer-token and UAA OAuth2 options](../../../static/img/integrations/cloud-foundry.png)
+
 ## Step 2: Save
 
 Click **Save**.

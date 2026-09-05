@@ -44,6 +44,8 @@ You can create it up front, or let the workflow editor create it for you.
 
 **From the workflow editor** — Add a [Webhook trigger](../../features/workflow-builder/triggers.md#webhook-trigger) to a workflow and enter an integration name in the sidebar. NudgeBee creates the integration for you, named `wf-<workflow-id>-<name>`.
 
+![The Automation Webhook form, which takes only a name and an account](../../../static/img/integrations/webhook-automation.png)
+
 ## Step 2: Copy the Webhook URL
 
 The URL is generated once the integration is **linked to a workflow**, and is shown in that workflow's Webhook trigger configuration — click the copy icon beside it. There is no URL to copy on the integrations page itself, because the endpoint is bound to the workflow, not to the integration alone.

@@ -46,6 +46,8 @@ Navigate to **Admin** > **Integrations** > **Docs** and select **Confluence**, t
 
 * **Limit to pages** — Restrict indexing to specific pages instead of a whole space. Use this when a space is large but only a handful of pages are operationally relevant.
 
+![The Confluence configuration form with Advanced Settings expanded, showing the authentication options and the Limit to pages setting](../../../static/img/integrations/confluence.png)
+
 ## Step 3: Test and Save
 
 Click **Test Connection**, then **Save**.

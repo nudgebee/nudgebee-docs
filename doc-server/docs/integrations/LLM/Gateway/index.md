@@ -37,6 +37,8 @@ Navigate to **Admin** > **Integrations** > **LLM**, select **LLM Gateway**, then
     * Mappings are **additive**: models not listed here remain available through provider-qualified names.
     * **Custom and Vertex OpenAI-compatible endpoints must list the models they serve** — there is no discovery for these.
 
+![The LLM Gateway form with Provider set to Custom, showing the API key, base URL and model-mapping fields](../../../../static/img/integrations/llm-gateway.png)
+
 ## Step 2: Test and Save
 
 Click **Test Connection**, then **Save**.

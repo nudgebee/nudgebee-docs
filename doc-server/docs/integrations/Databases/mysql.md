@@ -60,6 +60,8 @@ kubectl create secret generic nudgebee-mysql \
 The password key is `MYSQL_PWD`, not `MYSQL_PASSWORD`. A secret using the longer name will save successfully and then fail to authenticate.
 :::
 
+![The MySQL configuration form in K8s connection mode, showing the Kubernetes secret field](../../../static/img/integrations/db-mysql-k8s.png)
+
 ### Proxy Agent
 
 * **MySQL host \*** (Required) — Hostname or IP, e.g. `db.example.com` or `10.0.1.5`.
@@ -67,6 +69,8 @@ The password key is `MYSQL_PWD`, not `MYSQL_PASSWORD`. A secret using the longer
 * **Database name to connect to** — The schema NudgeBee opens.
 * **TLS Enabled** — Turn on for connections crossing a network boundary.
 * **Credential Source**, **Database username \***, **Database password \***, **Read Only**, **Maximum open connections in the pool** — see [common fields](./index.md#fields-common-to-every-database).
+
+![The MySQL form in Proxy Agent mode, showing host, port, database, TLS and credential fields](../../../static/img/integrations/db-mysql-proxy.png)
 
 ## Step 3: Save
 

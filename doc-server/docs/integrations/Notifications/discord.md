@@ -19,6 +19,8 @@ Unlike the webhook-based channels, Discord uses an **authorization flow**: you i
 Authorization is per Discord server. Repeat this for each server that should receive notifications.
 :::
 
+![The Discord integration panel, with the Add to Discord button that installs the NudgeBee app into a server](../../../static/img/integrations/discord.png)
+
 ## Step 2: Route Notifications to a Channel
 
 Once the application is authorized, choose what gets sent where using [Notification Rules](../../features/notifications.md) — for example routing production alerts to a dedicated incident channel while suppressing development namespaces.

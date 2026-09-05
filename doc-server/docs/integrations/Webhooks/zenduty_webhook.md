@@ -30,6 +30,8 @@ The `token` query parameter authenticates the sender. Treat the full URL as a se
 
 ---
 
+![The ZenDuty Webhook form, which takes only a name and an account](../../../static/img/integrations/webhook-zenduty.png)
+
 ## Step 2: Point ZenDuty at the URL
 
 Create a ZenDuty outgoing webhook in ZenDuty and set its destination to the URL from Step 1:

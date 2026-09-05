@@ -48,6 +48,8 @@ kubectl create secret generic nudgebee-clickhouse \
   --from-literal=CLICKHOUSE_PASSWORD='<YOUR_PASSWORD>'
 ```
 
+![The ClickHouse form in K8s connection mode, showing the secret field and the user and password key overrides](../../../static/img/integrations/db-clickhouse-k8s.png)
+
 ### Proxy Agent
 
 * **ClickHouse host \*** (Required) — Hostname or IP, e.g. `ch.example.com` or `10.0.1.5`.
@@ -55,6 +57,8 @@ kubectl create secret generic nudgebee-clickhouse \
 * **Database name to connect to \*** (Required)
 * **TLS Enabled** — Turn on for connections crossing a network boundary.
 * **Credential Source**, **Database username \***, **Database password \***, **Read Only**, **Maximum open connections in the pool** — see [common fields](./index.md#fields-common-to-every-database).
+
+![The ClickHouse form in Proxy Agent mode, showing host, port, database and secure-connection options](../../../static/img/integrations/db-clickhouse-proxy.png)
 
 ## Step 3: Test and Save
 

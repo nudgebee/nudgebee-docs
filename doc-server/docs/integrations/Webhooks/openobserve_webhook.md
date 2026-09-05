@@ -30,6 +30,8 @@ The `token` query parameter authenticates the sender. Treat the full URL as a se
 
 ---
 
+![The OpenObserve Webhook form, which takes only a name and an account](../../../static/img/integrations/webhook-openobserve.png)
+
 ## Step 2: Point OpenObserve at the URL
 
 Create a OpenObserve alert destination in OpenObserve and set its destination to the URL from Step 1:

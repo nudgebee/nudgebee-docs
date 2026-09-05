@@ -49,6 +49,8 @@ Navigate to **Admin** > **Integrations** > **Databases** and select **Oracle**, 
 * **Oracle service name** — The service name, e.g. `ORCL` or `XEPDB1`. Using a SID here is the most common cause of a failed connection.
 * **Credential Source**, **Database username \***, **Database password \***, **TLS Enabled**, **Read Only**, **Maximum open connections in the pool** — see [common fields](./index.md#fields-common-to-every-database).
 
+![The Oracle configuration form, showing the service name field that must not be given a SID](../../../static/img/integrations/db-oracle.png)
+
 ## Step 3: Test and Save
 
 Click **Test Connection**, then **Save**.

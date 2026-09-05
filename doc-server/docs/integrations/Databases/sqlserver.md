@@ -50,6 +50,8 @@ Navigate to **Admin** > **Integrations** > **Databases** and select **SQL Server
 * **TLS Enabled** — Turn on for connections crossing a network boundary. Azure SQL requires it.
 * **Credential Source**, **Database username \***, **Database password \***, **Read Only**, **Maximum open connections in the pool** — see [common fields](./index.md#fields-common-to-every-database).
 
+![The SQL Server configuration form, which offers Proxy Agent connection only](../../../static/img/integrations/db-sqlserver.png)
+
 ## Step 3: Test and Save
 
 Click **Test Connection**, then **Save**.

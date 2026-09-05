@@ -30,6 +30,8 @@ The `token` query parameter authenticates the sender. Treat the full URL as a se
 
 ---
 
+![The Elasticsearch Webhook form, which takes only a name and an account](../../../static/img/integrations/webhook-elasticsearch.png)
+
 ## Step 2: Point Elasticsearch / Kibana at the URL
 
 Create a Kibana webhook connector in Elasticsearch / Kibana and set its destination to the URL from Step 1:

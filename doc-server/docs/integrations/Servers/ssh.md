@@ -53,6 +53,8 @@ kubectl create secret generic nudgebee-ssh \
   --from-file=SSH_KEY=./id_ed25519
 ```
 
+![The SSH configuration form in K8s connection mode, showing the Kubernetes secret field](../../../static/img/integrations/ssh-k8s.png)
+
 ### Proxy Agent
 
 Forager opens the SSH connection. Credentials are configured here; **which hosts may be reached is configured on the agent**, not in this form — either a fixed `host` on the datasource, or `allowed_hosts` for dynamic mode, where NudgeBee supplies the target host at request time. See [SSH datasource notes](../../installation/proxy-agent/configuration.md#ssh-datasource-notes).
@@ -62,6 +64,8 @@ Forager opens the SSH connection. Credentials are configured here; **which hosts
 * **Private Key** — The private key in PEM format. Preferred over a password.
 * **Password** — Used only when not authenticating with a key.
 * **Passphrase** — Required if the private key is encrypted.
+
+![The SSH form in Proxy Agent mode, showing the credential source, username, private key, password and passphrase fields](../../../static/img/integrations/ssh-proxy.png)
 
 ## Step 3: Test and Save
 

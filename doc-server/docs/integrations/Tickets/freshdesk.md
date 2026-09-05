@@ -26,6 +26,8 @@ Navigate to **Admin** > **Integrations** > **Ticketing**, select **Freshdesk**, 
 * **API Key \*** (Required)
     * The API key from **Profile Settings → Your API Key** in Freshdesk.
 
+![The Freshdesk configuration form, showing the account URL and API key fields](../../../static/img/integrations/freshdesk.png)
+
 ## Step 2: Test and Save
 
 Click **Test Connection**, then **Save**.

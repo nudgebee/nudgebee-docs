@@ -60,6 +60,8 @@ kubectl create secret generic nudgebee-postgres \
   --from-literal=PGPASSWORD='<YOUR_PASSWORD>'
 ```
 
+![The PostgreSQL configuration form in K8s connection mode, showing the single Kubernetes secret field](../../../static/img/integrations/db-postgres-k8s.png)
+
 ### Proxy Agent
 
 Forager connects to the database over the network. Use this for RDS, Cloud SQL, Azure Database, or any database outside a connected cluster.
@@ -69,6 +71,8 @@ Forager connects to the database over the network. Use this for RDS, Cloud SQL, 
 * **Database name to connect to** — The database NudgeBee opens.
 * **SSL Mode** — `Disable` (default), `Require`, `Verify Ca` or `Verify Full`. Use `Require` or stronger for anything crossing a network boundary.
 * **Credential Source**, **Database username \***, **Database password \***, **Read Only**, **Maximum open connections in the pool** — see [common fields](./index.md#fields-common-to-every-database).
+
+![The PostgreSQL form in Proxy Agent mode, showing host, port, database, SSL mode, credential source and the read-only and pool-size options](../../../static/img/integrations/db-postgres-proxy.png)
 
 ## Step 3: Test and Save
 

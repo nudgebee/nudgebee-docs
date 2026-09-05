@@ -30,6 +30,8 @@ The `token` query parameter authenticates the sender. Treat the full URL as a se
 
 ---
 
+![The Azure Monitor Webhook form, which takes only a name and an account](../../../static/img/integrations/webhook-azure-monitor.png)
+
 ## Step 2: Point Azure Monitor at the URL
 
 Create a Azure Monitor action group in Azure Monitor and set its destination to the URL from Step 1:

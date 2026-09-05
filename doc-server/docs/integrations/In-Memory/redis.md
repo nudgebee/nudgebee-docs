@@ -44,6 +44,8 @@ kubectl create secret generic nudgebee-redis \
   --from-literal=REDIS_PASSWORD='<YOUR_PASSWORD>'
 ```
 
+![The Redis configuration form in K8s connection mode, showing the Kubernetes secret field](../../../static/img/integrations/redis-k8s.png)
+
 ### Proxy Agent
 
 The [Proxy Agent (Forager)](../../installation/proxy-agent/index.md) connects over the network. Use this for ElastiCache, Memorystore, Azure Cache for Redis, or any instance outside a connected cluster.
@@ -55,6 +57,8 @@ The [Proxy Agent (Forager)](../../installation/proxy-agent/index.md) connects ov
 * **Credential Source** — `Cloud Push` (default), `AWS Sm`, `Gcp Sm`, `Azure Kv` or `Local`. See [credential sources](../../installation/proxy-agent/credential-sources.md).
 * **Username** — ACL username, Redis 6 and later. Leave empty on older instances.
 * **Password** — Optional if the instance has no password set.
+
+![The Redis form in Proxy Agent mode, showing host, port, DB number, TLS and the Redis 6 ACL username](../../../static/img/integrations/redis-proxy.png)
 
 ## Step 3: Test and Save
 
