@@ -21,13 +21,14 @@ side-by-side examples.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| agent.accessKey | string | `""` | Agent credential. Set explicitly for offline/GitOps renders (Argo CD, Flux) — the chart cannot read an existing credential back and refuses to re-issue it on upgrade. |
+| agent.accessSecret | string | `""` | See `agent.accessKey`. |
+| agent.clusterName | string | `"nb-control-plane-k8s"` | Name the bundled agent registers its cluster under. |
+| agent.enabled | bool | `true` | Installs the NudgeBee agent alongside the server and connects the hosting cluster. The agent shares this Helm release, so `helm uninstall` removes it too. |
 | app.fullnameOverride | string | `"app"` |  |
 | app.image.repository | string | `"nudgebee-app"` |  |
 | app.image.tag | string | `""` |  |
 | app.replicaCount | int | `1` |  |
-| auto-pilot.fullnameOverride | string | `"auto-pilot"` |  |
-| auto-pilot.image.repository | string | `"nudgebee-auto-pilot"` |  |
-| auto-pilot.image.tag | string | `""` |  |
 | clickhouse.auth.existingSecret | string | `"clickhouse"` |  |
 | clickhouse.auth.existingSecretKey | string | `"admin-password"` |  |
 | clickhouse.enabled | bool | `false` |  |
@@ -37,19 +38,21 @@ side-by-side examples.
 | cloud-collector-server.fullnameOverride | string | `"cloud-collector-server"` |  |
 | cloud-collector-server.image.repository | string | `"nudgebee-cloud-collector-server"` |  |
 | cloud-collector-server.image.tag | string | `""` |  |
-| etl.fullnameOverride | string | `"etl-server"` |  |
-| etl.image.repository | string | `"nudgebee-etl-server"` |  |
-| etl.image.tag | string | `""` |  |
+| cost-server.enabled | bool | `true` |  |
+| cost-server.fullnameOverride | string | `"cost-server"` |  |
+| cost-server.image.repository | string | `"nudgebee-cost-server"` |  |
+| cost-server.image.tag | string | `""` |  |
+| global.existingNudgebeeSecretName | string | `""` | Name of an existing Kubernetes secret to use for NudgeBee configurations (e.g., NUDGEBEE_LICENSE, BASE_URL). When set, these configurations are managed within this secret. |
 | global.image.registry | string | `"registry.nudgebee.com"` |  |
 | global.imagePullSecrets[0].name | string | `"nudgebee-registry-secret"` |  |
-| global.existingNudgebeeSecretName | string | `""` | Name of an existing Kubernetes secret to use for NudgeBee configurations (e.g., NUDGEBEE_LICENSE, BASE_URL). When set, these configurations are managed within this secret. |
-| hasura.fullnameOverride | string | `"hasura"` |  |
-| hasura.image.repository | string | `"hasura/graphql-engine"` |  |
-| hasura.image.tag | string | `"v2.36.1-ce"` |  |
-| hasura.replicaCount | int | `1` |  |
 | k8s-collector.fullnameOverride | string | `"k8s-collector"` |  |
 | k8s-collector.image.repository | string | `"nudgebee-k8s-collector"` |  |
 | k8s-collector.image.tag | string | `""` |  |
+| llm-gateway.enabled | bool | `true` | AI Gateway — LLM passthrough, metering, auth and rate limits. |
+| llm-gateway.fullnameOverride | string | `"llm-gateway"` |  |
+| llm-gateway.image.repository | string | `"nudgebee-llm-gateway-server"` |  |
+| llm-gateway.image.tag | string | `""` |  |
+| llm-gateway.replicaCount | int | `2` | Multi-replica by default; rate-limit and routing state is shared via Redis/Postgres. |
 | llm-server.enabled | bool | `true` |  |
 | llm-server.fullnameOverride | string | `"llm-server"` |  |
 | llm-server.image.repository | string | `"nudgebee-llm-server"` |  |
@@ -62,11 +65,16 @@ side-by-side examples.
 | notifications.fullnameOverride | string | `"notifications"` |  |
 | notifications.image.repository | string | `"nudgebee-notifications"` |  |
 | notifications.image.tag | string | `""` |  |
+| nudgebee-qdrant-server.enabled | bool | `true` | Vector store backing RAG and knowledge-base search. |
+| nudgebee-qdrant-server.fullnameOverride | string | `"nudgebee-qdrant-server"` |  |
+| nudgebee-qdrant-server.image.repository | string | `"qdrant/qdrant"` |  |
+| nudgebee-qdrant-server.image.tag | string | `"v1.19.0"` |  |
 | nudgebee_registry_secret.enabled | bool | `true` |  |
 | nudgebee_registry_secret.existingSecretName | string | `""` |  |
 | nudgebee_registry_secret.password | string | `""` |  |
 | nudgebee_registry_secret.username | string | `"nudgebee"` |  |
 | nudgebee_secret.APP_DATABASE_URL | string | `""` |  |
+| nudgebee_secret.AUTH_DEFAULT_ROLE | string | `"tenant_admin_readonly"` | Sets the default role for new users during self-onboarding. Valid options are `tenant_admin_readonly` and `tenant_admin`. |
 | nudgebee_secret.BASE_URL | string | `"http://localhost:3000"` |  |
 | nudgebee_secret.EMAIL_FROM | string | `""` |  |
 | nudgebee_secret.EMAIL_SERVER_HOST | string | `""` |  |
@@ -76,11 +84,10 @@ side-by-side examples.
 | nudgebee_secret.JWT_PUBLIC_KEY | string | `""` |  |
 | nudgebee_secret.NUDGEBEE_ENCRYPTION_KEY | string | `""` |  |
 | nudgebee_secret.NUDGEBEE_LICENSE | string | `""` |  |
-| nudgebee_secret.AUTH_DEFAULT_ROLE | string | `"tenant_admin_readonly"` | Sets the default role for new users during self-onboarding. Valid options are `tenant_admin_readonly` and `tenant_admin`. |
 | nudgebee_secret.RELAY_SERVER_SECRET_KEY | string | `""` |  |
 | nudgebee_secret.existingSecretName | string | `""` |  |
 | postgres_migrations.fullnameOverride | string | `"postgres_migrations"` |  |
-| postgres_migrations.image.repository | string | `"nudgebee-hasura-migrations"` |  |
+| postgres_migrations.image.repository | string | `"migrations"` |  |
 | postgres_migrations.image.tag | string | `""` |  |
 | postgresql.auth.existingSecret | string | `"postgresql"` |  |
 | postgresql.enabled | bool | `true` |  |
@@ -101,16 +108,30 @@ side-by-side examples.
 | rag-server.fullnameOverride | string | `"rag-server"` |  |
 | rag-server.image.repository | string | `"nudgebee-rag-server"` |  |
 | rag-server.image.tag | string | `""` |  |
+| redis.auth.existingSecret | string | `"redis"` |  |
+| redis.auth.existingSecretPasswordKey | string | `"redis-password"` |  |
+| redis.enabled | bool | `true` |  |
+| redis.fullnameOverride | string | `"redis"` |  |
+| redis.replica.replicaCount | int | `0` |  |
 | relay-server.fullnameOverride | string | `"relay-server"` |  |
 | relay-server.image.repository | string | `"nudgebee-relay-server"` |  |
 | relay-server.image.tag | string | `""` |  |
 | services-server.fullnameOverride | string | `"services-server"` |  |
 | services-server.image.repository | string | `"nudgebee-services-server"` |  |
 | services-server.image.tag | string | `""` |  |
+| temporal.enabled | bool | `true` | Durable workflow execution behind Automations and Auto Optimize. Backed by Postgres — creates the `temporal` and `temporal_visibility` databases on first boot. |
+| temporal.fullnameOverride | string | `"temporal"` |  |
+| temporal.server.config.persistence.numHistoryShards | int | `512` | Fixed at cluster creation. Changing it on an existing deployment is not supported by Temporal. |
+| temporal.server.replicaCount | int | `1` |  |
+| temporal.web.enabled | bool | `false` | Temporal Web UI is disabled by default. |
 | ticket-server.enabled | bool | `true` |  |
 | ticket-server.fullnameOverride | string | `"ticket-server"` |  |
 | ticket-server.image.repository | string | `"nudgebee-ticket-server"` |  |
 | ticket-server.image.tag | string | `""` |  |
+| workflow-server.enabled | bool | `true` | Workflow engine. Dials Temporal at startup and exits if it is unreachable. |
+| workflow-server.fullnameOverride | string | `"workflow-server"` |  |
+| workflow-server.image.repository | string | `"nudgebee-workflow-server"` |  |
+| workflow-server.image.tag | string | `""` |  |
 
 ---
 

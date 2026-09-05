@@ -72,11 +72,15 @@ flowchart TB
 
     subgraph SERVICES["Microservices (Internal RPC with tenant + user context stamped on every call)"]
         direction TB
-        SERVICES_SERVER["<b>services-server</b><br/><small>Go core backend & GraphQL</small>"]:::backend
-        LLM_SERVER["<b>llm-server</b> (AI Engine)<br/><small>NuBi SRE Agents, RAG & AI Gateway</small>"]:::backend
+        SERVICES_SERVER["<b>services-server</b><br/><small>Go core backend & RPC handlers</small>"]:::backend
+        LLM_SERVER["<b>llm-server</b> (AI Engine)<br/><small>NuBi SRE Agents & investigations</small>"]:::backend
+        RAG_SERVER["<b>rag-server</b><br/><small>Knowledge-base retrieval</small>"]:::backend
+        LLM_GATEWAY["<b>llm-gateway</b><br/><small>AI Gateway — routing, metering, rate limits</small>"]:::backend
         WORKFLOW_SERVER["<b>workflow-server</b><br/><small>Autopilot & Runbook Automations</small>"]:::backend
         NOTIFICATIONS["<b>notifications</b><br/><small>Slack / Teams / Email Dispatcher</small>"]:::backend
         TICKET_SERVER["<b>ticket-server</b><br/><small>Jira / ServiceNow / PagerDuty</small>"]:::backend
+        ML_SERVER["<b>ml-k8s-server</b><br/><small>Right-sizing & anomaly models</small>"]:::backend
+        COST_SERVER["<b>cost-server</b><br/><small>OpenCost-based cost allocation</small>"]:::backend
     end
 
     subgraph STORAGE["Storage & Caching Layer (Shared by ALL services)"]
@@ -104,14 +108,19 @@ flowchart TB
     APP --> WORKFLOW_SERVER
     APP --> NOTIFICATIONS
     APP --> TICKET_SERVER
+    APP --> LLM_GATEWAY
 
     SERVICES_SERVER -.-> STORAGE
     LLM_SERVER -.-> STORAGE
     WORKFLOW_SERVER -.-> STORAGE
     NOTIFICATIONS -.-> STORAGE
     TICKET_SERVER -.-> STORAGE
+    ML_SERVER -.-> STORAGE
+    COST_SERVER -.-> STORAGE
+    LLM_GATEWAY -.-> STORAGE
 
-    LLM_SERVER -->|vector search| QDRANT
+    LLM_SERVER -->|knowledge-base search| RAG_SERVER
+    RAG_SERVER -->|vector search| QDRANT
     WORKFLOW_SERVER -->|durable execution| TEMPORAL
 
     K8S_COLLECTOR -->|signals| RABBITMQ

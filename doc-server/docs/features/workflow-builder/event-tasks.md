@@ -73,3 +73,28 @@ To create a separate event for each occurrence, ensure each event has a unique `
 |:---|:---|:---|
 | `id` | string | Created event ID. |
 
+---
+
+## `events.add_evidence`
+
+**Display Name:** Add Event Evidence
+
+Attach evidence to an event that already exists. This is the counterpart to `events.store`, not a replacement for it: `events.store` creates an event and deliberately leaves an existing event's evidence alone, so an automation triggered **by** an event uses this task to put its findings on that same event instead of splitting one incident across two rows.
+
+### Parameters
+
+| Field | Type | Required | Default | Description |
+|:---|:---|:---|:---|:---|
+| `event_id` | string | Yes | — | ID of the event to attach evidence to. In an event-triggered workflow this is `{{ Inputs.event.id }}`. |
+| `evidences` | array | Yes | — | Evidence objects to append (same shape as the Evidence Object Fields above). A single object is accepted too, so a one-evidence step does not need list syntax. |
+
+### Output
+
+| Name | Type | Description |
+|:---|:---|:---|
+| `event_id` | string | ID of the event that was updated. |
+| `added` | number | Number of evidences appended. |
+
+:::caution Evidence has to be renderable
+The Investigate page renders evidence by a fixed action-name list. For a markdown card to show up, set `additional_info.actual_action_name` to `text_enricher` — otherwise the evidence is stored but never displayed.
+:::

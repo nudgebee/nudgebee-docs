@@ -2,6 +2,21 @@
 
 Generated on: 2026-02-15T03:17:42.555Z
 
+
+:::warning This reference is a stale snapshot
+It was generated on **2026-02-15** by introspecting a Hasura GraphQL endpoint. That
+endpoint no longer exists — the API is now served by the in-app RPC gateway, which
+dispatches named actions rather than Hasura table queries. Two consequences:
+
+- Roughly **70% of current actions are missing** from the listings below.
+- The table-query examples (`cloud_accounts(limit: 3) { ... }`) no longer reflect how
+  requests are shaped. Named actions such as `accounts_list` are the current form.
+
+The authentication flow in [API Tokens](./api-tokens.md) is still accurate. Until this
+page is regenerated from the current schema, treat the listings as historical and
+confirm any action against a live environment before building on it.
+:::
+
 ## Table of Contents
 
 - [Getting Started](#getting-started)

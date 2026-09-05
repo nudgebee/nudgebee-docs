@@ -61,8 +61,8 @@ Every workflow execution includes these variables in the `Inputs` map:
 | [Observability Tasks](./observability-tasks.md) | Logs, metrics, traces |
 | [Database Tasks](./database-tasks.md) | SQL, Redis |
 | [CI/CD Tasks](./cicd-tasks.md) | ArgoCD |
-| [Source Control Tasks](./source-control-tasks.md) | GitHub CLI |
+| [Source Control Tasks](./source-control-tasks.md) | GitHub CLI, GitLab CLI |
 | [Message Queue Tasks](./message-queue-tasks.md) | RabbitMQ |
 | [Network Tasks](./network-tasks.md) | Ping, DNS, TCP, SSL, Traceroute, Whois, NTP |
 | [Crypto Tasks](./crypto-tasks.md) | Encode, decode, hash, encrypt, decrypt |
-| [Event Tasks](./event-tasks.md) | Store events for analysis |
+| [Event Tasks](./event-tasks.md) | Store events for analysis, attach evidence to an existing event |
