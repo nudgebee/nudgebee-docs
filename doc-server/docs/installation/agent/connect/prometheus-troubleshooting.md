@@ -86,12 +86,12 @@ helm get values nudgebee-agent -n nudgebee-agent -o json | jq '.globalConfig.pro
 Exec into the agent runner container and test direct reachability:
 ```bash
 kubectl run -n nudgebee-agent nudgebee-connectivity-check --rm -i --restart=Never \
-  --image=curlimages/curl -- curl -fsS --max-time 5 \
+  --image=curlimages/curl -- -fsS --max-time 5 \
   http://<PROMETHEUS_SERVICE_HOST>:<PORT>/-/ready
 ```
 **Common Failures:**
 - `bad address`: CoreDNS cannot resolve the service name across namespaces. Use the Fully Qualified Domain Name (FQDN): `http://prometheus-k8s.monitoring.svc.cluster.local:9090`.
-- `connection timed out`: A `NetworkPolicy` in the `monitoring` namespace is blocking ingress from namespace `nudgebee`.
+- `connection timed out`: A `NetworkPolicy` in the `monitoring` namespace is blocking ingress from namespace `nudgebee-agent`.
 
 ---
 
@@ -108,7 +108,7 @@ If your Prometheus is behind Thanos Gateway, an OAuth2 proxy, or another protect
 Test with authentication headers:
 ```bash
 kubectl run -n nudgebee-agent nudgebee-connectivity-check --rm -i --restart=Never \
-  --image=curlimages/curl -- curl -fsS -H "Authorization: Bearer <TOKEN>" \
+  --image=curlimages/curl -- -fsS -H "Authorization: Bearer <TOKEN>" \
   "http://<PROMETHEUS_HOST>:9090/api/v1/query?query=vector(1)"
 ```
 
@@ -125,7 +125,7 @@ globalConfig:
 Use the same simple query as the agent to confirm that the endpoint serves the Prometheus query API:
 ```bash
 kubectl run -n nudgebee-agent nudgebee-connectivity-check --rm -i --restart=Never \
-  --image=curlimages/curl -- curl -fsS \
+  --image=curlimages/curl -- -fsS \
   "http://<PROMETHEUS_HOST>:9090/api/v1/query?query=vector(1)"
 ```
 **Expected Response:**
@@ -149,7 +149,7 @@ globalConfig:
 Verify that standard Kubernetes metrics are actively scraped and stored:
 ```bash
 kubectl run -n nudgebee-agent nudgebee-connectivity-check --rm -i --restart=Never \
-  --image=curlimages/curl -- curl -fsS \
+  --image=curlimages/curl -- -fsS \
   "http://<PROMETHEUS_HOST>:9090/api/v1/query?query=count(node_cpu_seconds_total)"
 ```
 *If `result` array is empty, your Prometheus is running but node exporters or kube-state-metrics scrape targets are down.*
@@ -237,7 +237,7 @@ Test this query directly from a pod or your local terminal via port-forward:
 
 ```bash
 kubectl run -n nudgebee-agent prom-check --rm -i --restart=Never \
-  --image=curlimages/curl -- curl -fsS \
+  --image=curlimages/curl -- -fsS \
   "http://<PROMETHEUS_HOST>:9090/api/v1/query?query=up%7Bjob%3D~%22(.%2B%2F)%3Fnudgebee(-.*)%3F-node-agent%22%7D"
 ```
 

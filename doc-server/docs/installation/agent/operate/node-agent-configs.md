@@ -196,7 +196,8 @@ Look for:
 Confirm whether the node agent daemon is actually collecting metrics and serving its Prometheus exporter on port 80:
 
 ```bash
-kubectl exec -n nudgebee-agent daemonset/nudgebee-agent-node-agent -c node-agent -- \
+NODE_AGENT_POD=$(kubectl get pods -n nudgebee-agent -l app=nudgebee-node-agent -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -n nudgebee-agent $NODE_AGENT_POD -c node-agent -- \
   wget -qO- http://localhost:80/metrics | grep -E 'node_info|container_net_tcp_successful_connects_total' | head -n 10
 ```
 
