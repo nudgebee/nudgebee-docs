@@ -238,7 +238,7 @@ Test this query directly from a pod or your local terminal via port-forward:
 ```bash
 kubectl run -n nudgebee-agent prom-check --rm -i --restart=Never \
   --image=curlimages/curl -- curl -fsS \
-  "http://<PROMETHEUS_HOST>:9090/api/v1/query?query=up%7Bjob%3D~%22(%2B%2F)%3Fnudgebee(-.*)%3F-node-agent%22%7D"
+  "http://<PROMETHEUS_HOST>:9090/api/v1/query?query=up%7Bjob%3D~%22(.%2B%2F)%3Fnudgebee(-.*)%3F-node-agent%22%7D"
 ```
 
 #### Scenario 1: Node Agent is Scraped Under a Different Job Name

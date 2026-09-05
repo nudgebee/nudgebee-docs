@@ -169,7 +169,7 @@ Error creating: pods "..." is forbidden: violates PodSecurity "restricted:latest
 kubectl label namespace nudgebee-agent pod-security.kubernetes.io/enforce=privileged --overwrite
 ```
 
-On OpenShift, the chart provides an SCC manifest (`templates/openshift-scc-privileged.yaml`). Ensure the node-agent ServiceAccount is granted the `privileged` SCC:
+On OpenShift, the chart provides an SCC manifest (`templates/openshift-scc-privileged.yaml`). Note that the node-agent DaemonSet intentionally shares the runner's ServiceAccount (`<release-name>-runner-service-account`). Ensure this ServiceAccount is granted the `privileged` SCC:
 ```bash
 oc adm policy add-scc-to-user privileged -z nudgebee-agent-runner-service-account -n nudgebee-agent
 ```
