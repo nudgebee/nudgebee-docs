@@ -23,9 +23,18 @@ Oracle is always reached through the [Proxy Agent](../../installation/proxy-agen
 CREATE USER nudgebee IDENTIFIED BY "<YOUR_PASSWORD>";
 GRANT CREATE SESSION TO nudgebee;
 GRANT SELECT_CATALOG_ROLE TO nudgebee;
+
+-- Only if you want NudgeBee to query application data as well as diagnose the instance:
+GRANT SELECT ON <app_schema>.<table> TO nudgebee;
 ```
 
-`SELECT_CATALOG_ROLE` covers the `V$` performance views the health checks read.
+`SELECT_CATALOG_ROLE` covers every dictionary view NudgeBee reads for diagnostics — `V$SESSION`, `GV$SESSION`, `V$SQL`, `V$LOCKED_OBJECT`, `V$ACTIVE_SESSION_HISTORY` and `DBA_OBJECTS` — and nothing beyond the data dictionary. It grants no access to application data.
+
+That last point matters: `SELECT_CATALOG_ROLE` alone lets NudgeBee analyse sessions, locks and SQL statistics, but a question about your own tables will fail with `ORA-00942`. Grant `SELECT` explicitly on the tables you want readable. NudgeBee's schema introspection uses `USER_TABLES` and `USER_TAB_COLUMNS`, which describe the `nudgebee` user's own schema, so it will report an empty schema until such grants exist.
+
+:::note
+`V$ACTIVE_SESSION_HISTORY` is part of the Oracle Diagnostics Pack. The grant above makes it readable, but querying it on an instance without that licence is a licensing violation. Everything else NudgeBee reads is licence-free.
+:::
 
 ---
 

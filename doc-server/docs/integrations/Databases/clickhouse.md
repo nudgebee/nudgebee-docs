@@ -66,7 +66,8 @@ Click **Test Connection**, then **Save**.
 
 | Capability | What NudgeBee reads |
 |------------|---------------------|
-| Health check | `system.processes`, `system.parts`, `system.merges` and related tables |
+| Health check | `system.processes` for running queries and memory use, `system.parts` for table sizes and part counts, `system.mutations` for unfinished `ALTER`s, `system.dictionaries` for dictionary load state |
+| Schema introspection | `SHOW TABLES`, `DESCRIBE TABLE`, `system.tables` and `system.columns` |
 | Workflow queries | Any SQL you supply via [`dbms.query`](../../features/workflow-builder/database-tasks.md) with `dbms_type: clickhouse` |
 
 ---

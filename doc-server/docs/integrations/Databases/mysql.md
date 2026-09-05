@@ -11,7 +11,7 @@ Supported: MySQL 5.7 and later, and MariaDB.
 
 ## Prerequisites
 
-- A MySQL user NudgeBee can authenticate as, with read access to the schemas you want analysed and to the performance schema.
+- A MySQL user NudgeBee can authenticate as, with read access to the schemas you want analysed.
 - Either the NudgeBee agent running in the same cluster as the database (**K8s** mode), or a reachable [Proxy Agent](../../installation/proxy-agent/index.md) (**Proxy Agent** mode).
 
 ### Recommended Grants
@@ -19,11 +19,14 @@ Supported: MySQL 5.7 and later, and MariaDB.
 ```sql
 CREATE USER 'nudgebee'@'%' IDENTIFIED BY '<YOUR_PASSWORD>';
 GRANT SELECT ON <your_database>.* TO 'nudgebee'@'%';
-GRANT PROCESS, REPLICATION CLIENT ON *.* TO 'nudgebee'@'%';
-GRANT SELECT ON performance_schema.* TO 'nudgebee'@'%';
+GRANT PROCESS ON *.* TO 'nudgebee'@'%';
 ```
 
-`PROCESS` is what lets NudgeBee see other sessions in `SHOW PROCESSLIST`; without it, only the NudgeBee session is visible and concurrency analysis is meaningless.
+`SELECT` covers the application tables NudgeBee reads and the `information_schema.columns` lookups it runs before querying an unfamiliar table.
+
+`PROCESS` covers everything NudgeBee reads for diagnostics: it is what lets NudgeBee see other sessions in `SHOW PROCESSLIST` and `information_schema.processlist` — without it, only the NudgeBee session is visible and concurrency analysis is meaningless — and it is also required for `SHOW ENGINE INNODB STATUS`, which is how lock and transaction state is read.
+
+Nothing else is needed. In particular, NudgeBee does not read `performance_schema` and does not run any replication statement, so neither a `performance_schema` grant nor `REPLICATION CLIENT` is required.
 
 ---
 
@@ -75,8 +78,9 @@ Click **Save**. In Proxy Agent mode, use **Test Connection** first.
 
 | Capability | What NudgeBee reads |
 |------------|---------------------|
-| Health check | Session and connection counts, long-running queries, lock waits, table sizes |
-| Slow queries | `performance_schema` statement summaries |
+| Health check | `SHOW STATUS` for server counters, `SHOW PROCESSLIST` and `information_schema.processlist` for sessions and long-running queries |
+| Lock and transaction state | `SHOW ENGINE INNODB STATUS` |
+| Slow queries | Currently running statements from `information_schema.processlist`, filtered by execution time. MySQL analysis is point-in-time — there is no historical statement summary. |
 | Workflow queries | Any SQL you supply via [`dbms.query`](../../features/workflow-builder/database-tasks.md) with `dbms_type: mysql` |
 
 ---
@@ -97,7 +101,7 @@ See the [shared troubleshooting table](./index.md#troubleshooting) first. MySQL-
 | Authentication fails despite correct password | Secret uses `MYSQL_PASSWORD` instead of `MYSQL_PWD` | Recreate the secret with the `MYSQL_PWD` key. |
 | Only NudgeBee's own session is visible | Missing `PROCESS` grant | `GRANT PROCESS ON *.* TO 'nudgebee'@'%';` |
 | `Host ... is not allowed to connect` | The user is bound to a specific host | Create the user with a host pattern that covers the agent, e.g. `'nudgebee'@'%'`. |
-| Statement statistics are empty | `performance_schema` is disabled | Enable `performance_schema` in the server configuration and restart. |
+| No long-running queries reported, though you know some are running | They finished between polls, or `PROCESS` is missing so only NudgeBee's own session is listed | Confirm the `PROCESS` grant. MySQL analysis reads currently running statements, so a query that has already completed will not appear. |
 | TLS handshake errors | Server requires TLS, **TLS Enabled** is off | Turn on **TLS Enabled**. |
 
 ---

@@ -19,14 +19,22 @@ SQL Server is always reached through the [Proxy Agent](../../installation/proxy-
 ### Recommended Grants
 
 ```sql
+-- In master: create the login and grant the server-level permission to it.
+USE [master];
 CREATE LOGIN nudgebee WITH PASSWORD = '<YOUR_PASSWORD>';
+GRANT VIEW SERVER STATE TO nudgebee;
+
+-- In each database you want NudgeBee to query:
 USE [<your_database>];
 CREATE USER nudgebee FOR LOGIN nudgebee;
 ALTER ROLE db_datareader ADD MEMBER nudgebee;
-GRANT VIEW SERVER STATE TO nudgebee;
 ```
 
-`VIEW SERVER STATE` is what makes the `sys.dm_exec_*` views readable; without it, session and query analysis returns nothing.
+`VIEW SERVER STATE` is a server-level permission, so it must be granted in `master` to the **login**, not in a user database to the database user. Running the `GRANT` after a `USE [<your_database>]` fails.
+
+`VIEW SERVER STATE` is what makes the `sys.dm_exec_*` views readable — `sys.dm_exec_requests`, `sys.dm_exec_sessions`, `sys.dm_exec_query_stats` and `sys.dm_exec_sql_text` are all covered by it, and it is the only server-level permission NudgeBee needs. Without it, session and query analysis returns nothing.
+
+`db_datareader` covers the application tables and the `INFORMATION_SCHEMA` lookups NudgeBee runs before querying an unfamiliar table. NudgeBee can target any database by name, so add the user to every database you want analysed; `sys.databases` is readable without an extra grant.
 
 ---
 
