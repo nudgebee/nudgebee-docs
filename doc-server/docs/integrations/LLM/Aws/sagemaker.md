@@ -82,9 +82,9 @@ To deploy your custom models on SageMaker:
 ## Integrating with LLM Server
 
 1. **Configure SageMaker in LLM Server**:
-   
+
    Add the following configuration to your LLM Server settings:
-   
+
 ```sh
 LLM_PROVIDER=sagemaker
 LLM_PROVIDER_API_ENDPOINT=<SageMaker_Endpoint_URL> # e.g., https://your-endpoint-name.amazonaws.com
@@ -97,7 +97,7 @@ LLM_PROVIDER_REGION=<AWS_SageMaker_Region> # e.g., us-west-2
 1. **Configure SageMaker in RAG Server**:
 
    Add the following configuration to your RAG Server settings:
-   
+
 ```sh
 EMBEDDINGS_PROVIDER=sagemaker
 EMBEDDINGS_PROVIDER_REGION=<AWS_SageMaker_Region> # e.g., us-west-2

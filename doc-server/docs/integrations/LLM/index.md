@@ -81,7 +81,7 @@ NudgeBee's pre-trained `nb-llm` / `nb-slm` / `nb-text-embeddings` models are par
 
 NudgeBee provides pre-trained AI models that can be downloaded and deployed on supported platforms (applicable for licensed on-premises or self-hosted Enterprise environments):
 
- **NudgeBee AI/LLM Models**  
+ **NudgeBee AI/LLM Models**
    - Download pre-trained AI models from the NudgeBee platform using the following commands (requires an Enterprise license key):
 
      ##### SLM
@@ -94,21 +94,21 @@ NudgeBee provides pre-trained AI models that can be downloaded and deployed on s
       ```
    - Optimized for high-performance inference in various AI-driven applications.
 
-## Models Used for Retrieval-Augmented Generation (RAG)  
+## Models Used for Retrieval-Augmented Generation (RAG)
 
-RAG models enhance information retrieval by generating vector embeddings and enabling efficient similarity searches:  
+RAG models enhance information retrieval by generating vector embeddings and enabling efficient similarity searches:
 
-1. **nb-text-embeddings**  
-   - Generates vector embeddings for text data.  
-   - Powers the **RAG Server** for efficient similarity searches and context retrieval.  
+1. **nb-text-embeddings**
+   - Generates vector embeddings for text data.
+   - Powers the **RAG Server** for efficient similarity searches and context retrieval.
 
-## Models Used for Agents (LLM Server)  
+## Models Used for Agents (LLM Server)
 
-The **LLM Server** powers intelligent agents that specialize in reasoning, planning, and query generation:  
+The **LLM Server** powers intelligent agents that specialize in reasoning, planning, and query generation:
 
-1. **nb-llm**  
-   - Functions as the primary **reasoning and planning** model.  
-   - Handles complex query processing, decision-making, and response generation.  
+1. **nb-llm**
+   - Functions as the primary **reasoning and planning** model.
+   - Handles complex query processing, decision-making, and response generation.
 
-2. **nb-slm**  
+2. **nb-slm**
    - Designed for **task-specific agents**, improving modular AI functionality.

@@ -40,7 +40,7 @@ The Execute Image action interface provides a versatile way to run custom contai
   - Enter the name or link of the container image in the provided text box. Ensure that the image is accessible to the Kubernetes cluster.
 
 - **Image Pull Policy**:
-  - Select the appropriate image pull policy. 
+  - Select the appropriate image pull policy.
     - **Always**: Always pull the image.
     - **IfNotPresent**: Pull the image only if it is not already present on the node.
     - **Never**: Never pull the image; use the image that is already present on the node.

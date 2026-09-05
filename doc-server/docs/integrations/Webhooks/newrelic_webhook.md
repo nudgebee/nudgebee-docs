@@ -142,3 +142,12 @@ Events are deduplicated using a fingerprint derived from the condition ID and is
 | Events created but no logs/traces attached | Ensure a [New Relic observability integration](../Observability/newrelic.md) is configured for the same NudgeBee account. |
 | Events not appearing at all | Check that the New Relic Workflow is active and the filter matches your alert conditions. |
 | Duplicate events | Expected behavior — NudgeBee deduplicates by `conditionId-issueId`. State updates (e.g., ACTIVATED → CLOSED) update the existing event. |
+
+---
+
+## Helpful Links
+
+- [New Relic Webhook Destination Documentation](https://docs.newrelic.com/docs/alerts/get-notified/notification-integrations/#webhook)
+- [New Relic Alerts & Workflows Guide](https://docs.newrelic.com/docs/alerts/workflows/workflows-overview/)
+- [New Relic Payload Template Variables](https://docs.newrelic.com/docs/alerts/workflows/notification-templates/)
+- [New Relic Observability Integration in NudgeBee](../Observability/newrelic.md)

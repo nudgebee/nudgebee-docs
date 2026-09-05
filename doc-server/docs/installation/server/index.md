@@ -455,11 +455,11 @@ app:
       - secretName: nudgebee-tls
         hosts:
         - "<NudgeBee Base Domain>"
-    annotations: 
+    annotations:
       cert-manager.io/issuer: cert-letsencrypt-issuer
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/proxy-buffer-size: '32k'
-      nginx.ingress.kubernetes.io/proxy-body-size: "10m"     
+      nginx.ingress.kubernetes.io/proxy-body-size: "10m"
 k8s-collector:
   ingress:
     enabled: true
@@ -472,7 +472,7 @@ k8s-collector:
       - secretName: nudgebee-tls
         hosts:
         - "<NudgeBee Base Domain>"
-    annotations: 
+    annotations:
       cert-manager.io/issuer: cert-letsencrypt-issuer
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/proxy-body-size: "50m"
@@ -488,7 +488,7 @@ relay-server:
       - secretName: nudgebee-tls
         hosts:
         - "<NudgeBee Base Domain>"
-    annotations: 
+    annotations:
       cert-manager.io/issuer: cert-letsencrypt-issuer
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 ```

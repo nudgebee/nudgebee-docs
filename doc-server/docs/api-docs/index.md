@@ -32041,7 +32041,7 @@ aggregated selection of "recommendation_status_type"
 
 **Values:**
 
-- `Archive` - the recommendations which are no longer needed 
+- `Archive` - the recommendations which are no longer needed
 - `Assigned` - The recomendation which are assigned to in jira ticket
 - `Closed` - The recommendation which are applied by the user
 - `Dismissed` - The recommendation which are no longer useful for user
@@ -33908,7 +33908,7 @@ aggregated selection of "auto_pilot_category"
 
 ##### auto_pilot_execution_status
 
-saves execution status for autopilot. 
+saves execution status for autopilot.
 
 **Fields:**
 
@@ -34093,7 +34093,7 @@ aggregated selection of "auto_pilot_task"
 
 ##### auto_pilot_task_status
 
-status for auto pilot tasks 
+status for auto pilot tasks
 
 **Fields:**
 
@@ -39096,7 +39096,7 @@ aggregated selection of "feature"
 - `GENERATE_RCA` - Get root cause analysis for events
 - `LLM_BUDGET_DISABLED_INVESTIGATION` - Disable LLM budget checks for event investigation module
 - `LLM_BUDGET_DISABLED_USER_INVESTIGATION` - Disable LLM budget checks for user investigation module
-- `LLM_CODE_ANALYSIS_RAISE_PR` - Enable automated pr raise for code analysis fixes generated 
+- `LLM_CODE_ANALYSIS_RAISE_PR` - Enable automated pr raise for code analysis fixes generated
 - `LLM_FUNCTION` - llm function related changes like creating/editing function and at alert
 - `NEW_CONTEXT` - NEW_CONTEXT
 - `NEW_LLM_TOOLS` - New llm tools tab
@@ -39106,7 +39106,7 @@ aggregated selection of "feature"
 - `TICKETS_ADD_EVENT_COMMENTS` - Add comments on tickets for event evidence report
 - `TRACES_SERVICE_MAP_KNOWLEDGE_GRAPH` - This is to load service map from knowledge graph cache
 - `TROUBLESHOOT` - AI-powered incident troubleshooting and investigation
-- `UPGRADE_PLANNER` - Analyzes your current Kubernetes cluster configuration and generates a step-by-step upgrade plan 
+- `UPGRADE_PLANNER` - Analyzes your current Kubernetes cluster configuration and generates a step-by-step upgrade plan
 - `VERTICAL_RIGHTSIZING` - Enable vertical rightsizing recommendations for K8s workloads
 - `WORKFLOWS` - Workflow automation feature
 
@@ -48432,7 +48432,7 @@ select "projects_aggregate_bool_exp_var_samp_arguments_columns" columns of table
 
 ##### runbook_action
 
-stores user defined custom action for runbook 
+stores user defined custom action for runbook
 
 **Fields:**
 

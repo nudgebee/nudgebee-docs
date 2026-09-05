@@ -3,7 +3,7 @@ sidebar_position: 3
 ---
 # Google Chat
 
-## How to configure Google Chat in your NudgeBee Account 
+## How to configure Google Chat in your NudgeBee Account
 
 - This loom below shows how to configure Google Chat in your account for notifications.
 
@@ -23,7 +23,7 @@ Steps to add redirect URI:
 3. Under OAuth 2.0 Client IDs, click on the client used for NudgeBee authentication.
 4. In section as *Authorised redirect URIs*  → click *Add URI*
 5. Enter the following URI and click *Save*
-    
+
     ``` https://your-base-url.com/api/integrations/callback/google```
 
 Replace your-base-url with the actual domain where NudgeBee is hosted.
@@ -39,3 +39,29 @@ BASE_URL: Your nudgebee base url.
 ```
 
 Once this is set up, your NudgeBee instance will be ready to send messages to Google Chat.
+
+---
+
+## Troubleshooting Google Chat Integration
+
+### 1. `400 Bad Request / redirect_uri_mismatch`
+* **Symptom**: Authorizing Google Chat fails with Google OAuth error `redirect_uri_mismatch`.
+* **Root Cause**: The redirect URI in Google Cloud Console does not match `https://<your-base-url>/api/integrations/callback/google`.
+* **Remediation**:
+  1. In Google Cloud Console $\rightarrow$ APIs & Services $\rightarrow$ Credentials $\rightarrow$ OAuth 2.0 Client IDs, verify the exact Authorised Redirect URI.
+  2. Ensure your server's `BASE_URL` matches the external HTTPS ingress domain.
+
+---
+
+### 2. `403 Forbidden` / Webhook Target Space Access Denied
+* **Symptom**: Incoming webhook fails to post message to target Google Chat Space.
+* **Root Cause**: Webhook URL revoked or Space restricted by Google Workspace policy.
+* **Remediation**:
+  1. In Google Chat $\rightarrow$ Space Settings $\rightarrow$ **Apps & integrations** $\rightarrow$ **Manage webhooks**, regenerate the webhook URL.
+  2. Test sending a raw test payload:
+     ```bash
+     curl -X POST -H "Content-Type: application/json" \
+       -d '{"text":"NudgeBee integration test"}' \
+       "<YOUR_GOOGLE_CHAT_WEBHOOK_URL>"
+     ```
+  3. Update the webhook URL in NudgeBee Notification Channels.

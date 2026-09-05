@@ -175,3 +175,12 @@ When NudgeBee syncs your GCP account, it verifies that the webhook notification 
 | Events created but missing details | Ensure the alert policy has conditions configured with metrics and thresholds. Log-based alerts may have fewer details. |
 | Duplicate notification channels | NudgeBee checks for an existing channel named "NudgeBee Monitoring Alerts" before creating a new one. If you manually renamed or deleted it, auto-setup will create a new one. |
 | Webhook URL returns 401 | The `token` query parameter is invalid. Delete the integration in NudgeBee and re-enable real-time alerts to generate a new token. |
+
+---
+
+## Helpful Links
+
+- [Google Cloud Alerting Notification Channels](https://cloud.google.com/monitoring/support/notification-options#webhooks)
+- [Google Cloud Managing Alert Policies](https://cloud.google.com/monitoring/alerts/using-alerting-ui)
+- [Google Cloud Monitoring Editor Role Reference](https://cloud.google.com/iam/docs/understanding-roles#monitoring-roles)
+- [GCP Cloud Integration in NudgeBee](../../features/Cloud/GCP.md)

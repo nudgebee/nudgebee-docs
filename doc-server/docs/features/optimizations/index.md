@@ -10,7 +10,7 @@ NudgeBee's **FinOps AI-Assistant** continuously analyzes your Kubernetes workloa
 :::
 
 :::tip
-To automatically apply optimization recommendations without manual approval, configure [Autopilot Auto-Optimize](../autopilot/auto_optimize/). To have NudgeBee raise pull requests with the recommended changes, connect a [GitHub](../integrations/Code%20Repository/GitHub/github-integration.md) or [GitLab](../integrations/Code%20Repository/GitLab/gitlab-integration.md) repository.
+To automatically apply optimization recommendations without manual approval, configure [Autopilot Auto-Optimize](./autopilot/auto_optimize/). To have NudgeBee raise pull requests with the recommended changes, connect a [GitHub](../../integrations/Code%20Repository/GitHub/github-integration.md) or [GitLab](../../integrations/Code%20Repository/GitLab/gitlab-integration.md) repository.
 :::
 
 ---
@@ -50,11 +50,20 @@ graph LR
 
 ### How to Raise Automated PRs
 
-1. Connect your repository under **Admin → Integrations → Code Repositories** ([GitHub](../integrations/Code%20Repository/GitHub/github-integration.md) or [GitLab](../integrations/Code%20Repository/GitLab/gitlab-integration.md)).
+1. Connect your repository under **Admin → Integrations → Code Repositories** ([GitHub](../../integrations/Code%20Repository/GitHub/github-integration.md) or [GitLab](../../integrations/Code%20Repository/GitLab/gitlab-integration.md)).
 2. Navigate to **Optimizations → Workload Right-Sizing**.
 3. Select the target deployment or StatefulSet.
 4. Click **Create Pull Request**.
 5. NudgeBee creates a new branch, updates the Helm `values.yaml` or Terraform manifest with the recommended CPU/memory requests and limits, and opens a Pull Request with a clear rationale table for your engineering team to review.
+
+---
+
+## In This Section
+
+- **[Recommendations & AutoOptimize Lifecycle](./recommendations-lifecycle.md)** — Review recommendation evidence, configure supported automation, and verify or recover resource changes.
+- **[Autopilot Overview](./autopilot/autopilot.md)** — Policy-gated self-healing automation engine.
+- **[Auto-Optimize](./autopilot/auto_optimize/)** — Automated continuous rightsizing rules and execution schedules.
+- **[Auto-Runbooks Catalog](./autopilot/auto_runbook/)** — Ready-to-use runbooks for pod restarts, vertical/horizontal rightsizing, node shutdowns, and custom scripts.
 
 ---
 

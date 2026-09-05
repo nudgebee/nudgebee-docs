@@ -15,7 +15,7 @@ The following user inputs are required to configure the HorizontalRightsize acti
 
 1. **Scale Direction**:
    - **Toggle Button**: Indicates whether the user wants to scale the replicas up or down.
-   
+
 2. **Replica Configuration**:
    - **Maximum Value**: Define the maximum number of replicas.
    - **Minimum Value**: Define the minimum number of replicas.
@@ -30,7 +30,7 @@ The following user inputs are required to configure the HorizontalRightsize acti
 
 The HorizontalRightsize action interface is designed for ease of use and clarity. Here’s how each part works:
 
-- **Scale Direction Toggle**: 
+- **Scale Direction Toggle**:
   - **Scale Down**: Decreases the number of replicas.
   - **Scale Up**: Increases the number of replicas.
 

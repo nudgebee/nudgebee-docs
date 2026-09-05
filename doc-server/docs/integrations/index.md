@@ -32,6 +32,29 @@ Some integrations are **required** for NudgeBee to function (Kubernetes cluster 
 
 * **[Authentication](./Authentication/)** — Integrate NudgeBee with an existing identity provider — OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), LDAP, Teleport, or SAML 2.0. OAuth SSO and friends are available in every edition; SAML 2.0 is **Enterprise** and **Cloud** only. **Optional**.
 
+---
+
+## Verify an Integration After Setup or Credential Rotation
+
+Saving credentials, passing a connection test, and receiving useful data are different checks. The available status indicators and tests vary by provider; there is no shared 15-minute health or 24-hour stale-data threshold for all integrations.
+
+1. Open the configured integration and update the required credential fields.
+2. Run its connection test when available, then save.
+3. Exercise the capability you need: query observability data, synchronize a cloud account, or send a notification/create a ticket to a test destination.
+4. Inspect the result and any provider error. A successful authentication test does not prove permissions for every feature.
+
+Use the provider-specific troubleshooting guides below for the relevant checks.
+
+## Provider-Specific Troubleshooting Guides
+
+For troubleshooting specific integration providers, refer directly to the provider documentation:
+
+- **Observability**: [Datadog](./Observability/datadog.md#troubleshooting-datadog-integration), [New Relic](./Observability/newrelic.md#troubleshooting-new-relic-integration), [Dynatrace](./Observability/dynatrace.md#troubleshooting-dynatrace-integration)
+- **Notifications**: [Slack](./Notifications/slack.md#troubleshooting-slack-integration), [MS Teams](./Notifications/msteams.md#troubleshooting-ms-teams-integration), [Google Chat](./Notifications/google_chat.md#troubleshooting-google-chat-integration)
+- **Tickets**: [Jira](./Tickets/jira.md#troubleshooting-jira-integration), [ServiceNow](./Tickets/servicenow.md#troubleshooting-servicenow-integration), [PagerDuty](./Tickets/pagerduty.md#troubleshooting-pagerduty-integration), [Ticketing Diagnostic Guide](./Tickets/ticket-integrations-troubleshooting.md)
+- **Cloud**: [AWS](../features/Cloud/AWS.md#troubleshooting), [Azure](../features/Cloud/Azure.md#troubleshooting-azure-integration), [GCP](../features/Cloud/GCP.md#troubleshooting-gcp-integration), [Cloud Sync Troubleshooting](../features/Cloud/troubleshooting.md)
+- **LLM**: [OpenAI](./LLM/OpenAI/index.md#troubleshooting-openai-integration), [AWS Bedrock](./LLM/Aws/bedrock.md#troubleshooting-amazon-bedrock-integration)
+
 :::tip
 **Recommended setup order**: Observability source first, then a notification channel, then an LLM provider. This gives you monitoring, alerts, and AI-powered insights right away.
 :::

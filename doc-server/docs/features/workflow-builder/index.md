@@ -34,7 +34,7 @@ If you're trying to attach **evidence-collection actions to a specific alert** (
 - **Node** - The visual representation of a trigger or task on the canvas. You can drag, connect, and configure nodes.
 - **Connection** - A line between two nodes that defines the execution order. Connections flow from one node to the next.
 - **Execution** - A single run of a workflow. Each execution has a status, start/end time, and per-task results.
-- **Dry Run** - A test execution that validates your workflow without making any real changes to your systems.
+- **Dry Run** - A test execution with a dry-run flag. Only tasks that honor the flag skip side effects; other tasks can make real changes. See [Dry Run & Validation](./workflow-dry-run-validation.md).
 - **Template Expression** - Dynamic values using `{{ }}` syntax that reference outputs from previous tasks or shared configurations. For example, `{{ Task.output.value }}` or `{{ Configs.key_name }}`.
 - **Config** - A shared key-value pair managed centrally and referenced across workflows using `{{ Configs.key_name }}`.
 - **Status** - The current state of a workflow:
@@ -103,7 +103,7 @@ The editor is where you design and configure your workflows visually.
 **Bottom toolbar** (appears once you have nodes on the canvas):
 - **Add Action** - Add a new task to the workflow
 - **Run** - Save and execute the workflow (available after first save)
-- **Dry Run** - Validate the workflow without making real changes
+- **Dry Run** - Execute with a task-specific dry-run flag; external effects are possible
 - **AI Chat** - Open the NuBi AI sidebar for conversational editing
 - **Save** - Save the current workflow
 - **Settings** - Open workflow settings
@@ -310,9 +310,9 @@ Configurations are shared key-value pairs that can be referenced across all work
 ### Using Dry Run
 
 1. Click **Dry Run** in the bottom toolbar
-2. The workflow is validated without making any real changes
+2. Tasks execute with a dry-run flag; use test resources because tasks without dry-run support can make real changes
 3. A result modal shows per-task status and outputs
-4. Use this to verify your workflow logic before running it for real
+4. Inspect the outputs and any external effects before publishing; see [Dry Run & Validation](./workflow-dry-run-validation.md)
 
 ### Viewing Execution History
 
@@ -415,7 +415,7 @@ Each task has additional settings available in the **Settings** tab of the task 
 You can test a single task without running the entire workflow:
 
 - **Run Task** - Execute just this task in isolation to verify its configuration
-- **Dry Run to Task** - Run all previous tasks plus this task without making real changes
+- **Dry Run to Task** - Execute previous tasks and this task with the dry-run flag; side effects depend on each task
 
 Results appear inline in the task configuration sidebar with a toggle between JSON and formatted views.
 
@@ -516,13 +516,13 @@ See [Configuring Triggers](./triggers.md) for full details on each trigger type,
 Yes. You can add multiple trigger nodes to a single workflow. For example, a workflow can run on a schedule and also be triggered manually.
 
 **What happens if I edit a workflow while it's running?**
-Editing and saving a workflow does not affect executions that are already in progress. Your changes apply to the next execution.
+Editing and saving a workflow does not affect executions that are already in progress. Draft edits affect production triggers only after publishing and making the version live.
 
 **Can I use outputs from one task in another task's configuration?**
 Yes. Use template expressions like `{{ Task.output.value }}` in any text field. The task configuration sidebar shows available outputs from previous tasks that you can drag into fields.
 
 **What is the difference between Run and Dry Run?**
-**Run** executes the workflow and performs all real actions (sending notifications, running scripts, etc.). **Dry Run** validates the workflow logic and shows what would happen, without making any actual changes to your systems.
+**Run** executes the workflow and performs all real actions (sending notifications, running scripts, etc.). **Dry Run** executes tasks with a flag that only dry-run-aware tasks honor. Other tasks can still change external systems. Use isolated targets and follow [Dry Run & Validation](./workflow-dry-run-validation.md).
 
 **How do I share configuration values across multiple workflows?**
 Use the **Configuration Manager** (click **Configs** on the listing page) to create shared key-value pairs. Reference them in any workflow using `{{ Configs.key_name }}`.
@@ -532,3 +532,14 @@ Pause and Resume are only available for workflows with Schedule, Webhook, or Eve
 
 **What does the "Completed with Errors" status mean?**
 The workflow finished running all tasks, but some tasks encountered errors along the way. Check the execution details to see which tasks had issues.
+
+---
+
+## Task-Oriented Automation Guides
+
+- **[Create an Automation When an Event Occurs](./create-event-automation.md)** — Step-by-step walkthrough for building incident-driven automations and auto-remediation.
+- **[Create an Automation from an Optimization Recommendation](./create-optimization-automation.md)** — Automatically rightsize workloads and eliminate cloud waste.
+- **[Test and Validate an Automation (Dry Run & Validation)](./workflow-dry-run-validation.md)** — Validate inputs and task-specific dry-run behavior before publishing.
+- **[Troubleshooting: Why Didn't My Workflow Trigger?](./workflow-did-not-trigger.md)** — Pinpoint trigger mismatches, draft statuses, and timezone issues.
+- **[Workflow Operations: Approvals, Replays, Cancellations & Auditing](./workflow-operations-approvals.md)** — Manage human approval gates, retry whole executions, and inspect audit logs.
+- **[Choosing Between Event Playbooks, Workflows, and AutoOptimize](./automation-architecture-guide.md)** — Architectural decision guide across NudgeBee's automation engines.

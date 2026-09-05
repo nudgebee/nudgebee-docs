@@ -7,7 +7,7 @@ sidebar_position: 10
 
 An SLO is a target value or range of values for a service level that is measured by one or more Service Level Indicators (SLIs). It represents the desired level of performance for a specific aspect of a service, typically expressed as a percentage or time duration over a given period.
 
-NudgeBee lets you define, monitor, and track SLOs across your services. When an SLO is at risk or breached, you can get notified through your configured [notification channels](../integrations/Notifications/index.md) and trigger automated responses via [Autopilot](./autopilot/autopilot.md).
+NudgeBee lets you define, monitor, and track SLOs across your services. When an SLO is at risk or breached, you can get notified through your configured [notification channels](../integrations/Notifications/index.md) and trigger automated responses via [Autopilot](./optimizations/autopilot/autopilot.md).
 
 You can view and manage SLOs per cluster under **Cluster Details → Monitoring → SLO**, where each workload shows its objective, latency and availability targets, evaluation window, and 30-day status.
 

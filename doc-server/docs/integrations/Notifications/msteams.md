@@ -95,9 +95,39 @@ Restart the NudgeBee server pods after updating the secrets so the new values ar
 **Expected outcome**: The Teams integration shows as connected in NudgeBee, and a test notification arrives in the selected channel. Use [Notification Rules](../../features/notifications.md) to fine-tune the routing.
 :::
 
-### Troubleshooting
+## Troubleshooting MS Teams Integration
 
-- **OAuth sign-in fails with a redirect URI error**: The redirect URI registered in Step 1 must exactly match `https://www.your-nudgebee-server.com/api/integrations/ms-teams/callback`, including scheme and host.
-- **Sign-in fails for a single-tenant app**: Make sure `MS_TEAMS_AUTHORITY` is set to `https://login.microsoftonline.com/<your-tenant-id>` — the default `common` authority only works with multi-tenant registrations.
-- **Consent errors during sign-in**: An admin has not granted consent for the Graph permissions. Re-check Step 3.
-- **Notifications stopped after previously working**: The client secret may have expired — create a new one and update `MS_TEAMS_CLIENT_SECRET`.
+### 1. OAuth Sign-In Fails with `Redirect URI Mismatch` (AADSTS50011)
+* **Symptom**: Signing in to authorize Teams returns error `AADSTS50011: The reply URL specified in the request does not match the reply URLs configured for the application`.
+* **Root Cause**: The redirect URI registered in Microsoft Entra ID does not match the public HTTPS base URL of your NudgeBee server.
+* **Remediation**:
+  1. In Entra ID App Registrations $\rightarrow$ Authentication $\rightarrow$ Web Redirect URIs, ensure the URI is exactly:
+     ```
+     https://<your-nudgebee-server>/api/integrations/ms-teams/callback
+     ```
+  2. Verify that there are no trailing slashes or HTTP/HTTPS protocol mismatches.
+
+---
+
+### 2. Sign-In Fails for Single-Tenant App (`AADSTS700016`)
+* **Symptom**: Microsoft sign-in rejects authentication stating application identifier was not found in common authority.
+* **Root Cause**: The app was registered as Single-Tenant, but `MS_TEAMS_AUTHORITY` was left at the default `https://login.microsoftonline.com/common`.
+* **Remediation**:
+  In NudgeBee server secrets, set `MS_TEAMS_AUTHORITY: https://login.microsoftonline.com/<your-directory-tenant-id>`.
+
+---
+
+### 3. Missing Admin Consent (`AADSTS65001`)
+* **Symptom**: User cannot complete installation with error `Need admin approval`.
+* **Remediation**:
+  An Entra ID Global Administrator must navigate to **API permissions** in the Azure Portal and click **Grant admin consent for &lt;Directory&gt;**.
+
+---
+
+### 4. Notifications Stopped Working / Expired Client Secret
+* **Symptom**: Notifications were previously working but now fail silently or log `401 Unauthorized: Invalid client secret`.
+* **Root Cause**: The Microsoft Entra ID client secret reached its expiration date.
+* **Remediation**:
+  1. Go to Entra ID $\rightarrow$ App Registrations $\rightarrow$ **Certificates & secrets**.
+  2. Click **New client secret**, copy the new secret Value, and update `MS_TEAMS_CLIENT_SECRET` in NudgeBee.
+  3. Restart NudgeBee server pods.

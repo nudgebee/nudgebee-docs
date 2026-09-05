@@ -159,3 +159,12 @@ Events are deduplicated using a fingerprint derived from the monitor ID and aggr
 | Events created but no logs/traces attached | Ensure a [Datadog observability integration](../Observability/datadog.md) is configured for the same NudgeBee account. |
 | Events not appearing at all | Check that the Datadog monitor includes `@webhook-<name>` in its notification settings and that the webhook integration is active. |
 | Duplicate events | Expected behavior — NudgeBee deduplicates by `monitorId-aggregKey`. State updates (e.g., Triggered → Recovered) update the existing event. |
+
+---
+
+## Helpful Links
+
+- [Datadog Webhooks Integration Guide](https://docs.datadoghq.com/integrations/webhooks/)
+- [Datadog Manage Monitors Documentation](https://docs.datadoghq.com/monitors/manage/)
+- [Datadog Monitor Notification Variables](https://docs.datadoghq.com/monitors/notify/variables/)
+- [Datadog Observability Integration in NudgeBee](../Observability/datadog.md)

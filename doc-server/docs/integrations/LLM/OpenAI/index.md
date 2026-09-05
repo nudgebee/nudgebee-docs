@@ -96,3 +96,30 @@ For higher rate limits, increase your usage tier by:
 - Making consistent API usage
 - Maintaining payment history
 - Contacting OpenAI support for enterprise needs
+
+---
+
+## Troubleshooting OpenAI Integration
+
+### 1. `429 RateLimitError / Insufficient Quota`
+* **Symptom**: NuBi chat returns `429 You exceeded your current quota, please check your plan and billing details`.
+* **Root Causes**:
+  * Prepaid credit balance exhausted in OpenAI Platform.
+  * Tokens-per-minute (TPM) limit exceeded during bulk log analysis or large incident investigation.
+* **Remediation**:
+  1. Open [OpenAI Billing Overview](https://platform.openai.com/account/billing) and ensure account has positive prepaid balance.
+  2. Switch to a higher throughput model variant (e.g. `gpt-4o-mini`) or request a Tier upgrade for higher TPM limits.
+
+---
+
+### 2. `401 Invalid Authentication / Key Revoked`
+* **Symptom**: Connection test returns `401 Incorrect API key provided`.
+* **Remediation**:
+  Verify the API key starts with `sk-proj-` or `sk-` and does not contain leading/trailing whitespace.
+
+---
+
+### 3. `404 Model Not Found`
+* **Symptom**: NuBi fails with `The model 'gpt-5' does not exist or you do not have access to it`.
+* **Remediation**:
+  Ensure the model specified in `LLM_MODEL_NAME` is available in your OpenAI account tier (e.g. use `gpt-4o` or `gpt-4-turbo`).

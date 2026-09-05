@@ -8,7 +8,7 @@ Manage users, roles, and permissions in NudgeBee. You can invite team members, a
 ![NudgeBee Admin Users page listing team members with their status, role, email, group, and last accessed time, plus tabs for Groups, Audits, Notifications, Integrations, and more](./img/admin-users.png)
 
 :::tip
-New users can be invited by email. They will receive a login link and can access NudgeBee immediately — no password setup required. See [Security](./security.md) for details on authentication methods.
+New users can be invited by email. They will receive a login link and can access NudgeBee immediately — no password setup required. See [Security](./security.md) for details on authentication methods and role-based access control.
 :::
 
 ### Watch a Walkthrough

@@ -37,7 +37,7 @@ The Execute Bash action interface provides a straightforward way to run custom s
   - Specify the container image (e.g., `busybox`) that will be used to run the script. This image must be available in your container registry.
 
 - **Execution Mode**:
-  - **Ephemeral Container**: 
+  - **Ephemeral Container**:
     - When selected, the script runs in an ephemeral container within the same pod as the resource.
     - This mode is useful for lightweight scripts that do not require significant resources or isolation.
   - **Dedicated Pod**:

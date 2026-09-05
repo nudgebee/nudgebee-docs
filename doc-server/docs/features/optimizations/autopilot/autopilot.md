@@ -3,7 +3,7 @@ sidebar_position: 4
 ---
 # Autopilot
 
-Autopilot enables automated, self-healing operations for your Kubernetes clusters using NudgeBee's 30+ pre-built Cloud-Ops Agents. Instead of manually responding to every alert, you can configure automated runbooks that detect issues and take corrective action — like restarting a pod, scaling a workload, or creating a ticket — powered by [NuBi and the pre-built AI agents](../ai/) with human-in-loop approvals for safety.
+Autopilot enables automated, self-healing operations for your Kubernetes clusters using NudgeBee's 30+ pre-built Cloud-Ops Agents. Instead of manually responding to every alert, you can configure automated runbooks that detect issues and take corrective action — like restarting a pod, scaling a workload, or creating a ticket — powered by [NuBi and the pre-built AI agents](../../ai/) with human-in-loop approvals for safety.
 
 ![NudgeBee Automation listing showing configured automations with their trigger type (webhook, schedule, manual), last execution, and status](./img/automations-list.png)
 
@@ -17,9 +17,9 @@ Autopilot enables automated, self-healing operations for your Kubernetes cluster
 
 Autopilot is **optional** but highly valuable once you have the basics set up. You should configure Autopilot after:
 
-1. Your Kubernetes clusters are [connected](../../installation/agent/installation/) and monitored.
-2. An [observability source](../../integrations/Observability/) is integrated.
-3. An [LLM](../../integrations/LLM/) is connected (required for AI-driven runbooks).
+1. Your Kubernetes clusters are [connected](../../../installation/agent/installation/) and monitored.
+2. An [observability source](../../../integrations/Observability/) is integrated.
+3. An [LLM](../../../integrations/LLM/) is connected (required for AI-driven runbooks).
 
 :::info
 Autopilot actions are fully auditable. Every automated action is logged with what happened, why it was triggered, and what the outcome was.

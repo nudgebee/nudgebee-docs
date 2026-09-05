@@ -3,7 +3,7 @@ sidebar_position: 1
 ---
 # Slack
 
-## How to configure Slack in your NudgeBee Account 
+## How to configure Slack in your NudgeBee Account
 
 - This loom below shows how to configure Slack in your account for notifications.
 
@@ -69,3 +69,37 @@ SLACK_CLIENT_ID: The Client ID for the slack app.
 You can see the in basic information of your Slack app.
 
 ![img.png](../../../static/img/slack_secrets.png)
+
+---
+
+## Troubleshooting Slack Integration
+
+### 1. `channel_not_found` / Alerts Not Sent to Private Channels
+* **Symptom**: Notifications send to `#general` or public channels, but fail for private incident channels with error `channel_not_found`.
+* **Root Cause**: The `@NudgeBee` bot user has not been added as a member of the private channel.
+* **Remediation**:
+  1. Open the private Slack channel.
+  2. Type `/invite @NudgeBee` and press Enter.
+  3. Re-test sending a notification from **Settings $\rightarrow$ Notification Rules**.
+
+---
+
+### 2. `not_in_channel` / Missing Scopes
+* **Symptom**: Slack API returns `not_in_channel` error when posting to public channels.
+* **Root Cause**: The Slack app is missing the `chat:write.public` OAuth scope, or the bot token was revoked.
+* **Remediation**:
+  1. In the Slack App Dashboard $\rightarrow$ **OAuth & Permissions**, ensure `chat:write.public` and `chat:write` are listed under **Bot Token Scopes**.
+  2. If adding scopes, click **Reinstall to Workspace** at the top of the page to apply the new permissions.
+
+---
+
+### 3. Interactive Buttons / Approvals Fail (`dispatch_failed`)
+* **Symptom**: Clicking **Acknowledge**, **Snooze**, or **Approve Execution** in a Slack message returns a red `⚠️ We had trouble sending your response` warning.
+* **Root Cause**: Slack cannot reach the **Interactivity Request URL** on your NudgeBee server (due to firewall, ingress mismatch, or invalid SSL certificate).
+* **Remediation**:
+  1. In Slack App Dashboard $\rightarrow$ **Interactivity & Shortcuts**, verify the **Request URL** is accessible from the internet:
+     ```
+     https://<your-public-nudgebee-domain>/api/webhooks/slack/interactive
+     ```
+  2. Ensure your reverse proxy / Ingress controller preserves the `X-Slack-Signature` and `X-Slack-Request-Timestamp` HTTP headers.
+  3. Verify that `SLACK_SIGNING_SECRET` configured in NudgeBee exactly matches the Signing Secret in the Slack App Basic Information page.

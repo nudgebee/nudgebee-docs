@@ -89,15 +89,15 @@ helm upgrade nudgebee $NUDGEBEE_CHART --version $CHART_VERSION -f values.yaml --
 
 If upgrades failed ie. helm timeouts, then review the following steps and after resolving the issues, you can retry the upgrade command again.
 
-- **Helm Release Status**: 
+- **Helm Release Status**:
   ```bash
   helm status nudgebee --namespace nudgebee
   ```
-- **Pod Status**: 
+- **Pod Status**:
   ```bash
   kubectl get pods --namespace nudgebee
   ```
-- **Events**: 
+- **Events**:
   ```bash
   kubectl get events --namespace nudgebee
   ```

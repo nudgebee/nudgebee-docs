@@ -43,13 +43,13 @@ Google Gemini is a family of multimodal AI models developed by Google DeepMind. 
 ## Integrating with LLM Server
 
 1. **Configure Gemini in LLM Server**:
-   
+
    Add the following configuration to your LLM Server settings:
-   
+
 ```bash
     LLM_PROVIDER=googleai
     LLM_MODEL_NAME=<Model name in Google Cloud AI> # e.g., "gemini-1.5-pro"
-    LLM_PROVIDER_API_KEY=<Google Cloud authentication token>   
+    LLM_PROVIDER_API_KEY=<Google Cloud authentication token>
 ```
 
 
@@ -58,7 +58,7 @@ Google Gemini is a family of multimodal AI models developed by Google DeepMind. 
 1. **Configure Gemini in RAG Server**:
 
    Add the following configuration to your RAG Server settings:
-   
+
 ```bash
     EMBEDDINGS_PROVIDER=googleai/vertexai
     EMBEDDINGS_MODEL_NAME=<Model name in Google Cloud AI> # e.g., "text-embedding-004"

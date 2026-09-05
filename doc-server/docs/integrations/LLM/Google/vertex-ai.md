@@ -40,13 +40,13 @@ Google Vertex AI is a unified platform that brings together Google Cloud's machi
 ## Integrating with LLM Server
 
 1. **Configure Vertex AI in LLM Server**:
-   
+
    Add the following configuration to your LLM Server settings:
-   
+
 ```bash
     LLM_PROVIDER=googleai/vertexai
     LLM_MODEL_NAME=<Model name in Google Cloud AI>
-    LLM_PROVIDER_API_ENDPOINT=<Base URL for Google Cloud AI> 
+    LLM_PROVIDER_API_ENDPOINT=<Base URL for Google Cloud AI>
 ```
 
 
@@ -55,7 +55,7 @@ Google Vertex AI is a unified platform that brings together Google Cloud's machi
 1. **Configure Vertex AI in RAG Server**:
 
    Add the following configuration to your RAG Server settings:
-   
+
 ```bash
     EMBEDDINGS_PROVIDER=googleai/vertexai
     EMBEDDINGS_MODEL_NAME=<Model name in Google Cloud AI>

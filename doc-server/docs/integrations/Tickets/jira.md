@@ -15,3 +15,52 @@ sidebar_position: 1
 Note:
 - For security reasons it isn't possible to view the token after closing the creation dialog; if necessary, create a new token.
 - You should store the token securely, just as for any password.
+
+---
+
+## Troubleshooting Jira Integration
+
+### 1. Connection Test Failed (`401 Unauthorized`)
+* **Symptom**: Clicking **Test Connection** returns `Authentication failed: Invalid credentials`.
+* **Root Causes**:
+  * **Email vs Username**: In Jira Cloud (Atlassian Cloud), you **must** use the account email address as the username, combined with an API token (not your Atlassian password).
+  * **Jira Server / Data Center**: If using Jira Data Center, ensure you provide a Personal Access Token (PAT) or valid service account credentials.
+* **Remediation**:
+  1. Generate a new API token at `https://id.atlassian.com/manage/api-tokens`.
+  2. Verify that the email matches the exact account that generated the token.
+  3. Ensure the Jira Base URL is `https://<your-domain>.atlassian.net` (without trailing `/secure` or `/jira`).
+
+---
+
+### 2. Ticket Creation Fails (`Field 'customfield_XXXXX' cannot be set`)
+* **Symptom**: Automated ticket creation fails with `Error creating Jira issue: Field customfield_10024 is mandatory`.
+* **Root Cause**: Your Jira Project's Issue Type Scheme requires specific mandatory custom fields (e.g. *Environment*, *Team*, *Root Cause Category*) that are not mapped in the NudgeBee ticket template.
+* **Remediation**:
+  1. Check the required fields for the issue type by hitting the Jira Create Metadata API:
+     ```bash
+     curl -u user@example.com:<API_TOKEN> \
+       "https://your-domain.atlassian.net/rest/api/3/issue/createmeta?projectKeys=PROD&expand=projects.issuetypes.fields"
+     ```
+  2. Navigate to **Settings $\rightarrow$ Integrations $\rightarrow$ Tickets $\rightarrow$ Jira**.
+  3. Inspect the ticket creation form or workflow ticket task and supply the fields required by the selected project and issue type. Use the available field metadata; do not assume every field accepts workflow template expressions.
+
+---
+
+### 3. Assignee User Not Found (`User does not exist or has no permission`)
+* **Symptom**: Ticket creation fails when specifying a default assignee.
+* **Root Cause**: Jira Cloud uses Atlassian `accountId` (e.g. `5b10ac8d82e05b22cc7d4ef5`) instead of usernames, and the user must have the **Assignable User** permission in the target project.
+* **Remediation**:
+  1. In Jira Project Settings $\rightarrow$ Permissions, verify the user has **Assignable User** and **Create Issues** rights.
+  2. In Jira Cloud, enter the target user's `accountId` or leave assignee empty to allow Jira's default component lead assignment.
+
+---
+
+### 4. Jira Ticket Status Is Stale
+
+The ticket server synchronizes Jira ticket details by fetching the linked issues and updating NudgeBee ticket records. There is no `/api/webhooks/jira/status_sync` endpoint to configure for this flow.
+
+1. Confirm the issue is accessible using the integration's configured account.
+2. Check the linked ticket ID and integration configuration.
+3. Ask an administrator to inspect ticket-server synchronization errors and the sync job if the record remains stale.
+
+A synchronized ticket status is separate from the linked event's NudgeBee triage status. Do not assume closing a Jira issue automatically resolves that event.

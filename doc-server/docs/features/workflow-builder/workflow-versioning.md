@@ -55,7 +55,7 @@ From here you can:
 - **Make Live** — roll production back to that version instantly.
 - **Change status** — set any version Active / Paused / Inactive.
 - **Delete** — remove an unwanted version. The Live and current-draft versions are protected and can't be deleted.
-- **Retry a past run** — re-runs the exact version that originally ran, not whatever is live now. So Retry is a true "run that again."
+- **Retry a past run** — starts a new execution from the beginning using the original version when available. If that version is unavailable, the server falls back to the live version. Review completed side effects before retrying.
 
 ## Version status (per version)
 

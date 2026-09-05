@@ -1,6 +1,6 @@
 # Tickets
 
-NudgeBee integrates with popular ticketing and incident management systems so you can create, track, and manage tickets directly from the NudgeBee platform. Tickets can be created manually from the UI for errors, events, recommendations, and logs — or automated using [Autopilot](../../features/autopilot/autopilot.md) to create and assign tickets based on pre-configured rules.
+NudgeBee integrates with popular ticketing and incident management systems so you can create, track, and manage tickets directly from the NudgeBee platform. Tickets can be created manually from the UI for errors, events, recommendations, and logs — or automated using [Autopilot](../../features/optimizations/autopilot/autopilot.md) to create and assign tickets based on pre-configured rules.
 
 ### Why Connect a Ticketing System?
 
@@ -32,3 +32,7 @@ This integration is **optional**. NudgeBee works fully without a ticketing syste
 *   **[ServiceNow](./servicenow.md)** — Integrate with ServiceNow for enterprise ITSM workflows.
 *   **[PagerDuty](./pagerduty.md)** — Trigger and manage PagerDuty incidents.
 *   **[Zenduty](./zenduty.md)** — Integrate with Zenduty for incident management.
+
+## Operational & Diagnostic Guides
+
+*   **[Troubleshoot Ticketing Integrations & Ticket Creation Failures](./ticket-integrations-troubleshooting.md)** — Diagnose mandatory custom field errors, assignee permissions, and bidirectional status synchronization.

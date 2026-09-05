@@ -163,7 +163,7 @@ Required for integrating with Chat
 
 - **`GOOGLE_CLIENT_ID`**: Google clientId
 - **`GOOGLE_CLIENT_SECRET`: Google Client Secret
-  
+
 ### Email
 
 Required for sending emails like daily report
