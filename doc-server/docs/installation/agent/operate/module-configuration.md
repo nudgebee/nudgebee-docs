@@ -12,7 +12,7 @@ Start with the smallest agent installation that supports the workflows you use. 
 | Goal | Helm value | What changes |
 |---|---|---|
 | Stop the eBPF node agent | `nodeAgent.enabled: false` | Removes the node-agent DaemonSet. Network topology, L7 traffic metrics, node-agent logs, and profiles are unavailable. Kubernetes inventory and runner-based actions continue. |
-| Stop the bundled trace pipeline | `opentelemetry-collector.enabled: false` and `runner.clickhouse_enabled: false` | Removes the bundled OTel collector and ClickHouse, and stops the runner from expecting the ClickHouse Secret. Configure an external trace provider if trace queries are still required. |
+| Stop the bundled trace pipeline | `opentelemetry-collector.enabled: false`, `clickhouse.enabled: false`, and `runner.clickhouse_enabled: false` | Removes the bundled OTel collector and ClickHouse, and stops the runner from expecting the ClickHouse Secret. Configure an external trace provider if trace queries are still required. |
 | Stop runner mutations | `runner.mutateEnabled: false` | The runner does not register mutation handlers such as pod deletion, rollout restart, alert-rule changes, Alertmanager silences, and Loki rules. Read and investigation actions remain available. |
 | Restrict Kubernetes permissions | `runner.readOnly: true` | Uses the read-only ClusterRole. Recommendations can still compute, but applying remediation to customer workloads is blocked. |
 | Stop NudgeBee default alert rules | `alertmanager.create_nb_default_rules: false` | Stops rendering the chart's default `PrometheusRule`. It does not disable alert ingestion from rules managed elsewhere. |
@@ -31,6 +31,9 @@ nodeAgent:
   enabled: false
 
 opentelemetry-collector:
+  enabled: false
+
+clickhouse:
   enabled: false
 
 runner:

@@ -162,7 +162,7 @@ kubectl logs -n nudgebee-agent -l app.kubernetes.io/name=opentelemetry-collector
       service:
         pipelines:
           traces:
-            processors: [memory_limiter, filter/drop_namespaces, filter/drop_health_check, probabilistic_sampler, batch]
+            processors: [memory_limiter, batch]
             exporters: [clickhouse]
             receivers: [otlp]
           logs:
@@ -174,6 +174,7 @@ kubectl logs -n nudgebee-agent -l app.kubernetes.io/name=opentelemetry-collector
             exporters: [clickhouse]
             receivers: [otlp]
   ```
+  *(Note: If you add custom processors such as namespace filters or sampling, define them under `opentelemetry-collector.config.processors` and place them between `memory_limiter` and `batch`.)*
 
 ### Failure 2: Buffer Exhaustion During ClickHouse Restarts
 
@@ -204,11 +205,14 @@ If you do not use the bundled trace pipeline, disable both components together:
 opentelemetry-collector:
   enabled: false
 
+clickhouse:
+  enabled: false
+
 runner:
   clickhouse_enabled: false
 ```
 
-- Disabling `opentelemetry-collector` removes both the Collector and ClickHouse subcharts, freeing all persistent volume claims and memory.
+- Disabling `opentelemetry-collector` and explicitly setting `clickhouse.enabled: false` removes both the Collector and ClickHouse subcharts, freeing all persistent volume claims and memory.
 - Setting `runner.clickhouse_enabled: false` is **mandatory**; it prevents the runner Deployment from attempting to mount the `CLICKHOUSE_PASSWORD` Secret, which will not exist when ClickHouse is disabled.
 - Render manifests before upgrading to confirm no `CLICKHOUSE_PASSWORD` reference remains:
   ```bash
