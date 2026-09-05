@@ -29,6 +29,15 @@ NudgeBee includes four purpose-built AI assistants, each focused on a specific d
 | **CloudOps AI-Assistant** | Cloud infrastructure management, security posture analysis, and operational recommendations. |
 | **K8s AI-Assistant** | Kubernetes-specific debugging, upgrade guidance, and workload optimization. |
 
+## Configuring and Governing AI
+
+- **[AI Gateway](./ai-gateway.md)** — One endpoint in front of every LLM provider, with routing, tier aliases, quotas and per-user cost attribution.
+- **[LLM Analyser](./llm-analyser.md)** — Where NudgeBee's own AI spend goes, by conversation, model, agent, tool and user.
+- **[Egress Filter](./egress-filter.md)** — Scan what leaves for secrets and PII, and detect, redact or block.
+- **[Tools & MCP](./tools-and-mcp.md)** — What the agents are able to do, and which MCP servers are connected.
+- **[Memory Policy](./memory-policy.md)** — The tenant-wide opt-out for each layer of AI memory.
+- **[RCA Format](./rca-format.md)** — The Markdown template the AI fills in when it writes a root cause analysis.
+
 ## Specialized Agents
 
 Under the hood, NudgeBee's AI assistants use a modular set of specialized agents that you can also invoke directly through the [Workflow Builder](../workflow-builder/):

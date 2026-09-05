@@ -17,7 +17,8 @@ NudgeBee supports BYOM (Bring Your Own Model) with three categories of LLM provi
 
 | Category | Providers | Best For |
 |---|---|---|
-| **Cloud Provider Services** | [AWS Bedrock](./Aws/bedrock.md), [Azure OpenAI](./Azure/azure-openai.md), [Google Vertex AI](./Google/vertex-ai.md), [Google Gemini](./Google/gemini.md), [OpenAI](./OpenAI/) | Teams with existing cloud contracts or preferred providers. |
+| **Direct Provider APIs** | [Anthropic](./Anthropic/), [OpenAI](./OpenAI/) | Teams going straight to the model vendor. |
+| **Cloud Provider Services** | [AWS Bedrock](./Aws/bedrock.md), [Azure OpenAI](./Azure/azure-openai.md), [Google Vertex AI](./Google/vertex-ai.md), [Google Gemini](./Google/gemini.md) | Teams with existing cloud contracts or preferred providers. |
 | **Self-Hosted / Open Source** | [Ollama](./Ollama/), [HuggingFace](./HuggingFace/), [AWS SageMaker](./Aws/sagemaker.md) | Organizations requiring data privacy, air-gapped environments, or custom-trained models. |
 | **NudgeBee Models** <Enterprise/> <Cloud/> | Pre-trained NudgeBee AI models (nb-llm, nb-slm) | Enterprise/Cloud users who want optimized, purpose-built models for Cloud Ops. |
 
@@ -68,6 +69,9 @@ Choose from the following LLM providers to integrate with your NudgeBee applicat
 - [Azure](./Azure/index.md) - Microsoft Azure integration options including Azure OpenAI Service
 - [Google](./Google/index.md) - Google Cloud Platform integration options including Gemini and VertexAI
 - [OpenAI](./OpenAI/index.md) - OpenAI API integration for GPT-5, GPT-4o, GPT-4, and Embeddings models
+
+### Direct Provider APIs
+- [Anthropic](./Anthropic/index.md) - Claude models direct from Anthropic, for LLM Server and as an AI Gateway route
 
 ### Open Source & Self-Hosted Options
 - [Hugging Face](./HuggingFace/index.md) - Integration with Hugging Face's model repository and inference APIs

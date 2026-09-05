@@ -92,6 +92,8 @@ Click **Apply Fix** in the UI to create the secret, or click **Create Jira Ticke
 - **[Alerting & Action Customisation](./alerting.md)** — Configure custom alerting rules and attach playbook actions for auto-triage.
 - **[Event Playbooks vs Workflows](./event-playbooks-vs-workflows.md)** — Conceptual guide to the two automation surfaces and when to use each.
 - **[Playbook Catalog](./playbook-catalog.md)** — Full reference of every event-playbook action and its parameters, including custom data-collection (proxy DB query, cloud CLI, SSH, kubectl).
+- **[Alert Tuning](./alert-tuning.md)** — Threshold suggestions derived from seven days of the metric behind an alert, with direct or pull-request apply and revert.
+- **[Event Resolutions](./event-resolutions.md)** — The ledger of every action taken on an event: pull requests, tickets, deployment changes, workflow runs and commands.
 - **[Templating & Best Practices](./templating.md)** — Use gonja (Jinja-style) templates in action parameters, with patterns for labels, outputs, conditionals, and `for_each` loops.
 
 ### Infrastructure & Operational Diagnostics
