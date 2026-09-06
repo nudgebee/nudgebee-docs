@@ -1,7 +1,6 @@
 ---
 sidebar_position: 8
 sidebar_label: SLOs & Error Budgets
-title: "Service Level Objectives (SLOs) & Error Budgets"
 keywords: [slo, sli, error budget, burn rate alerts, multi-window burn rate, reliability engineering, prometheus slo]
 ---
 
