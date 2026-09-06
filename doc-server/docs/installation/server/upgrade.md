@@ -50,9 +50,10 @@ NudgeBee database schema migrations run automatically during upgrades and are ty
 
 ```bash
 # For bundled PostgreSQL (use -i without -t to prevent TTY character corruption on piped stdout):
+# Uses pg_dumpall to capture all databases (application state, temporal, and temporal_visibility):
 # Note: In standard Helm releases, pods are named nudgebee-postgresql-0 (or postgresql-0 if fullnameOverride is set).
 kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -- \
-  pg_dump -U postgres postgres | gzip > "nudgebee-postgres-preupgrade-$(date +%Y%m%d%H%M%S).sql.gz"
+  pg_dumpall -U postgres | gzip > "nudgebee-postgres-preupgrade-$(date +%Y%m%d%H%M%S).sql.gz"
 
 # For AWS RDS (Single Instance):
 aws rds create-db-snapshot \
@@ -419,9 +420,9 @@ Helm rollback reverts Kubernetes Deployments, ConfigMaps, Secrets, and container
      --namespace nudgebee --replicas=0
 
    # 2. Restore PostgreSQL database from the pre-upgrade backup snapshot
-   # (Use -i without -t to avoid TTY corruption)
+   # (pg_dumpall includes database creation and connection directives)
    gunzip -c nudgebee-postgres-preupgrade-*.sql.gz | \
-     kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -- psql -U postgres -d postgres
+     kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -- psql -U postgres
 
    # 3. Scale application pods back up
    kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
