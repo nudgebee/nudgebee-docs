@@ -215,10 +215,10 @@ If `helm upgrade` times out or fails at the hook stage, inspect the migration po
 kubectl get pods --namespace nudgebee -l app.kubernetes.io/instance=nudgebee
 
 # 2. Inspect the database readiness init container
-kubectl logs --namespace nudgebee job/postgres-migration-job -c db-check
+kubectl logs --namespace nudgebee job/nudgebee-postgres-migration-job -c db-check
 
 # 3. Inspect the migration execution logs
-kubectl logs --namespace nudgebee job/postgres-migration-job -c postgres-migration-job
+kubectl logs --namespace nudgebee job/nudgebee-postgres-migration-job -c postgres-migration-job
 ```
 
 #### Common Root Causes & Remediations:
@@ -236,7 +236,7 @@ kubectl logs --namespace nudgebee job/postgres-migration-job -c postgres-migrati
    - The chart specifies `before-hook-creation`, so re-running `helm upgrade` will automatically clean up the old job.
    - To clean up immediately for manual testing:
      ```bash
-     kubectl delete job postgres-migration-job --namespace nudgebee
+     kubectl delete job nudgebee-postgres-migration-job --namespace nudgebee
      ```
 
 ### Temporal Schema Migrations
@@ -409,94 +409,104 @@ REVISION  UPDATED                   STATUS    CHART           APP VERSION  DESCR
 2         Sun Sep 06 14:00:00 2026  failed    nudgebee-0.2.0  0.2.0        Upgrade "nudgebee" failed: timed out
 ```
 
-### Step 2: Roll Back Kubernetes Resources via Helm
-Roll back to the previous stable revision (e.g. revision 1):
+### Step 2: Evaluate Migration Impact (Additive vs. Destructive)
+
+Helm rollback automatically reverts Kubernetes Deployments, ConfigMaps, Secrets, and container images to the previous revision. However, **Helm cannot automatically roll back database schema changes**. Determine the nature of the migration failure before proceeding:
+
+1. **Additive Migrations (Non-Breaking)**:
+   If the failed release only added new tables or nullable columns, the older application code will run safely without schema restoration. Proceed directly to **Scenario A (Direct Helm Rollback)**.
+2. **Destructive Migrations (Schema Restore Required)**:
+   If the failed release modified existing column types, renamed tables, or dropped constraints incompatibly, **do not run Helm rollback immediately**. Running Helm rollback first would cause older application pods to start up and connect to an incompatible database schema, risking crash-loops or data corruption. Instead, follow **Scenario B (Database Restore Prior to Workload Rollback)**.
+
+---
+
+### Step 3: Rollback Procedures
+
+#### Scenario A: Direct Rollback for Additive (Non-Breaking) Upgrades
+Simply roll back the Helm release to the target revision (e.g. revision 1):
 
 ```bash
 helm rollback nudgebee 1 --namespace nudgebee --wait --timeout 10m
 ```
 
-### Step 3: Database Rollback Considerations
-Helm rollback reverts Kubernetes Deployments, ConfigMaps, Secrets, and container images. However, **Helm cannot automatically roll back database schema changes**.
+Verify service recovery:
+```bash
+kubectl logs -n nudgebee -l app.kubernetes.io/name=services-server --tail=100
+```
 
-1. **Additive Migrations (Non-Breaking)**:
-   If the new release only added columns or tables, older application code usually runs without issue. Verify by checking pod logs:
-   ```bash
-   kubectl logs -n nudgebee -l app.kubernetes.io/name=services-server --tail=100
-   ```
-2. **Destructive Migrations (Schema Restore Required)**:
-   If a migration altered columns or dropped constraints incompatibly, restore the persistent datastore:
+#### Scenario B: Rollback for Destructive Migrations
 
-   **For Bundled PostgreSQL:**
-   ```bash
-   # 1. Scale down application microservices, collectors, and Temporal pods to prevent write conflicts & active connections
-   kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
-     nudgebee-k8s-collector nudgebee-cloud-collector-server \
-     nudgebee-temporal-frontend nudgebee-temporal-history nudgebee-temporal-matching nudgebee-temporal-worker \
-     --namespace nudgebee --replicas=0
+##### Option 1: Bundled PostgreSQL Restoration
+For installations running the bundled PostgreSQL StatefulSet:
 
-   # 2. Terminate active connections and drop existing databases to prevent duplicate key/relation conflicts during restore
-   kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres \
-     -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname IN ('nudgebee', 'temporal', 'temporal_visibility') AND pid <> pg_backend_pid();" \
-     -c "DROP DATABASE IF EXISTS nudgebee;" \
-     -c "DROP DATABASE IF EXISTS temporal;" \
-     -c "DROP DATABASE IF EXISTS temporal_visibility;"
+```bash
+# 1. Scale down application microservices, collectors, and Temporal pods to prevent write conflicts & active connections
+kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
+  nudgebee-k8s-collector nudgebee-cloud-collector-server \
+  nudgebee-temporal-frontend nudgebee-temporal-history nudgebee-temporal-matching nudgebee-temporal-worker \
+  --namespace nudgebee --replicas=0
 
-   # 3. Restore PostgreSQL database from the pre-upgrade backup snapshot
-   # (pg_dumpall includes database creation and connection directives)
-   gunzip -c nudgebee-postgres-preupgrade-<TIMESTAMP>.sql.gz | \
-     kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres
+# 2. Terminate active connections and drop existing databases to prevent duplicate key/relation conflicts during restore
+kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres \
+  -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname IN ('nudgebee', 'temporal', 'temporal_visibility') AND pid <> pg_backend_pid();" \
+  -c "DROP DATABASE IF EXISTS nudgebee;" \
+  -c "DROP DATABASE IF EXISTS temporal;" \
+  -c "DROP DATABASE IF EXISTS temporal_visibility;"
 
-   # 4. Scale application, collectors, and Temporal pods back up
-   kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
-     nudgebee-k8s-collector nudgebee-cloud-collector-server \
-     nudgebee-temporal-frontend nudgebee-temporal-history nudgebee-temporal-matching nudgebee-temporal-worker \
-     --namespace nudgebee --replicas=1
-   ```
+# 3. Restore PostgreSQL database from the pre-upgrade backup snapshot
+# (pg_dumpall includes database creation and connection directives)
+gunzip -c nudgebee-postgres-preupgrade-<TIMESTAMP>.sql.gz | \
+  kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres
 
-   **For External Managed PostgreSQL (AWS RDS / Aurora):**
-   ```bash
-   # 1. Scale down application, collectors, and Temporal pods
-   kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
-     nudgebee-k8s-collector nudgebee-cloud-collector-server \
-     nudgebee-temporal-frontend nudgebee-temporal-history nudgebee-temporal-matching nudgebee-temporal-worker \
-     --namespace nudgebee --replicas=0
+# 4. Roll back Kubernetes resources via Helm
+# Helm automatically reverts manifests and scales pods back up to their configured revision replica counts
+helm rollback nudgebee 1 --namespace nudgebee --wait --timeout 10m
+```
 
-   # 2. Restore database from your pre-upgrade snapshot
-   # AWS RDS (Single Instance):
-   # Note: Include --db-subnet-group-name and --vpc-security-group-ids to preserve cluster network connectivity
-   aws rds restore-db-instance-from-db-snapshot \
-     --db-instance-identifier <restored-rds-instance-id> \
-     --db-snapshot-identifier "nudgebee-preupgrade-<timestamp>" \
-     --db-subnet-group-name <your-db-subnet-group> \
-     --vpc-security-group-ids <your-security-group-ids>
+:::note[Benign Errors During pg_dumpall Restore]
+When restoring a `pg_dumpall` backup, PostgreSQL will attempt to recreate default roles (such as `postgres`) and the system `postgres` database. This will produce several `already exists` errors in the console (e.g., `ERROR: role "postgres" already exists`). These errors are expected, harmless, and can be safely ignored.
+:::
 
-   # AWS Aurora PostgreSQL (Cluster):
-   # Note: Include --db-subnet-group-name and --vpc-security-group-ids to preserve cluster network connectivity
-   aws rds restore-db-cluster-from-snapshot \
-     --db-cluster-identifier <restored-aurora-cluster-id> \
-     --snapshot-identifier "nudgebee-preupgrade-<timestamp>" \
-     --engine aurora-postgresql \
-     --db-subnet-group-name <your-db-subnet-group> \
-     --vpc-security-group-ids <your-security-group-ids>
+##### Option 2: External Managed PostgreSQL (AWS RDS / Aurora) Restoration
+For installations backed by external managed cloud databases:
 
-   # Note: Aurora restore provisions the storage cluster only. Create an instance to make it accessible:
-   aws rds create-db-instance \
-     --db-cluster-identifier <restored-aurora-cluster-id> \
-     --db-instance-identifier <restored-aurora-instance-id> \
-     --db-instance-class <instance-class> \
-     --engine aurora-postgresql
+```bash
+# 1. Scale down application microservices, collectors, and Temporal pods to cut off active traffic
+kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
+  nudgebee-k8s-collector nudgebee-cloud-collector-server \
+  nudgebee-temporal-frontend nudgebee-temporal-history nudgebee-temporal-matching nudgebee-temporal-worker \
+  --namespace nudgebee --replicas=0
 
-   # 3. Update APP_DATABASE_URL and Temporal datastore endpoints in user-values.yaml
-   # to point to the restored RDS/Aurora endpoint, then re-apply the Helm rollback:
-   helm rollback nudgebee 1 --namespace nudgebee --wait
+# 2. Restore database from your pre-upgrade snapshot
+# AWS RDS (Single Instance):
+# Note: Include --db-subnet-group-name and --vpc-security-group-ids to preserve cluster network connectivity
+aws rds restore-db-instance-from-db-snapshot \
+  --db-instance-identifier <restored-rds-instance-id> \
+  --db-snapshot-identifier "nudgebee-preupgrade-<timestamp>" \
+  --db-subnet-group-name <your-db-subnet-group> \
+  --vpc-security-group-ids <your-security-group-ids>
 
-   # 4. Scale application, collectors, and Temporal pods back up
-   kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
-     nudgebee-k8s-collector nudgebee-cloud-collector-server \
-     nudgebee-temporal-frontend nudgebee-temporal-history nudgebee-temporal-matching nudgebee-temporal-worker \
-     --namespace nudgebee --replicas=1
-   ```
+# AWS Aurora PostgreSQL (Cluster):
+# Note: Include --db-subnet-group-name and --vpc-security-group-ids to preserve cluster network connectivity
+aws rds restore-db-cluster-from-snapshot \
+  --db-cluster-identifier <restored-aurora-cluster-id> \
+  --snapshot-identifier "nudgebee-preupgrade-<timestamp>" \
+  --engine aurora-postgresql \
+  --db-subnet-group-name <your-db-subnet-group> \
+  --vpc-security-group-ids <your-security-group-ids>
+
+# Note: Aurora cluster restore provisions the shared storage volume only. Create an instance to make it accessible:
+aws rds create-db-instance \
+  --db-cluster-identifier <restored-aurora-cluster-id> \
+  --db-instance-identifier <restored-aurora-instance-id> \
+  --db-instance-class <instance-class> \
+  --engine aurora-postgresql
+
+# 3. Update APP_DATABASE_URL and Temporal datastore endpoints in user-values.yaml
+# to point to the restored RDS/Aurora endpoint, then execute the Helm rollback:
+# Helm automatically reverts manifests and scales pods back up to their configured revision replica counts
+helm rollback nudgebee 1 --namespace nudgebee --wait --timeout 10m
+```
 
 ---
 
