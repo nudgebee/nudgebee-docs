@@ -358,6 +358,8 @@ temporal:
               databaseName: "temporal"
               user: "nb_user"
               password: "YourSecretPass"
+              # tls:
+              #   enabled: true
           visibility:
             sql:
               pluginName: "postgres"
@@ -365,6 +367,8 @@ temporal:
               databaseName: "temporal_visibility"
               user: "nb_user"
               password: "YourSecretPass"
+              # tls:
+              #   enabled: true
 
 # 2. Disable bundled RabbitMQ
 rabbitmq:
@@ -425,8 +429,9 @@ Helm rollback reverts Kubernetes Deployments, ConfigMaps, Secrets, and container
 
    **For Bundled PostgreSQL:**
    ```bash
-   # 1. Scale down application microservices and Temporal pods to prevent write conflicts & active connections
+   # 1. Scale down application microservices, collectors, and Temporal pods to prevent write conflicts & active connections
    kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
+     nudgebee-k8s-collector nudgebee-cloud-collector-server \
      nudgebee-temporal-frontend nudgebee-temporal-history nudgebee-temporal-matching nudgebee-temporal-worker \
      --namespace nudgebee --replicas=0
 
@@ -442,30 +447,38 @@ Helm rollback reverts Kubernetes Deployments, ConfigMaps, Secrets, and container
    gunzip -c nudgebee-postgres-preupgrade-<TIMESTAMP>.sql.gz | \
      kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres
 
-   # 4. Scale application and Temporal pods back up
+   # 4. Scale application, collectors, and Temporal pods back up
    kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
+     nudgebee-k8s-collector nudgebee-cloud-collector-server \
      nudgebee-temporal-frontend nudgebee-temporal-history nudgebee-temporal-matching nudgebee-temporal-worker \
      --namespace nudgebee --replicas=1
    ```
 
    **For External Managed PostgreSQL (AWS RDS / Aurora):**
    ```bash
-   # 1. Scale down application and Temporal pods
+   # 1. Scale down application, collectors, and Temporal pods
    kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
+     nudgebee-k8s-collector nudgebee-cloud-collector-server \
      nudgebee-temporal-frontend nudgebee-temporal-history nudgebee-temporal-matching nudgebee-temporal-worker \
      --namespace nudgebee --replicas=0
 
    # 2. Restore database from your pre-upgrade snapshot
    # AWS RDS (Single Instance):
+   # Note: Include --db-subnet-group-name and --vpc-security-group-ids to preserve cluster network connectivity
    aws rds restore-db-instance-from-db-snapshot \
      --db-instance-identifier <restored-rds-instance-id> \
-     --db-snapshot-identifier "nudgebee-preupgrade-<timestamp>"
+     --db-snapshot-identifier "nudgebee-preupgrade-<timestamp>" \
+     --db-subnet-group-name <your-db-subnet-group> \
+     --vpc-security-group-ids <your-security-group-ids>
 
    # AWS Aurora PostgreSQL (Cluster):
+   # Note: Include --db-subnet-group-name and --vpc-security-group-ids to preserve cluster network connectivity
    aws rds restore-db-cluster-from-snapshot \
      --db-cluster-identifier <restored-aurora-cluster-id> \
      --snapshot-identifier "nudgebee-preupgrade-<timestamp>" \
-     --engine aurora-postgresql
+     --engine aurora-postgresql \
+     --db-subnet-group-name <your-db-subnet-group> \
+     --vpc-security-group-ids <your-security-group-ids>
 
    # Note: Aurora restore provisions the storage cluster only. Create an instance to make it accessible:
    aws rds create-db-instance \
@@ -478,8 +491,9 @@ Helm rollback reverts Kubernetes Deployments, ConfigMaps, Secrets, and container
    # to point to the restored RDS/Aurora endpoint, then re-apply the Helm rollback:
    helm rollback nudgebee 1 --namespace nudgebee --wait
 
-   # 4. Scale application and Temporal pods back up
+   # 4. Scale application, collectors, and Temporal pods back up
    kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
+     nudgebee-k8s-collector nudgebee-cloud-collector-server \
      nudgebee-temporal-frontend nudgebee-temporal-history nudgebee-temporal-matching nudgebee-temporal-worker \
      --namespace nudgebee --replicas=1
    ```
