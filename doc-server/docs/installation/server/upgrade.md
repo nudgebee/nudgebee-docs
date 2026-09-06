@@ -181,7 +181,7 @@ sequenceDiagram
     participant Mig as postgres-migration-job
     participant Apps as Core Microservices (app, services-server...)
 
-    Helm->>Init: Spawn post-upgrade hook (weight: -5)
+    Helm->>Init: Spawn pre-upgrade hook (weight: -5)
     loop Poll DB Ready
         Init->>PG: pg_isready -h postgresql -U postgres
         PG-->>Init: 0 (Accepting connections)
@@ -436,7 +436,7 @@ Helm rollback reverts Kubernetes Deployments, ConfigMaps, Secrets, and container
 
    # 3. Restore PostgreSQL database from the pre-upgrade backup snapshot
    # (pg_dumpall includes database creation and connection directives)
-   gunzip -c nudgebee-postgres-preupgrade-*.sql.gz | \
+   gunzip -c nudgebee-postgres-preupgrade-<TIMESTAMP>.sql.gz | \
      kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres
 
    # 4. Scale application and Temporal pods back up
@@ -464,6 +464,13 @@ Helm rollback reverts Kubernetes Deployments, ConfigMaps, Secrets, and container
      --snapshot-identifier "nudgebee-preupgrade-<timestamp>" \
      --engine aurora-postgresql
 
+   # Note: Aurora restore provisions the storage cluster only. Create an instance to make it accessible:
+   aws rds create-db-instance \
+     --db-cluster-identifier <restored-aurora-cluster-id> \
+     --db-instance-identifier <restored-aurora-instance-id> \
+     --db-instance-class <instance-class> \
+     --engine aurora-postgresql
+
    # 3. Update APP_DATABASE_URL and Temporal datastore endpoints in user-values.yaml
    # to point to the restored RDS/Aurora endpoint, then re-apply the Helm rollback:
    helm rollback nudgebee 1 --namespace nudgebee --wait
@@ -489,7 +496,7 @@ kubectl get pods --namespace nudgebee --field-selector=status.phase!=Running
 
 # 3. Verify core API readiness endpoint
 kubectl run curl-test --rm -it --image=curlimages/curl --restart=Never -- \
-  curl -sS http://nudgebee-services-server.nudgebee.svc.cluster.local:8080/healthz
+  -sS http://nudgebee-services-server.nudgebee.svc.cluster.local:8080/healthz
 
 # 4. Verify connected agents can reach relay-server
 kubectl logs --namespace nudgebee -l app.kubernetes.io/name=relay-server --tail=50 | grep -i "handshake"
