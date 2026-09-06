@@ -214,7 +214,9 @@ A healthy response returns JSON with `"status": "green"` or `"status": "yellow"`
      ```
   2. Check data stream aliases if using modern Elastic Agent or Fleet:
      ```bash
-     curl -k -fsS -u "elastic:<password>" https://elasticsearch:9200/_data_stream
+     kubectl run es-data-streams --rm -i --restart=Never --image=curlimages/curl -- \
+       curl -k -fsS -u "elastic:<password>" \
+       https://elasticsearch-es-internal-http.monitoring.svc:9200/_data_stream
      ```
   3. If your logs reside in non-standard index names (e.g., `app-logs-*`), configure the index pattern appropriately or set `ELASTICSEARCH_LOG_INDEX` in runner environment variables.
 

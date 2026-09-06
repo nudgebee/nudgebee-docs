@@ -137,7 +137,7 @@ A healthy `/api/v1/health` endpoint returns HTTP 200 with an empty body or JSON 
 ### Scenario 3: `HTTP 400 invalid operator` on Older SigNoz Versions
 
 * **Symptom**: Log autocompletion fails with `invalid operator:`.
-* **Root Cause**: Self-hosted SigNoz versions $\le$ v0.51 reject attribute queries when `aggregateOperator` is omitted.
+* **Root Cause**: Self-hosted SigNoz versions ≤ v0.51 reject attribute queries when `aggregateOperator` is omitted.
 * **Resolution**: The NudgeBee Agent automatically injects `aggregateOperator=noop` and `dataSource=logs` on autocomplete requests. If you are using custom external scripts or proxies, ensure these query parameters are passed.
 
 ### Scenario 4: Connection Refused or Timeout Behind Ingress
