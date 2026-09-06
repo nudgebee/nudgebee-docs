@@ -38,7 +38,7 @@ Explore everything NudgeBee offers for Cloud-Ops Intelligence, troubleshooting, 
 
 - **[Tickets](./tickets.md)** — Turn incidents into trackable tickets automatically. Create, assign, and manage tickets in Jira, ServiceNow, PagerDuty, or GitHub Issues directly from NudgeBee — or let Autopilot do it for you.
 
-- **[SLO Operations](./slo-operations.md)** — Define and track Service Level Objectives and multi-window burn rate alerts to ensure your services meet reliability targets.
+- **[SLOs & Error Budgets](./slo.md)** — Define and track Service Level Objectives and multi-window burn rate alerts to ensure your services meet reliability targets.
 
 - **[Security & Authorization](./security.md)** — Role-based access control, encryption, least-privilege agent permissions, and audit trails.
 
