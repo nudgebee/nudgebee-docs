@@ -200,8 +200,8 @@ sequenceDiagram
 
 ### PostgreSQL Migration Hook (`postgres-migration-job`)
 The primary schema migration is defined as a Helm hook:
-- **Hook Trigger**: `"helm.sh/hook": post-install,post-upgrade`
-- **Hook Weight**: `"-5"` (runs before main application pods roll over)
+- **Hook Trigger**: `"helm.sh/hook": pre-install,pre-upgrade` (runs and completes before application pods are rolled out)
+- **Hook Weight**: `"-5"`
 - **Retry Policy**: `spec.backoffLimit: 0` and `restartPolicy: Never`
 - **Delete Policy**: `"helm.sh/hook-delete-policy": before-hook-creation`
 
@@ -353,12 +353,14 @@ temporal:
         datastores:
           default:
             sql:
+              pluginName: "postgres"
               connectAddr: "rds-postgres.internal.net:5432"
               databaseName: "temporal"
               user: "nb_user"
               password: "YourSecretPass"
           visibility:
             sql:
+              pluginName: "postgres"
               connectAddr: "rds-postgres.internal.net:5432"
               databaseName: "temporal_visibility"
               user: "nb_user"
