@@ -241,7 +241,7 @@ kubectl logs --namespace nudgebee job/postgres-migration-job -c postgres-migrati
 
 ### Temporal Schema Migrations
 Temporal persistence runs against its own PostgreSQL databases (`temporal` and `temporal_visibility`).
-- In the NudgeBee umbrella chart, `temporal.schema.useHelmHooks: false` is configured intentionally. This ensures the schema update job runs as a standard Kubernetes Job alongside PostgreSQL rather than a pre-install hook, eliminating bootstrap deadlocks when PostgreSQL is bundled in the same release.
+- In the NudgeBee umbrella chart (pinning Temporal Helm chart 1.6.0), `temporal.schema.useHelmHooks: false` is configured intentionally (disabling both setup and update hooks; in legacy Helm chart releases this was split across `temporal.schema.setup.useHelmHooks` and `temporal.schema.update.useHelmHooks`). This ensures the schema migration job runs as a standard Kubernetes Job alongside PostgreSQL rather than a pre-install hook, eliminating bootstrap deadlocks when PostgreSQL is bundled in the same release.
 - **Invariant**: The shard count `temporal.server.config.persistence.numHistoryShards` is pinned to **`512`**. **Do not modify this value.** Changing shard counts corrupts existing workflow execution history.
 
 ---
@@ -342,10 +342,14 @@ nudgebee_secret:
   APP_DATABASE_URL: "postgresql://nb_user:YourSecretPass@rds-postgres.internal.net:5432/nudgebee?sslmode=require"
 
 # Ensure Temporal persistence points to the same external database host
+# Note: Temporal chart 1.x (bundled in NudgeBee) nests stores under 'datastores' with 'defaultStore' / 'visibilityStore'.
+# (In legacy pre-1.0 Temporal charts, stores were defined directly under 'persistence').
 temporal:
   server:
     config:
       persistence:
+        defaultStore: default
+        visibilityStore: visibility
         datastores:
           default:
             sql:
