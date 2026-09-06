@@ -241,7 +241,7 @@ kubectl logs --namespace nudgebee job/postgres-migration-job -c postgres-migrati
 
 ### Temporal Schema Migrations
 Temporal persistence runs against its own PostgreSQL databases (`temporal` and `temporal_visibility`).
-- In the NudgeBee umbrella chart (pinning Temporal Helm chart 1.6.0), both `temporal.schema.setup.useHelmHooks: false` and `temporal.schema.update.useHelmHooks: false` (as well as `temporal.schema.useHelmHooks: false`) are configured intentionally. This ensures the schema migration job runs as a standard Kubernetes Job alongside PostgreSQL rather than a pre-install hook, eliminating bootstrap deadlocks when PostgreSQL is bundled in the same release.
+- In the NudgeBee umbrella chart (pinning Temporal Helm chart 1.6.0), both `temporal.schema.setup.registerWithHelmHooks: false` and `temporal.schema.update.registerWithHelmHooks: false` (as well as `temporal.schema.registerWithHelmHooks: false`) are configured intentionally. This ensures the schema migration job runs as a standard Kubernetes Job alongside PostgreSQL rather than a pre-install hook, eliminating bootstrap deadlocks when PostgreSQL is bundled in the same release.
 - **Invariant**: The shard count `temporal.server.config.persistence.numHistoryShards` is pinned to **`512`**. **Do not modify this value.** Changing shard counts corrupts existing workflow execution history.
 
 ---
@@ -431,8 +431,11 @@ Helm rollback reverts Kubernetes Deployments, ConfigMaps, Secrets, and container
      --namespace nudgebee --replicas=0
 
    # 2. Terminate active connections and drop existing databases to prevent duplicate key/relation conflicts during restore
-   kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres -c \
-     "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname IN ('nudgebee', 'temporal', 'temporal_visibility') AND pid <> pg_backend_pid(); DROP DATABASE IF EXISTS nudgebee; DROP DATABASE IF EXISTS temporal; DROP DATABASE IF EXISTS temporal_visibility;"
+   kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres \
+     -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname IN ('nudgebee', 'temporal', 'temporal_visibility') AND pid <> pg_backend_pid();" \
+     -c "DROP DATABASE IF EXISTS nudgebee;" \
+     -c "DROP DATABASE IF EXISTS temporal;" \
+     -c "DROP DATABASE IF EXISTS temporal_visibility;"
 
    # 3. Restore PostgreSQL database from the pre-upgrade backup snapshot
    # (pg_dumpall includes database creation and connection directives)
