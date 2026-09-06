@@ -71,7 +71,7 @@ Provide separate queries for good events and total events:
 
 ### Model B: Threshold-Based Metric
 
-Direct latency percentage (e.g., histogram quantile under 200ms):
+Direct latency percentage (e.g., percentage of requests under 200ms):
 ```promql
 sum(rate(http_request_duration_seconds_bucket{le="0.2", job="checkout"}[5m]))
 /
