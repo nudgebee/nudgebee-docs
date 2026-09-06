@@ -49,21 +49,62 @@ This 32-byte hexadecimal key encrypts all integration credentials, OAuth secrets
 NudgeBee database schema migrations run automatically during upgrades and are typically forward-only. Always create a verified database snapshot before applying upgrades:
 
 ```bash
-# For bundled PostgreSQL:
-kubectl exec -it postgresql-0 --namespace nudgebee -- \
+# For bundled PostgreSQL (use -i without -t to prevent TTY character corruption on piped stdout):
+# Note: In standard Helm releases, pods are named nudgebee-postgresql-0 (or postgresql-0 if fullnameOverride is set).
+kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -- \
   pg_dump -U postgres postgres | gzip > "nudgebee-postgres-preupgrade-$(date +%Y%m%d%H%M%S).sql.gz"
 
-# For AWS RDS / Aurora PostgreSQL:
+# For AWS RDS (Single Instance):
 aws rds create-db-snapshot \
   --db-instance-identifier <your-rds-instance-id> \
+  --db-snapshot-identifier "nudgebee-preupgrade-$(date +%Y%m%d%H%M%S)"
+
+# For AWS Aurora PostgreSQL (Cluster):
+aws rds create-db-cluster-snapshot \
+  --db-cluster-identifier <your-aurora-cluster-id> \
   --db-snapshot-identifier "nudgebee-preupgrade-$(date +%Y%m%d%H%M%S)"
 ```
 
 ---
 
-## 2. Pre-Flight Manifest Comparison
+## 2. Set Edition & Chart Environment
 
-Before modifying resources in the cluster, preview the exact Kubernetes manifests that Helm will create, modify, or delete.
+Select your edition to set the chart repository, target version, and registry authentication before inspecting manifests or executing the upgrade:
+
+<Tabs groupId="edition">
+<TabItem value="community" label="Community (free)">
+
+Set the chart reference to the public GitHub Container Registry:
+
+```bash
+export NUDGEBEE_CHART="oci://ghcr.io/nudgebee/charts/nudgebee"
+export TARGET_VERSION="0.2.0" # Set to target version
+```
+
+</TabItem>
+<TabItem value="enterprise" label="Enterprise">
+
+Log in to the NudgeBee Enterprise registry using your license key:
+
+```bash
+export NUDGEBEE_LICENSE_KEY="<your-license-key>"
+export NUDGEBEE_CHART="oci://registry.nudgebee.com/nudgebee"
+export TARGET_VERSION="0.2.0" # Set to target version
+
+# Authenticate to the OCI registry
+helm registry login registry.nudgebee.com \
+  --username nudgebee \
+  --password "$NUDGEBEE_LICENSE_KEY"
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+## 3. Pre-Flight Manifest Comparison
+
+Before modifying resources in the cluster, preview the exact Kubernetes manifests that Helm will create, modify, or delete using the chart variables configured above.
 
 ### Option A: Using `helm-diff` (Recommended)
 The `helm-diff` plugin renders colorized diffs between the active release and the proposed target release:
@@ -97,25 +138,15 @@ diff -u active-manifests.yaml target-manifests.yaml | less
 ```
 
 ### What to Look for in the Diff:
-- **StatefulSet Spec Changes**: Kubernetes rejects in-place modifications to StatefulSet `volumeClaimTemplates` and pod selectors (see [StatefulSet Troubleshooting](#5-statefulset--pvc-storage-diagnostics)).
+- **StatefulSet Spec Changes**: Kubernetes rejects in-place modifications to StatefulSet `volumeClaimTemplates` and pod selectors (see [StatefulSet Troubleshooting](#6-statefulset--pvc-storage-diagnostics)).
 - **Database Hook Updates**: Changes in migration image tags or environment variables for `postgres-migration-job`.
 - **Resource Limits & Probes**: New CPU/memory allocations or probe timing changes that could impact pod scheduling.
 
 ---
 
-## 3. Execute the Upgrade
+## 4. Execute the Upgrade
 
-<Tabs groupId="edition">
-<TabItem value="community" label="Community (free)">
-
-Set the chart reference to the public GitHub Container Registry:
-
-```bash
-export NUDGEBEE_CHART="oci://ghcr.io/nudgebee/charts/nudgebee"
-export TARGET_VERSION="0.2.0" # Set to desired version
-```
-
-Execute the upgrade with a generous timeout to allow schema migrations to complete:
+Execute the upgrade against your cluster:
 
 ```bash
 helm upgrade nudgebee $NUDGEBEE_CHART \
@@ -125,36 +156,6 @@ helm upgrade nudgebee $NUDGEBEE_CHART \
   --wait \
   --timeout 15m
 ```
-
-</TabItem>
-<TabItem value="enterprise" label="Enterprise">
-
-Log in to the NudgeBee Enterprise registry using your license key:
-
-```bash
-export NUDGEBEE_LICENSE_KEY="<your-license-key>"
-export NUDGEBEE_CHART="oci://registry.nudgebee.com/nudgebee"
-export TARGET_VERSION="0.2.0" # Set to desired version
-
-# Authenticate to the OCI registry
-helm registry login registry.nudgebee.com \
-  --username nudgebee \
-  --password "$NUDGEBEE_LICENSE_KEY"
-```
-
-Execute the upgrade:
-
-```bash
-helm upgrade nudgebee $NUDGEBEE_CHART \
-  --version $TARGET_VERSION \
-  --namespace nudgebee \
-  -f user-values.yaml \
-  --wait \
-  --timeout 15m
-```
-
-</TabItem>
-</Tabs>
 
 :::tip[Avoiding Stale Values]
 Avoid using `--reuse-values` when upgrading across minor or major versions. `--reuse-values` retains outdated default parameters from old chart versions and merges them on top of new chart definitions, which can suppress new features and required configuration updates. Always maintain your own version-controlled `user-values.yaml` containing only your explicit overrides.
@@ -162,9 +163,13 @@ Avoid using `--reuse-values` when upgrading across minor or major versions. `--r
 
 ---
 
-## 4. Database Migration Lifecycle & Diagnostics
+## 5. Database Migration Lifecycle & Diagnostics
 
 NudgeBee relies on two automated database migration mechanisms during upgrades: the PostgreSQL schema migration job and Temporal schema setup.
+
+:::note[Resource Naming Convention]
+In standard Helm installations without custom overrides, Kubernetes workloads are prefixed with the release name (e.g., `nudgebee-app`, `nudgebee-postgresql-0`, `nudgebee-services-server`). If your `values.yaml` specifies `fullnameOverride` (the default in some bundled configurations), the prefix is omitted (e.g., `app`, `postgresql-0`, `services-server`). Adjust the command-line resource names according to your deployment.
+:::
 
 ```mermaid
 sequenceDiagram
@@ -224,7 +229,7 @@ kubectl logs --namespace nudgebee job/postgres-migration-job -c postgres-migrati
    - Long-running queries from active worker pods can block `ALTER TABLE` locks.
    - Scale down background workers temporarily:
      ```bash
-     kubectl scale deployment k8s-collector cloud-collector-server --namespace nudgebee --replicas=0
+     kubectl scale deployment nudgebee-k8s-collector nudgebee-cloud-collector-server --namespace nudgebee --replicas=0
      ```
 3. **Clearing a Failed Job for Re-Run**:
    - The chart specifies `before-hook-creation`, so re-running `helm upgrade` will automatically clean up the old job.
@@ -240,7 +245,7 @@ Temporal persistence runs against its own PostgreSQL databases (`temporal` and `
 
 ---
 
-## 5. StatefulSet & PVC Storage Diagnostics
+## 6. StatefulSet & PVC Storage Diagnostics
 
 Bundled stateful services (PostgreSQL, RabbitMQ, Redis, Qdrant) use Kubernetes `StatefulSet` resources with PersistentVolumeClaims (PVCs).
 
@@ -278,7 +283,7 @@ kubectl get volumeattachment | grep <pv-name>
 kubectl get node <old-node-name>
 
 # 3. If the old pod is lingering in Terminating on the old node, force-terminate:
-kubectl delete pod postgresql-0 --namespace nudgebee --grace-period=0 --force
+kubectl delete pod nudgebee-postgresql-0 --namespace nudgebee --grace-period=0 --force
 ```
 
 ### StatefulSet Immutable Field Violations
@@ -293,7 +298,7 @@ Delete the StatefulSet definition **without deleting the running pods or PVCs** 
 
 ```bash
 # 1. Delete the StatefulSet object, leaving pods and underlying PVCs untouched
-kubectl delete statefulset postgresql --namespace nudgebee --cascade=orphan
+kubectl delete statefulset nudgebee-postgresql --namespace nudgebee --cascade=orphan
 
 # 2. Re-run the helm upgrade to recreate the StatefulSet with the new specification
 helm upgrade nudgebee $NUDGEBEE_CHART --version $TARGET_VERSION -f user-values.yaml --namespace nudgebee
@@ -301,7 +306,7 @@ helm upgrade nudgebee $NUDGEBEE_CHART --version $TARGET_VERSION -f user-values.y
 
 ---
 
-## 6. Bundled vs. External Infrastructure Topology
+## 7. Bundled vs. External Infrastructure Topology
 
 For production-grade scalability and managed failover, NudgeBee allows disabling bundled subcharts and connecting to external managed services.
 
@@ -373,7 +378,7 @@ Before running `helm upgrade` with external databases:
 
 ---
 
-## 7. Rollback & Recovery Runbook
+## 8. Rollback & Recovery Runbook
 
 If an upgrade encounters unrecoverable errors or service disruptions, execute this rollback procedure.
 
@@ -410,22 +415,22 @@ Helm rollback reverts Kubernetes Deployments, ConfigMaps, Secrets, and container
    If a migration altered columns or dropped constraints incompatibly:
    ```bash
    # 1. Scale down application microservices to avoid write conflicts
-   kubectl scale deployment app services-server workflow-server notifications \
+   kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
      --namespace nudgebee --replicas=0
 
    # 2. Restore PostgreSQL database from the pre-upgrade backup snapshot
-   # (For bundled postgres)
+   # (Use -i without -t to avoid TTY corruption)
    gunzip -c nudgebee-postgres-preupgrade-*.sql.gz | \
-     kubectl exec -i postgresql-0 --namespace nudgebee -- psql -U postgres -d postgres
+     kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -- psql -U postgres -d postgres
 
    # 3. Scale application pods back up
-   kubectl scale deployment app services-server workflow-server notifications \
+   kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
      --namespace nudgebee --replicas=1
    ```
 
 ---
 
-## 8. Post-Upgrade Verification
+## 9. Post-Upgrade Verification
 
 After the upgrade completes, verify system health across all layers:
 
@@ -438,7 +443,7 @@ kubectl get pods --namespace nudgebee --field-selector=status.phase!=Running
 
 # 3. Verify core API readiness endpoint
 kubectl run curl-test --rm -it --image=curlimages/curl --restart=Never -- \
-  curl -sS http://services-server.nudgebee.svc.cluster.local:8080/healthz
+  curl -sS http://nudgebee-services-server.nudgebee.svc.cluster.local:8080/healthz
 
 # 4. Verify connected agents can reach relay-server
 kubectl logs --namespace nudgebee -l app.kubernetes.io/name=relay-server --tail=50 | grep -i "handshake"
