@@ -41,6 +41,7 @@ const config = {
           { from: '/docs/installation/agent/installation/node-agent-configs', to: '/docs/installation/agent/operate/node-agent-configs' },
           { from: '/docs/installation/agent/installation/cluster-autoscaler', to: '/docs/installation/agent/operate/cluster-autoscaler' },
           { from: '/docs/installation/agent/installation/cluster-autoscaler/aks_kaarpenter_installation', to: '/docs/installation/agent/operate/cluster-autoscaler/aks_kaarpenter_installation' },
+          { from: '/docs/features/slo-operations', to: '/docs/features/slo' },
         ],
       },
     ],
