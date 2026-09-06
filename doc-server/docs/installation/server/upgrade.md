@@ -421,9 +421,9 @@ Helm rollback reverts Kubernetes Deployments, ConfigMaps, Secrets, and container
    kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
      --namespace nudgebee --replicas=0
 
-   # 2. Drop existing databases to prevent duplicate key/relation conflicts during restore
-   kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- \
-     psql -U postgres -c "DROP DATABASE IF EXISTS nudgebee; DROP DATABASE IF EXISTS temporal; DROP DATABASE IF EXISTS temporal_visibility;"
+   # 2. Terminate active connections and drop existing databases to prevent duplicate key/relation conflicts during restore
+   kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres -c \
+     "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname IN ('nudgebee', 'temporal', 'temporal_visibility') AND pid <> pg_backend_pid(); DROP DATABASE IF EXISTS nudgebee; DROP DATABASE IF EXISTS temporal; DROP DATABASE IF EXISTS temporal_visibility;"
 
    # 3. Restore PostgreSQL database from the pre-upgrade backup snapshot
    # (pg_dumpall includes database creation and connection directives)
