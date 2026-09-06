@@ -62,7 +62,7 @@ NudgeBee supports two SLI evaluation models:
 Provide separate queries for good events and total events:
 - **Good Events (Numerator)**:
   ```promql
-  sum(rate(http_requests_total{job="checkout", status=~"2..|3.."}[5m]))
+  sum(rate(http_requests_total{job="checkout", status=~"[23][0-9]{2}"}[5m]))
   ```
 - **Total Events (Denominator)**:
   ```promql
