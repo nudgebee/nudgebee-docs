@@ -50,9 +50,9 @@ NudgeBee database schema migrations run automatically during upgrades and are ty
 
 ```bash
 # For bundled PostgreSQL (use -i without -t to prevent TTY character corruption on piped stdout):
-# Uses pg_dumpall to capture all databases (application state, temporal, and temporal_visibility):
-# Note: In standard Helm releases, pods are named nudgebee-postgresql-0 (or postgresql-0 if fullnameOverride is set).
-kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -- \
+# Uses pg_dumpall to capture all databases (application state, temporal, and temporal_visibility).
+# Note: Target the postgresql container explicitly (-c postgresql) as the pod contains the postgres-exporter metrics sidecar.
+kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- \
   pg_dumpall -U postgres | gzip > "nudgebee-postgres-preupgrade-$(date +%Y%m%d%H%M%S).sql.gz"
 
 # For AWS RDS (Single Instance):
@@ -352,11 +352,13 @@ temporal:
               connectAddr: "rds-postgres.internal.net:5432"
               databaseName: "temporal"
               user: "nb_user"
+              password: "YourSecretPass"
           visibility:
             sql:
               connectAddr: "rds-postgres.internal.net:5432"
               databaseName: "temporal_visibility"
               user: "nb_user"
+              password: "YourSecretPass"
 
 # 2. Disable bundled RabbitMQ
 rabbitmq:
@@ -419,12 +421,16 @@ Helm rollback reverts Kubernetes Deployments, ConfigMaps, Secrets, and container
    kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
      --namespace nudgebee --replicas=0
 
-   # 2. Restore PostgreSQL database from the pre-upgrade backup snapshot
+   # 2. Drop existing databases to prevent duplicate key/relation conflicts during restore
+   kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- \
+     psql -U postgres -c "DROP DATABASE IF EXISTS nudgebee; DROP DATABASE IF EXISTS temporal; DROP DATABASE IF EXISTS temporal_visibility;"
+
+   # 3. Restore PostgreSQL database from the pre-upgrade backup snapshot
    # (pg_dumpall includes database creation and connection directives)
    gunzip -c nudgebee-postgres-preupgrade-*.sql.gz | \
-     kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -- psql -U postgres
+     kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres
 
-   # 3. Scale application pods back up
+   # 4. Scale application pods back up
    kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
      --namespace nudgebee --replicas=1
    ```
