@@ -9,6 +9,11 @@ updates:
     directory: "/doc-server"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
