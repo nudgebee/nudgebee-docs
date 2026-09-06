@@ -179,12 +179,13 @@ function renderTypes(classifiedTypes, groups) {
   return md;
 }
 
-function renderTOC(groups, classifiedQueries, classifiedMutations, classifiedSubscriptions, classifiedTypes) {
+function renderTOC(groups, classifiedQueries, classifiedMutations, classifiedSubscriptions, classifiedTypes, undeclaredActions) {
   let md = '## Table of Contents\n\n';
 
   md += '- [Getting Started](#getting-started)\n';
   md += '  - [Authentication](#authentication)\n';
   md += '  - [List Cloud Accounts Example](#list-cloud-accounts-example)\n';
+  md += '  - [Errors](#errors)\n';
   md += '- [Common Examples](#common-examples)\n';
 
   // Queries TOC
@@ -223,6 +224,11 @@ function renderTOC(groups, classifiedQueries, classifiedMutations, classifiedSub
     md += `  - [Other](#subscriptions--other) (${classifiedSubscriptions['other'].length})\n`;
   }
 
+  // Undeclared actions TOC
+  if (undeclaredActions && undeclaredActions.length > 0) {
+    md += `- [Actions Without a Schema Entry](#actions-without-a-schema-entry) (${undeclaredActions.length})\n`;
+  }
+
   // Types TOC
   let coreTotal = 0;
   let helperTotal = 0;
@@ -237,12 +243,54 @@ function renderTOC(groups, classifiedQueries, classifiedMutations, classifiedSub
   return md;
 }
 
-function renderMarkdown({ gettingStarted, examples, groups, classifiedQueries, classifiedMutations, classifiedSubscriptions, classifiedTypes }) {
+/**
+ * Escapes one free-text value for a Markdown table cell.
+ *
+ * Order matters: backslashes go first, or escaping the pipe would itself be
+ * neutralised by a trailing backslash already in the text (`a\\` + `|` renders
+ * as an escaped backslash followed by a live column separator). Newlines are
+ * collapsed for the same reason — a row ends at the line break.
+ */
+function escapeTableCell(text) {
+  return String(text || '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\|/g, '\\|')
+    .replace(/\s*[\r\n]+\s*/g, ' ')
+    .trim();
+}
+
+/**
+ * Actions the gateway routes that have no definition in the SDL.
+ *
+ * `actions.yaml` is the routing table and `actions.graphql` is the type
+ * surface, and the two are not in lockstep: an action can be routed without a
+ * schema entry (the gateway only needs the SDL for input coercion on its
+ * bypass path). Those actions are callable and undocumented, which is exactly
+ * the gap that let this reference drift unnoticed — so they are listed rather
+ * than quietly omitted, with the one-line description actions.yaml carries.
+ */
+function renderUndeclaredActions(actions) {
+  if (!actions || actions.length === 0) return '';
+
+  let md = '\n## Actions Without a Schema Entry\n\n';
+  md += `These ${actions.length} actions are routed by the gateway but declare no types in the schema, `;
+  md += 'so they have no signature above. They are callable; their arguments and response shape have to be ';
+  md += 'confirmed against a live environment. Descriptions come from the routing table.\n\n';
+  md += '| Action | Description |\n|---|---|\n';
+  for (const action of actions) {
+    const comment = escapeTableCell(action.comment);
+    md += `| \`${action.name}\` | ${comment} |\n`;
+  }
+  md += '\n---\n';
+  return md;
+}
+
+function renderMarkdown({ gettingStarted, examples, groups, classifiedQueries, classifiedMutations, classifiedSubscriptions, classifiedTypes, undeclaredActions }) {
   let md = '# Nudgebee GraphQL API Documentation\n\n';
   md += `Generated on: ${new Date().toISOString()}\n\n`;
 
   // Table of Contents
-  md += renderTOC(groups, classifiedQueries, classifiedMutations, classifiedSubscriptions, classifiedTypes);
+  md += renderTOC(groups, classifiedQueries, classifiedMutations, classifiedSubscriptions, classifiedTypes, undeclaredActions);
 
   // Getting Started
   md += gettingStarted || getGettingStarted();
@@ -258,6 +306,9 @@ function renderMarkdown({ gettingStarted, examples, groups, classifiedQueries, c
 
   // Subscriptions
   md += renderGroupedOperations('Subscriptions', classifiedSubscriptions, groups, 4);
+
+  // Actions routed but not declared in the schema
+  md += renderUndeclaredActions(undeclaredActions);
 
   // Types
   md += renderTypes(classifiedTypes, groups);
