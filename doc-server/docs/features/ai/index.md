@@ -33,7 +33,7 @@ NudgeBee includes four purpose-built AI assistants, each focused on a specific d
 
 - **[AI Gateway](./ai-gateway.md)** — One endpoint in front of every LLM provider, with routing, tier aliases, quotas and per-user cost attribution.
 - **[LLM Analyser](./llm-analyser.md)** — Where NudgeBee's own AI spend goes, by conversation, model, agent, tool and user.
-- **[Egress Filter](./egress-filter.md)** — Scan what leaves for secrets and PII, and detect, redact or block.
+- **[Egress Filter](./egress-filter.md)** — Scan what leaves for secrets, PII and PHI, and detect, redact, block, or swap personal data for reversible tokens.
 - **[Tools & MCP](./tools-and-mcp.md)** — What the agents are able to do, and which MCP servers are connected.
 - **[Memory Policy](./memory-policy.md)** — The tenant-wide opt-out for each layer of AI memory.
 - **[RCA Format](./rca-format.md)** — The Markdown template the AI fills in when it writes a root cause analysis.

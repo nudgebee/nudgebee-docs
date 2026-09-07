@@ -67,9 +67,13 @@ When a cap is hit, further requests get **HTTP 429** until the window resets. A 
 
 ### Data privacy
 
-**Capture request & response bodies** stores the full prompt and response for each request so admins can inspect their own traffic. It is **off by default**, and a platform administrator can disable it at the platform level, in which case the tenant control is locked and says so.
+![Gateway Data & privacy tab: body capture with its retention warning, and the egress secret filter mode](./img/gateway-data-privacy.png)
+
+**Capture request & response bodies** stores the full prompt and response for each request so admins can inspect their own traffic. It is **off by default**, and a platform administrator can disable it at the platform level, in which case the tenant control is locked and says so. Captured bodies are kept for a fixed retention window, then deleted, and are visible only to the user who made the request.
 
 Turn it on when you are debugging a specific behaviour; leave it off otherwise — it stores whatever your prompts contain.
+
+**Egress secret filter (DLP)** scans outbound request bodies for credentials before they reach a provider. It is the same detector described on the [Egress Filter](./egress-filter.md) page, applied at the gateway instead of to NuBi's own calls — so it covers the traffic *your* applications send. Leave it on **Inherit platform default**, or override it for this tenant with **Off**, **Detect**, **Enforce** or **Redact**; the modes mean the same thing here as they do there.
 
 ## Related
 
