@@ -47,7 +47,7 @@ The agent **never reads Secret data contents** (`get` or `list` on `secrets` is 
 
 ## Data Sent to LLM Providers
 
-Outbound LLM payloads pass through the [Egress Filter](./ai/egress-filter.md) before they reach a provider. It scans for credentials — and, when enabled, swaps emails, names, phone numbers and locations for reversible tokens — so secrets and personal data in log lines, tickets and command output do not leave with the prompt. Policy is per tenant: record, block, or mask.
+Outbound LLM payloads pass through the [Egress Filter](./ai/egress-filter.md) before they reach a provider. It scans for credentials — and, when enabled, swaps emails, names, phone numbers and locations for reversible tokens — so secrets and personal data in log lines, tickets and command output do not leave with the prompt. Policy is per tenant: detect, enforce, or redact.
 
 ## Audit
 - User operations are tracked and can be viewed on the UI.

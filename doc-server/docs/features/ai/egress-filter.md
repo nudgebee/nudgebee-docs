@@ -68,7 +68,7 @@ The shipped rule set covers the credential formats whose presence in an outbound
 
 One further detector, `high-entropy-blob`, flags any random-looking string of 32 characters or more. It is the broadest rule and the noisiest on operational text — image digests, JWT bodies and session IDs all trip it — so expect it to dominate your Detect-mode events.
 
-Rules are identified by a stable id (`aws-access-key-id`, `gcp-api-key`, …) that appears in events, metrics, and the detail view below. The matched value itself is never used as a metric label.
+Rules are identified by a stable ID (`aws-access-key-id`, `gcp-api-key`, …) that appears in events, metrics, and the detail view below. The matched value itself is never used as a metric label.
 
 ### Custom detection patterns
 
