@@ -18,30 +18,41 @@ NudgeBee can only ingest a report with **Daily** granularity and **text/csv**
 format.
 
 :::warning
-The AWS console now steers you towards **Data Exports** (CUR 2.0), which produces
-**Parquet** files. NudgeBee cannot read those. You need the older report type,
-created from **Cost & Usage Reports**, with Daily granularity and CSV output.
+The default export type in the AWS console is **Standard data export** (CUR 2.0).
+NudgeBee cannot use those exports: they are managed by a different API, so
+NudgeBee does not even discover them, and their column layout differs from the
+legacy report. Choose the **Legacy CUR export** type instead, with Daily
+granularity and gzip text/csv output.
 :::
 
 ### Creating a CUR
 
-1. In the AWS Console, open **Billing and Cost Management → Cost & Usage Reports**.
-2. Click **Create report**, and choose the **Legacy CUR (CUR 1.0)** report type —
-   not Data Exports / CUR 2.0.
-3. Give the report a name (e.g. `nudgebeeReport`) and note it — you may need it
+1. In the AWS Console, open **Billing and Cost Management** and choose
+   **Data Exports** in the navigation pane. The standalone *Cost & Usage Reports*
+   page no longer exists — legacy reports are created and listed here.
+2. Click **Create**. Under **Export type**, choose **Legacy CUR export** — not
+   *Standard data export* (CUR 2.0).
+3. Enter an **Export name** (e.g. `nudgebeeReport`) and note it — you may need it
    for Edit Billing Config.
-4. Set **Time granularity** to **Daily**.
-5. Set the report format to **text/csv**, with **GZIP** compression.
-6. Choose or create an S3 bucket to deliver the report to, and accept the default
-   delivery policy.
-7. Create the report.
+4. Under **Export content**, tick **Include resource IDs**. Without it the report
+   has no per-resource line items: total spend still shows, but per-resource
+   cost and rightsizing savings stay empty.
+5. Under **Data table delivery options**, set **Time granularity** to **Daily**.
+   Either **Report versioning** option works; the CloudFormation template uses
+   *Overwrite existing report*.
+6. Leave every **Report data integration** option unticked. Selecting Amazon
+   Athena switches the file format to Parquet, which NudgeBee cannot read.
+7. Set **Compression type and file format** to **gzip – text/csv**.
+8. Under **Data export storage settings**, choose or create an S3 bucket, accept
+   the generated bucket policy, and optionally set an S3 path prefix.
+9. Click **Create report**.
 
 AWS delivers the first report within 24 hours. NudgeBee picks it up on the next
 daily sync — you do not need to re-onboard the account.
 
 The IAM role or user also needs `cur:DescribeReportDefinitions` and
 `s3:GetBucketLocation` / `s3:ListBucket` / `s3:GetObject` on that bucket. All of these
-are in the [least-privilege policy](#least-privilege-iam-policy-manual-role-creation)
+are in the [manual role policy](#least-privilege-iam-policy-manual-role-creation)
 below.
 
 ---
@@ -80,7 +91,11 @@ In the AWS Console, the **Quick create stack** page opens with the NudgeBee temp
 
 Use this flow if you already have a **cross-account IAM role** that NudgeBee can assume.
 
-The role must allow `sts:AssumeRole`, `cur:DescribeReportDefinitions`, and `s3:GetBucketLocation` / `s3:ListBucket` on the CUR bucket.
+The role's **trust policy** must let NudgeBee's principal call `sts:AssumeRole`, and its
+**permissions policy** must grant at least the read-only set in
+[Least-Privilege IAM Policy](#least-privilege-iam-policy-manual-role-creation) — including
+`cur:DescribeReportDefinitions` and `s3:GetBucketLocation` / `s3:ListBucket` / `s3:GetObject`
+on the CUR bucket if you want cost data.
 
 1. Enter a **Display Name** and choose an **Access Mode**.
 2. Paste the **IAM Role ARN** (e.g. `arn:aws:iam::123456789012:role/NudgebeeRole`).
@@ -124,40 +139,126 @@ StackSets deploy only to **member** accounts, not the management account itself.
 
 ## Least-Privilege IAM Policy (Manual Role Creation)
 
-If you prefer to create a custom IAM role manually instead of using the managed CloudFormation template, attach the following least-privilege policy document to your cross-account role:
+Use this if you cannot run the CloudFormation template and want to create the
+cross-account role yourself. It takes two policies: a **trust policy** that lets
+NudgeBee assume the role, and a **permissions policy** that grants what NudgeBee
+reads.
+
+A manually created role supports the **Read-Only** access mode. The write
+permissions behind **Standard** mode and the EventBridge event pipeline are only
+deployed by the CloudFormation template — see
+[Standard access mode](#standard-access-mode-with-a-manual-role) below.
+
+### Step 1 — Trust policy
+
+NudgeBee assumes your role from its own IAM principal. To find that principal's
+ARN, open **Add AWS Account**, stay on the **CloudFormation** tab and click
+**Connect via AWS Console**: the Quick create page lists it as the
+`NudgebeeIamRole` parameter. Copy the value and close the tab without creating
+the stack. On a self-hosted install it is the `NUDGEBEE_INSTANCE_ROLE` value from
+the Helm values.
 
 ```json
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "NudgeBeeCloudWatchDiscovery",
+      "Effect": "Allow",
+      "Principal": { "AWS": "<NUDGEBEE_IAM_PRINCIPAL_ARN>" },
+      "Action": "sts:AssumeRole",
+      "Condition": { "StringEquals": { "sts:ExternalId": "<YOUR_EXTERNAL_ID>" } }
+    }
+  ]
+}
+```
+
+The `Condition` block is optional. If you keep it, enter the same value in the
+**External ID** field when you connect the account — NudgeBee sends it on every
+`sts:AssumeRole` call, and a trust policy that requires it rejects calls without it.
+
+### Step 2 — Permissions policy
+
+Pick one of the two options.
+
+**Option A — mirror the CloudFormation template.** Attach the AWS-managed
+`arn:aws:iam::aws:policy/ReadOnlyAccess` policy, plus this inline policy. This is
+what the template grants in Read-Only mode and keeps working as NudgeBee adds
+support for more AWS services.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "NudgebeeBillingReadOnly",
       "Effect": "Allow",
       "Action": [
-        "cloudwatch:DescribeAlarms",
-        "cloudwatch:DescribeAlarmsForMetric",
-        "cloudwatch:GetMetricData",
-        "cloudwatch:ListMetrics"
+        "budgets:Describe*",
+        "budgets:View*",
+        "ce:Get*",
+        "ce:Describe*",
+        "ce:List*",
+        "cur:Describe*",
+        "pricing:*",
+        "organizations:Describe*",
+        "organizations:List*",
+        "savingsplans:Describe*"
       ],
       "Resource": "*"
     },
     {
-      "Sid": "NudgeBeeEKSDiscovery",
+      "Sid": "NudgebeeLogsQueryAccess",
       "Effect": "Allow",
-      "Action": [
-        "eks:DescribeCluster",
-        "eks:ListClusters"
-      ],
-      "Resource": "*"
+      "Action": ["logs:StartQuery", "logs:StopQuery"],
+      "Resource": "arn:aws:logs:*:*:log-group:*:*"
     },
     {
-      "Sid": "NudgeBeeCostAndUsageDiscovery",
+      "Sid": "NudgebeeCURS3Access",
+      "Effect": "Allow",
+      "Action": ["s3:GetBucketLocation", "s3:ListBucket", "s3:GetObject"],
+      "Resource": [
+        "arn:aws:s3:::<YOUR_CUR_BUCKET_NAME>",
+        "arn:aws:s3:::<YOUR_CUR_BUCKET_NAME>/*"
+      ]
+    }
+  ]
+}
+```
+
+**Option B — explicit least privilege.** If `ReadOnlyAccess` is too broad for
+your policy, attach the following instead. It lists every read action the
+current NudgeBee collector calls, grouped by feature so you can drop a statement
+for a service you do not use — discovery of that service then reports
+`AccessDenied` and is skipped. Because it is a snapshot of today's collector,
+re-check it after NudgeBee upgrades; new AWS services need new actions here,
+whereas Option A picks them up automatically.
+
+Object reads (`s3:GetObject`) are deliberately limited to the CUR bucket; NudgeBee
+reads bucket configuration everywhere but never reads objects outside it.
+
+<details>
+<summary><strong>Option B policy document</strong> (seven statements, about 230 read actions)</summary>
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "NudgeBeeBillingAndRecommendations",
       "Effect": "Allow",
       "Action": [
         "cur:DescribeReportDefinitions",
-        "ce:GetCostAndUsage",
-        "ce:GetCostForecast",
-        "ce:GetDimensionValues"
+        "ce:GetReservationPurchaseRecommendation",
+        "ce:GetSavingsPlansPurchaseRecommendation",
+        "pricing:GetProducts",
+        "cost-optimization-hub:ListRecommendations",
+        "compute-optimizer:GetEnrollmentStatus",
+        "compute-optimizer:GetEC2InstanceRecommendations",
+        "compute-optimizer:GetEBSVolumeRecommendations",
+        "compute-optimizer:GetECSServiceRecommendations",
+        "compute-optimizer:GetLambdaFunctionRecommendations",
+        "support:DescribeTrustedAdvisorChecks",
+        "support:DescribeTrustedAdvisorCheckResult"
       ],
       "Resource": "*"
     },
@@ -173,10 +274,287 @@ If you prefer to create a custom IAM role manually instead of using the managed 
         "arn:aws:s3:::<YOUR_CUR_BUCKET_NAME>",
         "arn:aws:s3:::<YOUR_CUR_BUCKET_NAME>/*"
       ]
+    },
+    {
+      "Sid": "NudgeBeeMonitoring",
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:DescribeAlarms",
+        "cloudwatch:DescribeAlarmsForMetric",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:ListMetrics",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams",
+        "logs:DescribeMetricFilters",
+        "logs:FilterLogEvents",
+        "logs:StartQuery",
+        "logs:StopQuery",
+        "logs:GetQueryResults",
+        "logs:ListTagsForResource",
+        "pi:GetResourceMetrics",
+        "pi:GetDimensionKeyDetails",
+        "xray:GetEncryptionConfig",
+        "xray:GetGroups",
+        "xray:GetSamplingRules",
+        "xray:ListTagsForResource",
+        "cloudtrail:DescribeTrails",
+        "cloudtrail:GetTrailStatus",
+        "cloudtrail:ListTags",
+        "cloudtrail:LookupEvents",
+        "cloudtrail:ListEventDataStores",
+        "cloudtrail:GetEventDataStore"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NudgeBeeComputeDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeAddresses",
+        "ec2:DescribeFlowLogs",
+        "ec2:DescribeInstanceTypes",
+        "ec2:DescribeInstances",
+        "ec2:DescribeInternetGateways",
+        "ec2:DescribeNatGateways",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:DescribeRegions",
+        "ec2:DescribeRouteTables",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeSpotPriceHistory",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeVolumes",
+        "ec2:DescribeVolumesModifications",
+        "ec2:DescribeVpcEndpoints",
+        "ec2:DescribeVpcs",
+        "ec2:GetInstanceTypesFromInstanceRequirements",
+        "autoscaling:DescribeAutoScalingInstances",
+        "application-autoscaling:DescribeScalableTargets",
+        "ecs:DescribeCapacityProviders",
+        "ecs:DescribeClusters",
+        "ecs:DescribeServices",
+        "ecs:DescribeTaskDefinition",
+        "ecs:DescribeTasks",
+        "ecs:ListClusters",
+        "ecs:ListServices",
+        "ecs:ListTasks",
+        "eks:DescribeCluster",
+        "eks:DescribeNodegroup",
+        "eks:ListClusters",
+        "eks:ListNodegroups",
+        "lambda:GetFunction",
+        "lambda:GetFunctionConcurrency",
+        "lambda:ListFunctionUrlConfigs",
+        "lambda:ListFunctions",
+        "lambda:ListProvisionedConcurrencyConfigs",
+        "lambda:ListTags",
+        "elasticbeanstalk:DescribeApplications",
+        "elasticbeanstalk:DescribeEnvironmentHealth",
+        "elasticbeanstalk:DescribeEnvironmentResources",
+        "elasticbeanstalk:DescribeEnvironments",
+        "elasticbeanstalk:ListTagsForResource",
+        "elasticloadbalancing:DescribeListeners",
+        "elasticloadbalancing:DescribeLoadBalancerAttributes",
+        "elasticloadbalancing:DescribeLoadBalancers",
+        "elasticloadbalancing:DescribeTags",
+        "elasticloadbalancing:DescribeTargetGroups",
+        "elasticloadbalancing:DescribeTargetHealth",
+        "cloudformation:DescribeStacks",
+        "cloudformation:ListStacks",
+        "sagemaker:DescribeEndpoint",
+        "sagemaker:DescribeNotebookInstance",
+        "sagemaker:ListEndpoints",
+        "sagemaker:ListNotebookInstances",
+        "sagemaker:ListTags",
+        "bedrock:GetCustomModel",
+        "bedrock:GetModelInvocationLoggingConfiguration",
+        "bedrock:GetProvisionedModelThroughput",
+        "bedrock:ListCustomModels",
+        "bedrock:ListProvisionedModelThroughputs",
+        "bedrock:ListTagsForResource",
+        "states:DescribeStateMachine",
+        "states:ListExecutions",
+        "states:ListStateMachines",
+        "states:ListTagsForResource",
+        "ssm:DescribeDocument",
+        "ssm:DescribeInstanceInformation",
+        "ssm:DescribeInstancePatches",
+        "ssm:DescribeMaintenanceWindows",
+        "ssm:DescribeParameters",
+        "ssm:DescribePatchBaselines",
+        "ssm:ListAssociations",
+        "ssm:ListDocuments",
+        "ssm:ListTagsForResource"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NudgeBeeDataAndMessagingDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "rds:DescribeDBInstances",
+        "rds:DescribeDBSnapshots",
+        "rds:DescribeReservedDBInstances",
+        "dynamodb:DescribeContinuousBackups",
+        "dynamodb:DescribeTable",
+        "dynamodb:DescribeTimeToLive",
+        "dynamodb:ListTables",
+        "dynamodb:ListTagsOfResource",
+        "elasticache:DescribeCacheClusters",
+        "elasticache:DescribeCacheEngineVersions",
+        "elasticache:ListTagsForResource",
+        "redshift:DescribeClusters",
+        "es:DescribeElasticsearchDomains",
+        "es:ListDomainNames",
+        "es:ListTags",
+        "kafka:DescribeClusterV2",
+        "kafka:ListClusters",
+        "kafka:ListClustersV2",
+        "efs:DescribeFileSystems",
+        "efs:DescribeLifecycleConfiguration",
+        "efs:DescribeMountTargets",
+        "s3:ListAllMyBuckets",
+        "s3:GetBucketAcl",
+        "s3:GetEncryptionConfiguration",
+        "s3:GetLifecycleConfiguration",
+        "s3:GetBucketLocation",
+        "s3:GetBucketLogging",
+        "s3:GetBucketPolicyStatus",
+        "s3:GetBucketTagging",
+        "s3:GetBucketVersioning",
+        "s3:GetBucketPublicAccessBlock",
+        "backup:DescribeBackupVault",
+        "backup:GetBackupPlan",
+        "backup:GetBackupVaultAccessPolicy",
+        "backup:ListBackupPlans",
+        "backup:ListBackupVaults",
+        "backup:ListTags",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:ListQueueTags",
+        "sqs:ListQueues",
+        "sns:GetTopicAttributes",
+        "sns:ListSubscriptionsByTopic",
+        "sns:ListTagsForResource",
+        "sns:ListTopics",
+        "ses:DescribeConfigurationSet",
+        "ses:GetIdentityDkimAttributes",
+        "ses:GetIdentityMailFromDomainAttributes",
+        "ses:GetIdentityNotificationAttributes",
+        "ses:GetIdentityVerificationAttributes",
+        "ses:ListConfigurationSets",
+        "ses:ListIdentities",
+        "ecr:DescribeRepositories",
+        "ecr:ListTagsForResource",
+        "ecr-public:DescribeRepositories",
+        "ecr-public:ListTagsForResource",
+        "codeartifact:GetRepositoryPermissionsPolicy",
+        "codeartifact:ListRepositories",
+        "codeartifact:ListTagsForResource"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NudgeBeeNetworkAndEdgeDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "cloudfront:GetDistribution",
+        "cloudfront:ListDistributions",
+        "cloudfront:ListTagsForResource",
+        "route53:GetDNSSEC",
+        "route53:GetHealthCheckStatus",
+        "route53:ListHealthChecks",
+        "route53:ListHostedZones",
+        "route53:ListQueryLoggingConfigs",
+        "route53:ListResourceRecordSets",
+        "route53:ListTagsForResource",
+        "directconnect:DescribeConnections",
+        "directconnect:DescribeLags",
+        "directconnect:DescribeLoa",
+        "directconnect:DescribeTags",
+        "directconnect:DescribeVirtualInterfaces",
+        "wafv2:GetIPSet",
+        "wafv2:GetLoggingConfiguration",
+        "wafv2:GetWebACL",
+        "wafv2:ListIPSets",
+        "wafv2:ListRegexPatternSets",
+        "wafv2:ListResourcesForWebACL",
+        "wafv2:ListTagsForResource",
+        "wafv2:ListWebACLs"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NudgeBeeSecurityPosture",
+      "Effect": "Allow",
+      "Action": [
+        "iam:GetAccessKeyLastUsed",
+        "iam:GetAccountPasswordPolicy",
+        "iam:GetAccountSummary",
+        "iam:ListAccessKeys",
+        "iam:ListAttachedUserPolicies",
+        "iam:ListGroups",
+        "iam:ListMFADevices",
+        "iam:ListRoleTags",
+        "iam:ListRoles",
+        "iam:ListUserPolicies",
+        "iam:ListUserTags",
+        "iam:ListUsers",
+        "kms:DescribeKey",
+        "kms:GetKeyPolicy",
+        "kms:GetKeyRotationStatus",
+        "kms:ListKeys",
+        "kms:ListResourceTags",
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:ListSecrets",
+        "guardduty:GetDetector",
+        "guardduty:ListDetectors",
+        "securityhub:DescribeHub",
+        "securityhub:DescribeStandards",
+        "securityhub:GetFindings",
+        "inspector2:BatchGetAccountStatus",
+        "inspector2:ListCoverage",
+        "inspector2:ListFindings",
+        "config:DescribeComplianceByConfigRule",
+        "config:DescribeConfigRuleEvaluationStatus",
+        "config:DescribeConfigRules",
+        "config:DescribeConfigurationAggregators",
+        "config:DescribeConfigurationRecorderStatus",
+        "config:DescribeConfigurationRecorders",
+        "config:DescribeConformancePackCompliance",
+        "config:DescribeConformancePacks",
+        "config:DescribeDeliveryChannels",
+        "config:ListTagsForResource",
+        "config:SelectResourceConfig"
+      ],
+      "Resource": "*"
     }
   ]
 }
 ```
+
+</details>
+
+### Standard access mode with a manual role
+
+**Standard** mode lets NudgeBee create CloudWatch alarms and apply
+recommendations. These are the write actions NudgeBee uses for that; add them to
+your role only if you want those features. The CloudFormation template grants
+the same set, except the RDS cluster start/stop actions, which only the
+collector uses today:
+
+| Feature | Actions |
+|---|---|
+| CloudWatch alarms | `cloudwatch:PutMetricAlarm`, `cloudwatch:DeleteAlarms` |
+| Log-based alarms | `logs:CreateLogGroup`, `logs:TagLogGroup`, `logs:PutMetricFilter`, `logs:DeleteMetricFilter` |
+| EC2 remediations | `ec2:StartInstances`, `ec2:StopInstances`, `ec2:RebootInstances`, `ec2:ModifyVolume` |
+| RDS remediations | `rds:StartDBInstance`, `rds:StopDBInstance`, `rds:RebootDBInstance`, `rds:StartDBCluster`, `rds:StopDBCluster` |
+| ECS remediations | `ecs:UpdateService` |
+| Run Command on instances | `ssm:SendCommand`, `ssm:GetCommandInvocation`, `ssm:ListCommandInvocations`, `ssm:DescribeInstanceInformation` |
+
+The template also deploys EventBridge rules in every region that forward
+resource state-change events to NudgeBee. A manual role cannot provide that;
+without it, NudgeBee learns about changes on its daily sync rather than in near
+real time.
 
 ---
 
