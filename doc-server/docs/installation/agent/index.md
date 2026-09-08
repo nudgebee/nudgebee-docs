@@ -70,6 +70,8 @@ Kubernetes.
 
 The NudgeBee Cluster Collector runs within your Kubernetes cluster. The main component is the Runner, which acts as a central controller — it coordinates data collection from cluster components and maintains a secure, outbound-only WebSocket connection to the NudgeBee Server.
 
+Telemetry reaches the Runner two ways: events, alerts and eBPF spans are **pushed** to it, while metrics, logs, traces and cost data are **queried in place**, so no second copy of your telemetry is shipped anywhere. The Runner also **acts** on the cluster — restarting, scaling, cordoning, exec-ing into pods and silencing alerts. That path is gated by RBAC and by [`runner.mutateEnabled`](./operate/helm_values.md#permissions-and-access-mode), and every mutation request is signature-checked against the relay's public key before it runs.
+
 <figure style={{margin: '0 0 1.5rem'}}>
   <ThemedImage
     alt="The Cluster Collector inside a monitored Kubernetes cluster. The Kubernetes API Server and Alertmanager push events and alerts into the collector; the Runner queries Prometheus, your log store and the bundled trace store in place; the Node Agent exports eBPF spans to the OTel Collector and is scraped by Prometheus. A single outbound connection on 443 reaches the NudgeBee Relay and Collector servers — no inbound port is opened."
@@ -110,11 +112,16 @@ The node agent produces spans from eBPF and sends them to the OpenTelemetry coll
 ### Metrics
 Metrics come from a Prometheus-compatible backend you already run — Prometheus, Thanos, VictoriaMetrics, Grafana Mimir, Chronosphere, Amazon Managed Prometheus, Azure Monitor. The chart does not install one; the quick-install script will add kube-prometheus-stack if the cluster has none.
 
+### Cost (OpenCost)
+Optional and **off by default** (`opencost.enabled`). When enabled, the chart deploys the OpenCost exporter and the runner probes its `/healthz` endpoint, feeding cluster cost allocation into the Optimize surfaces. See [Helm values](./operate/helm_values.md) for the exporter settings.
+
 ### Recommendation & Diagnostic Jobs
 The runner launches short-lived Jobs for analysis that needs its own tooling:
 - **[Trivy](https://github.com/aquasecurity/trivy)**: scans container images for CVEs.
 - **[KRR](https://github.com/robusta-dev/krr)**: analyses CPU and memory usage for rightsizing recommendations.
 - **[Popeye](https://github.com/derailed/popeye)**: inspects cluster configuration for misconfigurations and anti-patterns.
+
+These Jobs run in the release namespace and are cleaned up when they finish.
 
 ## Component failure boundaries
 
