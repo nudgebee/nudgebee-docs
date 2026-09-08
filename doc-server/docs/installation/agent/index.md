@@ -3,6 +3,9 @@ sidebar_position: 1
 sidebar_label: Cluster Collector
 ---
 
+import ThemedImage from '@theme/ThemedImage';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # Cluster Collector
 
 The NudgeBee Cluster Collector is a lightweight software component that runs inside your Kubernetes cluster. It collects data about workloads, performance, cost, and security, and sends it to the NudgeBee server — feeding the [Semantic Knowledge Graph](../../features/knowledge-graph.md) that powers NudgeBee's Cloud-Ops Intelligence. You need to install a collector in every cluster that you want NudgeBee to monitor. The collector supports AWS, Azure, GCP, and on-premises Kubernetes environments.
@@ -67,46 +70,18 @@ Kubernetes.
 
 The NudgeBee Cluster Collector runs within your Kubernetes cluster. The main component is the Runner, which acts as a central controller — it coordinates data collection from cluster components and maintains a secure, outbound-only WebSocket connection to the NudgeBee Server.
 
-```mermaid
-flowchart TB
-    classDef runner fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e40af,rx:6,ry:6;
-    classDef collector fill:#f0fdf4,stroke:#22c55e,stroke-width:2px,color:#14532d,rx:6,ry:6;
-    classDef k8s fill:#fffbeb,stroke:#f59e0b,stroke-width:2px,color:#92400e,rx:6,ry:6;
-    classDef server fill:#f5f3ff,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6,rx:6,ry:6;
-
-    subgraph MONITORED["Monitored Kubernetes Cluster"]
-        API_SERVER["<b>Kubernetes API Server</b><br/><small>Cluster state, Pods, Deployments</small>"]:::k8s
-
-        subgraph AGENT["NudgeBee Agent Namespace (nudgebee-agent)"]
-            RUNNER["<b>NudgeBee Runner</b> (Deployment)<br/><small>• Aggregates telemetry signals<br/>• Executes in-cluster diagnostic & remediation tasks<br/>• Outbound WSS tunnel</small>"]:::runner
-            KUBEWATCH["<b>Event Watcher (Kubewatch)</b><br/><small>Streams resource changes & pod events</small>"]:::collector
-            NODE_AGENT["<b>Node Agent</b> (DaemonSet)<br/><small>eBPF network metrics, latency & packet telemetry</small>"]:::collector
-            OTEL["<b>OTel Collector + ClickHouse</b><br/><small>Installed by the chart, stores eBPF spans</small>"]:::collector
-        end
-
-        PROM["<b>Prometheus / VictoriaMetrics</b><br/><small>Yours, not installed by the agent</small>"]:::k8s
-        AM["<b>Alertmanager</b><br/><small>Yours — needs a receiver pointing at the agent</small>"]:::k8s
-        LOGS["<b>Log store</b><br/><small>Loki • Elasticsearch • SigNoz</small>"]:::k8s
-    end
-
-    subgraph BACKEND["NudgeBee Server Control Plane"]
-        RELAY["<b>Relay Server</b> (:8080)<br/><small>wss://relay.nudgebee.com/register</small>"]:::server
-        COLLECTOR["<b>Collector Server</b><br/><small>https://collector.nudgebee.com</small>"]:::server
-    end
-
-    API_SERVER -->|Watch Events| KUBEWATCH
-    KUBEWATCH -->|Forward Events| RUNNER
-    NODE_AGENT -->|Scraped by| PROM
-    NODE_AGENT -->|OTLP Spans| OTEL
-    AM -->|"POST /api/alerts"| RUNNER
-
-    RUNNER -->|Query Metrics| PROM
-    RUNNER -->|Query Logs| LOGS
-    RUNNER -->|Query Traces| OTEL
-
-    RUNNER -->|"Outbound WSS :443"| RELAY
-    RUNNER -->|"HTTPS Telemetry :443"| COLLECTOR
-```
+<figure style={{margin: '0 0 1.5rem'}}>
+  <ThemedImage
+    alt="The Cluster Collector inside a monitored Kubernetes cluster. The Kubernetes API Server and Alertmanager push events and alerts into the collector; the Runner queries Prometheus, your log store and the bundled trace store in place; the Node Agent exports eBPF spans to the OTel Collector and is scraped by Prometheus. A single outbound connection on 443 reaches the NudgeBee Relay and Collector servers — no inbound port is opened."
+    sources={{
+      light: useBaseUrl('/img/architecture/cluster-collector-light.svg'),
+      dark: useBaseUrl('/img/architecture/cluster-collector-dark.svg'),
+    }}
+  />
+  <figcaption style={{fontSize: '0.85rem', opacity: 0.75, textAlign: 'center', marginTop: '0.5rem'}}>
+    The Runner is the only component that talks to NudgeBee, and it only ever dials out.
+  </figcaption>
+</figure>
 
 ## Components
 
