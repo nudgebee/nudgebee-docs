@@ -233,7 +233,7 @@ whereas Option A picks them up automatically.
 
 Object reads (`s3:GetObject`) are deliberately limited to the CUR bucket; NudgeBee
 reads bucket configuration everywhere but never reads objects outside it. Log
-**contents** are read, through CloudWatch Logs Insights — that is what root-cause
+**contents** are read through CloudWatch Logs Insights — that is what root-cause
 analysis works from.
 
 #### What each statement powers
@@ -244,9 +244,9 @@ analysis works from.
 | `NudgeBeeCURS3Access` | Reading the Cost & Usage Report | No spend breakdown by resource |
 | `NudgeBeeMonitoring` | Metrics, alarms, log queries, RCA | Troubleshooting and log analysis stop working |
 | `NudgeBeeDependencyMap` | The resource dependency map | Resources are listed but not their relationships |
-| `NudgeBeeComputeDiscovery` | EC2, EKS, ECS, Lambda, ELB, ASG discovery | Those resources are invisible |
-| `NudgeBeeDataAndMessagingDiscovery` | RDS, ElastiCache, OpenSearch, S3, SQS/SNS discovery | Those resources are invisible |
-| `NudgeBeeNetworkAndEdgeDiscovery` | Route 53, CloudFront, Direct Connect, WAF discovery | Those resources are invisible |
+| `NudgeBeeComputeDiscovery` | EC2, EKS, ECS, Lambda, ELB, Auto Scaling and more | Those resources are invisible |
+| `NudgeBeeDataAndMessagingDiscovery` | RDS, DynamoDB, ElastiCache, OpenSearch, S3, EFS, ECR, SQS/SNS and more | Those resources are invisible |
+| `NudgeBeeNetworkAndEdgeDiscovery` | Route 53, CloudFront, Direct Connect, WAF | Those resources are invisible |
 | `NudgeBeeSecurityPosture` | Security and compliance findings | No security findings |
 
 #### Trimming it safely
@@ -603,8 +603,8 @@ the collector running in your cluster; the events do not leave your account.
 These rules ship with the template's **Standard** mode, so they are not available
 with a manual role, and today they cannot be enabled separately from the write
 actions above. Without them NudgeBee learns about changes on its daily sync
-rather than in near real time. Ask us if you want the event pipeline without the
-write permissions.
+rather than in near real time. Contact NudgeBee support if you want the event
+pipeline without the write permissions.
 
 ---
 
