@@ -227,17 +227,53 @@ support for more AWS services.
 
 **Option B — explicit least privilege.** If `ReadOnlyAccess` is too broad for
 your policy, attach the following instead. It lists every read action the
-current NudgeBee collector calls, grouped by feature so you can drop a statement
-for a service you do not use — discovery of that service then reports
-`AccessDenied` and is skipped. Because it is a snapshot of today's collector,
+current NudgeBee collector calls. Because it is a snapshot of today's collector,
 re-check it after NudgeBee upgrades; new AWS services need new actions here,
 whereas Option A picks them up automatically.
 
 Object reads (`s3:GetObject`) are deliberately limited to the CUR bucket; NudgeBee
-reads bucket configuration everywhere but never reads objects outside it.
+reads bucket configuration everywhere but never reads objects outside it. Log
+**contents** are read, through CloudWatch Logs Insights — that is what root-cause
+analysis works from.
+
+#### What each statement powers
+
+| Statement | Powers | If you remove it |
+|---|---|---|
+| `NudgeBeeBillingAndRecommendations` | Spend views, EC2/RDS rightsizing, cost recommendations | No cost data and no rightsizing advice |
+| `NudgeBeeCURS3Access` | Reading the Cost & Usage Report | No spend breakdown by resource |
+| `NudgeBeeMonitoring` | Metrics, alarms, log queries, RCA | Troubleshooting and log analysis stop working |
+| `NudgeBeeDependencyMap` | The resource dependency map | Resources are listed but not their relationships |
+| `NudgeBeeComputeDiscovery` | EC2, EKS, ECS, Lambda, ELB, ASG discovery | Those resources are invisible |
+| `NudgeBeeDataAndMessagingDiscovery` | RDS, ElastiCache, OpenSearch, S3, SQS/SNS discovery | Those resources are invisible |
+| `NudgeBeeNetworkAndEdgeDiscovery` | Route 53, CloudFront, Direct Connect, WAF discovery | Those resources are invisible |
+| `NudgeBeeSecurityPosture` | Security and compliance findings | No security findings |
+
+#### Trimming it safely
+
+**Trim by service prefix, not by whole statement.** The statements are grouped by
+feature, and most mix several services — `NudgeBeeComputeDiscovery` alone covers
+`ec2`, `eks`, `ecs`, `lambda`, `elasticloadbalancing` and more. Dropping the whole
+statement because you do not run ECS also blinds NudgeBee to your EC2 instances and
+EKS clusters. Delete the individual `<service>:` actions for services you do not
+run; discovery of those then reports `AccessDenied` and is skipped, and the account
+connects normally.
+
+Two things that look like tightening but break the policy outright:
+
+* **Do not add a region condition.** `aws:RequestedRegion` scoped to your workload
+  region denies the services that are global or us-east-1 only — `ce`, `cur`,
+  `pricing`, `organizations`, `savingsplans`, `iam`, `route53`, `cloudfront` and
+  `support`. CUR discovery always runs in `us-east-1`.
+* **Do not replace `"Resource": "*"` with resource ARNs or tag conditions.** Most
+  discovery APIs — `ec2:Describe*`, `cloudwatch:ListMetrics`,
+  `elasticloadbalancing:Describe*`, `eks:ListClusters`, `logs:DescribeLogGroups` —
+  do not support resource-level permissions, so an ARN there denies everything.
+  Resource ARNs work only where this policy already uses them: the CUR bucket and
+  log groups.
 
 <details>
-<summary><strong>Option B policy document</strong> (seven statements, about 230 read actions)</summary>
+<summary><strong>Option B policy document</strong> (eight statements, about 230 read actions)</summary>
 
 ```json
 {
@@ -303,6 +339,14 @@ reads bucket configuration everywhere but never reads objects outside it.
         "cloudtrail:LookupEvents",
         "cloudtrail:ListEventDataStores",
         "cloudtrail:GetEventDataStore"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NudgeBeeDependencyMap",
+      "Effect": "Allow",
+      "Action": [
+        "config:SelectResourceConfig"
       ],
       "Resource": "*"
     },
@@ -523,8 +567,7 @@ reads bucket configuration everywhere but never reads objects outside it.
         "config:DescribeConformancePackCompliance",
         "config:DescribeConformancePacks",
         "config:DescribeDeliveryChannels",
-        "config:ListTagsForResource",
-        "config:SelectResourceConfig"
+        "config:ListTagsForResource"
       ],
       "Resource": "*"
     }
@@ -551,10 +594,17 @@ collector uses today:
 | ECS remediations | `ecs:UpdateService` |
 | Run Command on instances | `ssm:SendCommand`, `ssm:GetCommandInvocation`, `ssm:ListCommandInvocations`, `ssm:DescribeInstanceInformation` |
 
-The template also deploys EventBridge rules in every region that forward
-resource state-change events to NudgeBee. A manual role cannot provide that;
-without it, NudgeBee learns about changes on its daily sync rather than in near
-real time.
+The template also deploys EventBridge rules in every region that forward resource
+state-change events — EC2 state changes, RDS events, CloudWatch alarm state
+changes — to the SQS queue configured for your NudgeBee deployment. On a
+self-hosted install that queue lives in **your own AWS account** and is read by
+the collector running in your cluster; the events do not leave your account.
+
+These rules ship with the template's **Standard** mode, so they are not available
+with a manual role, and today they cannot be enabled separately from the write
+actions above. Without them NudgeBee learns about changes on its daily sync
+rather than in near real time. Ask us if you want the event pipeline without the
+write permissions.
 
 ---
 
