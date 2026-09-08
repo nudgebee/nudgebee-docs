@@ -15,7 +15,7 @@ The chart is open source at [`nudgebee/k8s-agent`](https://github.com/nudgebee/k
 | https://charts.bitnami.com/bitnami | clickhouse | 3.1.* | `opentelemetry-collector.enabled` |
 | https://open-telemetry.github.io/opentelemetry-helm-charts | opentelemetry-collector | 0.165.0 | `opentelemetry-collector.enabled` |
 
-For task-oriented guidance, see [Enable or Disable Agent Modules](./module-configuration.md) and [Agent Storage and PVCs](./storage-and-pvcs.md).
+For task-oriented guidance, see [Enable or Disable Collector Modules](./module-configuration.md) and [Collector Storage and PVCs](./storage-and-pvcs.md).
 
 ---
 
@@ -23,14 +23,14 @@ For task-oriented guidance, see [Enable or Disable Agent Modules](./module-confi
 
 | Key | Type | Default | Description |
 |---|---|---|---|
-| `runner.nudgebee.auth_secret_key` | string | `""` | Agent auth key from **Admin → Integrations → Kubernetes Clusters**. The backend derives the account and cluster from this key. |
+| `runner.nudgebee.auth_secret_key` | string | `""` | Collector auth key from **Admin → Integrations → Kubernetes Clusters**. The backend derives the account and cluster from this key. |
 | `runner.nudgebee.endpoint` | string | `https://collector.nudgebee.com` | Collector URL. Self-hosted: `https://collector.yourcompany.com`. |
 | `runner.relay_address` | string | `wss://relay.nudgebee.com/register` | Relay WebSocket URL. Self-hosted: `wss://relay.yourcompany.com/register`. |
 | `globalConfig.prometheus_url` | string | `""` | Prometheus/Thanos/VictoriaMetrics query URL. Empty = auto-discover in-cluster. |
 
 ### Auth key from an existing Secret
 
-If something else creates the credential — External Secrets, a parent chart, your own pipeline — point the agent at that Secret instead of putting the key in your values. Setting this and `auth_secret_key` together fails the install rather than silently picking one.
+If something else creates the credential — External Secrets, a parent chart, your own pipeline — point the collector at that Secret instead of putting the key in your values. Setting this and `auth_secret_key` together fails the install rather than silently picking one.
 
 ```yaml
 runner:
@@ -49,12 +49,12 @@ A default install can already act on workloads: delete and evict pods, exec into
 | Key | Type | Default | Description |
 |---|---|---|---|
 | `runner.enableWritePermissions` | bool | `false` | Adds the cluster-shape permissions the default install leaves out: node delete, Service/Endpoint/ServiceAccount management, Secret update and delete, namespace create and delete, ResourceQuota and LimitRange writes, `statefulsets/scale`, workload creation, Ingress and NetworkPolicy writes, rollout lifecycle. |
-| `runner.readOnly` | bool | `false` | Cuts the ClusterRole down to `get`, `list`, `watch`. No Secrets access at all, no `pods/exec`, no eviction, no node patch. The few writes the agent needs to run come from a Role scoped to the release namespace. |
-| `runner.mutateEnabled` | bool | `true` | Turns the runner's mutating actions on or off inside the agent itself (`delete_pod`, `cordon`, `rollout_restart`, PrometheusRule CRUD, Alertmanager silences, Loki rules). With `false` they are never registered at startup, whatever RBAC allows. |
+| `runner.readOnly` | bool | `false` | Cuts the ClusterRole down to `get`, `list`, `watch`. No Secrets access at all, no `pods/exec`, no eviction, no node patch. The few writes the collector needs to run come from a Role scoped to the release namespace. |
+| `runner.mutateEnabled` | bool | `true` | Turns the runner's mutating actions on or off inside the collector itself (`delete_pod`, `cordon`, `rollout_restart`, PrometheusRule CRUD, Alertmanager silences, Loki rules). With `false` they are never registered at startup, whatever RBAC allows. |
 | `runner.scannerAutoCopyPullSecrets` | bool | `false` | Lets an image scan copy the scanned pod's `imagePullSecrets` into the scanner namespace so private images can be pulled. Also grants secret update, patch, and delete in the release namespace to clean the copies up afterwards. |
 | `runner.customClusterRoleRules` | list | `[]` | Extra rules appended to the runner ClusterRole. |
 | `runnerServiceAccount.imagePullSecrets` | list | `[]` | Pull secrets attached to the runner ServiceAccount. |
-| `automountServiceAccountToken` | bool | `true` | Mount the ServiceAccount token in agent pods. |
+| `automountServiceAccountToken` | bool | `true` | Mount the ServiceAccount token in collector pods. |
 
 | Capability | Default | `enableWritePermissions` | `readOnly` |
 |---|---|---|---|
@@ -82,7 +82,7 @@ helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
 
 Under `readOnly` the rightsizing recommendations still compute; you just cannot apply them from the UI. If your security review needs to see the exact permissions first, the whole read-only ClusterRole is in one file: [`runner-service-account-readonly.yaml`](https://github.com/nudgebee/k8s-agent/blob/main/charts/nudgebee-agent/templates/runner-service-account-readonly.yaml).
 
-If what you want is for the agent not to act, rather than for its ServiceAccount to lose the permission, `mutateEnabled: false` is the smaller change. The actions are never registered and the RBAC stays as it is.
+If what you want is for the collector not to act, rather than for its ServiceAccount to lose the permission, `mutateEnabled: false` is the smaller change. The actions are never registered and the RBAC stays as it is.
 
 ### Actions triggered from the UI
 
@@ -92,7 +92,7 @@ runner:
     relay_signing_public_key: "<server SIGNING_PUBLIC_KEY>"
 ```
 
-This is the relay's Ed25519 public key. The agent uses it to check that a request really came from the relay before running a workload mutation. Leave it empty and those requests are rejected with `401` no matter what RBAC allows. The install command generated by the UI fills it in for you; you only set it by hand when writing your own values file for a self-hosted server.
+This is the relay's Ed25519 public key. The collector uses it to check that a request really came from the relay before running a workload mutation. Leave it empty and those requests are rejected with `401` no matter what RBAC allows. The install command generated by the UI fills it in for you; you only set it by hand when writing your own values file for a self-hosted server.
 
 ---
 
@@ -113,7 +113,7 @@ In-cluster Prometheus needs none of the `auth` values. Use them for managed back
 
 ## Alerts
 
-These values only control the alert rules the chart ships. Getting alerts to the agent is a separate job that happens in your Alertmanager: see [Alert Forwarding](../connect/alertmanager.md).
+These values only control the alert rules the chart ships. Getting alerts to the collector is a separate job that happens in your Alertmanager: see [Alert Forwarding](../connect/alertmanager.md).
 
 | Key | Type | Default | Description |
 |---|---|---|---|
@@ -156,7 +156,7 @@ See [Logging Integration](../connect/logging/index.md).
 | `runner.chronosphere.tracesEnabled` | bool | `true` | Report Chronosphere as the traces provider when `url` is set. |
 | `runner.chronosphere.tracesUrl` | string | `""` | Explicit traces URL; empty falls back to `prometheus_url` when it points at chronosphere.io. |
 | `runner.pinot.url` / `authToken` / `username` / `password` | string | `""` | Apache Pinot broker. |
-| `runner.grafana.url` / `username` / `password` / `extra_headers` | string | `""` | Grafana endpoint the agent proxies UI requests to. `extra_headers` is semicolon-separated. |
+| `runner.grafana.url` / `username` / `password` / `extra_headers` | string | `""` | Grafana endpoint the collector proxies UI requests to. `extra_headers` is semicolon-separated. |
 
 See [Tracing Integration](../connect/tracing/index.md).
 
@@ -240,9 +240,9 @@ Without the prometheus-operator there is no PodMonitor to create. Scrape the nod
 | `openshift.createPrivilegedScc` | bool | `false` | Privileged SCC (node agent eBPF). |
 | `openshift.sccName` / `privilegedSccName` / `sccPriority` / `privilegedSccPriority` | | `null` | Overrides. |
 | `enablePrometheusStack` | bool | `true` | Asserts that the prometheus-operator CRDs (`ServiceMonitor`, `PodMonitor`, `PrometheusRule`) are registered, so those manifests still render during offline templating (Argo CD, Flux). Set `false` on a cluster with no operator. |
-| `enableServiceMonitors` | bool | `true` | Render ServiceMonitors for agent components. |
+| `enableServiceMonitors` | bool | `true` | Render ServiceMonitors for collector components. |
 | `nameOverride` / `fullnameOverride` | string | `""` | Resource naming. |
-| `globalConfig.custom_annotations` | object | `{}` | Annotations added to all agent pods. |
+| `globalConfig.custom_annotations` | object | `{}` | Annotations added to all collector pods. |
 
 ### Installing where there is no Prometheus operator
 

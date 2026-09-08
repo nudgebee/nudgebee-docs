@@ -29,7 +29,7 @@ NudgeBee can integrate with Grafana to surface dashboards directly in the NudgeB
 
    Setting `url` is what enables the integration; there is no `enabled` flag.
 
-3. **Apply configuration and upgrade the agent**
+3. **Apply configuration and upgrade the collector**
    - **Using shell script**:
      ```bash
      sh installation.sh -a <NUDGEBEE_AUTH_KEY> -f values.yaml

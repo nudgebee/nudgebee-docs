@@ -6,12 +6,12 @@ sidebar_position: 4
 
 ## Introduction
 
-Example configuration for pointing the agent at a self-hosted NudgeBee server.
+Example configuration for pointing the collector at a self-hosted NudgeBee server.
 
 ## Prerequisites
 - Onprem Collector-Server Url
 - Onprem Relay-Server Url
-- Agent Keys
+- Cluster Collector Keys
 - Review [Metrics Provider](./connect/metrics.md)
 - Review [Logging Providers](./connect/logging/index.md)
 
@@ -47,4 +47,4 @@ opentelemetry-collector:
 
 ### Alerts
 
-The values above do not wire up alerts. Add a receiver in your Alertmanager that posts to the agent, otherwise this cluster reports metrics and events but never an alert: [Alert Forwarding](./connect/alertmanager.md).
+The values above do not wire up alerts. Add a receiver in your Alertmanager that posts to the collector, otherwise this cluster reports metrics and events but never an alert: [Alert Forwarding](./connect/alertmanager.md).

@@ -4,17 +4,17 @@ sidebar_position: 1
 
 # Grafana Loki
 
-Grafana Loki is a horizontally scalable, multi-tenant log aggregation system. The NudgeBee Agent runner connects to Loki over its HTTP API to execute LogQL range queries, stream label discovery, and fetch targeted logs during root cause analysis (RCA).
+Grafana Loki is a horizontally scalable, multi-tenant log aggregation system. The NudgeBee Cluster Collector runner connects to Loki over its HTTP API to execute LogQL range queries, stream label discovery, and fetch targeted logs during root cause analysis (RCA).
 
 ## Deployment Architectures
 
 Loki can be deployed in two primary topologies:
-* **[Monolithic Loki](https://grafana.com/docs/loki/latest/setup/install/helm/install-monolithic)**: Runs all Loki components (distributor, ingester, querier, query-frontend) inside a single pod or binary. The agent connects directly to the service port (usually `http://loki:3100`).
-* **[Scalable / Microservices Loki](https://grafana.com/docs/loki/latest/setup/install/helm/install-scalable/)**: Deploys separate read, write, and backend stateful sets fronted by an NGINX gateway (`loki-gateway`). The agent connects to the gateway service (usually port `80` or `3100`).
+* **[Monolithic Loki](https://grafana.com/docs/loki/latest/setup/install/helm/install-monolithic)**: Runs all Loki components (distributor, ingester, querier, query-frontend) inside a single pod or binary. The collector connects directly to the service port (usually `http://loki:3100`).
+* **[Scalable / Microservices Loki](https://grafana.com/docs/loki/latest/setup/install/helm/install-scalable/)**: Deploys separate read, write, and backend stateful sets fronted by an NGINX gateway (`loki-gateway`). The collector connects to the gateway service (usually port `80` or `3100`).
 
 ---
 
-## NudgeBee Agent Configuration
+## NudgeBee Cluster Collector Configuration
 
 ### Auto-Discovery vs. Explicit Configuration
 

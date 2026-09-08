@@ -21,10 +21,10 @@ side-by-side examples.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| agent.accessKey | string | `""` | Agent credential. Set explicitly for offline/GitOps renders (Argo CD, Flux) — the chart cannot read an existing credential back and refuses to re-issue it on upgrade. |
+| agent.accessKey | string | `""` | Cluster Collector credential. Set explicitly for offline/GitOps renders (Argo CD, Flux) — the chart cannot read an existing credential back and refuses to re-issue it on upgrade. |
 | agent.accessSecret | string | `""` | See `agent.accessKey`. |
-| agent.clusterName | string | `"nb-control-plane-k8s"` | Name the bundled agent registers its cluster under. |
-| agent.enabled | bool | `true` | Installs the NudgeBee agent alongside the server and connects the hosting cluster. The agent shares this Helm release, so `helm uninstall` removes it too. |
+| agent.clusterName | string | `"nb-control-plane-k8s"` | Name the bundled Cluster Collector registers its cluster under. |
+| agent.enabled | bool | `true` | Installs the NudgeBee Cluster Collector alongside the server and connects the hosting cluster. It shares this Helm release, so `helm uninstall` removes it too. |
 | app.fullnameOverride | string | `"app"` |  |
 | app.image.repository | string | `"nudgebee-app"` |  |
 | app.image.tag | string | `""` |  |

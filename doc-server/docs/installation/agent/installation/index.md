@@ -5,14 +5,14 @@ sidebar_position: 1
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Agent Installation
+# Cluster Collector Installation
 
-Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The agent runs as a lightweight collector DaemonSet and controller within your cluster. It gathers live workload telemetry, resource utilization, events, logs, and distributed traces, streaming them to the NudgeBee Server to build the **Semantic Knowledge Graph** for real-time AI troubleshooting and cost optimizations.
+Install the NudgeBee Cluster Collector on each Kubernetes cluster you want to monitor. It runs as a lightweight DaemonSet and controller within your cluster. It gathers live workload telemetry, resource utilization, events, logs, and distributed traces, streaming them to the NudgeBee Server to build the **Semantic Knowledge Graph** for real-time AI troubleshooting and cost optimizations.
 
-:::note[Do I need the Agent?]
+:::note[Do I need the Collector?]
 - **Connecting a Cloud Account** (AWS/Azure/GCP) provides high-level cloud inventory and cluster auto-discovery without installing software upfront.
-- **Installing the Agent** inside the cluster is **required for deep in-cluster telemetry**, live pod logs, kernel-level eBPF network metrics, and automated AI incident RCA.
-- Both **Cloud SaaS** and **Self-Hosted** deployments install the exact same agent into monitored clusters.
+- **Installing the Collector** inside the cluster is **required for deep in-cluster telemetry**, live pod logs, kernel-level eBPF network metrics, and automated AI incident RCA.
+- Both **Cloud SaaS** and **Self-Hosted** deployments install the exact same collector into monitored clusters.
 :::
 
 :::tip
@@ -20,7 +20,7 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 :::
 
 :::info
-**Cloud SaaS users**: You only need to install the agent — the server is managed for you. Generate your agent auth key at [app.nudgebee.com](https://app.nudgebee.com) and skip straight to [Install the Agent](#2-install-the-agent).
+**Cloud SaaS users**: You only need to install the collector — the server is managed for you. Generate your collector auth key at [app.nudgebee.com](https://app.nudgebee.com) and skip straight to [Install the Collector](#2-install-the-agent).
 
 **Self-hosted users**: Make sure the [NudgeBee Server is installed](../../server/) first. You will need the Relay Server URL and Collector Server URL from your server setup — see [Self-Hosted Configuration](#4-for-self-hosted-nudgebee).
 :::
@@ -50,21 +50,21 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 | **Helm** | v3.x installed and configured | [Install Helm](https://helm.sh/) if you don't have it |
 | **Linux Kernel** | v4.2 or newer on all nodes | Required for eBPF-based network metrics collection |
 | **NudgeBee Auth Key** | Generated from the NudgeBee UI | **Admin → Integrations → Kubernetes Clusters → Add K8s Account** |
-| **Registry access** | Outbound access to `nudgebee.github.io` (Helm repo) and `ghcr.io/nudgebee` (agent images) | Air-gapped clusters can mirror images internally |
+| **Registry access** | Outbound access to `nudgebee.github.io` (Helm repo) and `ghcr.io/nudgebee` (collector images) | Air-gapped clusters can mirror images internally |
 | **Prometheus** | A running Prometheus instance in the cluster | If omitted, the installer can deploy a bundled instance |
 
 ### Resource Footprint
 
-The agent components are designed to be low overhead:
+The collector components are designed to be low overhead:
 
 | Component | Sizing Breakdown | Notes |
 |---|---|---|
-| **Agent Core (without Prometheus)** | **~2 GB RAM, 1-2 CPU cores** | Includes Runner, Node Agent DaemonSet (eBPF), Event Watcher |
-| **Agent with Bundled Observability** | **~5 GB RAM, 2-3 CPU cores** | Includes Prometheus, Alertmanager, and Kube-State-Metrics |
+| **Collector Core (without Prometheus)** | **~2 GB RAM, 1-2 CPU cores** | Includes Runner, Node Agent DaemonSet (eBPF), Event Watcher |
+| **Collector with Bundled Observability** | **~5 GB RAM, 2-3 CPU cores** | Includes Prometheus, Alertmanager, and Kube-State-Metrics |
 
 ---
 
-## 2. Install the Agent
+## 2. Install the Collector {#2-install-the-agent}
 
 ### Step 1: Generate Your Auth Key
 
@@ -74,7 +74,7 @@ The agent components are designed to be low overhead:
 4. The **Finish Setup** step gives you the install command with your **Auth Key** (`<YOUR_AUTH_KEY>`) in it. Copy the key.
 
 :::caution Blast Radius of Auth Key
-Your Auth Key authorizes your agent to send data to your NudgeBee control plane. Store it securely in a secret manager or Kubernetes Secret — never commit it in cleartext.
+Your Auth Key authorizes your collector to send data to your NudgeBee control plane. Store it securely in a secret manager or Kubernetes Secret — never commit it in cleartext.
 :::
 
 ### Step 2: Deploy via Helm
@@ -97,7 +97,7 @@ helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-
   --set kubeStateMetrics.enabled=true \
   -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/kube-prometheus-stack-values.yaml
 
-# 3. Deploy NudgeBee Agent
+# 3. Deploy NudgeBee Cluster Collector
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
@@ -120,7 +120,7 @@ helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-
   --set kubeStateMetrics.enabled=true \
   -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/kube-prometheus-stack-values.yaml
 
-# 3. Deploy NudgeBee Agent
+# 3. Deploy NudgeBee Cluster Collector
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
@@ -135,7 +135,7 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
 helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
 helm repo update
 
-# 2. Deploy NudgeBee Agent (Azure Monitor integration enabled)
+# 2. Deploy NudgeBee Cluster Collector (Azure Monitor integration enabled)
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
@@ -152,7 +152,7 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
 helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
 helm repo update
 
-# 2. Deploy NudgeBee Agent with minimal local footprint
+# 2. Deploy NudgeBee Cluster Collector with minimal local footprint
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
@@ -163,12 +163,12 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
 </TabItem>
 </Tabs>
 
-### Step 3: Send Your Alerts to the Agent
+### Step 3: Send Your Alerts to the Collector
 
-NudgeBee raises alert-driven events only if your Alertmanager posts alerts to the agent. If you installed Prometheus using the values file in Step 2, that receiver is already configured.
+NudgeBee raises alert-driven events only if your Alertmanager posts alerts to the collector. If you installed Prometheus using the values file in Step 2, that receiver is already configured.
 
 :::caution[Already running Prometheus? Configure Alertmanager to push alerts]
-Skipping the Prometheus install is fine—the agent **queries** metrics, so it only needs a reachable URL.
+Skipping the Prometheus install is fine—the collector **queries** metrics, so it only needs a reachable URL.
 
 Alerts are different: they are **pushed**, and the values file in Step 2 is what configures Alertmanager to send them. If you skip Step 2 without wiring Alertmanager, NudgeBee gets metrics and traces but never an alert, with nothing reporting an error.
 
@@ -203,7 +203,7 @@ For complete configuration instructions across kube-prometheus-stack, VictoriaMe
 
 ## 3. Verify the Installation (Checklist) {#3-verify-the-installation}
 
-After running the install command, verify that the agent is communicating with the server:
+After running the install command, verify that the collector is communicating with the server:
 
 ### 1. Verify Pod Readiness
 ```bash
@@ -214,7 +214,7 @@ kubectl get pods -n nudgebee-agent
 - `nudgebee-agent-node-agent-*` (DaemonSet): `1/1 Running` on every worker node
 - `nudgebee-agent-forwarder-*` (event watcher): `1/1 Running`
 
-### 2. Inspect Agent Connection Logs
+### 2. Inspect Collector Connection Logs
 ```bash
 kubectl logs -n nudgebee-agent -l app=nudgebee-agent-runner --tail=50
 ```
@@ -237,13 +237,13 @@ Look for log confirmation: `Connected to NudgeBee Relay successfully` and `Regis
    Which workloads in this cluster have restarted, entered CrashLoopBackOff, or experienced OOMKills in the last 24 hours?
    ```
    **Expected Result**: On a healthy cluster, NuBi confirms no active restart anomalies are detected. On clusters with issues, it provides affected workloads with exit codes and recommended remediation steps.
-4. **Success Verification**: When you receive responses grounded in your cluster's live workloads and node statuses, your agent telemetry pipeline is verified and fully operational.
+4. **Success Verification**: When you receive responses grounded in your cluster's live workloads and node statuses, your collector telemetry pipeline is verified and fully operational.
 
 ---
 
-## 4. Troubleshooting Agent Installation Errors
+## 4. Troubleshooting Collector Installation Errors
 
-Use this diagnostic reference to resolve common agent deployment and communication issues.
+Use this diagnostic reference to resolve common collector deployment and communication issues.
 
 ---
 
@@ -253,7 +253,7 @@ Use this diagnostic reference to resolve common agent deployment and communicati
 |---|---|---|
 | **`401 Unauthorized / Invalid API Key`** | Incorrect or revoked Auth Key | Verify the key under **Admin → Integrations → Kubernetes Clusters** and re-run `helm upgrade` with `--set runner.nudgebee.auth_secret_key="<KEY>"`. |
 | **`node-agent CrashLoopBackOff` (eBPF load failure)** | Kernel < 4.2 or non-standard distro (Bottlerocket, Talos, GKE COS) | Check kernel with `uname -r` and ensure `/sys/kernel/debug` is accessible. As a last resort, drop the DaemonSet with `--set nodeAgent.enabled=false` (loses eBPF network metrics and profiling). |
-| **No alerts in NudgeBee, everything else working** | No Alertmanager receiver points at the agent | Add the receiver. See [Alert Forwarding](../connect/alertmanager.md). Nothing reports this on its own. |
+| **No alerts in NudgeBee, everything else working** | No Alertmanager receiver points at the collector | Add the receiver. See [Alert Forwarding](../connect/alertmanager.md). Nothing reports this on its own. |
 | **`WebSocket Dial Timeout / EOF`** | Outbound firewall or NetworkPolicy blocking TCP 443 | Verify egress to `wss://relay.nudgebee.com` (SaaS) or your relay Ingress. Ensure port 443 is open. |
 | **`Prometheus connection refused / empty metrics`** | Wrong Prometheus service URL or missing KSM | Point `globalConfig.prometheus_url` to valid service DNS (e.g. `http://<service>.<namespace>.svc:9090`). |
 | **`CRD / Webhook timeout error`** | Prometheus operator CRDs not yet established | Wait 30 seconds and re-run the `helm upgrade` command. |
@@ -273,7 +273,7 @@ kubectl logs daemonset/nudgebee-agent-node-agent -n nudgebee-agent
 **Resolution:**
 - Verify that your Kubernetes node kernel is version **4.2 or higher** (`uname -r`).
 - For container-optimized operating systems (e.g. AWS Bottlerocket or GKE COS), ensure debugfs and bpf filesystems are mounted.
-- If running on microVMs or kernels with restricted eBPF, disable the node agent entirely. The rest of the agent (inventory, events, metrics, alerts) keeps working; you lose eBPF network metrics and profiling:
+- If running on microVMs or kernels with restricted eBPF, disable the node agent entirely. The rest of the collector (inventory, events, metrics, alerts) keeps working; you lose eBPF network metrics and profiling:
   ```shell
   helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
     --namespace nudgebee-agent \
@@ -286,7 +286,7 @@ If the cluster connects in the UI but workload CPU and memory graphs remain empt
 
 **Diagnose:**
 ```shell
-# Test Prometheus DNS resolution from inside the agent runner pod
+# Test Prometheus DNS resolution from inside the collector runner pod
 kubectl exec -it deployment/nudgebee-agent-runner -n nudgebee-agent -- wget -qO- http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090/api/v1/query?query=up
 ```
 
@@ -326,7 +326,7 @@ spec:
 
 ## 4. For Self-Hosted NudgeBee
 
-If you are running a self-hosted NudgeBee instance, the agent needs to know where your server is. Instead of the `--set` flags in the SaaS installation, create a `values.yaml` file that points to your server's Relay and Collector URLs.
+If you are running a self-hosted NudgeBee instance, the collector needs to know where your server is. Instead of the `--set` flags in the SaaS installation, create a `values.yaml` file that points to your server's Relay and Collector URLs.
 
 :::info
 **Where do I find these URLs?** You configured them during [Server Installation](/docs/installation/server/).
@@ -380,7 +380,7 @@ helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
   --set runner.enableWritePermissions=true
 ```
 
-To go the other way and leave the agent with `get`, `list`, `watch` and nothing else:
+To go the other way and leave the collector with `get`, `list`, `watch` and nothing else:
 
 ```bash
 helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
@@ -392,19 +392,19 @@ Setting both fails the install. [Permissions and access mode](../operate/helm_va
 
 ### Additional Configuration References
 
-- **[Alert Forwarding](../connect/alertmanager.md)** — Point your Alertmanager at the agent. Without it NudgeBee gets no alerts.
-- **[Helm Values Reference](../operate/helm_values.md)** — Complete list of all configurable values for the agent Helm chart.
+- **[Alert Forwarding](../connect/alertmanager.md)** — Point your Alertmanager at the collector. Without it NudgeBee gets no alerts.
+- **[Helm Values Reference](../operate/helm_values.md)** — Complete list of all configurable values for the collector Helm chart.
 - **[Node Agent Configuration](../operate/node-agent-configs.md)** — Fine-tune the eBPF-based node agent.
 - **[Kubernetes Provider Setup](./k8s-provider/)** — Provider-specific instructions for GKE, AKS, and other managed Kubernetes services.
-- **[Logging Integration](../connect/logging/)** — Connect log sources (ELK, Loki, etc.) to the agent.
+- **[Logging Integration](../connect/logging/)** — Connect log sources (ELK, Loki, etc.) to the collector.
 - **[Tracing Integration](../connect/tracing/)** — Connect tracing backends for distributed tracing.
-- **[Upgrade Guide](./upgrade.md)** — How to upgrade an existing agent to a newer version.
+- **[Upgrade Guide](./upgrade.md)** — How to upgrade an existing collector to a newer version.
 
 ---
 
 ## What's Next?
 
-Your agent is installed and sending data to NudgeBee. Here is what to do next:
+Your collector is installed and sending data to NudgeBee. Here is what to do next:
 
 1. **[Connect an observability source](/docs/integrations/Observability/)** — Connect Prometheus, Datadog, New Relic, or other monitoring tools for metrics, logs, and traces.
 2. **[Set up notifications](/docs/integrations/Notifications/)** — Connect Slack, Teams, or Google Chat to receive alerts.

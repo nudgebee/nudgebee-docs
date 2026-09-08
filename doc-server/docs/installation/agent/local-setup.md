@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Try Locally
 
-Run the agent against a throwaway [KinD](https://kind.sigs.k8s.io/) cluster to see what NudgeBee looks like with real data, without touching a real cluster.
+Run the collector against a throwaway [KinD](https://kind.sigs.k8s.io/) cluster to see what NudgeBee looks like with real data, without touching a real cluster.
 
 ## What you get, and what you don't
 
@@ -38,7 +38,7 @@ kubectl get nodes
 
 In [app.nudgebee.com](https://app.nudgebee.com), go to **Admin → Integrations**, open the **Kubernetes Clusters** card, and click **Add K8s Account**. Name it something you will recognise as disposable, mark it **Non-production**, and finish the wizard. Copy the auth key it gives you.
 
-## 3. Install the agent
+## 3. Install the collector
 
 ```bash
 wget https://raw.githubusercontent.com/nudgebee/k8s-agent/main/installation.sh

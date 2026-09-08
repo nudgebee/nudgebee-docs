@@ -5,17 +5,17 @@ sidebar_position: 1
 
 # Alert Forwarding (Alertmanager)
 
-NudgeBee investigates the alerts you already have. To get them, your Alertmanager has to POST them to the agent. The agent Helm chart cannot set this up, because the configuration lives in your Alertmanager.
+NudgeBee investigates the alerts you already have. To get them, your Alertmanager has to POST them to the collector. The collector Helm chart cannot set this up, because the configuration lives in your Alertmanager.
 
-If you skip it, nothing breaks visibly. Metrics are pulled, so a bad Prometheus URL shows up right away. Alerts are pushed, so when no receiver targets the agent, all the pods stay healthy, no error is logged, and NudgeBee just never raises an alert-driven event. If your cluster shows metrics and workloads but no alerts, start here.
+If you skip it, nothing breaks visibly. Metrics are pulled, so a bad Prometheus URL shows up right away. Alerts are pushed, so when no receiver targets the collector, all the pods stay healthy, no error is logged, and NudgeBee just never raises an alert-driven event. If your cluster shows metrics and workloads but no alerts, start here.
 
 There are three independent checks:
 
 | Check | What it proves | Where to diagnose |
 |---|---|---|
-| **Alertmanager Connected** in Agent Health | The runner can reach the configured Alertmanager `/-/healthy` endpoint. | Agent configuration, service discovery, authentication, and NetworkPolicy. |
+| **Alertmanager Connected** in Agent Health | The runner can reach the configured Alertmanager `/-/healthy` endpoint. | Collector configuration, service discovery, authentication, and NetworkPolicy. |
 | NudgeBee receiver appears in the loaded Alertmanager route tree | Alertmanager accepted the routing configuration. | The generated Alertmanager config and route ordering. |
-| A firing alert appears in NudgeBee | Alertmanager matched the route and delivered the webhook to the correct agent/account. | Alertmanager delivery logs, receiver URL, network path, and agent logs. |
+| A firing alert appears in NudgeBee | Alertmanager matched the route and delivered the webhook to the correct collector/account. | Alertmanager delivery logs, receiver URL, network path, and collector logs. |
 
 A green Agent Health status proves only the first check. It does not prove that Alertmanager is configured to send alerts to NudgeBee.
 
@@ -97,7 +97,7 @@ helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-
   -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/kube-prometheus-stack-values.yaml
 ```
 
-One catch: a values file cannot template, so the URL in it is hardcoded to `nudgebee-agent-runner.nudgebee-agent.svc`. It resolves only if your agent release is named `nudgebee-agent` in a namespace of the same name. With any other name, download the file, replace that URL with the one `helm install` printed, and install from your copy. When the URL does not resolve, Alertmanager logs the failed sends and fires `AlertmanagerFailedToSendAlerts`, but NudgeBee has no way to tell you it is missing alerts.
+One catch: a values file cannot template, so the URL in it is hardcoded to `nudgebee-agent-runner.nudgebee-agent.svc`. It resolves only if your collector release is named `nudgebee-agent` in a namespace of the same name. With any other name, download the file, replace that URL with the one `helm install` printed, and install from your copy. When the URL does not resolve, Alertmanager logs the failed sends and fires `AlertmanagerFailedToSendAlerts`, but NudgeBee has no way to tell you it is missing alerts.
 
 If you already run kube-prometheus-stack and did not install it from that file, add the route and receiver under `alertmanager.config` in your own values:
 
@@ -198,7 +198,7 @@ kubectl create secret generic metrics-datasource-secret \
   -n nudgebee-agent
 ```
 
-If your backend uses basic auth or OAuth2 instead, VMAlert takes `datasource.basicAuth` or `datasource.oauth2` in place of the bearer token below. None of this involves the NudgeBee agent, which only receives what VMAlertmanager forwards.
+If your backend uses basic auth or OAuth2 instead, VMAlert takes `datasource.basicAuth` or `datasource.oauth2` in place of the bearer token below. None of this involves the NudgeBee Cluster Collector, which only receives what VMAlertmanager forwards.
 
 ### 2. Install
 
@@ -210,7 +210,7 @@ helm upgrade --install vma vm/victoria-metrics-k8s-stack --version 0.57.0 -f vm-
 
 ### 3. `vm-operator.yaml`
 
-Point `datasource.url` at the query endpoint the agent already uses (`globalConfig.prometheus_url`). Everything else the VictoriaMetrics stack can install is turned off here, so this release only evaluates rules and routes alerts.
+Point `datasource.url` at the query endpoint the collector already uses (`globalConfig.prometheus_url`). Everything else the VictoriaMetrics stack can install is turned off here, so this release only evaluates rules and routes alerts.
 
 ```yaml
 victoria-metrics-operator:
@@ -359,17 +359,17 @@ To keep the token out of the URL, send it as a header instead. Both work:
             credentials: '<token>'
 ```
 
-**If one Alertmanager serves several clusters**, split the traffic rather than sending everything to one destination. Add a route per cluster matching on the external label your Prometheus or Ruler sets (`cluster`, `prometheus`, or whatever you configured), and give each route its own receiver — either the in-cluster agent for that cluster, or the same public webhook with a different `&cluster=` query label so NudgeBee can tell the events apart.
+**If one Alertmanager serves several clusters**, split the traffic rather than sending everything to one destination. Add a route per cluster matching on the external label your Prometheus or Ruler sets (`cluster`, `prometheus`, or whatever you configured), and give each route its own receiver — either the in-cluster collector for that cluster, or the same public webhook with a different `&cluster=` query label so NudgeBee can tell the events apart.
 
-This matters most when the receiver is an in-cluster agent: the agent stamps every alert it accepts with its own cluster name, so alerts from cluster B arriving at cluster A's agent are attributed to cluster A and name resources that do not exist there.
+This matters most when the receiver is an in-cluster collector: the collector stamps every alert it accepts with its own cluster name, so alerts from cluster B arriving at cluster A's collector are attributed to cluster A and name resources that do not exist there.
 
 ---
 
 ## Using an AlertmanagerConfig CR
 
-If your platform manages Alertmanager entirely through CRs, you can route to NudgeBee that way — but not by simply creating an `AlertmanagerConfig` in the agent's namespace. That is the one arrangement that quietly does the wrong thing.
+If your platform manages Alertmanager entirely through CRs, you can route to NudgeBee that way — but not by simply creating an `AlertmanagerConfig` in the collector's namespace. That is the one arrangement that quietly does the wrong thing.
 
-The operator injects a `namespace=<the CR's own namespace>` matcher into every route it generates from an `AlertmanagerConfig`. A CR in the agent's namespace therefore forwards only alerts that originated in that namespace. NudgeBee receives a trickle, which reads as "mostly working" rather than as a broken config.
+The operator injects a `namespace=<the CR's own namespace>` matcher into every route it generates from an `AlertmanagerConfig`. A CR in the collector's namespace therefore forwards only alerts that originated in that namespace. NudgeBee receives a trickle, which reads as "mostly working" rather than as a broken config.
 
 What controls this is `spec.alertmanagerConfigMatcherStrategy.type` on the `Alertmanager` resource:
 
@@ -431,7 +431,7 @@ Do not reach for `None` to fix this. It drops the namespace restriction for ever
 
 ## Troubleshooting: Why is NudgeBee Not Receiving Alerts? {#verify}
 
-If your cluster shows healthy metrics and active workloads in the Console but NudgeBee never generates alert-driven events or incident investigations, Alertmanager webhooks are not reaching the agent.
+If your cluster shows healthy metrics and active workloads in the Console but NudgeBee never generates alert-driven events or incident investigations, Alertmanager webhooks are not reaching the collector.
 
 Follow this systematic diagnostic checklist to locate and fix the blockage.
 
@@ -546,13 +546,13 @@ Look for errors like:
 
 #### Correcting the Webhook URL
 
-The receiver URL must match your agent release name and namespace:
+The receiver URL must match your collector release name and namespace:
 
 ```
 http://<release-name>-runner.<agent-namespace>.svc.cluster.local/api/alerts
 ```
 
-- If Alertmanager runs in a different namespace (e.g. `monitoring`) than the agent (`nudgebee-agent`), always supply the full `.svc.cluster.local` domain.
+- If Alertmanager runs in a different namespace (e.g. `monitoring`) than the collector (`nudgebee-agent`), always supply the full `.svc.cluster.local` domain.
 - The runner Service listens on port **80** and routes to container port 5000. Do not append `:5000` to the Service URL.
 
 ---
@@ -599,7 +599,7 @@ spec:
 
 ### Step 6: Test Runner Webhook Intake Directly
 
-You can test the agent runner's `/api/alerts` endpoint independently of Alertmanager to confirm it processes payloads and generates findings:
+You can test the collector runner's `/api/alerts` endpoint independently of Alertmanager to confirm it processes payloads and generates findings:
 
 1. Port-forward the runner Service:
    ```bash

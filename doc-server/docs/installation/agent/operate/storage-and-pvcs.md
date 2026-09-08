@@ -1,11 +1,11 @@
 ---
 sidebar_position: 3
-title: Agent Storage, ClickHouse & OpenTelemetry Collector
+title: Collector Storage, ClickHouse & OpenTelemetry Collector
 ---
 
-# Agent Storage, ClickHouse & OpenTelemetry Collector
+# Collector Storage, ClickHouse & OpenTelemetry Collector
 
-The agent runner, event watcher, and node-agent DaemonSet do not require persistent volumes. A default chart installation creates persistent storage for bundled **ClickHouse**, which stores trace and telemetry data received by the bundled **OpenTelemetry Collector**.
+The collector runner, event watcher, and node-agent DaemonSet do not require persistent volumes. A default chart installation creates persistent storage for bundled **ClickHouse**, which stores trace and telemetry data received by the bundled **OpenTelemetry Collector**.
 
 When ClickHouse or the OpenTelemetry Collector crashloop, restart, or fail to start, follow this guide to identify the root cause and remediate it.
 
