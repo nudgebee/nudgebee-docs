@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 # Upgrade NudgeBee Server
 
-Upgrading your NudgeBee Server control plane ensures you benefit from the latest features, security patches, database optimizations, and agent compatibility updates.
+Upgrading your NudgeBee Server control plane ensures you benefit from the latest features, security patches, database optimizations, and Cluster Collector compatibility updates.
 
 This guide provides code-grounded operational procedures for upgrading NudgeBee Server via Helm, inspecting manifest diffs, troubleshooting database migration hooks, diagnosing StatefulSet/PVC storage issues, and executing rollback runbooks.
 
@@ -24,7 +24,7 @@ The chart location and image registry differ by edition (see [Editions & Capabil
 ### Version Pinning Invariant
 In production environments, **always pin explicit chart versions** using `--version <TARGET_VERSION>`. Never run unbounded upgrades against `latest`, which can pull unverified dependencies or major database schema changes without preparation.
 
-Review the [Server Release Notes](../../releases/server/index.md) before upgrading to check for breaking schema migrations, minimum agent version requirements, or deprecated Helm values.
+Review the [Server Release Notes](../../releases/server/index.md) before upgrading to check for breaking schema migrations, minimum Cluster Collector version requirements, or deprecated Helm values.
 
 ### Export Active Configuration & Stored Values
 Helm merges your supplied `-f values.yaml` with values stored in the Helm release secret from the previous deployment. Stored values can carry obsolete parameters across major chart revisions.
@@ -525,7 +525,7 @@ kubectl get pods --namespace nudgebee --field-selector=status.phase!=Running
 kubectl run curl-test --rm -it --image=curlimages/curl --restart=Never -- \
   -sS http://nudgebee-services-server.nudgebee.svc.cluster.local:8080/healthz
 
-# 4. Verify connected agents can reach relay-server
+# 4. Verify connected Cluster Collectors can reach relay-server
 kubectl logs --namespace nudgebee -l app.kubernetes.io/name=relay-server --tail=50 | grep -i "handshake"
 ```
 

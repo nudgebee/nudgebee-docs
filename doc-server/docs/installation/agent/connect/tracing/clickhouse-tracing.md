@@ -10,7 +10,7 @@ The NudgeBee Node Agent is a component designed to collect tracing data from HTT
 
 ## Architecture Diagram
 
-![Agent Architecture](/img/nb_agent_architecture.png)
+![Collector Architecture](/img/nb_agent_architecture.png)
 
 ## Components
 

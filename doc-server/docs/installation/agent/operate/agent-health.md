@@ -3,20 +3,24 @@ id: k8s-agent-health
 title: Kubernetes Agent Health & Subsystem Status
 sidebar_label: Kubernetes Agent Health
 sidebar_position: 3
-keywords: [agent health, k8s agent, relay connection, node agent, logs provider, traces, jaeger, clickhouse]
+keywords: [agent health, k8s collector, relay connection, node agent, logs provider, traces, jaeger, clickhouse]
 intent: inspect
 provider: kubernetes
 ---
 
 # Kubernetes Agent Health & Subsystem Status
 
-The **Agent Health** view in the NudgeBee Console provides real-time visibility into the internal status of the NudgeBee Kubernetes Agent and all connected cluster datasources.
+The **Agent Health** view in the NudgeBee Console provides real-time visibility into the internal status of the NudgeBee Cluster Collector and all connected cluster datasources.
+
+:::note
+The console still labels this view **Agent Health** and its fields **Agent URL** and **Agent Version**. Those are the on-screen labels for the component this documentation now calls the [Cluster Collector](../index.md).
+:::
 
 ---
 
 ## 1. Agent Health Dashboard Overview
 
-On each periodic telemetry tick, the agent runner executes local lightweight probes against all configured datasources and reports their state to the NudgeBee backend.
+On each periodic telemetry tick, the collector runner executes local lightweight probes against all configured datasources and reports their state to the NudgeBee backend.
 
 ```mermaid
 graph LR
@@ -45,12 +49,12 @@ graph LR
 Below is the complete reference of every field displayed on the Agent Health card, how it is probed, and what each status means:
 
 ### 1. Relay Connection
-* **Purpose**: Maintains a bidirectional WebSocket/gRPC reverse proxy tunnel between the in-cluster agent and NudgeBee Server. Allows NuBi and operators to execute live diagnostic queries, fetch pod logs, or run interactive terminal sessions without opening inbound firewall ports into the cluster.
+* **Purpose**: Maintains a bidirectional WebSocket/gRPC reverse proxy tunnel between the in-cluster collector and NudgeBee Server. Allows NuBi and operators to execute live diagnostic queries, fetch pod logs, or run interactive terminal sessions without opening inbound firewall ports into the cluster.
 * **Healthy State**: `Connected` (Green).
 * **Probe Mechanism**: Continuous WebSocket keepalive ping.
 * **Failure Causes**:
   * Outbound firewall blocks TCP port `443` to the Relay server.
-  * `RELAY_SERVER_SECRET_KEY` mismatch between agent and server.
+  * `RELAY_SERVER_SECRET_KEY` mismatch between collector and server.
   * Intermediate reverse proxy drops long-lived WebSocket connections (missing `Upgrade: websocket` headers).
 
 ---
@@ -68,7 +72,7 @@ Below is the complete reference of every field displayed on the Agent Health car
 ### 3. Prometheus
 * **Purpose**: Primary metrics engine for cluster CPU, memory, disk, network usage, and Kubernetes object metrics.
 * **Healthy State**: `Connected` (Green), with retention duration displayed (e.g. `15d`).
-* **Probe Mechanism**: The agent runs the PromQL instant query `vector(1)` through its configured authenticated Prometheus client. A valid Prometheus response with `status: success` marks it Connected.
+* **Probe Mechanism**: The collector runs the PromQL instant query `vector(1)` through its configured authenticated Prometheus client. A valid Prometheus response with `status: success` marks it Connected.
 * **Failure Causes**: Incorrect service URL, DNS or network failure, invalid static or managed-provider credentials, a timeout, or a response that is not a successful Prometheus API payload.
 * **Troubleshooting Guide**: See [Why is Prometheus Disconnected?](../connect/prometheus-troubleshooting.md).
 
@@ -77,7 +81,7 @@ Below is the complete reference of every field displayed on the Agent Health car
 ### 4. Alertmanager
 * **Purpose**: Forwards alert definitions, active firing alerts, and alert silencing rules to NudgeBee's event triage engine.
 * **Healthy State**: `Connected` (Green).
-* **Probe Mechanism**: The agent sends `GET /-/healthy` to the configured Alertmanager URL on each telemetry cycle (60 seconds by default).
+* **Probe Mechanism**: The collector sends `GET /-/healthy` to the configured Alertmanager URL on each telemetry cycle (60 seconds by default).
 * **Failure Causes**:
   * Alertmanager service not reachable at configured URL.
   * In-cluster Alertmanager webhook receiver not configured to forward alerts to NudgeBee.
@@ -112,7 +116,7 @@ Below is the complete reference of every field displayed on the Agent Health car
 * **Purpose**: Collects real-time container, pod, and node cost allocations and idle waste metrics.
 * **Healthy State**: `Connected` (Green).
 * **Probe Mechanism**: Probes the OpenCost `/healthz` endpoint.
-* **Failure Causes**: OpenCost pod not running, or agent lacks RBAC to query OpenCost service.
+* **Failure Causes**: OpenCost pod not running, or collector lacks RBAC to query OpenCost service.
 
 ---
 
@@ -138,7 +142,7 @@ Below is the complete reference of every field displayed on the Agent Health car
 ---
 
 ### 10. Agent Version & Latest Version
-* **Purpose**: Displays the currently running agent container image tag compared against the latest stable release published by NudgeBee.
+* **Purpose**: Displays the currently running Cluster Collector container image tag compared against the latest stable release published by NudgeBee.
 * **Upgrade Recommended**: The Console asks you to update whenever the running version differs from the latest version returned by the server.
 
 ---
@@ -160,5 +164,5 @@ Below is the complete reference of every field displayed on the Agent Health car
 ## 4. NuBi Documentation Search
 
 Ask NuBi in chat for guided subsystem setup and troubleshooting:
-- *"How does the Kubernetes agent probe Prometheus and Loki health?"*
+- *"How does the cluster collector probe Prometheus and Loki health?"*
 - *"What does it mean when Node Agent count shows 0 in Agent Health?"*

@@ -3,7 +3,7 @@ sidebar_position: 1
 ---
 # Logging
 
-NudgeBee integrates with your existing logging backends to provide instant log context during automated root cause analysis (RCA) and incident triage. Instead of streaming raw log streams out of your cluster to a third-party service, the NudgeBee Agent runner acts as an authenticated in-cluster query proxy, fetching only the targeted log slices needed to investigate specific alert windows.
+NudgeBee integrates with your existing logging backends to provide instant log context during automated root cause analysis (RCA) and incident triage. Instead of streaming raw log streams out of your cluster to a third-party service, the NudgeBee Cluster Collector runner acts as an authenticated in-cluster query proxy, fetching only the targeted log slices needed to investigate specific alert windows.
 
 ## Supported Logging Providers
 

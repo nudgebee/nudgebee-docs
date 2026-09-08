@@ -4,11 +4,11 @@ sidebar_position: 3
 
 # Google Cloud Trace
 
-Use this when your traces already live in Google Cloud Trace and you do not want a second copy in the agent's bundled ClickHouse.
+Use this when your traces already live in Google Cloud Trace and you do not want a second copy in the collector's bundled ClickHouse.
 
 ## How it fits together
 
-Cloud Trace has no query API the agent can use for this, so traces are exported from Cloud Trace to BigQuery, and the agent queries BigQuery:
+Cloud Trace has no query API the collector can use for this, so traces are exported from Cloud Trace to BigQuery, and the collector queries BigQuery:
 
 ```mermaid
 flowchart LR
@@ -17,15 +17,15 @@ flowchart LR
     NB[NudgeBee agent] -- SQL --> BQ
 ```
 
-Two pieces to set up: getting spans into Cloud Trace and on to BigQuery, and giving the agent read access to that dataset.
+Two pieces to set up: getting spans into Cloud Trace and on to BigQuery, and giving the collector read access to that dataset.
 
 ## 1. Export traces to BigQuery
 
-Point the OpenTelemetry collector at Google Cloud with the [`googlecloud` exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/googlecloudexporter/README.md), then set up a Cloud Trace [export sink to BigQuery](https://cloud.google.com/trace/docs/trace-export-bigquery). Note the dataset — the agent queries it by project.
+Point the OpenTelemetry collector at Google Cloud with the [`googlecloud` exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/googlecloudexporter/README.md), then set up a Cloud Trace [export sink to BigQuery](https://cloud.google.com/trace/docs/trace-export-bigquery). Note the dataset — the collector queries it by project.
 
-## 2. Give the agent access to BigQuery
+## 2. Give the collector access to BigQuery
 
-The agent authenticates with Application Default Credentials, so on GKE it picks up Workload Identity with no credentials in your values file.
+The collector authenticates with Application Default Credentials, so on GKE it picks up Workload Identity with no credentials in your values file.
 
 ### Using Workload Identity (recommended)
 
@@ -58,7 +58,7 @@ gcloud projects add-iam-policy-binding [PROJECT_ID] \
   --role="roles/bigquery.jobUser"
 ```
 
-Bind it to the **agent's own** service account. Do not create a new one — the chart already has `<release>-runner-service-account`, and that is the identity the runner uses:
+Bind it to the **collector's own** service account. Do not create a new one — the chart already has `<release>-runner-service-account`, and that is the identity the runner uses:
 
 ```bash
 gcloud iam service-accounts add-iam-policy-binding \
@@ -126,7 +126,7 @@ gcloud projects add-iam-policy-binding [PROJECT_ID] \
   --role="roles/bigquery.jobUser"
 
 # nodes also need the cloud-platform scope; scopes cannot be changed on an
-# existing pool, so create one and move the agent to it if they are missing
+# existing pool, so create one and move the collector to it if they are missing
 gcloud container node-pools describe [NODE_POOL_NAME] \
   --cluster=[CLUSTER_NAME] --zone=[ZONE] \
   --format="value(config.oauthScopes)"

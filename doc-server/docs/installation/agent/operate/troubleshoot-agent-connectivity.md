@@ -1,22 +1,22 @@
 ---
 id: agent-connectivity
-title: Troubleshoot NudgeBee Agent Connectivity
-sidebar_label: Agent Connectivity & Heartbeat
+title: Troubleshoot NudgeBee Cluster Collector Connectivity
+sidebar_label: Collector Connectivity & Heartbeat
 sidebar_position: 2
-keywords: [agent disconnected, agent heartbeat, agent flapping, last connected, proxy agent, agent health, agent status]
+keywords: [collector disconnected, collector heartbeat, collector flapping, last connected, proxy agent, agent health, collector status]
 intent: diagnose
 provider: all
 ---
 
-# Troubleshoot NudgeBee Agent Connectivity
+# Troubleshoot NudgeBee Cluster Collector Connectivity
 
-This guide helps you diagnose and resolve connectivity issues between your infrastructure agents (Kubernetes Agent, Proxy Agent, or Cloud Integrations) and the NudgeBee backend platform.
+This guide helps you diagnose and resolve connectivity issues between NudgeBee's data-collection components (Cluster Collector, Proxy Agent, or Cloud Integrations) and the NudgeBee backend platform.
 
 ---
 
-## 1. What Agent Connectivity Status Means
+## 1. What Collector Connectivity Status Means
 
-NudgeBee monitors the health of all registered agents using an active telemetry heartbeat loop:
+NudgeBee monitors the health of all registered collectors using an active telemetry heartbeat loop:
 
 ```mermaid
 sequenceDiagram
@@ -40,40 +40,40 @@ sequenceDiagram
 
 | Status | Badge | Meaning |
 | :--- | :--- | :--- |
-| **Connected** | 🟢 Green | The agent is actively reporting telemetry and sending periodic heartbeats. |
-| **Not Connected** | 🔴 Red | No telemetry heartbeat has been received within the connection threshold, or the agent process is stopped. |
-| **Degraded / Warning** | 🟡 Yellow | The core agent is connected, but one or more critical subsystems (e.g., Prometheus, Logs, Traces) failed their local health probe. |
-| **Pending / Initializing** | ⚪ Gray | The agent registration has been created, but the initial heartbeat has not yet been received. |
+| **Connected** | 🟢 Green | The collector is actively reporting telemetry and sending periodic heartbeats. |
+| **Not Connected** | 🔴 Red | No telemetry heartbeat has been received within the connection threshold, or the collector process is stopped. |
+| **Degraded / Warning** | 🟡 Yellow | The core collector is connected, but one or more critical subsystems (e.g., Prometheus, Logs, Traces) failed their local health probe. |
+| **Pending / Initializing** | ⚪ Gray | The collector registration has been created, but the initial heartbeat has not yet been received. |
 
 ---
 
 ## 2. Key Connectivity Concepts
 
 ### What Does "Last Connected" Mean?
-`Last Connected` represents the exact UTC timestamp when the NudgeBee backend last received and validated a telemetry payload or heartbeat ping from the agent (`last_connected_at`).
+`Last Connected` represents the exact UTC timestamp when the NudgeBee backend last received and validated a telemetry payload or heartbeat ping from the collector (`last_connected_at`).
 
 ### Heartbeat Staleness & Recovery
-- **Heartbeat Interval**: The Kubernetes agent periodically posts telemetry snapshots to the backend.
-- **Automatic Recovery**: As soon as the agent recovers and delivers a successful heartbeat tick, the backend automatically transitions the status back to `Connected` without requiring manual intervention or cluster restarts.
+- **Heartbeat Interval**: The cluster collector periodically posts telemetry snapshots to the backend.
+- **Automatic Recovery**: As soon as the collector recovers and delivers a successful heartbeat tick, the backend automatically transitions the status back to `Connected` without requiring manual intervention or cluster restarts.
 
-### Why Does an Agent Alternate (Flap) Between Connected and Not Connected?
+### Why Does a Collector Alternate (Flap) Between Connected and Not Connected?
 Frequent status toggling usually indicates one of three root causes:
-1. **Pod OOMKills / Restarts**: The agent pod is repeatedly crashing and restarting due to memory pressure during large cluster discovery sweeps.
-2. **Network Jitter / Proxy Timeouts**: Intermediate firewalls, HTTP proxies, or cloud NAT gateways are dropping idle connections before the agent's keepalive ping.
+1. **Pod OOMKills / Restarts**: The collector pod is repeatedly crashing and restarting due to memory pressure during large cluster discovery sweeps.
+2. **Network Jitter / Proxy Timeouts**: Intermediate firewalls, HTTP proxies, or cloud NAT gateways are dropping idle connections before the collector's keepalive ping.
 3. **Telemetry Probes Timeout**: A local datasource probe (such as a slow Prometheus query) exceeds the internal probe budget, delaying the heartbeat post.
 
-### Agent vs. Proxy Agent
-- **Direct Kubernetes Agent**: Runs inside your target Kubernetes cluster. It directly scrapes local endpoints (`http://prometheus-server...`) and opens an outbound connection to NudgeBee.
-- **Proxy Agent**: Runs in a bastion or jump-host environment. It is designed to bridge private, air-gapped VPCs/clusters or private databases where direct outbound agent installation is restricted. See [Proxy Agent Troubleshooting](../../proxy-agent/troubleshooting.md).
+### Collector vs. Proxy Agent
+- **Direct Cluster Collector**: Runs inside your target Kubernetes cluster. It directly scrapes local endpoints (`http://prometheus-server...`) and opens an outbound connection to NudgeBee.
+- **Proxy Agent**: Runs in a bastion or jump-host environment. It is designed to bridge private, air-gapped VPCs/clusters or private databases where direct outbound collector installation is restricted. See [Proxy Agent Troubleshooting](../../proxy-agent/troubleshooting.md).
 
-### Agent Version Compatibility
-NudgeBee agents maintain broad backward compatibility with NudgeBee server releases. However, older agent versions may lack probe definitions for newer features or custom trace providers, leading to unpopulated health fields in the UI. Upgrading your agent alongside server updates is recommended.
+### Collector Version Compatibility
+NudgeBee Cluster Collectors maintain broad backward compatibility with NudgeBee server releases. However, older collector versions may lack probe definitions for newer features or custom trace providers, leading to unpopulated health fields in the UI. Upgrading your collector alongside server updates is recommended.
 
 ---
 
 ## 3. Diagnostic Decision Tree
 
-Use this decision tree to pinpoint why your agent is disconnected:
+Use this decision tree to pinpoint why your collector is disconnected:
 
 ```mermaid
 graph TD
@@ -92,17 +92,17 @@ graph TD
 
 ## 4. Provider-Specific Verification Steps
 
-### A. Kubernetes Agent
-Run the following commands to check agent pod health and logs:
+### A. Cluster Collector
+Run the following commands to check collector pod health and logs:
 
 ```bash
 # 1. Check pod status in the release namespace
 kubectl get pods -n nudgebee-agent -o wide
 
-# 2. Inspect recent agent pod events
+# 2. Inspect recent collector pod events
 kubectl describe deployment nudgebee-agent-runner -n nudgebee-agent
 
-# 3. Stream live logs from the agent runner
+# 3. Stream live logs from the collector runner
 kubectl logs -n nudgebee-agent deploy/nudgebee-agent-runner -c runner --tail=100 -f
 ```
 
@@ -115,7 +115,7 @@ kubectl logs -n nudgebee-agent deploy/nudgebee-agent-runner -c runner --tail=100
 ---
 
 ### B. AWS Cloud Account Synchronization
-For AWS agent connections:
+For AWS collector connections:
 1. Verify that the **CloudFormation Stack** deployed in the target account is in `CREATE_COMPLETE` or `UPDATE_COMPLETE` state.
 2. Confirm the cross-account IAM Role trust policy allows NudgeBee's backend IAM role (`sts:AssumeRole`).
 3. Check if AWS API rate limiting is occurring (`RequestLimitExceeded`).
@@ -140,7 +140,7 @@ For GCP connections:
 
 ### Failure 1: Invalid Backend Authentication Secret
 - **Symptom**: Pod logs output `telemetry post failed: HTTP 401 Unauthorized` or `auth secret mismatch`.
-- **Cause**: The `authSecretKey` in the agent's Helm release does not match the secret key configured on the NudgeBee server.
+- **Cause**: The `authSecretKey` in the collector's Helm release does not match the secret key configured on the NudgeBee server.
 - **Remediation**:
   ```bash
   helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
@@ -155,7 +155,7 @@ For GCP connections:
 - **Cause**: Kubernetes cluster egress policies or perimeter firewalls block outbound HTTPS traffic on port `443` to the NudgeBee backend or relay endpoint.
 - **Remediation**:
   - Whitelist the NudgeBee backend domain and relay domain on port `443` (TCP).
-  - If using an outbound corporate HTTP proxy, configure `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` in the agent's `values.yaml`:
+  - If using an outbound corporate HTTP proxy, configure `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` in the collector's `values.yaml`:
     ```yaml
     runner:
       additional_env_vars:
@@ -175,7 +175,7 @@ For GCP connections:
     ```
 
 ### Failure 3: Memory Exhaustion (OOMKilled) on Large Clusters
-- **Symptom**: Agent pod restarts frequently with `OOMKilled (Exit Code 137)`.
+- **Symptom**: Collector pod restarts frequently with `OOMKilled (Exit Code 137)`.
 - **Cause**: The runner's informer cache and discovery snapshot exceed its configured memory limit. Object count matters more than request traffic.
 - **Remediation**:
   Increase resource limits in `values.yaml`:
@@ -194,7 +194,7 @@ For GCP connections:
 
 ## 6. Support Escalation & Diagnostic Bundle
 
-Collect the affected account, UTC time range, pod status, recent Kubernetes events, and relevant agent logs. Confirm your namespace and pod/container names before running the commands.
+Collect the affected account, UTC time range, pod status, recent Kubernetes events, and relevant collector logs. Confirm your namespace and pod/container names before running the commands.
 
 The example below requires Bash, Python 3, and kubectl. It stores diagnostics with owner-only permissions and redacts common credential formats. Redaction is best-effort: review the complete file locally before sharing it, including URLs, event messages, customer identifiers, and application-specific secrets.
 
@@ -233,5 +233,5 @@ If collection fails, inspect the partial output locally and correct the namespac
 ## 7. NuBi Documentation Search
 
 Ask NuBi in chat for guided connectivity troubleshooting:
-- *"How do I troubleshoot a disconnected Kubernetes agent in NudgeBee?"*
-- *"How do I generate a sanitized agent diagnostic bundle for support?"*
+- *"How do I troubleshoot a disconnected cluster collector in NudgeBee?"*
+- *"How do I generate a sanitized collector diagnostic bundle for support?"*

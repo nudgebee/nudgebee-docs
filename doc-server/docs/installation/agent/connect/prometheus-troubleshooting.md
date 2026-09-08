@@ -16,7 +16,7 @@ This guide provides a systematic **10-step decision tree** to identify and resol
 
 ---
 
-## 1. How the Agent Tests Prometheus Connectivity
+## 1. How the Collector Tests Prometheus Connectivity
 
 During each telemetry cycle, the runner executes this PromQL instant query through the same authenticated client used for metrics operations:
 
@@ -64,17 +64,17 @@ flowchart TD
 
 ## 3. Step-by-Step Diagnostic Procedures
 
-### Step 1: Is the Main Kubernetes Agent Connected?
-If the primary agent itself is disconnected, all subsystem badges will show disconnected.
+### Step 1: Is the Main Cluster Collector Connected?
+If the primary collector itself is disconnected, all subsystem badges will show disconnected.
 ```bash
 kubectl get pods -n nudgebee-agent -l app.kubernetes.io/name=nudgebee-agent
 ```
-*If pod is crashlooping or not running, resolve [Agent Connectivity](../operate/troubleshoot-agent-connectivity.md) first.*
+*If pod is crashlooping or not running, resolve [Collector Connectivity](../operate/troubleshoot-agent-connectivity.md) first.*
 
 ---
 
 ### Step 2: Is the Prometheus URL Configured in Helm Values?
-Verify what URL the agent was configured with:
+Verify what URL the collector was configured with:
 ```bash
 helm get values nudgebee-agent -n nudgebee-agent -o json | jq '.globalConfig.prometheus_url'
 ```
@@ -82,8 +82,8 @@ helm get values nudgebee-agent -n nudgebee-agent -o json | jq '.globalConfig.pro
 
 ---
 
-### Step 3: Can the Agent Pod Resolve and Reach the Endpoint?
-Exec into the agent runner container and test direct reachability:
+### Step 3: Can the Collector Pod Resolve and Reach the Endpoint?
+Exec into the collector runner container and test direct reachability:
 ```bash
 kubectl run -n nudgebee-agent nudgebee-connectivity-check --rm -i --restart=Never \
   --image=curlimages/curl -- -fsS --max-time 5 \
@@ -96,7 +96,7 @@ kubectl run -n nudgebee-agent nudgebee-connectivity-check --rm -i --restart=Neve
 ---
 
 ### Step 4: Is the URL Format Correct?
-The agent automatically appends `/api/v1/query` to the configured base URL.
+The collector automatically appends `/api/v1/query` to the configured base URL.
 - ✅ **Correct**: `http://prometheus-operated.monitoring.svc.cluster.local:9090`
 - ❌ **Incorrect**: `http://prometheus-operated.monitoring.svc.cluster.local:9090/api/v1/query` (will result in double path `/api/v1/query/api/v1/query`).
 
@@ -122,7 +122,7 @@ globalConfig:
 ---
 
 ### Step 6: Is the Endpoint Prometheus-Compatible?
-Use the same simple query as the agent to confirm that the endpoint serves the Prometheus query API:
+Use the same simple query as the collector to confirm that the endpoint serves the Prometheus query API:
 ```bash
 kubectl run -n nudgebee-agent nudgebee-connectivity-check --rm -i --restart=Never \
   --image=curlimages/curl -- -fsS \
@@ -154,9 +154,9 @@ kubectl run -n nudgebee-agent nudgebee-connectivity-check --rm -i --restart=Neve
 ```
 *If `result` array is empty, your Prometheus is running but node exporters or kube-state-metrics scrape targets are down.*
 
-### Prometheus is connected, but agent targets or default rules are missing
+### Prometheus is connected, but collector targets or default rules are missing
 
-The health badge checks only that the Prometheus query API responds to `vector(1)`. It does not prove that Prometheus has selected or scraped the monitoring objects created by the agent chart.
+The health badge checks only that the Prometheus query API responds to `vector(1)`. It does not prove that Prometheus has selected or scraped the monitoring objects created by the collector chart.
 
 | Object | Purpose | Chart control |
 |---|---|---|
@@ -185,7 +185,7 @@ In standard `kube-prometheus-stack` installations:
 
 #### How to Enable PodMonitors in Default Prometheus Settings
 
-You have two options to ensure Prometheus discovers the agent's monitoring resources:
+You have two options to ensure Prometheus discovers the collector's monitoring resources:
 
 **Option 1: Configure Prometheus Operator to discover cluster-wide monitors (Recommended for Platform Teams)**
 
@@ -207,7 +207,7 @@ prometheus:
 
 **Option 2: Label NudgeBee resources to match Prometheus selectors**
 
-If you cannot modify the Prometheus CR, supply the selector labels expected by Prometheus in the NudgeBee agent's `values.yaml`:
+If you cannot modify the Prometheus CR, supply the selector labels expected by Prometheus in the NudgeBee Cluster Collector's `values.yaml`:
 
 ```yaml
 prometheusStack:
@@ -215,7 +215,7 @@ prometheusStack:
     release: kube-prometheus-stack # Replace with your Prometheus release name
 ```
 
-This injects the label into the agent's `PodMonitor`, `ServiceMonitor`, and default `PrometheusRule`.
+This injects the label into the collector's `PodMonitor`, `ServiceMonitor`, and default `PrometheusRule`.
 
 ---
 

@@ -14,7 +14,7 @@ Some of these have a dedicated chart value and are easier to set that way: `node
 
 | Flag                   | Description                                         | Default          |
 | ---------------------- | --------------------------------------------------- | ---------------- |
-| `LISTEN`               | Address the agent listens on (`ip:port` or `:port`) | `0.0.0.0:80`     |
+| `LISTEN`               | Address the collector listens on (`ip:port` or `:port`) | `0.0.0.0:80`     |
 | `CGROUPFS_ROOT`        | Path to cgroup filesystem mount                     | `/sys/fs/cgroup` |
 | `EPHEMERAL_PORT_RANGE` | Skip tracking these TCP port ranges                 | `32768-60999`    |
 | `TRACK_PUBLIC_NETWORK` | Whitelisted public IP networks to track             | `0.0.0.0/0`      |
@@ -222,7 +222,7 @@ Run this query directly in the Prometheus configured at `globalConfig.prometheus
 | **Series exist with `job="kubernetes-pods"` or `job="coroot-node-agent"`** | The pod is scraped under an alternate job name. See [Fixing Scrape Job Names](../connect/prometheus-troubleshooting.md#scenario-1-node-agent-is-scraped-under-a-different-job-name). |
 | **Series exist with value `0`** | Prometheus cannot reach the pod IP on port 80. Inspect NetworkPolicies or firewall rules blocking Prometheus scrape egress. |
 | **Fewer series than cluster nodes** | Pods may be missing on tainted nodes (e.g. GPU, Karpenter, or master/control-plane nodes). Add tolerations via `nodeAgent.tolerations`. |
-| **Duplicate series per pod with different labels** | Both a static scrape job and PodMonitor are active, scraping the agent twice with conflicting `instance` labels. Disable `nodeAgent.podmonitor.enabled: false`. |
+| **Duplicate series per pod with different labels** | Both a static scrape job and PodMonitor are active, scraping the collector twice with conflicting `instance` labels. Disable `nodeAgent.podmonitor.enabled: false`. |
 
 #### Matching Prometheus Operator Selectors
 

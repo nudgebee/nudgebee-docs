@@ -3,15 +3,15 @@ sidebar_position: 3
 ---
 # SigNoz
 
-Integrate [SigNoz](https://signoz.io/) with the NudgeBee Kubernetes Agent for unified log analysis, trace correlation, and automated incident triage.
+Integrate [SigNoz](https://signoz.io/) with the NudgeBee Cluster Collector for unified log analysis, trace correlation, and automated incident triage.
 
-The agent queries SigNoz through its v3 query APIs:
+The collector queries SigNoz through its v3 query APIs:
 - **Log Queries**: `POST /api/v3/query_range`
 - **Attribute Autocomplete**: `GET /api/v3/autocomplete/attribute_keys` and `GET /api/v3/autocomplete/attribute_values`
 
 ---
 
-## 1. NudgeBee Agent Configuration
+## 1. NudgeBee Cluster Collector Configuration
 
 To enable SigNoz, specify the `runner.signoz.url` in your Helm values. Setting a non-empty `url` automatically activates the integration (no separate `enabled` toggle is required).
 
@@ -39,7 +39,7 @@ runner:
 | `runner.signoz.password` | string | `""` | SigNoz user password. Used in conjunction with `runner.signoz.user`. |
 
 :::tip Provider Precedence
-The agent checks logging providers in the following order:
+The collector checks logging providers in the following order:
 **Pinot → Elasticsearch → SigNoz → Loki**.
 SigNoz takes precedence over Loki. However, if Elasticsearch is explicitly enabled (`runner.es.enabled: true`), Elasticsearch takes precedence over SigNoz. See [Logging Overview](./index.md#provider-precedence).
 :::
@@ -50,7 +50,7 @@ SigNoz takes precedence over Loki. However, if Elasticsearch is explicitly enabl
 
 ### Option A: SigNoz API Key (Recommended)
 
-When `apiKey` is provided, the agent attaches the `SIGNOZ-API-KEY` HTTP header to all outbound queries.
+When `apiKey` is provided, the collector attaches the `SIGNOZ-API-KEY` HTTP header to all outbound queries.
 
 1. Navigate to **Settings → API Keys** in your SigNoz console.
 2. Create a new API key with query permissions.
@@ -60,7 +60,7 @@ When `apiKey` is provided, the agent attaches the `SIGNOZ-API-KEY` HTTP header t
 
 If using basic user credentials instead of an API key:
 1. Provide `runner.signoz.user` (email) and `runner.signoz.password`.
-2. The agent automatically calls `POST /api/v1/login` against the SigNoz endpoint to obtain an access JWT.
+2. The collector automatically calls `POST /api/v1/login` against the SigNoz endpoint to obtain an access JWT.
 3. The JWT token is securely cached in memory and refreshed automatically when it approaches expiration. Outbound queries carry `Authorization: Bearer <jwt>`.
 
 *(Note: If both `apiKey` and `user`/`password` are configured, `apiKey` takes precedence.)*
@@ -69,12 +69,12 @@ If using basic user credentials instead of an API key:
 
 ## 3. Health Probing & Version Detection
 
-The Kubernetes Agent automatically monitors SigNoz connectivity by probing:
+The Cluster Collector automatically monitors SigNoz connectivity by probing:
 ```http
 GET <SIGNOZ_URL>/api/v1/health
 ```
 
-In addition, the agent queries:
+In addition, the collector queries:
 ```http
 GET <SIGNOZ_URL>/api/v1/version
 ```
@@ -107,7 +107,7 @@ A healthy `/api/v1/health` endpoint returns HTTP 200 with an empty body or JSON 
 
 ### Scenario 1: `HTTP 401 Unauthorized` / Login Failures
 
-* **Symptom**: Agent logs show `signoz login: HTTP 401` or queries return `HTTP 401 Unauthorized`.
+* **Symptom**: Collector logs show `signoz login: HTTP 401` or queries return `HTTP 401 Unauthorized`.
 * **Root Cause**: Invalid API key or expired credentials.
 * **Resolution**:
   1. If using `apiKey`, verify that the key is active in the SigNoz UI under **Settings → API Keys**.
@@ -138,12 +138,12 @@ A healthy `/api/v1/health` endpoint returns HTTP 200 with an empty body or JSON 
 
 * **Symptom**: Log autocompletion fails with `invalid operator:`.
 * **Root Cause**: Self-hosted SigNoz versions ≤ v0.51 reject attribute queries when `aggregateOperator` is omitted.
-* **Resolution**: The NudgeBee Agent automatically injects `aggregateOperator=noop` and `dataSource=logs` on autocomplete requests. If you are using custom external scripts or proxies, ensure these query parameters are passed.
+* **Resolution**: The NudgeBee Cluster Collector automatically injects `aggregateOperator=noop` and `dataSource=logs` on autocomplete requests. If you are using custom external scripts or proxies, ensure these query parameters are passed.
 
 ### Scenario 4: Connection Refused or Timeout Behind Ingress
 
 * **Symptom**: Agent Health reports `Logs: Disconnected` with `dial tcp: i/o timeout` or `connection refused`.
-* **Root Cause**: The agent cannot route to the configured SigNoz URL.
+* **Root Cause**: The collector cannot route to the configured SigNoz URL.
 * **Resolution**:
   1. Check whether SigNoz is deployed in the same cluster or external.
   2. For in-cluster deployments, target the internal Kubernetes Service (e.g. `http://signoz-query-service.platform.svc.cluster.local:8080` or port `3301` depending on your Helm chart values) rather than an external load balancer.

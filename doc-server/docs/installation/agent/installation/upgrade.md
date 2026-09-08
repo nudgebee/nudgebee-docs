@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Upgrade
 
-The Helm chart version and the agent application version are separate. Check both before changing a production cluster:
+The Helm chart version and the collector application version are separate. Check both before changing a production cluster:
 
 ```bash
 helm list -n nudgebee-agent
@@ -17,7 +17,7 @@ Pin the chart version in production so the same command is repeatable across clu
 
 ### Prerequisites
 
-Before upgrading your NudgeBee Agent, ensure the following:
+Before upgrading your NudgeBee Cluster Collector, ensure the following:
 
 #### Software
 - **Helm** installed and configured.

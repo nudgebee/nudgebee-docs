@@ -6,15 +6,15 @@ sidebar_position: 1
 
 ## When to Use
 
-Use the Proxy Agent when you need NudgeBee to query databases, run SSH commands on servers, or access services that are **not running inside Kubernetes**, or when your infrastructure is in a private network that the NudgeBee K8s agent cannot reach.
+Use the Proxy Agent when you need NudgeBee to query databases, run SSH commands on servers, or access services that are **not running inside Kubernetes**, or when your infrastructure is in a private network that the NudgeBee Cluster Collector cannot reach.
 
 | Scenario | Use |
 |----------|-----|
 | Database on a VM, bare metal, or managed service (RDS, Cloud SQL, etc.) | **Proxy Agent** |
 | Run commands on Linux/Windows servers via SSH | **Proxy Agent** |
-| Database running inside your Kubernetes cluster | K8s Agent (default) |
+| Database running inside your Kubernetes cluster | Cluster Collector (default) |
 | Database or server in a private VPC with no K8s access | **Proxy Agent** |
-| You already have a K8s agent but want to add non-K8s resources | **Proxy Agent** (alongside your K8s agent) |
+| You already have a Cluster Collector but want to add non-K8s resources | **Proxy Agent** (alongside your Cluster Collector) |
 
 ## How It Works
 
@@ -100,7 +100,7 @@ Best for: Self-hosted deployments, GitOps workflows, infrastructure-as-code setu
 
 ### Proxy-only versus dual-mode
 
-Most types above are **dual-mode**: NudgeBee can reach them either through the in-cluster agent or through Forager, and you choose per integration with the connection mode. `postgresql`, `mysql`, `mssql`, `clickhouse`, `oracle`, `redis`, `ssh`, `mcp` and `rabbitmq` all work either way.
+Most types above are **dual-mode**: NudgeBee can reach them either through the Cluster Collector or through Forager, and you choose per integration with the connection mode. `postgresql`, `mysql`, `mssql`, `clickhouse`, `oracle`, `redis`, `ssh`, `mcp` and `rabbitmq` all work either way.
 
 `mongodb_proxy`, `kafka_proxy` and `http_proxy` are **proxy-only** — they have no in-cluster equivalent, so Forager is the only way to reach them.
 

@@ -8,10 +8,10 @@ import TabItem from '@theme/TabItem';
 
 # Server Installation
 
-The NudgeBee Server is the central control plane of the NudgeBee platform. It hosts the web UI, Semantic Knowledge Graph, AI agent orchestrator, and workflow execution engine. It receives data from NudgeBee Agents across your clusters and integrates with identity providers and observability tools.
+The NudgeBee Server is the central control plane of the NudgeBee platform. It hosts the web UI, Semantic Knowledge Graph, AI agent orchestrator, and workflow execution engine. It receives data from NudgeBee Cluster Collectors across your clusters and integrates with identity providers and observability tools.
 
 :::note[Self-Hosted Only]
-**Cloud SaaS users**: You do not need to install the server. It is fully managed for you at [app.nudgebee.com](https://app.nudgebee.com). Skip directly to [Agent Installation](../agent/installation/index.md).
+**Cloud SaaS users**: You do not need to install the server. It is fully managed for you at [app.nudgebee.com](https://app.nudgebee.com). Skip directly to [Cluster Collector Installation](../agent/installation/index.md).
 
 **Infrastructure Scope**: The self-hosted NudgeBee Server requires its own Kubernetes cluster (or dedicated namespace) on Kubernetes v1.27+. If you do not operate Kubernetes infrastructure, use Cloud SaaS.
 :::
@@ -19,7 +19,7 @@ The NudgeBee Server is the central control plane of the NudgeBee platform. It ho
 :::tip[Choosing an edition]
 The self-hosted server comes in two editions (see [Editions & Capabilities](../../editions.md) for the full comparison):
 
-- **Community** <Community/> — free, source-available self-hosted edition. The Server is licensed under **BSL 1.1** (converting to Apache 2.0 on its stated change date); Agents are **Apache 2.0**. Images are pulled from the public `ghcr.io/nudgebee` registry. **No license key required.** OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), magic-link email, and credentials login are all included.
+- **Community** <Community/> — free, source-available self-hosted edition. The Server is licensed under **BSL 1.1** (converting to Apache 2.0 on its stated change date); Cluster Collectors are **Apache 2.0**. Images are pulled from the public `ghcr.io/nudgebee` registry. **No license key required.** OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), magic-link email, and credentials login are all included.
 - **Enterprise** <Enterprise/> — adds **SAML 2.0** SSO, NudgeBee's managed models (`nb-llm`, `nb-slm`), and commercial SLA support. Images are pulled from `registry.nudgebee.com` and require a license key.
 
 The installation steps below use tabs — pick your edition in each step.
@@ -160,7 +160,7 @@ Your cluster needs the following network access. Understanding why each rule exi
 - **Outbound to Container Registry** (`ghcr.io/nudgebee` or `registry.nudgebee.com` on port 443): **Required during install/upgrade** to pull container images. *What breaks if blocked:* Pods get stuck in `ImagePullBackOff`.
 - **Internal Cluster DNS Resolution**: **Required for internal service communication**. The server pods must be able to resolve `BASE_URL` and internal service endpoints. *What breaks if blocked:* Auth callback loops and service-to-service communication failures.
 - **Outbound to Integrations** (Slack, Jira, Teams, GitHub, OpenAI / Cloud APIs on port 443): **Required only for enabled integrations**. *What breaks if blocked:* Alert notifications, auto-PRs, or AI analysis queries will fail to dispatch.
-- **Inbound Access** (Port 80/443 via Ingress or port-forward): **Required for user web UI access, webhook triggers, and agent telemetry reception**.
+- **Inbound Access** (Port 80/443 via Ingress or port-forward): **Required for user web UI access, webhook triggers, and collector telemetry reception**.
 
 :::tip Start Simple with Port-Forwarding
 **Why skip Ingress initially?** For local evaluation, testing, or sandboxes, you can run NudgeBee entirely with `kubectl port-forward` without provisioning DNS records, public IPs, or SSL certificates. Add Ingress when transitioning to team use.
@@ -175,7 +175,7 @@ The installation follows three steps: select your edition, configure `values.yam
 ### Step 1: Select Your Edition & Registry Login
 
 :::caution[Protecting Your License & Auth Credentials]
-**Keep your license / auth key secret.** This key authenticates your cluster to the NudgeBee registry and allows agents to report into your control plane. Treat it like a root password:
+**Keep your license / auth key secret.** This key authenticates your cluster to the NudgeBee registry and allows collectors to report into your control plane. Treat it like a root password:
 - Store it in a secret manager (AWS Secrets Manager, Vault) or a Kubernetes Secret.
 - Never commit it to version control or paste it in shared channels.
 - Avoid passing it as an inline CLI flag to prevent it from saving in your shell history (e.g. use `read -s NUDGEBEE_LICENSE_KEY` or environment files).
@@ -319,8 +319,8 @@ kubectl get pods -n nudgebee
 | Pod Name Pattern | Ready State | Status | Role |
 |---|---|---|---|
 | `nudgebee-app-*` | `1/1` | `Running` | Main UI and GraphQL/REST API |
-| `nudgebee-k8s-collector-*` | `1/1` | `Running` | Telemetry receiver for agents |
-| `nudgebee-relay-server-*` | `1/1` | `Running` | WebSocket agent relay server |
+| `nudgebee-k8s-collector-*` | `1/1` | `Running` | Telemetry receiver for Cluster Collectors |
+| `nudgebee-relay-server-*` | `1/1` | `Running` | WebSocket Cluster Collector relay server |
 | `nudgebee-postgresql-0` | `1/1` | `Running` | Core database (if bundled) |
 | `nudgebee-rabbitmq-0` | `1/1` | `Running` | Event message bus (if bundled) |
 | `nudgebee-schema-migration-*` | `0/1` | `Completed` | Post-install database migration job |
@@ -387,9 +387,9 @@ Once logged into the dashboard, complete your initial control plane verification
 
 1. **Verify UI & Dashboard Navigation**: Navigate through **Kubernetes**, **Troubleshoot**, and **Optimizations** to confirm all views load without errors.
 2. **Connect an LLM Provider (BYOM)**: Navigate to **Settings → AI / LLM** and configure your API key ([OpenAI, AWS Bedrock, or Ollama](../../integrations/LLM/)) to enable NuBi AI investigations and automated RCA.
-3. **Next Step: Install the K8s Agent**: The NudgeBee Server is the control plane. To begin ingesting real-time pod telemetry, logs, and metrics from your target clusters, proceed to:
+3. **Next Step: Install the Cluster Collector**: The NudgeBee Server is the control plane. To begin ingesting real-time pod telemetry, logs, and metrics from your target clusters, proceed to:
 
-👉 **[Install the NudgeBee Agent on Your Cluster](../agent/installation/index.md)**
+👉 **[Install the NudgeBee Cluster Collector on Your Cluster](../agent/installation/index.md)**
 
 ---
 
@@ -409,11 +409,11 @@ NudgeBee exposes three services that each need their own Ingress entry:
 | Service | Purpose | Example domain |
 |---|---|---|
 | **App** | The web UI and API | `nudgebee.yourcompany.com` |
-| **Collector** | Receives data from agents running in your monitored clusters | `collector.yourcompany.com` |
-| **Relay** | WebSocket connection for real-time agent communication | `relay.yourcompany.com` |
+| **Collector Server** | Receives data from Cluster Collectors running in your monitored clusters | `collector.yourcompany.com` |
+| **Relay** | WebSocket connection for real-time Cluster Collector communication | `relay.yourcompany.com` |
 
 :::info
-**Relay and Collector URLs for Agent Installation**: When you install agents with Ingress enabled, use:
+**Relay and Collector URLs for Cluster Collector Installation**: When you install collectors with Ingress enabled, use:
 - **Relay Server URL**: `wss://relay.yourcompany.com`
 - **Collector Server URL**: `https://collector.yourcompany.com`
 :::
@@ -618,7 +618,7 @@ kubectl logs deployment/nudgebee-services-server -n nudgebee | grep -i rabbit
 Verify that `RABBIT_MQ_HOST` matches your service name (default `rabbitmq` or `nudgebee-rabbitmq`) and that the `RABBIT_MQ_PASSWORD` matches the secret generated during install.
 
 #### 4. Ingress 502 Bad Gateway / WebSocket EOF
-If the NudgeBee web UI loads but live events, agent connections, or NuBi AI chat stream disconnect unexpectedly:
+If the NudgeBee web UI loads but live events, Cluster Collector connections, or NuBi AI chat stream disconnect unexpectedly:
 
 **Resolution:**
 Ensure your Ingress controller is configured for long-lived WebSocket connections. For NGINX Ingress, apply these annotations:
@@ -671,6 +671,6 @@ This removes all NudgeBee components and data. Make sure to back up any data you
 
 Your NudgeBee server is running. Here is what to do next:
 
-1. **[Install the NudgeBee Agent](../agent/installation/index.md)** on each Kubernetes cluster you want to monitor — this is how NudgeBee gets visibility into your workloads.
+1. **[Install the NudgeBee Cluster Collector](../agent/installation/index.md)** on each Kubernetes cluster you want to monitor — this is how NudgeBee gets visibility into your workloads.
 2. **[Configure Integrations](../../integrations/index.md)** — connect your observability tools, notification channels, and LLM provider to unlock the full platform.
 3. **[Explore the Getting Started Guide](../../features/index.md)** — see the recommended setup order and what to do after your first login.

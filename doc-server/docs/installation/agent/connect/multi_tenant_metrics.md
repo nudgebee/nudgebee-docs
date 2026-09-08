@@ -4,14 +4,14 @@ sidebar_position: 6
 
 # Multi-cluster Prometheus Setup
 
-When several clusters share one Prometheus-compatible backend, every stored series must carry a stable cluster label. Each NudgeBee agent must also identify the label value for its own cluster, otherwise queries can combine identically named workloads from different clusters.
+When several clusters share one Prometheus-compatible backend, every stored series must carry a stable cluster label. Each NudgeBee Cluster Collector must also identify the label value for its own cluster, otherwise queries can combine identically named workloads from different clusters.
 
 ## Choose the isolation model
 
 | Requirement | Configuration |
 |---|---|
-| Add the cluster selector to NudgeBee-generated PromQL | Set `globalConfig.prometheus_additional_labels` for each agent release. |
-| Enforce tenant isolation even if a query omits the selector | Put a label-enforcing proxy in front of the shared backend and give each agent its own proxy endpoint. |
+| Add the cluster selector to NudgeBee-generated PromQL | Set `globalConfig.prometheus_additional_labels` for each collector release. |
+| Enforce tenant isolation even if a query omits the selector | Put a label-enforcing proxy in front of the shared backend and give each collector its own proxy endpoint. |
 
 The chart-level label is query scoping, not a security boundary. The relay substitutes it into NudgeBee's cluster-aware query templates, but the shared Prometheus endpoint remains capable of answering unscoped queries. Use the proxy model when one cluster or tenant must never query another tenant's data.
 
@@ -26,9 +26,9 @@ globalConfig:
     cluster: prod-us-east-1
 ```
 
-Use a different value in every cluster's agent release. After upgrading, open **Agent Health** and confirm that **Additional Labels** shows the expected map.
+Use a different value in every cluster's collector release. After upgrading, open **Agent Health** and confirm that **Additional Labels** shows the expected map.
 
-Before blaming the agent for empty results, verify the label exists upstream:
+Before blaming the collector for empty results, verify the label exists upstream:
 
 ```promql
 count by (cluster) (up)
@@ -79,7 +79,7 @@ globalConfig:
   prometheus_url: "http://label-proxy.prometheus.svc:8080"
 ```
 
-Every PromQL query the agent runs now goes through the proxy and comes back scoped to the one label value. You can also set `prometheus_additional_labels` to the same label and value so Agent Health records the cluster scope explicitly; the proxy remains the enforcement layer.
+Every PromQL query the collector runs now goes through the proxy and comes back scoped to the one label value. You can also set `prometheus_additional_labels` to the same label and value so Agent Health records the cluster scope explicitly; the proxy remains the enforcement layer.
 
 ## One proxy per tenant
 
@@ -99,7 +99,7 @@ helm upgrade --install label-proxy-test prometheus-community/prom-label-proxy \
   --set config.extraArgs[0]=--label-value=test
 ```
 
-Then give each cluster's agent the matching `prometheus_url`: `http://label-proxy-dev.prometheus.svc:8080` for the dev cluster, `http://label-proxy-test.prometheus.svc:8080` for test.
+Then give each cluster's collector the matching `prometheus_url`: `http://label-proxy-dev.prometheus.svc:8080` for the dev cluster, `http://label-proxy-test.prometheus.svc:8080` for test.
 
 ## If metrics come back empty
 

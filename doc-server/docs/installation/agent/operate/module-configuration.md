@@ -1,11 +1,11 @@
 ---
 sidebar_position: 2
-title: Enable or Disable Agent Modules
+title: Enable or Disable Collector Modules
 ---
 
-# Enable or Disable Agent Modules
+# Enable or Disable Collector Modules
 
-Start with the smallest agent installation that supports the workflows you use. Change modules in a values file and run `helm upgrade`; avoid relying on a long sequence of `--set` arguments that is difficult to review later.
+Start with the smallest collector installation that supports the workflows you use. Change modules in a values file and run `helm upgrade`; avoid relying on a long sequence of `--set` arguments that is difficult to review later.
 
 ## Module controls and impact
 
@@ -123,4 +123,4 @@ The values file is the source of truth for the full resource map. Disabling a wa
 4. Upgrade the release and inspect **Agent Health**.
 5. Keep the saved values for rollback.
 
-See [Helm Chart Values](./helm_values.md) for the complete operator-facing value reference and [Agent Storage and PVCs](./storage-and-pvcs.md) before disabling a stateful component.
+See [Helm Chart Values](./helm_values.md) for the complete operator-facing value reference and [Collector Storage and PVCs](./storage-and-pvcs.md) before disabling a stateful component.

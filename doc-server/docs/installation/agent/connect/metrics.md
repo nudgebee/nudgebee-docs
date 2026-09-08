@@ -65,7 +65,7 @@ A static header does not work for backends that sign each request. For Amazon Ma
 
 ## 🚨 Need Alerting?
 
-Alerts only reach NudgeBee if your Alertmanager is configured to forward them to the agent — see [Alert Forwarding](./alertmanager.md). That page covers kube-prometheus-stack, operator-managed Alertmanager (including Thanos-based stacks), plain Alertmanager, and external/central Alertmanagers.
+Alerts only reach NudgeBee if your Alertmanager is configured to forward them to the collector — see [Alert Forwarding](./alertmanager.md). That page covers kube-prometheus-stack, operator-managed Alertmanager (including Thanos-based stacks), plain Alertmanager, and external/central Alertmanagers.
 
 If your setup has no Alertmanager at all — common with managed metrics backends like Chronosphere — the same page's [VMAlert + VMAlertmanager](./alertmanager.md#vmalert--vmalertmanager) section covers a lightweight alternative.
 
