@@ -1,19 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 700" width="1320" height="700" role="img" aria-label="The NudgeBee Cluster Collector runs in your cluster: the Event Watcher and Node Agent feed a Runner, which queries Prometheus, your log store and the bundled trace store in place, and opens a single outbound connection to the NudgeBee Relay and Collector servers.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 700" width="1360" height="700" role="img" aria-label="The NudgeBee Cluster Collector runs in your cluster: the Event Watcher and Node Agent feed a Runner, which queries Prometheus, your log store and the bundled trace store in place, and opens a single outbound connection to the NudgeBee Relay and Collector servers.">
 <defs>
 <marker id="ah-push" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#5b6875"/></marker>
 <marker id="ah-pull" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#8a94a0"/></marker>
 <marker id="ah-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#c2900f"/></marker>
 <filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.5" stdDeviation="2.5" flood-color="#0f172a" flood-opacity="0.10"/></filter>
 </defs>
-<rect width="1320" height="700" fill="#ffffff"/>
+<rect width="1360" height="700" fill="#ffffff"/>
 <rect x="28" y="28" width="976" height="576" rx="14" ry="14" fill="#fbfaf8" stroke="#ded9cf" stroke-width="1.5" stroke-dasharray="7 5"/>
 <text x="48" y="54" fill="#7c7261" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" letter-spacing="1.4">MONITORED KUBERNETES CLUSTER</text>
 <text x="50" y="90" fill="#7c7261" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" letter-spacing="1.1">ALREADY RUNNING IN YOUR CLUSTER</text>
 <rect x="420" y="64" width="560" height="418" rx="12" ry="12" fill="#fdf9ef" stroke="#d4a017" stroke-width="1.5"/>
 <text x="438" y="90" fill="#8a6d10" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" letter-spacing="1.2">NUDGEBEE CLUSTER COLLECTOR</text>
 <text x="962" y="90" fill="#8a6d10" font-family="'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace" font-size="13" font-weight="400" text-anchor="end">namespace: nudgebee-agent</text>
-<rect x="1042" y="150" width="260" height="250" rx="12" ry="12" fill="#f7f8fa" stroke="#b6c0cc" stroke-width="1.5"/>
-<text x="1172.0" y="178" fill="#5c6b7a" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle" letter-spacing="1.2">NUDGEBEE CONTROL PLANE</text>
+<rect x="1042" y="150" width="290" height="250" rx="12" ry="12" fill="#f7f8fa" stroke="#b6c0cc" stroke-width="1.5"/>
+<text x="1187.0" y="178" fill="#5c6b7a" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle" letter-spacing="1.2">NUDGEBEE CONTROL PLANE</text>
 <polyline points="280,137 450,137" fill="none" stroke="#5b6875" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah-push)"/>
 <text x="365" y="126" fill="#55606c" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="500" text-anchor="middle">watch events</text>
 <polyline points="565,170 565,214" fill="none" stroke="#5b6875" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah-push)"/>
@@ -58,17 +58,17 @@
 <rect x="740" y="372" width="210" height="76" rx="9" ry="9" fill="#ffffff" stroke="#e3bd5a" stroke-width="1.6" filter="url(#sh)"/>
 <text x="845.0" y="404" fill="#16202b" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="17" font-weight="600" text-anchor="middle">OTel Collector</text>
 <text x="845.0" y="426" fill="#6b7683" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="400" text-anchor="middle">+ ClickHouse (bundled)</text>
-<rect x="1067" y="194" width="210" height="66" rx="9" ry="9" fill="#ffffff" stroke="#cdd5df" stroke-width="1.5" filter="url(#sh)"/>
-<text x="1172.0" y="222" fill="#16202b" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="17" font-weight="600" text-anchor="middle">Relay Server</text>
-<text x="1172.0" y="244" fill="#6b7683" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="400" text-anchor="middle">wss://relay… · 443</text>
-<rect x="1067" y="298" width="210" height="66" rx="9" ry="9" fill="#ffffff" stroke="#cdd5df" stroke-width="1.5" filter="url(#sh)"/>
-<text x="1172.0" y="326" fill="#16202b" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="17" font-weight="600" text-anchor="middle">Collector Server</text>
-<text x="1172.0" y="348" fill="#6b7683" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="400" text-anchor="middle">https://collector… · 443</text>
+<rect x="1067" y="194" width="240" height="66" rx="9" ry="9" fill="#ffffff" stroke="#cdd5df" stroke-width="1.5" filter="url(#sh)"/>
+<text x="1187.0" y="222" fill="#16202b" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="17" font-weight="600" text-anchor="middle">Relay Server</text>
+<text x="1187.0" y="244" fill="#6b7683" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="400" text-anchor="middle">wss://relay.nudgebee.com/register</text>
+<rect x="1067" y="298" width="240" height="66" rx="9" ry="9" fill="#ffffff" stroke="#cdd5df" stroke-width="1.5" filter="url(#sh)"/>
+<text x="1187.0" y="326" fill="#16202b" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="17" font-weight="600" text-anchor="middle">Collector Server</text>
+<text x="1187.0" y="348" fill="#6b7683" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="400" text-anchor="middle">https://collector.nudgebee.com</text>
 <text x="46" y="651" fill="#7c7261" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" letter-spacing="1.2">How data moves</text>
 <line x1="180" y1="646" x2="218" y2="646" stroke="#5b6875" stroke-width="1.6" marker-end="url(#ah-push)"/>
 <text x="228" y="651" fill="#55606c" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start">pushed into the collector</text>
 <line x1="470" y1="646" x2="508" y2="646" stroke="#8a94a0" stroke-width="1.6" stroke-dasharray="6 5" marker-end="url(#ah-pull)"/>
 <text x="518" y="651" fill="#55606c" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start">collector queries in place — no second copy</text>
 <line x1="880" y1="646" x2="918" y2="646" stroke="#c2900f" stroke-width="2.2" marker-end="url(#ah-accent)"/>
-<text x="928" y="651" fill="#55606c" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start">outbound only · no inbound port opened</text>
+<text x="928" y="651" fill="#55606c" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start">outbound only on 443 · no inbound port opened</text>
 </svg>
