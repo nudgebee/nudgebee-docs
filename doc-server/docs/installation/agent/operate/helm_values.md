@@ -51,7 +51,7 @@ A default install can already act on workloads: delete and evict pods, exec into
 | `runner.enableWritePermissions` | bool | `false` | Adds the cluster-shape permissions the default install leaves out: node delete, Service/Endpoint/ServiceAccount management, Secret update and delete, namespace create and delete, ResourceQuota and LimitRange writes, `statefulsets/scale`, workload creation, Ingress and NetworkPolicy writes, rollout lifecycle. |
 | `runner.readOnly` | bool | `false` | Cuts the ClusterRole down to `get`, `list`, `watch`. No Secrets access at all, no `pods/exec`, no eviction, no node patch. The few writes the agent needs to run come from a Role scoped to the release namespace. |
 | `runner.mutateEnabled` | bool | `true` | Turns the runner's mutating actions on or off inside the agent itself (`delete_pod`, `cordon`, `rollout_restart`, PrometheusRule CRUD, Alertmanager silences, Loki rules). With `false` they are never registered at startup, whatever RBAC allows. |
-| `runner.scannerAutoCopyPullSecrets` | bool | `false` | Lets an image scan copy the scanned pod's `imagePullSecrets` into the scanner namespace so private images can be pulled. Also grants secret update, patch, and delete in the release namespace to clean the copies up afterwards. |
+| `runner.scannerAutoCopyPullSecrets` | bool | `true` | Lets an image scan copy the scanned pod's `imagePullSecrets` into the release namespace, where the scan Job runs, so private images can be pulled. The copies are owned by that Job and go away with it. Also grants secret update, patch, and delete in the release namespace to clean them up. Set it to `false` and the agent never reads a registry credential — private images are then scannable only while a copy of the image is still on the node. `readOnly` forces it off. |
 | `runner.customClusterRoleRules` | list | `[]` | Extra rules appended to the runner ClusterRole. |
 | `runnerServiceAccount.imagePullSecrets` | list | `[]` | Pull secrets attached to the runner ServiceAccount. |
 | `automountServiceAccountToken` | bool | `true` | Mount the ServiceAccount token in agent pods. |
@@ -78,7 +78,7 @@ helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
   --set runner.enableWritePermissions=true   # or runner.readOnly=true
 ```
 
-`readOnly` cannot be combined with `enableWritePermissions` or `scannerAutoCopyPullSecrets`. The install fails if you set both.
+`readOnly` cannot be combined with `enableWritePermissions`. The install fails if you set both. It also turns `scannerAutoCopyPullSecrets` off — that path has to read Secrets in workload namespaces, which read-only mode does not allow.
 
 Under `readOnly` the rightsizing recommendations still compute; you just cannot apply them from the UI. If your security review needs to see the exact permissions first, the whole read-only ClusterRole is in one file: [`runner-service-account-readonly.yaml`](https://github.com/nudgebee/k8s-agent/blob/main/charts/nudgebee-agent/templates/runner-service-account-readonly.yaml).
 
