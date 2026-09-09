@@ -82,7 +82,7 @@ Roll the runner (`kubectl rollout restart deployment/nudgebee-agent-runner -n nu
 
 Notes:
 
-- Use `SSL_CERT_DIR` and keep `/etc/ssl/certs` in the list. `SSL_CERT_FILE` **replaces** the trust store rather than adding to it, which drops the public roots the agent still needs for every other HTTPS target.
+- Use `SSL_CERT_DIR`, and keep `/etc/ssl/certs` in the list. Go splits the value on `:` and reads every directory in it, so the system roots and your CA both load. `SSL_CERT_FILE` is the wrong knob: it takes a single path and **replaces** the default CA bundle rather than adding to it, which leaves the public roots dependent on whatever the base image happens to leave loose in `/etc/ssl/certs`.
 - Put the full chain in the PEM — the root plus any intermediates. A root-only file fails the same way if the server does not send its intermediates.
 - Use a Secret instead of a ConfigMap if your policy treats the CA as non-public; the volume block is the same with `secret.secretName`.
 - There is no option to skip certificate verification for the collector or relay. `runner.es.sslVerify` looks similar but only applies to Elasticsearch.

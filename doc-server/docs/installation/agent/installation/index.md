@@ -337,7 +337,7 @@ kubectl logs deployment/nudgebee-agent-runner -n nudgebee-agent | grep x509
 ```
 
 **Resolution:**
-Mount your CA into the runner and set `SSL_CERT_DIR`. The full recipe is in [Collector or relay behind a private CA](../operate/helm_values.md#collector-or-relay-behind-a-private-ca). Verification cannot be disabled instead.
+Mount your CA into the runner and set `SSL_CERT_DIR`. The full recipe is in [Collector or relay behind a private CA](../operate/helm_values.md#collector-or-relay-behind-a-private-ca). Disabling certificate verification is not supported.
 
 ---
 
