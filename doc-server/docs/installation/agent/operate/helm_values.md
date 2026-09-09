@@ -40,6 +40,54 @@ runner:
       key: NUDGEBEE_AUTH_SECRET_KEY
 ```
 
+### Collector or relay behind a private CA
+
+If your collector and relay serve certificates issued by an internal CA, the runner rejects them and nothing reaches the server:
+
+```
+incremental post failed ... tls: failed to verify certificate: x509: certificate signed by unknown authority
+```
+
+The pod stays Running and healthy while this repeats, so the only symptom is a cluster that never reports data. Mount your CA and point the runner's trust store at it. One setting covers every outbound connection: the discovery POSTs, the relay WebSocket, task polling, and config refresh.
+
+```shell
+kubectl -n nudgebee-agent create configmap nudgebee-private-ca \
+  --from-file=ca.crt=/path/to/internal-ca.pem
+```
+
+```yaml
+runner:
+  extraVolumes:
+    - name: private-ca
+      configMap:
+        name: nudgebee-private-ca
+  extraVolumeMounts:
+    - name: private-ca
+      mountPath: /etc/nudgebee/ca
+      readOnly: true
+  additional_env_vars:
+    - name: SSL_CERT_DIR
+      value: /etc/ssl/certs:/etc/nudgebee/ca
+    # additional_env_vars replaces the chart's list instead of merging, so the
+    # three ClickHouse variables have to be repeated here.
+    - name: CLICKHOUSE_PORT
+      value: "8123"
+    - name: CLICKHOUSE_USER
+      value: default
+    - name: CLICKHOUSE_DB
+      value: default
+```
+
+Roll the runner (`kubectl rollout restart deployment/nudgebee-agent-runner -n nudgebee-agent`) and the `x509` errors stop.
+
+Notes:
+
+- Use `SSL_CERT_DIR` and keep `/etc/ssl/certs` in the list. `SSL_CERT_FILE` **replaces** the trust store rather than adding to it, which drops the public roots the agent still needs for every other HTTPS target.
+- Put the full chain in the PEM — the root plus any intermediates. A root-only file fails the same way if the server does not send its intermediates.
+- Use a Secret instead of a ConfigMap if your policy treats the CA as non-public; the volume block is the same with `secret.secretName`.
+- There is no option to skip certificate verification for the collector or relay. `runner.es.sslVerify` looks similar but only applies to Elasticsearch.
+- This covers the runner only. If the OpenTelemetry collector or the forwarder also ship to an internal endpoint over TLS, mount the CA into those pods through their own volume settings.
+
 ---
 
 ## Permissions and access mode

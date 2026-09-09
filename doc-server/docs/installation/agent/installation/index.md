@@ -255,6 +255,7 @@ Use this diagnostic reference to resolve common agent deployment and communicati
 | **`node-agent CrashLoopBackOff` (eBPF load failure)** | Kernel < 4.2 or non-standard distro (Bottlerocket, Talos, GKE COS) | Check kernel with `uname -r` and ensure `/sys/kernel/debug` is accessible. As a last resort, drop the DaemonSet with `--set nodeAgent.enabled=false` (loses eBPF network metrics and profiling). |
 | **No alerts in NudgeBee, everything else working** | No Alertmanager receiver points at the agent | Add the receiver. See [Alert Forwarding](../connect/alertmanager.md). Nothing reports this on its own. |
 | **`WebSocket Dial Timeout / EOF`** | Outbound firewall or NetworkPolicy blocking TCP 443 | Verify egress to `wss://relay.nudgebee.com` (SaaS) or your relay Ingress. Ensure port 443 is open. |
+| **`x509: certificate signed by unknown authority`** | Collector or relay served by an internal CA the agent does not trust | Mount the CA into the runner and set `SSL_CERT_DIR`. See [Collector or relay behind a private CA](../operate/helm_values.md#collector-or-relay-behind-a-private-ca). |
 | **`Prometheus connection refused / empty metrics`** | Wrong Prometheus service URL or missing KSM | Point `globalConfig.prometheus_url` to valid service DNS (e.g. `http://<service>.<namespace>.svc:9090`). |
 | **`CRD / Webhook timeout error`** | Prometheus operator CRDs not yet established | Wait 30 seconds and re-run the `helm upgrade` command. |
 
@@ -321,6 +322,22 @@ spec:
           port: 53
 ```
 
+#### 4. Collector or Relay Behind a Private CA
+Common on self-hosted installs where the collector Ingress uses a certificate from an internal CA. The runner pod is Running and healthy, but the logs repeat:
+
+```
+tls: failed to verify certificate: x509: certificate signed by unknown authority
+```
+
+Nothing reaches the server while this happens, and no other component reports a problem.
+
+**Diagnose:**
+```shell
+kubectl logs deployment/nudgebee-agent-runner -n nudgebee-agent | grep x509
+```
+
+**Resolution:**
+Mount your CA into the runner and set `SSL_CERT_DIR`. The full recipe is in [Collector or relay behind a private CA](../operate/helm_values.md#collector-or-relay-behind-a-private-ca). Verification cannot be disabled instead.
 
 ---
 
