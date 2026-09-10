@@ -51,18 +51,18 @@ Workflows are version-controlled: save drafts freely, publish immutable named ve
 
 ### Accessing the Workflow Builder
 
-1. Click **Workflow** in the left navigation sidebar
+1. Click **Automations** in the left navigation sidebar
 2. You arrive at the **Workflow listing page**, which shows all your workflows with their status, triggers, tags, and last execution details
 
 ![Workflow Listing Page](../img/workflow-listing-page.png)
 
 ### Creating Your First Workflow
 
-1. On the workflow listing page, click **Create Workflow** in the top-right corner
+1. On the workflow listing page, click **Create Automation** in the top-right corner
 
 ![Create Workflow Modal](../img/create-workflow-modal.png)
 
-2. In the modal that appears, click **Make a Workflow**
+2. In the modal that appears, pick the **Account** the automation will run in, then click **Make an Automation**
 3. The Workflow Editor opens with an empty canvas and a prompt: "Add Your Workflow Trigger Node"
 4. Select a trigger type - for your first workflow, choose **Manual Trigger** so you can run it on demand
 5. A trigger node appears on the canvas
@@ -76,7 +76,7 @@ Workflows are version-controlled: save drafts freely, publish immutable named ve
 13. Click **Run** to execute your workflow
 
 :::tip
-You can also let AI build your workflow. Click **Create Workflow**, then choose **Ask nubi AI to generate**. Describe what you want in plain language, review the AI's plan, and approve it to generate the workflow automatically.
+You can also let AI build your workflow. Click **Create Automation**, then choose **Generate with nubi**. Describe what you want in plain language, review the AI's plan, and approve it to generate the workflow automatically.
 :::
 
 ## Building Workflows
@@ -434,8 +434,8 @@ Some task types cannot be tested individually, including Sub-workflow, Condition
 ### AI-Assisted Features
 
 **Generate a workflow with AI:**
-1. Click **Create Workflow** on the listing page
-2. Choose **Ask nubi AI to generate**
+1. Click **Create Automation** on the listing page
+2. Choose **Generate with nubi**
 3. Describe what you want in natural language
 4. Review the AI's plan and approve it, or request changes
 5. The generated workflow loads in the editor ready for you to review and customize

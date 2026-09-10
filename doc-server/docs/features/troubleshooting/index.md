@@ -5,7 +5,7 @@ sidebar_position: 1
 
 NudgeBee's troubleshooting dashboard gives you a real-time view of events, errors, and anomalies across all your connected Kubernetes clusters. Instead of switching between multiple monitoring tools, you get a single pane of glass — powered by the [Semantic Knowledge Graph](../knowledge-graph.md) — that correlates metrics, logs, traces, and code to help you find the root cause of issues faster, reducing MTTR from hours to minutes.
 
-![NudgeBee Troubleshoot dashboard showing the triage inbox with event severity, triage scores, and the All Events, Investigations, and Knowledge Graph tabs](./img/troubleshoot-overview.png)
+![NudgeBee Troubleshoot dashboard showing NuBi's daily briefing above the triage inbox, with event severity and triage scores, and the All Events, Investigations, Event Resolutions, Knowledge Graph, and Analytics tabs](./img/troubleshoot-overview.png)
 
 ### What You Can Do Here
 
