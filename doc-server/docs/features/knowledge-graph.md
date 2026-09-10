@@ -30,10 +30,10 @@ The graph will load with your infrastructure resources and their relationships.
 
 ## Filtering Your Graph
 
-Use the filters at the top of the page to focus on specific resources.
+Use the **Filters** panel on the left of the page to focus on specific resources, then click **Apply Filters**.
 
 ![Filter Controls](./img/knowledge-graph-filters.png)
-*Filter controls at the top of the Knowledge Graph*
+*The Filters panel on the left of the Knowledge Graph*
 
 ### Account
 
