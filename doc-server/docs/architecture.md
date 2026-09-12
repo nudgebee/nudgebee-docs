@@ -81,6 +81,7 @@ flowchart TB
         TICKET_SERVER["<b>ticket-server</b><br/><small>Jira / ServiceNow / PagerDuty</small>"]:::backend
         ML_SERVER["<b>ml-k8s-server</b><br/><small>Right-sizing & anomaly models</small>"]:::backend
         COST_SERVER["<b>cost-server</b><br/><small>OpenCost-based cost allocation</small>"]:::backend
+        VULN_SERVER["<b>vulnerability-server</b><br/><small>Package inventory to CVE matching</small>"]:::backend
     end
 
     subgraph STORAGE["Storage & Caching Layer (Shared by ALL services)"]
@@ -122,6 +123,7 @@ flowchart TB
     LLM_SERVER -->|knowledge-base search| RAG_SERVER
     RAG_SERVER -->|vector search| QDRANT
     WORKFLOW_SERVER -->|durable execution| TEMPORAL
+    SERVICES_SERVER -->|"OS + package list"| VULN_SERVER
 
     K8S_COLLECTOR -->|signals| RABBITMQ
     CLOUD_COLLECTOR -->|signals| RABBITMQ
