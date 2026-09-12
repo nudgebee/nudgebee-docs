@@ -9,7 +9,9 @@ sidebar_label: Custom Dashboards
 
 Build your own views over everything NudgeBee already collects — metrics, logs, traces, events, and the databases and queues you have connected — without leaving the product or standing up a separate Grafana.
 
-<!-- ![Dashboard List showing saved dashboards](./img/dashboard-list.png) -->
+![Dashboard List showing saved dashboards](./img/dashboard-list.png)
+
+![A dashboard in view mode: title, time range, refresh, export and Edit in the toolbar; panels below](./img/dashboard-overview.png)
 
 ## Starting a dashboard
 
@@ -151,6 +153,55 @@ list queues name messages consumers
 A metrics, logs or traces panel carries one expression but sends one request per account, and each account resolves its own provider — the integration flagged as that account's default, or the one the agent detected.
 
 The editor shows a **provider row** naming the provider each account will actually answer through. Check it whenever a dashboard spans accounts on different backends: an account whose provider cannot read the panel's query language returns nothing rather than erroring, and you will only find out at render time.
+
+## Panels across several accounts
+
+A panel is scoped to accounts when it is authored: either **every account of one provider** ("All K8s") or a **fixed list** of accounts. A panel scoped to several accounts asks each of them and combines what comes back, so one panel can compare clusters, or add them up, without one panel per cluster.
+
+### One Accounts filter for the whole dashboard
+
+The toolbar carries an **Accounts** filter that narrows every panel at once. It lists only the accounts some panel on the dashboard actually queries — the union of the panels' scopes, grouped by provider — never every account you have. It is hidden when the dashboard queries only one account.
+
+![The Accounts filter open in the dashboard toolbar, listing the K8s accounts the panels are scoped to](./img/dashboard-accounts-filter.png)
+
+- **Empty means no filter.** Every panel shows all of its accounts.
+- **Pick one or more accounts** and each panel narrows to the ones it is scoped to. If none of the selected accounts belong to a panel's scope, the panel says so and offers *Show all accounts*, which clears the dashboard filter.
+- **Each panel's own Account picker still works**, and narrows further within the dashboard selection. When the dashboard filter leaves a panel exactly one account, that panel's picker shows it as its selection.
+- **The chip in each panel header says what the panel is showing** — its scope when unfiltered (`All K8s`, `3 accounts`), the account name once narrowed, or `n of N accounts` when three or more are selected.
+- The filter is page state, like the time range: it resets when you open another dashboard, and it is not saved with the dashboard.
+
+![The same dashboard with k8s-dev picked: the toolbar, the panel chip and the panel's own picker all read k8s-dev](./img/dashboard-filter-applied.png)
+
+### What each visualization does with several accounts
+
+| Visualization | With several accounts |
+|---|---|
+| Time series | One line per account per series, prefixed with the account name, plus a dashed **All accounts** line that adds them up |
+| Bar | Accounts stacked, so the bar's height is the total |
+| Stat / Gauge | One number: the sum of what every account reported, with the per-account breakdown on hover |
+| Table | One row per account per series, with the account in its own **Account** column |
+| Logs | Lines from every account, with an **Account** column |
+| Traces | One account only — the traces API takes a single account, so the panel uses the first, or the one you pick |
+
+**Time series.** Every account's own lines are drawn, and beside them a heavier, dashed `All accounts` line that sums them, on the same axis. The total is worked out per label set: an aggregate such as `sum(...)` answers with one series per account and gets one `All accounts` line; `sum by (namespace) (...)` gets one per namespace, named `All accounts · <namespace>`; a label set that only one account reports, such as a pod name, gets no total. An account with a gap at an instant is left out of that instant's sum, so `95 + gap + 10` reads 105; the total is missing only where no account reported.
+
+![A time series over five K8s accounts: five per-account lines and the dashed All accounts total](./img/dashboard-consolidated-line.png)
+
+![A by (job_workflow_name) query over all K8s accounts: one All accounts · workflow line per label set the accounts share](./img/dashboard-per-label-totals.png)
+
+**Stat and gauge.** The card shows one total, the sum of every account that answered, with the account count under it. Hover the number for each account's contribution. An account that could not answer is never counted as zero: the count reads `5 of 6 accounts`, and the hover names it as *no answer*. Summing assumes the values are additive — true of `sum` and `count`, not of an average or a percentile.
+
+![A stat over six K8s accounts reading 727 and 5 of 6 accounts, with the per-account breakdown on hover](./img/dashboard-stat-breakdown.png)
+
+**Table.** Each account's rows are listed with the account in its own column and the series label alone in the next, so the table can be scanned by account. A table over one account keeps just Series and Latest.
+
+![A table over All K8s with Account, Series and Latest columns](./img/dashboard-multi-account-table.png)
+
+**What a missing account looks like.** An account that was asked and did not answer is named in the banner above a chart or table, *No answer from k8s-dev-oss — showing the rest.* A stat or gauge carries the same fact as its account count instead, since the card has no room for a sentence.
+
+### Series limits with several accounts
+
+The chart limit of 20 series and the table limit of 500 are split **evenly across the accounts**, and each account is ranked inside its own share. Without that, one cluster with larger numbers would take every slot and the quieter clusters would vanish from the chart with nothing to say they were queried. The warning names each account that was trimmed with its real count — *Showing 6 of 13 from k8s-rs-prod and 6 of 16 from k8s-dev* — and the `All accounts` line sums the series that were kept.
 
 ## Template variables
 
