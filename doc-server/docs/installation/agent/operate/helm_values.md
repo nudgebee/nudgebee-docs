@@ -180,13 +180,13 @@ Off by default. Turn it on to feed cluster cost allocation into the Optimize sur
 
 If the runner is getting OOMKilled, this is the section you want. Its memory is dominated by the informer cache, so it scales with the number of objects in the cluster, not with traffic.
 
+The chart sets no `GOMEMLIMIT` or other Go heap tuning, so `runner.resources.limits.memory` is the only lever — raise it using the sizing guide below rather than looking for a GC knob.
+
 | Key | Type | Default | Description |
 |---|---|---|---|
 | `runner.resources.requests.cpu` | string | `250m` | |
 | `runner.resources.requests.memory` | string | `1000Mi` | |
 | `runner.resources.limits.memory` | string | `2000Mi` | Budget roughly 1Gi per 50k watched objects. Under 100 nodes the default is fine; around 500 nodes use `4000Mi`; around 1000 nodes use `6000Mi` or more. |
-| `runner.goMemLimitRatio` | float | `0.8` | How much of the memory limit the Go heap may use, with the rest left for non-heap memory. The chart derives `GOMEMLIMIT` from the limit and this ratio, so the GC knows about the ceiling instead of finding it via a SIGKILL. Lower it if the pod still OOMs at a limit you think is generous. |
-| `runner.goMemLimit` | string | `""` | Sets `GOMEMLIMIT` directly, e.g. `1600MiB`, and skips the calculation above. |
 | `runner.probes.enabled` | bool | `true` | Liveness and readiness probes against `/healthz` on port 5000. |
 | `runner.scaling.snapshotBatching` | bool | `true` | Sends the full inventory snapshot in batches rather than one payload. |
 | `runner.scaling.batchSize` | int | `1000` | Objects per snapshot batch. |
@@ -209,13 +209,17 @@ If the runner is getting OOMKilled, this is the section you want. Its memory is 
 | `nodeAgent.resources.requests` | object | `100m` / `500Mi` | |
 | `nodeAgent.resources.limits` | object | `1` / `1Gi` | |
 | `nodeAgent.podmonitor.enabled` | bool | `true` | Render a `PodMonitor` so Prometheus scrapes the node agent. |
-| `nodeAgent.podmonitor.additionalLabels` | object | `{}` | These have to match your Prometheus CR's `podMonitorSelector`. If they do not, the operator ignores the PodMonitor, no scrape target is created, and network metrics stay empty with nothing reporting an error. Example: `{pod-monitor: pod-monitor}`. |
-| `nodeAgent.podmonitor.namespaceSelector` | object | `{}` | Which namespaces Prometheus looks in for the pods. Empty means the PodMonitor's own namespace. Example: `{matchNames: [nudgebee-agent]}` or `{any: true}`. |
 | `nodeAgent.podmonitor.azuremanaged` | bool | `false` | Emits the `azmonitoring.coreos.com` PodMonitor that Azure Monitor managed Prometheus reads instead. |
 | `nodeAgent.priorityClassName` | string | `""` | |
 | `nodeAgent.env` | list | see chart | Includes `SENSITIVE_HEADERS`, the header names the node agent strips from captured traffic. |
 
 Without the prometheus-operator there is no PodMonitor to create. Scrape the node agent with the job from [`kube-prometheus-stack-values.yaml`](https://github.com/nudgebee/k8s-agent/blob/main/kube-prometheus-stack-values.yaml) instead. More detail in [Node Agent Configuration](./node-agent-configs.md).
+
+:::caution The PodMonitor's labels are not configurable
+The chart stamps the PodMonitor with the standard chart labels and nothing else — `app.kubernetes.io/name`, `app.kubernetes.io/instance`, `app.kubernetes.io/version`, `app.kubernetes.io/managed-by`, `helm.sh/chart`, and `component: node-agent`. There is no value for adding your own, and no value for setting a `namespaceSelector` (the operator's default applies, so Prometheus looks in the PodMonitor's own namespace).
+
+This matters because a `podMonitorSelector` on your Prometheus CR that requires a label the chart does not emit — `release: <your-prom-release>` is the usual one — makes the operator ignore the PodMonitor silently: no scrape target is created and network metrics stay empty with nothing reporting an error. **Fix it on the Prometheus side**, by widening that selector to match one of the labels above or by letting it select everything. You cannot fix it from this chart.
+:::
 
 ---
 

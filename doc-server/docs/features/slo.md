@@ -35,7 +35,7 @@ An [observability source](../integrations/Observability/index.md) (such as Prome
 
 ## 2. Managing SLOs in NudgeBee
 
-You can view and manage SLOs per cluster under **Cluster Details → Monitoring → SLO** (or directly via **SLOs** in the navigation menu). Each workload displays its objective, latency and availability targets, evaluation window, and 30-day status.
+You can view and manage SLOs per cluster under **Cluster Details → Monitoring → SLO** (or jump straight there by searching for `SLO` with `Ctrl`/`⌘` + `K`). Each workload displays its objective, latency and availability targets, evaluation window, and 30-day status.
 
 ![NudgeBee SLO list under Cluster Details showing each workload's objective, window, latency, availability target, and 30-day status, with an Add SLO action](./img/slo-list.png)
 
@@ -43,7 +43,7 @@ You can view and manage SLOs per cluster under **Cluster Details → Monitoring 
 
 ## 3. Step-by-Step: Creating an SLO
 
-1. Navigate to **Cluster Details → Monitoring → SLO** (or select **SLOs** in the navigation sidebar).
+1. Navigate to **Cluster Details → Monitoring → SLO** (or search for `SLO` with `Ctrl`/`⌘` + `K`). There is no top-level SLOs entry in the sidebar — SLOs are always scoped to a cluster.
 2. Click **Create SLO** (or **Add SLO**).
 3. Configure the general metadata:
    - **Service Name**: e.g., `checkout-service`
