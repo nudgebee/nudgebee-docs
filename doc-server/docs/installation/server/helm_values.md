@@ -21,10 +21,12 @@ side-by-side examples.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| agent.accessKey | string | `""` | Agent credential. Set explicitly for offline/GitOps renders (Argo CD, Flux) — the chart cannot read an existing credential back and refuses to re-issue it on upgrade. |
-| agent.accessSecret | string | `""` | See `agent.accessKey`. |
-| agent.clusterName | string | `"nb-control-plane-k8s"` | Name the bundled agent registers its cluster under. |
-| agent.enabled | bool | `true` | Installs the NudgeBee agent alongside the server and connects the hosting cluster. The agent shares this Helm release, so `helm uninstall` removes it too. |
+| admin.email | string | `""` | Address the first admin and their organization are created from during install. **Required on a fresh install that has no license** — the chart fails otherwise. Never checked on upgrade. A license carries its own address and takes precedence; a conflicting value is ignored with a warning. See [`admin.email`](./index.md#admin-email). |
+| agent.accessKey | string | `""` | GitOps only. Offline render (Argo CD, Flux) cannot read the existing credential back and the chart refuses to re-issue it on upgrade, so supply it from the live `nudgebee-bootstrap` Secret. Leave empty for ordinary `helm install` / `helm upgrade`. |
+| agent.accessSecret | string | `""` | The other half of `agent.accessKey`. Both or neither. |
+| agent.clusterName | string | `"nb-control-plane-k8s"` | Name the bundled agent registers its cluster under. More than 3 characters, max 40, no special characters; `Demo` is reserved. |
+| agent.enabled | bool | `true` | Installs the NudgeBee agent alongside the server and connects the hosting cluster, so the first cluster needs no second install and no copied auth key. Set `false` when this cluster is already monitored by a separately installed agent. The agent shares this Helm release, so `helm uninstall` removes it too. See [the bundled agent](./index.md#bundled-agent). |
+| nudgebee-agent.* | — | — | Passthrough to the bundled agent subchart. Anything the [agent chart](../agent/operate/helm_values.md) accepts can be set here. The node agent, the OpenTelemetry collector, and the agent's ClickHouse are **off** by default. |
 | app.fullnameOverride | string | `"app"` |  |
 | app.image.repository | string | `"nudgebee-app"` |  |
 | app.image.tag | string | `""` |  |

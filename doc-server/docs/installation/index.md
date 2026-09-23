@@ -8,7 +8,7 @@ sidebar_label: Installation Overview
 Before you install, select the deployment model that matches your organization's requirements:
 
 - **Cloud SaaS** — NudgeBee hosts and manages the server control plane for you. You only install the **NudgeBee Agent** on each Kubernetes cluster you want monitored (or connect a cloud account for instant discovery). Generate your auth key in the UI and go straight to [Agent Installation](./agent/installation/index.md).
-- **Self-Hosted** — You run the **NudgeBee Server** inside your own Kubernetes cluster, giving you full data ownership and air-gapped support. Deploy the [Server](./server/index.md) first, then install the [Agent](./agent/installation/index.md) on each monitored cluster.
+- **Self-Hosted** — You run the **NudgeBee Server** inside your own Kubernetes cluster, giving you full data ownership and air-gapped support. Deploy the [Server](./server/index.md) first — it installs an agent alongside itself and connects the cluster it runs on — then install the [Agent](./agent/installation/index.md) on each *additional* cluster you want monitored.
 
 :::info Scope & Infrastructure Prerequisites
 **Kubernetes-Specialized**: NudgeBee monitors Kubernetes workloads.
@@ -34,6 +34,6 @@ Use the table below to determine the exact path for your setup:
 ## Installation Components
 
 * **[Server Installation](./server/index.md)** — *(Self-hosted only)* Deploy the central control plane, Semantic Knowledge Graph, and workflow engine to your Kubernetes cluster.
-* **[K8s Agent Installation](./agent/installation/index.md)** — *(Everyone)* Install the lightweight collector DaemonSet and runner into each Kubernetes cluster you want to monitor.
+* **[K8s Agent Installation](./agent/installation/index.md)** — *(Everyone)* Install the lightweight collector DaemonSet and runner into each Kubernetes cluster you want to monitor. Self-hosted installs get one of these for free on the cluster running the server.
 * **[Proxy Agent](./proxy-agent/index.md)** — *(Optional)* Deploy secure proxy connectivity to private datasources, isolated databases, or internal endpoints.
 
