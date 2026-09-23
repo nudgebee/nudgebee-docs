@@ -21,7 +21,7 @@ Dynatrace Workflow triggers (Davis problem)
 HTTP Request action sends POST to NudgeBee
         │
         ▼
-NudgeBee  /webhook/dynatrace
+NudgeBee  /api/webhooks/dynatrace
         │
         ├── Fetch full problem details from Dynatrace API v2
         ├── Match impacted entity to a Kubernetes workload
@@ -38,8 +38,10 @@ NudgeBee  /webhook/dynatrace
 2. Select **Dynatrace**
 3. Copy the webhook endpoint URL — it will look like:
    ```
-   https://<your-nudgebee-url>/webhook/dynatrace
+   https://<your-nudgebee-domain>/api/webhooks/dynatrace?token=<generated-token>
    ```
+
+   Copy the URL exactly as the integration shows it, including the `token` query parameter — the endpoint rejects a request without it. A URL that does not match this route is answered by the NudgeBee web app with a 404 and never reaches the alert pipeline.
 
 ---
 
