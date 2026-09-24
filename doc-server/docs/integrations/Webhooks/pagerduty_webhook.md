@@ -17,8 +17,10 @@ Receive PagerDuty incident notifications directly into NudgeBee. When an inciden
 4. Click **Save**. NudgeBee generates a unique webhook URL in the format:
 
 ```
-https://<your-nudgebee-domain>/api/webhooks/pagerduty_webhook?token=<generated-token>
+https://<your-nudgebee-domain>/api/webhooks/pagerduty?token=<generated-token>
 ```
+
+Copy the URL exactly as the integration shows it. The path segment is the provider name — lowercase, no `_webhook` suffix — and nothing may follow it. `pagerduty_webhook` is the integration type NudgeBee stores internally, not a URL you can post to; a URL that does not match the route above is answered by the NudgeBee web app with a 404 and never reaches the alert pipeline.
 
 5. **Copy the webhook URL** — you will configure it in PagerDuty in the next step.
 
@@ -35,10 +37,10 @@ https://<your-nudgebee-domain>/api/webhooks/pagerduty_webhook?token=<generated-t
      - `incident.triggered`
      - `incident.resolved`
 4. Click **Add Webhook**.
-5. Use the **Send Test Event** button to verify the connection.
+5. Use the **Send Test Event** button to confirm delivery. PagerDuty reports `200 OK`, but no event appears in NudgeBee — see the note below.
 
 :::note
-NudgeBee only processes `incident.triggered` and `incident.resolved` events. Other event types (e.g., `incident.acknowledged`, `incident.annotated`) are silently ignored.
+NudgeBee only processes `incident.triggered` and `incident.resolved` events. Other event types are accepted with `200 OK` and recorded as **skipped**, not failed — they create no NudgeBee event. This includes `incident.acknowledged`, `incident.annotated`, and `pagey.ping`, which is what **Send Test Event** sends. A green test event therefore proves the URL and token are right; it does not produce an event. Trigger a real incident to see one.
 :::
 
 ---
@@ -96,7 +98,7 @@ In this example, incidents with the label `env=production` are routed to account
 
 ## Verify the Integration
 
-1. In PagerDuty, use the **Send Test Event** button on the webhook subscription, or trigger a real incident on a monitored service.
+1. In PagerDuty, trigger a real incident on a monitored service. **Send Test Event** will not work here — it sends `pagey.ping`, which NudgeBee skips.
 2. In NudgeBee, navigate to **Events** and verify the incident appears with:
    - Correct title and priority
    - Incident details evidence attached
@@ -112,3 +114,5 @@ In this example, incidents with the label `env=production` are routed to account
 | Events not appearing | Ensure the PagerDuty webhook subscription is active and includes `incident.triggered` in the event types. |
 | Enrichment labels missing | Ensure a [PagerDuty ticket integration](../Tickets/pagerduty.md) is configured for the same NudgeBee account — this is required for API-based enrichment. |
 | Acknowledged events not updating | Expected behavior — NudgeBee only processes `triggered` and `resolved` events. Acknowledgements do not update the NudgeBee event status. |
+| Test event succeeds but no event appears | Expected behavior — **Send Test Event** sends `pagey.ping`, which NudgeBee skips. Trigger a real incident instead. |
+| Webhook URL returns a 404 HTML page | The path is wrong, so the request is reaching the NudgeBee web app instead of the alert pipeline. The correct path is `/api/webhooks/pagerduty`. Check that the URL uses `https`, is lowercase, has no `_webhook` suffix, and has nothing after `pagerduty` except the `?token=` query. To avoid typos, copy the URL directly from the integration. |

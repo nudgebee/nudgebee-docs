@@ -18,7 +18,7 @@ SolarWinds alert fires
 SolarWinds Webhook Notification (HTTP POST)
         │
         ▼
-NudgeBee  /webhook/solarwinds
+NudgeBee  /api/webhooks/solarwinds
         │
         ├── Parse alert type and extract entity/metric info
         ├── Match impacted entity to a Kubernetes workload
@@ -34,8 +34,10 @@ NudgeBee  /webhook/solarwinds
 2. Select **SolarWinds**
 3. Copy the webhook endpoint URL — it will look like:
    ```
-   https://<your-nudgebee-url>/webhook/solarwinds
+   https://<your-nudgebee-domain>/api/webhooks/solarwinds?token=<generated-token>
    ```
+
+   Copy the URL exactly as the integration shows it, including the `token` query parameter — the endpoint rejects a request without it. A URL that does not match this route is answered by the NudgeBee web app with a 404 and never reaches the alert pipeline.
 
 ---
 
