@@ -70,6 +70,8 @@ Before configuring SAML, ensure you have:
 | `SAML_SYNC_ROLES_ON_LOGIN` | Sync user roles from SAML groups on every login. | `true` |
 | `SAML_REMOVE_OLD_ROLES` | Remove roles not present in the current SAML assertion during sync. | `true` |
 | `SAML_INCLUDE_UNMAPPED_GROUPS` | Pass through IdP groups that are not in the mapping as-is. | `false` |
+| `SAML_SP_PRIVATE_KEY` | PEM private key used to sign outgoing authentication requests. Setting it turns signing on — see [Signed Authentication Requests](#signed-authentication-requests). | Not set (requests are unsigned) |
+| `SAML_SP_CERT` | The certificate matching `SAML_SP_PRIVATE_KEY`, in PEM format. Published in SP metadata. | Not set |
 
 ### Certificate Setup
 
@@ -87,6 +89,79 @@ SAML_CERT="MIIDpDCCAoygAwIBAgIGAX..."
 
 You can typically download this certificate from your IdP's SAML application settings page.
 
+### Signed Authentication Requests
+
+Some Identity Providers reject sign-in requests that are not digitally signed. Microsoft AD FS is the common case: when its relying party trust has **Require signed SAML authentication requests** turned on, the browser lands on an AD FS error page reading `MSIS7085: The server requires a signed SAML authentication request but no signature is present.`
+
+Signing is off by default and is enabled per deployment. Configure it only when your IdP requires it.
+
+:::tip[Only SP-initiated login is affected]
+Starting from your IdP's portal still works while this is unconfigured, because that flow sends no authentication request at all. Only the SSO button on the NudgeBee sign-in page fails.
+:::
+
+#### Step 1 — Generate a signing key pair
+
+Run this wherever you manage your deployment's secrets. The private key stays in your environment; NudgeBee never needs a copy.
+
+```bash
+openssl req -x509 -newkey rsa:2048 -nodes -days 3650 \
+  -keyout nudgebee-saml-sp.key \
+  -out nudgebee-saml-sp.crt \
+  -subj "/CN=nudgebee-saml-sp"
+```
+
+| File | Contains | Used for |
+|---|---|---|
+| `nudgebee-saml-sp.key` | Private key. Keep it secret. | The `SAML_SP_PRIVATE_KEY` variable |
+| `nudgebee-saml-sp.crt` | Public certificate. | The `SAML_SP_CERT` variable, and upload to your IdP |
+
+A certificate issued by your own internal CA works just as well — NudgeBee does not check who issued it. A long validity period is recommended so that rotation does not become a recurring task.
+
+#### Step 2 — Give the certificate to your IdP
+
+Do this **before** setting the environment variables. If NudgeBee starts signing while your IdP does not yet hold the certificate, sign-in fails signature validation instead.
+
+For AD FS, in **AD FS Management**:
+
+1. Open **Relying Party Trusts** and select the NudgeBee trust.
+2. Open **Properties → Signature → Add…** and select `nudgebee-saml-sp.crt`.
+3. On the **Advanced** tab, confirm the secure hash algorithm is **SHA-256**. NudgeBee signs with RSA-SHA256, which is the AD FS default.
+
+For other providers, look for a "request signing", "verification certificate", or "validate signatures" setting on the SAML application.
+
+#### Step 3 — Set the environment variables
+
+```env
+SAML_SP_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0...
+-----END PRIVATE KEY-----"
+
+SAML_SP_CERT="-----BEGIN CERTIFICATE-----
+MIIDpDCCAoygAwIBAgIGAX...
+-----END CERTIFICATE-----"
+```
+
+Both `BEGIN PRIVATE KEY` and `BEGIN RSA PRIVATE KEY` formats are accepted. The key must not be protected by a passphrase — NudgeBee cannot prompt for one.
+
+Restart the application, then confirm signing is active:
+
+```bash
+curl -s https://app.yourdomain.com/api/auth/saml/health | grep -o '"requestSigning":{[^}]*}'
+```
+
+A key NudgeBee cannot read disables SAML rather than quietly sending unsigned requests, because an unsigned request is exactly what your IdP is rejecting. The health endpoint names the offending variable in that case.
+
+#### Rotating the signing certificate
+
+Replace the certificate in this order so that sign-in keeps working throughout:
+
+1. Generate a new key pair.
+2. Add the new certificate to your IdP **alongside** the existing one. AD FS accepts more than one signing certificate per trust.
+3. Update `SAML_SP_PRIVATE_KEY` and `SAML_SP_CERT`, then restart.
+4. Remove the old certificate from your IdP.
+
+An expiring signing certificate is reported by the [health endpoint](#health-check) 30 days ahead.
+
 ## NudgeBee Service Provider Details
 
 When creating a SAML application in your IdP, you will need to provide the following NudgeBee SP details:
@@ -97,6 +172,9 @@ When creating a SAML application in your IdP, you will need to provide the follo
 | **Entity ID / Audience** | Your `SAML_AUDIENCE` value (e.g., `https://app.yourdomain.com`) |
 | **NameID Format** | `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` |
 | **Sign-on URL** | `{NEXTAUTH_URL}/api/auth/saml/login` |
+| **SP Metadata URL** | `{NEXTAUTH_URL}/api/auth/saml/metadata` |
+
+If your IdP can import a Service Provider from a URL, point it at the metadata URL instead of entering the fields by hand. The metadata carries the ACS URL, the entity id, the NameID format, and the request-signing certificate when one is configured.
 
 ### Endpoints
 
@@ -104,6 +182,7 @@ When creating a SAML application in your IdP, you will need to provide the follo
 |---|---|---|
 | `/api/auth/saml/login` | GET | Initiates the SAML login flow (SP-initiated SSO) |
 | `/api/auth/saml/acs` | POST | Assertion Consumer Service — receives the SAML response from the IdP |
+| `/api/auth/saml/metadata` | GET | Service Provider metadata for import into your IdP |
 | `/api/auth/saml/health` | GET | Returns SAML configuration status and certificate health |
 
 ## SAML Attribute Mapping
@@ -214,6 +293,15 @@ GET /api/auth/saml/health
     "expiresAt": "2025-12-01T00:00:00.000Z",
     "daysUntilExpiry": 365
   },
+  "requestSigning": {
+    "enabled": true,
+    "certificate": {
+      "expired": false,
+      "expiringSoon": false,
+      "expiresAt": "2035-09-01T00:00:00.000Z",
+      "daysUntilExpiry": 3650
+    }
+  },
   "config": {
     "entryPoint": "https://yourorg.okta.com/app/.../sso/saml",
     "issuer": "http://www.okta.com/exk1234567",
@@ -223,10 +311,12 @@ GET /api/auth/saml/health
 }
 ```
 
+`requestSigning.enabled` is `false` on deployments that have not configured [signed authentication requests](#signed-authentication-requests), and the `certificate` block is then absent. A signing certificate that cannot be read is reported as `requestSigning.error`.
+
 **Status values:**
 - `healthy` — Certificate is valid with more than 30 days remaining.
 - `warning` — Certificate expires within 30 days. Renew soon.
-- `error` — Certificate has expired. SAML login will fail.
+- `error` — Certificate has expired, or a configured signing key cannot be read. SAML login will fail.
 
 ## Troubleshooting
 
@@ -241,6 +331,10 @@ GET /api/auth/saml/health
 | "Invalid session data" error | Session token expired (took >60 seconds) | Check network latency between IdP and NudgeBee; ensure clocks are synchronized |
 | User created but wrong role | Default role misconfigured | Check `AUTH_DEFAULT_ROLE` (On-Prem) or `auth_default_role` tenant attribute (SaaS) |
 | Certificate expiry warning | IdP certificate is expiring soon | Download a new certificate from your IdP and update `SAML_CERT`; use `/api/auth/saml/health` to monitor |
+| IdP reports that a signed authentication request is required (AD FS `MSIS7085`) | The IdP requires signed requests and NudgeBee is not configured to sign them | Configure [Signed Authentication Requests](#signed-authentication-requests). To confirm the diagnosis first, note that signing in from the IdP portal still works while the SSO button does not |
+| SAML login button disappears right after setting `SAML_SP_PRIVATE_KEY` | The key is malformed, or is protected by a passphrase | Check `/api/auth/saml/health` — it names the variable. Re-export the key in PEM form without a passphrase |
+| Signature validation fails only after enabling request signing | The IdP does not hold the matching certificate, or holds an older one | Upload `nudgebee-saml-sp.crt` to the IdP and confirm the hash algorithm is SHA-256 |
+| Metadata URL returns `SAML_SP_CERT is required` | A signing key is set without its certificate | Set `SAML_SP_CERT` to the certificate matching `SAML_SP_PRIVATE_KEY` |
 
 ## Notes
 
