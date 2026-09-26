@@ -81,7 +81,7 @@ The form labels these fields with "Cubeapm" in the name, for example **Cubeapm U
 ### Test and Save
 
 1. Click **Test Connection**. NudgeBee first runs a trivial PromQL query (`1`) against `/api/metrics/api/v1/query`. It then checks that the trace search API at `/api/traces/select/logsql/query` exists. On success you see **Cubeapm connection successful**.
-2. *(Optional)* Expand **Advanced Settings** to set **Default Log Filters**, **Default Trace Filters**, **Log Label Mapping**, and **Trace Label Mapping**. These cards unlock after a successful test.
+2. *(Optional)* Expand **Advanced Settings** to set **Default Log Filters**, **Default Trace Filters**, **Log Label Mapping**, and **Trace Label Mapping**. See [Advanced Settings](./advanced-settings.md) for what each one does. These cards unlock after a successful test.
 3. Click **Save**. It stays disabled until a test succeeds.
 
 Test Connection checks the query URL and token only. It does not contact the admin API, so a wrong admin URL or admin token shows up only when NudgeBee manages an alert rule.

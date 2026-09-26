@@ -32,7 +32,7 @@ Navigate to **Admin** > **Integrations** > **Observability**, select **Jaeger**,
 * **Jaeger Query URL \*** (Required)
     * The Query API endpoint, e.g. `https://jaeger.example.com:16686`. For an in-cluster deployment this is usually the Query service DNS name, e.g. `http://jaeger-query.observability.svc.cluster.local:16686`.
 
-**Advanced Settings** holds optional tuning for this integration.
+**Advanced Settings** holds optional per-account **Default Trace Filters** and **Trace Label Mapping**. See [Advanced Settings: default filters and field mapping](./advanced-settings.md).
 
 ![The Jaeger configuration form, showing the Query API URL, optional bearer token and default-trace-provider flag](../../../static/img/integrations/obs-jaeger.png)
 
@@ -77,3 +77,4 @@ Jaeger is a **trace-only** source. Pair it with a metrics source such as [Promet
 - [Traces integration overview](../../installation/agent/connect/tracing/index.md)
 - [Jaeger Query API](https://www.jaegertracing.io/docs/latest/apis/)
 - [Observability overview](./index.md)
+- [Advanced Settings: default filters and field mapping](./advanced-settings.md)

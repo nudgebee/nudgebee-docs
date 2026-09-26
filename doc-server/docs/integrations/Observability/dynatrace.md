@@ -217,3 +217,4 @@ Dynatrace Grail  ←──  NudgeBee queries via DQL
 - [Dynatrace Query Language (DQL) guide](https://docs.dynatrace.com/docs/platform/grail/dynatrace-query-language/dql-guide)
 - [Dynatrace Grail — storage and querying](https://docs.dynatrace.com/docs/platform/grail)
 - [Set up Dynatrace on Kubernetes](https://docs.dynatrace.com/docs/setup-and-configuration/setup-on-k8s)
+- [Advanced Settings: default filters and field mapping](./advanced-settings.md)

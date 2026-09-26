@@ -188,3 +188,4 @@ SolarWinds Observability SaaS  ←──  NudgeBee queries via API
 - [SolarWinds API Tokens](https://documentation.solarwinds.com/en/success_center/observability/default.htm#cshid=api-tokens)
 - [SolarWinds Kubernetes Monitoring setup](https://documentation.solarwinds.com/en/success_center/observability/default.htm#cshid=kubernetes)
 - [SolarWinds OpenTelemetry APM](https://documentation.solarwinds.com/en/success_center/observability/default.htm#cshid=apm-otel)
+- [Advanced Settings: default filters and field mapping](./advanced-settings.md)

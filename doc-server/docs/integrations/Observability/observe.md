@@ -38,3 +38,9 @@ To successfully integrate **Observe**, you will need to provide the following in
 
 After filling in all the required fields, click **Save** to complete the integration setup.
 If successful, Observe will be connected as a log provider for your account.
+
+---
+
+## Advanced Settings
+
+To map the field names your logs use onto NudgeBee's concepts, such as pod and namespace, see [Advanced Settings: default filters and field mapping](./advanced-settings.md).

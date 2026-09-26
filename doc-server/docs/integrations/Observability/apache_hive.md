@@ -66,3 +66,4 @@ Click **Test Connection**, then **Save**.
 
 - [Observability overview](./index.md)
 - [Apache Hive documentation](https://cwiki.apache.org/confluence/display/Hive/Home)
+- [Advanced Settings: default filters and field mapping](./advanced-settings.md)
