@@ -97,3 +97,9 @@ The SaaS model is configured through this integration form. The agent model is c
 - Chronosphere uses **PromQL** for metrics queries, making it compatible with Prometheus-based dashboards and alerts.
 - Trace data is queried using Chronosphere's native trace API with OpenTelemetry-compatible span attributes.
 - Both instant queries and range queries with configurable step sizes are supported for metrics.
+
+---
+
+## Advanced Settings
+
+To scope trace queries to one environment per account, or to map trace field names your pipeline spells differently, see [Advanced Settings: default filters and field mapping](./advanced-settings.md).

@@ -116,3 +116,9 @@ NudgeBee supports the full range of NRQL operators for filtering: `=`, `!=`, `LI
 * **Symptom**: Incident investigation logs show `NRQL query execution timeout exceeded`.
 * **Remediation**:
   Narrow the query time window or filter by specific attributes (`k8s.podName`, `service.name`) to reduce the data volume scanned in New Relic.
+
+---
+
+## Advanced Settings
+
+To scope trace queries to one environment per account, or to map field names your pipeline spells differently, see [Advanced Settings: default filters and field mapping](./advanced-settings.md). New Relic has no default log filter.
