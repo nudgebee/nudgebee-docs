@@ -3,6 +3,10 @@ sidebar_position: 1
 ---
 # Slack
 
+:::tip Only need alerts in one Slack channel?
+A [webhook target](./webhook_targets.md) posts notifications through the channel's incoming webhook. It needs no app install or admin approval, but it is one-way.
+:::
+
 ## How to configure Slack in your NudgeBee Account
 
 - This loom below shows how to configure Slack in your account for notifications.
