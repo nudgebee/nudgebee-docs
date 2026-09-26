@@ -109,3 +109,9 @@ Your App Registration must have the following permissions:
 - Trace queries go to the Application Insights API (`api.applicationinsights.io`).
 - Log queries go to the Log Analytics API (`api.loganalytics.io`).
 - Custom table names are supported for both traces and logs to accommodate different Azure configurations.
+
+---
+
+## Advanced Settings
+
+To scope trace queries to one environment per account, or to map field names your pipeline spells differently, see [Advanced Settings: default filters and field mapping](./advanced-settings.md). Azure Application Insights has no default log filter.

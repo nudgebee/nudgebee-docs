@@ -90,3 +90,9 @@ After filling in all the required fields, click the "Save" or "Connect" button (
 * **Root Cause**: The Kubernetes cluster name or namespace tag in Datadog (`kube_cluster_name`, `cluster_name`) differs from the cluster name registered in NudgeBee.
 * **Remediation**:
   Ensure your Datadog Agent `datadog.yaml` contains `tags: ["kube_cluster_name:<CLUSTER_NAME>"]` matching the cluster identifier in NudgeBee.
+
+---
+
+## Advanced Settings
+
+To scope this integration to one cluster or environment per account, or to map field names your pipeline spells differently, see [Advanced Settings: default filters and field mapping](./advanced-settings.md).
