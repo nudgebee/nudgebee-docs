@@ -3,6 +3,10 @@ sidebar_position: 3
 ---
 # Google Chat
 
+:::tip Only need alerts in one Google Chat space?
+A [webhook target](./webhook_targets.md) posts notifications through the space's incoming webhook. It needs no app install or admin approval, but it is one-way.
+:::
+
 ## How to configure Google Chat in your NudgeBee Account
 
 - This loom below shows how to configure Google Chat in your account for notifications.

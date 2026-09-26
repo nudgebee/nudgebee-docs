@@ -18,6 +18,8 @@ Notification rules control delivery for platform categories such as Troubleshoot
 
 Open **Notification Rules**, add a rule, and select the source category and available account, namespace, application, alert, and severity filters. Choose destination channels from your configured providers and save the rule.
 
+[Webhook targets](../integrations/Notifications/webhook_targets.md) for Slack, Microsoft Teams, and Google Chat appear as their own **Slack Webhook**, **Teams Webhook**, and **Google Chat Webhook** channels. Pick one target of each type per rule. A webhook target has no default destination: it receives only the notifications a rule routes to it.
+
 | Filter | Matching behavior |
 | --- | --- |
 | Source | Platform category; raw ingestion sources such as Prometheus and Datadog findings map to Troubleshoot |
