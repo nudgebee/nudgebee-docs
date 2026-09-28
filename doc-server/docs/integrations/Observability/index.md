@@ -40,6 +40,7 @@ NudgeBee reads telemetry from the platforms below. Connect any combination — f
 | Azure Application Insights | Traces | [Azure App Insights](./azure_app_insights.md) |
 | Loggly | Logs | [Loggly](./loggly.md) |
 | Observe | Logs | [Observe](./observe.md) |
+| Splunk Enterprise / Splunk Cloud Platform | Metrics, logs, traces | [Splunk Enterprise](./splunk_enterprise.md) |
 | Splunk Observability Cloud | Metrics | Configure in **Admin** > **Integrations** > **Observability** |
 | Apache Pinot | Logs | Configure in **Admin** > **Integrations** > **Observability** |
 | Apache Hive | Logs | [Apache Hive](./apache_hive.md) |
@@ -48,6 +49,7 @@ NudgeBee reads telemetry from the platforms below. Connect any combination — f
 | Jaeger | Traces | [Jaeger](./jaeger.md) |
 | Grafana Tempo | Traces | Configure in **Admin** > **Integrations** > **Observability** |
 | OpenObserve | Logs | Configure in **Admin** > **Integrations** > **Observability** |
+| CubeAPM | Metrics, logs, traces | [CubeAPM](./cubeapm.md) |
 
 :::note
 Providers without a linked guide are configured directly from **Admin** > **Integrations** > **Observability**, where the configuration form documents each field inline.
@@ -59,6 +61,7 @@ Observability sources supply telemetry; alerts reach NudgeBee separately, throug
 
 - [Prometheus Alertmanager](../../installation/agent/connect/alertmanager.md) — forward alerts from kube-prometheus-stack, operator-managed, plain or external Alertmanagers
 - [Datadog](../Webhooks/datadog_webhook.md), [Dynatrace](../Webhooks/dynatrace_webhook.md), [New Relic](../Webhooks/newrelic_webhook.md), [SolarWinds](../Webhooks/solarwinds_webhook.md), [GCP Cloud Monitoring](../Webhooks/gcp_monitoring_webhook.md), [ServiceNow](../Webhooks/servicenow_webhook.md) and [PagerDuty](../Webhooks/pagerduty_webhook.md) webhooks
+- [CubeAPM](../Webhooks/cubeapm_webhook.md) webhook
 - Azure Monitor, Grafana, Elasticsearch and Zenduty webhooks — see the [webhooks overview](../Webhooks/)
 
 ---

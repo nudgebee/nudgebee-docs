@@ -28,6 +28,7 @@ Create any of these from **Admin** > **Integrations** > **Webhooks**.
 | [Elasticsearch Webhook](./elasticsearch_webhook.md) | Receive alerts raised by Elasticsearch/Kibana rules and watchers. |
 | [OpenObserve Webhook](./openobserve_webhook.md) | Receive OpenObserve alert notifications into NudgeBee. |
 | [Splunk Webhook](./splunk_webhook.md) | Receive Splunk alert notifications into NudgeBee. |
+| [CubeAPM Webhook](./cubeapm_webhook.md) | Receive CubeAPM alert notifications, and close the event when the alert resolves. |
 
 ### Also Available
 
