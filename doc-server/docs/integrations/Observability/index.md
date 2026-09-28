@@ -55,6 +55,10 @@ NudgeBee reads telemetry from the platforms below. Connect any combination — f
 Providers without a linked guide are configured directly from **Admin** > **Integrations** > **Observability**, where the configuration form documents each field inline.
 :::
 
+:::tip Shared backends and non-standard field names
+If one log or trace backend serves several accounts, or your pipeline names fields differently from the provider's defaults, use the integration's **Advanced Settings**. See [Default filters and field mapping](./advanced-settings.md).
+:::
+
 ### Getting Alerts In
 
 Observability sources supply telemetry; alerts reach NudgeBee separately, through [inbound webhooks](../Webhooks/) or Alertmanager forwarding:

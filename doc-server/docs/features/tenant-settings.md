@@ -28,15 +28,17 @@ Turning it on means anyone who can obtain an email address at an allowed domain 
 
 ## Label Mapping
 
-NudgeBee has to know which of your labels mean what. Three sub-tabs, one per signal type:
+NudgeBee has to know which of your labels mean what. Three sub-tabs, one per signal type.
+
+The **Logs** and **Traces** mappings here are the lowest tier you set yourself. An account's own mapping and the integration's **Advanced Settings** both override them. See [Advanced Settings: which mapping wins](../integrations/Observability/advanced-settings.md#which-mapping-wins).
 
 ### Logs
 
-Map your logs backend's label keys onto product concepts, plus a **Cluster Label** telling NudgeBee which key carries the cluster name.
+Map the field names your logs backend uses for **Pod**, **Namespace** and **App**. To keep one account's logs to one cluster or environment, use **Default Log Filters** on the log integration instead.
 
 ### Traces
 
-The same mapping for your tracing backend.
+The same mapping for your tracing backend: **Service name**, **Workload name**, **Span name**, **Duration (ns)** and **Status code**, with the remaining canonical fields under **advanced trace fields**.
 
 ### Webhook alerts
 

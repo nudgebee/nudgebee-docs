@@ -114,7 +114,7 @@ Index and app names may contain only letters, digits, underscores, and hyphens.
 ### Test and Save
 
 1. Click **Test Connection**. NudgeBee calls `GET /services/server/info` on the Splunk URL, with a 15-second timeout. On success you see **Splunk Enterprise connection successful**.
-2. *(Optional)* Expand **Advanced Settings** to set **Default Log Filters**, **Default Trace Filters**, **Log Label Mapping**, and **Trace Label Mapping**. These cards unlock after a successful test, because they need the field names Splunk returns.
+2. *(Optional)* Expand **Advanced Settings** to set **Default Log Filters**, **Default Trace Filters**, **Log Label Mapping**, and **Trace Label Mapping**. See [Advanced Settings](./advanced-settings.md) for what each one does. These cards unlock after a successful test, because they need the field names Splunk returns.
 3. Click **Save**. It stays disabled until a test succeeds.
 
 If the test fails, the message tells you what to fix:

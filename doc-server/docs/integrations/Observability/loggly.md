@@ -101,3 +101,4 @@ Once configured, NudgeBee queries your Loggly account for log data using the Log
 - [Loggly Search Overview](https://documentation.solarwinds.com/en/success_center/loggly/content/admin/search-overview.htm)
 - [Loggly Event Retrieval API (Retrieving Data)](https://documentation.solarwinds.com/en/success_center/loggly/content/admin/api-retrieving-data.htm)
 - [Loggly Customer Token (for sending data — not used by NudgeBee)](https://documentation.solarwinds.com/en/success_center/loggly/content/admin/customer-token-authentication-token.htm)
+- [Advanced Settings: default filters and field mapping](./advanced-settings.md)
