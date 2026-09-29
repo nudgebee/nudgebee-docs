@@ -125,7 +125,7 @@ For AWS agent connections:
 ### C. Azure Cloud Account Synchronization
 For Azure connections:
 1. Verify that the **Enterprise Application / Service Principal** credentials (Client ID, Client Secret, Tenant ID) have not expired.
-2. Ensure the Service Principal holds `Reader` and `Cost Management Reader` permissions on the target Subscription / Management Group.
+2. Ensure the Service Principal holds the `Reader` role on the target Subscription / Management Group (Reader includes cost data).
 
 ---
 

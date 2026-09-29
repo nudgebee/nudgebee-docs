@@ -20,7 +20,7 @@ Cloud synchronization is not a single monolithic job. It runs as a billing job f
 
 ```mermaid
 graph TD
-    Trigger[Scheduled Cron / 'Sync Now'] --> S1[1. Daily Spends Sync<br/>CUR / Cost Export / BigQuery]
+    Trigger[Scheduled Cron / 'Sync Now'] --> S1[1. Daily Spends Sync<br/>CUR / Azure Cost Management / BigQuery]
     S1 -->|Completes DB Write| S2[2. Resource Inventory ETL<br/>EC2, RDS, Disks, Subscriptions]
     S2 -->|Then attempts| S3[3. Recommendations & Scanners<br/>Idle Waste, Rightsizing, Security]
 
@@ -42,7 +42,7 @@ In the Cloud Accounts dashboard, each account displays an **Overall Connection S
 
 | Feature Module | Sync Cadence | What "Connected" Means | Failure Impact |
 | :--- | :--- | :--- | :--- |
-| **Spends** | Periodic (Daily billing reports) | Cost and Usage Reports (AWS CUR), Azure Cost Export, or GCP BigQuery Billing datasets are actively ingested. | Spend charts stop updating; new resources are not matched against cost data. |
+| **Spends** | Periodic (Daily billing reports) | Cost and Usage Reports (AWS CUR), Azure Cost Management query data, or GCP BigQuery Billing datasets are actively ingested. | Spend charts stop updating; new resources are not matched against cost data. |
 | **Resources** | Periodic Resource Discovery | Cloud resource inventory (VMs, databases, storage buckets, networking) was successfully discovered via Cloud APIs. | Knowledge Graph topology becomes stale; newly created cloud resources are missing. |
 | **Recommendations** | Post-Resource Discovery | Rightsizing, idle waste, and security posture algorithms completed analysis against the latest inventory. | Recommendations list does not reflect recent infrastructure changes. |
 | **Events** | Real-time / Event-driven | CloudWatch/EventBridge SQS, Azure Event Grid, or GCP Monitoring webhooks are actively delivering events. | Incidents and configuration changes are not alerted in real time. |
@@ -83,7 +83,7 @@ The **Sync Now** button in the Console triggers an immediate synchronization req
 - **Cause**: Required IAM permissions are missing from the cross-account role or Service Principal.
 - **Remediation**:
   - **AWS**: Verify that the NudgeBee CloudFormation Stack is at the latest template version. Check that `sts:AssumeRole` trust policy includes the NudgeBee Server ARN.
-  - **Azure**: In Azure Portal, ensure the Service Principal is assigned `Reader` and `Cost Management Reader` roles on the subscription.
+  - **Azure**: In Azure Portal, ensure the Service Principal is assigned the `Reader` role on the subscription (Reader includes cost data). If cost is still missing, check the Enterprise Agreement "view charges" setting.
   - **GCP**: In IAM & Admin, grant `Viewer` and `BigQuery Data Viewer` to the NudgeBee Service Account.
 
 ---

@@ -63,15 +63,10 @@ NudgeBee lists the subscriptions that the supplied Microsoft Entra service princ
 2. Enter the tenant ID, client ID, and client secret for the service principal.
 3. Grant the service principal the required roles at each subscription, or at a parent scope whose permissions are inherited by those subscriptions. For example, at a management-group scope:
    ```bash
-   # Assign Reader and Cost Management Reader at the Management Group scope
+   # Assign Reader at the Management Group scope (Reader also grants read access to cost data)
    az role assignment create \
      --assignee "<NUDGEBEE_APP_CLIENT_ID>" \
      --role "Reader" \
-     --scope "/providers/Microsoft.Management/managementGroups/<YOUR_ROOT_MG_ID>"
-
-   az role assignment create \
-     --assignee "<NUDGEBEE_APP_CLIENT_ID>" \
-     --role "Cost Management Reader" \
      --scope "/providers/Microsoft.Management/managementGroups/<YOUR_ROOT_MG_ID>"
    ```
 4. Click **Discover Subscriptions**. NudgeBee lists all discovered subscriptions with check boxes to select which subscriptions to activate.
@@ -101,7 +96,7 @@ When onboarding a cloud fleet, data populates progressively across three phases 
 | Phase | Typical Duration (Approximate) | What Becomes Available |
 | :--- | :--- | :--- |
 | **1. Resource Discovery** | Initial discovery sweep (~minutes) | Cloud inventory (VMs, databases, buckets, networking) populates the Knowledge Graph. |
-| **2. Spends Ingestion** | Dependent on provider billing export availability | Billing reports (CUR / Cost Export / BigQuery) aggregate into cost breakdown charts. |
+| **2. Spends Ingestion** | Dependent on provider billing export availability | Billing data (AWS CUR / Azure Cost Management / GCP BigQuery) aggregate into cost breakdown charts. |
 | **3. Recommendations** | Follows resource and spend processing | Rightsizing, idle waste, and cost optimization algorithms complete analysis. |
 
 ---
