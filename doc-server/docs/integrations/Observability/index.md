@@ -48,7 +48,7 @@ NudgeBee reads telemetry from the platforms below. Connect any combination — f
 | Last9 | Metrics, logs | [Last9 logs](../../installation/agent/connect/logging/last9.md), [Last9 metrics](../../installation/agent/connect/metrics.md) |
 | Jaeger | Traces | [Jaeger](./jaeger.md) |
 | Grafana Tempo | Traces | Configure in **Admin** > **Integrations** > **Observability** |
-| OpenObserve | Logs | Configure in **Admin** > **Integrations** > **Observability** |
+| OpenObserve | Metrics, logs, traces | [OpenObserve](./openobserve.md) |
 | CubeAPM | Metrics, logs, traces | [CubeAPM](./cubeapm.md) |
 
 :::note
