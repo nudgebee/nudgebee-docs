@@ -17,6 +17,16 @@ The chart location and image registry differ by edition (see [Editions & Capabil
 - **Enterprise** <Enterprise/> — `oci://registry.nudgebee.com/nudgebee`, requires registry authentication using your license key.
 :::
 
+:::caution[Read this before upgrading a deployment installed on an older chart]
+Recent charts install the agent alongside the server by default (`agent.enabled: true`). On an upgrade that default applies to your release too, so decide which case you are in:
+
+- **This cluster is already monitored by a separately installed agent** → set `agent.enabled: false` in your `values.yaml`. Otherwise the same cluster registers a second time under a different name and shows up twice in **Kubernetes**.
+- **This cluster is not monitored yet** → leave the default on and set `agent.clusterName` to the name you want it to appear under (default `nb-control-plane-k8s`).
+- **You render offline (Argo CD, Flux) with the agent enabled** → you must also set `agent.accessKey` and `agent.accessSecret` from the live `nudgebee-bootstrap` Secret, or the upgrade fails by design rather than regenerate a credential the database no longer matches.
+
+`admin.email` is **not** required on upgrade — it is only validated on a fresh install, since an existing deployment already has an admin. See [the bundled agent](./index.md#bundled-agent) and [`admin.email`](./index.md#admin-email) for the full detail.
+:::
+
 ---
 
 ## 1. Upgrade Planning & Pre-Flight Checks

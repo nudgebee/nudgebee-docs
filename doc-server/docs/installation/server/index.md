@@ -219,12 +219,24 @@ global:
   image:
     registry: "ghcr.io/nudgebee"
 
+# REQUIRED on a fresh Community install. The first admin and their organization
+# are created during install from this address, so the deployment is complete
+# when `helm install` returns. The install fails fast if it is missing.
+admin:
+  email: "you@example.com"
+
 nudgebee_secret:
   BASE_URL: "http://localhost:3000"
   # 32-byte hex — generate once with `openssl rand -hex 32` and store in your
   # secret manager. Rotating after data is written makes previously-encrypted
   # DB rows unreadable, so treat it like a database master password.
   NUDGEBEE_ENCRYPTION_KEY: "<your-32-byte-hex-key>"
+
+# The agent is installed alongside the server by default and connects the
+# cluster hosting it. Name it here; set `enabled: false` to opt out.
+agent:
+  enabled: true
+  clusterName: "nb-control-plane-k8s"
 
 app:
   ingress:
@@ -261,6 +273,18 @@ nudgebee_secret:
   NUDGEBEE_ENCRYPTION_KEY: "<your-32-byte-hex-key>"   # openssl rand -hex 32
   NUDGEBEE_LICENSE: <your-license-key>
 
+# Optional on Enterprise: the license carries its own admin address and takes
+# precedence. Set it only if your license does not name one — a conflicting
+# value is ignored with a warning in the services-server log.
+# admin:
+#   email: "you@example.com"
+
+# The agent is installed alongside the server by default and connects the
+# cluster hosting it. Name it here; set `enabled: false` to opt out.
+agent:
+  enabled: true
+  clusterName: "nb-control-plane-k8s"
+
 app:
   ingress:
     enabled: false
@@ -277,6 +301,78 @@ Replace `<your-license-key>` with your NudgeBee license key and generate
 
 </TabItem>
 </Tabs>
+
+#### `admin.email` — who the first admin is {#admin-email}
+
+The server creates the first admin user and their organization **during install**, so the deployment is usable the moment `helm install` returns rather than half-configured until somebody signs in.
+
+| Edition | Is `admin.email` required? | Which address is used |
+|---|---|---|
+| **Community** <Community/> | **Yes**, on a fresh install — the chart fails with `[ERROR] admin.email is required` | The value you set |
+| **Enterprise** <Enterprise/> | No, if `nudgebee_secret.NUDGEBEE_LICENSE` (or `global.existingNudgebeeSecretName`) is set | The address inside the license. A different `admin.email` is ignored and logged as a warning |
+
+Other things worth knowing:
+
+- **Upgrades are never checked.** An existing deployment already has an admin, so `admin.email` is only validated on `helm install` of a new release.
+- **The address is validated.** A malformed address fails the install.
+- **Sign in with this address** plus the generated bootstrap password — see [Access the UI](#4-access-the-ui--authenticate).
+
+#### The bundled agent — installed by default {#bundled-agent}
+
+`agent.enabled` defaults to **`true`**: the chart installs the [NudgeBee Agent](../agent/installation/index.md) into the same namespace and registers the cluster hosting the server. The first cluster therefore needs no second install and no copied auth key — the chart generates the agent credential and hands the same value to both sides.
+
+| Value | Default | What it does |
+|---|---|---|
+| `agent.enabled` | `true` | Install the agent alongside the server and connect this cluster |
+| `agent.clusterName` | `nb-control-plane-k8s` | Name this cluster appears under. Must be more than 3 characters, max 40, no special characters; `Demo` is reserved |
+| `agent.accessKey` / `agent.accessSecret` | `""` | **GitOps only** — see the Argo CD / Flux caution below |
+| `nudgebee-agent.*` | — | Passthrough to the agent subchart; anything the [agent chart](../agent/operate/helm_values.md) accepts can be set here |
+
+The bundled agent runs a deliberately light subset so a first install stays small. The node agent (privileged eBPF DaemonSet), the OpenTelemetry collector, and the agent's ClickHouse are **off**; inventory, events, logs, metrics, and alerts all work. Turn them on explicitly when you want network metrics, the service map, traces, or profiles:
+
+```yaml
+nudgebee-agent:
+  nodeAgent:
+    enabled: true
+  opentelemetry-collector:
+    enabled: true
+  runner:
+    clickhouse_enabled: true    # must be on together with the collector above
+```
+
+:::caution[Set `agent.enabled: false` if this cluster is already monitored]
+If a separately installed agent already reports this cluster, leave the bundled one off — otherwise the same cluster registers a second time under a different name:
+
+```yaml
+agent:
+  enabled: false
+```
+
+This is the common case when **upgrading** an existing self-hosted deployment, where the default flips the behaviour from what you installed with.
+:::
+
+:::caution[GitOps (Argo CD, Flux): set `agent.accessKey` and `agent.accessSecret`]
+Offline rendering cannot read the existing credential back from the cluster, and the chart refuses to silently regenerate it — a fresh credential paired with the old hash in Postgres would leave the agent unable to authenticate. On an upgrade rendered offline the chart fails unless you supply both explicitly. Read them from the live cluster:
+
+```shell
+kubectl get secret nudgebee-bootstrap -n nudgebee \
+  -o jsonpath='{.data.LOCAL_AGENT_ACCESS_KEY}' | base64 -d; echo
+kubectl get secret nudgebee-bootstrap -n nudgebee \
+  -o jsonpath='{.data.LOCAL_AGENT_ACCESS_SECRET}' | base64 -d; echo
+```
+
+```yaml
+agent:
+  accessKey: "<existing LOCAL_AGENT_ACCESS_KEY>"
+  accessSecret: "<existing LOCAL_AGENT_ACCESS_SECRET>"
+```
+
+Leave both empty for ordinary `helm install` / `helm upgrade` against a reachable cluster.
+:::
+
+:::note[The agent shares the Helm release]
+`helm uninstall nudgebee` removes the bundled agent too. It also adds two pods (runner and forwarder) to the sizing figures above — and substantially more if you enable the node agent, the OpenTelemetry collector, or the agent's ClickHouse, which brings its own PVC.
+:::
 
 ### Step 3: Run the Helm Install
 
@@ -295,6 +391,19 @@ helm upgrade nudgebee $NUDGEBEE_CHART \
 ```
 
 To install a specific version, add `--version $CHART_VERSION` to the command. See the [Server Releases](../../releases/server/) page for available versions.
+
+For a quick evaluation you can skip the values file entirely and pass the three values that matter on the command line (Community chart shown):
+
+```shell
+export NUDGEBEE_ENC_KEY=$(openssl rand -hex 32)   # save this — it cannot be rotated after data is written
+
+helm install nudgebee oci://ghcr.io/nudgebee/charts/nudgebee \
+  --namespace nudgebee --create-namespace \
+  --set nudgebee_secret.NUDGEBEE_ENCRYPTION_KEY="$NUDGEBEE_ENC_KEY" \
+  --set admin.email="you@example.com" \
+  --set agent.enabled=true \
+  --wait --timeout 20m
+```
 
 :::tip
 **This minimal setup gets NudgeBee running with port-forwarding.** You can add Ingress, SSL, external Postgres, and other configurations later without reinstalling — just update your `values.yaml` and run `helm upgrade` again.
@@ -318,14 +427,21 @@ kubectl get pods -n nudgebee
 
 | Pod Name Pattern | Ready State | Status | Role |
 |---|---|---|---|
-| `nudgebee-app-*` | `1/1` | `Running` | Main UI and GraphQL/REST API |
-| `nudgebee-k8s-collector-*` | `1/1` | `Running` | Telemetry receiver for agents |
-| `nudgebee-relay-server-*` | `1/1` | `Running` | WebSocket agent relay server |
-| `nudgebee-postgresql-0` | `1/1` | `Running` | Core database (if bundled) |
-| `nudgebee-rabbitmq-0` | `1/1` | `Running` | Event message bus (if bundled) |
-| `nudgebee-schema-migration-*` | `0/1` | `Completed` | Post-install database migration job |
+| `app-*` | `1/1` | `Running` | Main UI and GraphQL/REST API |
+| `services-server-*` | `1/1` | `Running` | Core backend (also provisions the admin and the bundled agent's account) |
+| `k8s-collector-*` | `1/1` | `Running` | Telemetry receiver for agents |
+| `relay-server-*` | `1/1` | `Running` | WebSocket agent relay server |
+| `postgresql-0` | `1/1` | `Running` | Core database (if bundled) |
+| `rabbitmq-0` | `1/1` | `Running` | Event message bus (if bundled) |
+| `postgres-migration-job-*` | `0/1` | `Completed` | Pre-install database migration job |
+| `nudgebee-nudgebee-agent-runner-*` | `1/1` | `Running` | Bundled agent (only when `agent.enabled: true`, the default) |
+| `nudgebee-nudgebee-agent-forwarder-*` | `1/1` | `Running` | Bundled agent's event watcher |
 
 All active pods should show `1/1` `Running`, and migration jobs should show `Completed`. This typically takes 2–3 minutes after the Helm command finishes.
+
+:::note[Bundled agent pod names]
+The agent is a subchart of the server release, so its pods carry the release name twice (`nudgebee-nudgebee-agent-*`). There is no `node-agent` DaemonSet unless you enable it — see [the bundled agent](#bundled-agent).
+:::
 
 ### 2. Verify HTTP Connectivity
 
@@ -351,7 +467,7 @@ You should receive an `HTTP/1.1 200 OK` (or `307 Temporary Redirect` to `/auth/s
 
 ### Understanding Authentication by Deployment Mode
 - **Cloud SaaS (`app.nudgebee.com`)**: Completely passwordless — users sign in using OAuth SSO (Google, GitHub, Okta, Microsoft) or email magic links. No passwords are stored or generated.
-- **Self-Hosted Community & Enterprise**: Initializes with a secure bootstrap admin password stored in an in-cluster Kubernetes secret so administrators can complete initial setup and configure SSO.
+- **Self-Hosted Community & Enterprise**: The admin user and organization are created during install from [`admin.email`](#admin-email) (or the address in your Enterprise license), and a secure bootstrap password is stored in an in-cluster Kubernetes secret so that administrator can sign in, complete setup, and configure SSO.
 
 ### Accessing Without Ingress (Port-Forwarding)
 
@@ -373,7 +489,17 @@ kubectl get secret nudgebee -n nudgebee \
 echo
 ```
 
-Use your admin email (e.g. `admin@nudgebee.local` or the email provided during install) and the decoded password to sign in.
+Sign in with the address you set in `admin.email` (or the address carried by your Enterprise license) and the decoded password. That user already exists with its organization, so there is nothing to set up on first login.
+
+:::tip[Nothing was provisioned?]
+If the login screen rejects the address, check that the install actually provisioned it:
+
+```shell
+kubectl logs -n nudgebee deploy/services-server | grep -i 'first run'
+```
+
+`no admin address configured, leaving provisioning to first login` means neither `admin.email` nor a license address reached the server — the deployment falls back to provisioning whoever signs in first.
+:::
 
 :::caution Production Security
 **The bootstrap credentials provider is intended for initial onboarding and evaluation only.** For production, configure an enterprise identity provider (SAML 2.0 or OAuth SSO) and disable dummy credentials. See [Authentication Integrations](../../integrations/Authentication/) for details.
@@ -386,8 +512,15 @@ Use your admin email (e.g. `admin@nudgebee.local` or the email provided during i
 Once logged into the dashboard, complete your initial control plane verification:
 
 1. **Verify UI & Dashboard Navigation**: Navigate through **Kubernetes**, **Troubleshoot**, and **Optimizations** to confirm all views load without errors.
-2. **Connect an LLM Provider (BYOM)**: Navigate to **Settings → AI / LLM** and configure your API key ([OpenAI, AWS Bedrock, or Ollama](../../integrations/LLM/)) to enable NuBi AI investigations and automated RCA.
-3. **Next Step: Install the K8s Agent**: The NudgeBee Server is the control plane. To begin ingesting real-time pod telemetry, logs, and metrics from your target clusters, proceed to:
+2. **Confirm the Cluster Hosting the Server Is Connected**: With the bundled agent enabled (the default), **Kubernetes** already lists this cluster under `agent.clusterName` (`nb-control-plane-k8s` unless you changed it). If it does not appear:
+
+   ```shell
+   kubectl logs -n nudgebee deploy/services-server | grep -iE 'first run|local agent'
+   ```
+
+   `no tenant yet, deferring registration to first login` means the agent registers as soon as the first admin exists. A cluster-name error (too short, reserved, or invalid characters) is reported here too — fix `agent.clusterName` and re-run `helm upgrade`.
+3. **Connect an LLM Provider (BYOM)**: Navigate to **Settings → AI / LLM** and configure your API key ([OpenAI, AWS Bedrock, or Ollama](../../integrations/LLM/)) to enable NuBi AI investigations and automated RCA.
+4. **Next Step: Install the Agent on Your Other Clusters**: The cluster running the server is already covered. Every **additional** cluster you want monitored needs its own agent install:
 
 👉 **[Install the NudgeBee Agent on Your Cluster](../agent/installation/index.md)**
 
@@ -565,6 +698,10 @@ Use this diagnostic playbook if your Helm deployment encounters errors or pods f
 
 | Error Symptom | Probable Cause | Diagnostic Command & Fix |
 |---|---|---|
+| **`[ERROR] admin.email is required`** (install refuses to render) | Fresh install with no admin address and no license | Set `admin.email` in `values.yaml` or `--set admin.email=you@example.com`. Enterprise installs can set `nudgebee_secret.NUDGEBEE_LICENSE` instead. See [`admin.email`](#admin-email) |
+| **`admin.email is not a valid address`** | Typo in the address | Fix the address. It is validated because the organization is created from it at install time |
+| **`The bundled agent's credential could not be found and will not be regenerated`** | Upgrade rendered offline (Argo CD / Flux), where `lookup` cannot read the existing Secret | Set `agent.accessKey` and `agent.accessSecret` from the live `nudgebee-bootstrap` Secret, or `agent.enabled=false`. See [the bundled agent](#bundled-agent) |
+| **Same cluster appears twice after an upgrade** | `agent.enabled` defaults to `true`, and this cluster already had a standalone agent | Set `agent.enabled: false`, then delete the duplicate account under **Admin → Integrations → Kubernetes Clusters** |
 | **Migration Job Timeout / `0/1 Completed`** | Database not ready before migration ran, or stale schema lock | Check logs: `kubectl logs job/nudgebee-migration -n nudgebee`<br/>Fix: Re-run `helm upgrade --wait` |
 | **`error pinging postgres: lookup postgres`** | Incorrect DB hostname or bundled vs external mismatch | Check `nudgebee_secret.APP_DATABASE_URL`<br/>Bundled: `postgresql.nudgebee.svc.cluster.local:5432`<br/>External: Verify RDS / Cloud SQL endpoint |
 | **RabbitMQ connection refused / CrashLoop** | RabbitMQ broker not ready or bad AMQP credentials | Check: `kubectl logs deployment/nudgebee-rabbitmq -n nudgebee`<br/>Verify `RABBIT_MQ_HOST: "rabbitmq"` and port `5672` |
@@ -662,15 +799,15 @@ helm uninstall nudgebee --namespace nudgebee --kube-context $KUBE_CONTEXT
 ```
 
 :::caution
-This removes all NudgeBee components and data. Make sure to back up any data you need before uninstalling.
+This removes all NudgeBee components and data — **including the bundled agent**, which shares the same Helm release. Make sure to back up any data you need before uninstalling.
 :::
 
 ---
 
 ## What's Next?
 
-Your NudgeBee server is running. Here is what to do next:
+Your NudgeBee server is running, and the cluster it runs on is already connected through the bundled agent. Here is what to do next:
 
-1. **[Install the NudgeBee Agent](../agent/installation/index.md)** on each Kubernetes cluster you want to monitor — this is how NudgeBee gets visibility into your workloads.
+1. **[Install the NudgeBee Agent](../agent/installation/index.md)** on each **additional** Kubernetes cluster you want to monitor — this is how NudgeBee gets visibility into workloads outside the control-plane cluster.
 2. **[Configure Integrations](../../integrations/index.md)** — connect your observability tools, notification channels, and LLM provider to unlock the full platform.
 3. **[Explore the Getting Started Guide](../../features/index.md)** — see the recommended setup order and what to do after your first login.

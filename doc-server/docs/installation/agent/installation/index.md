@@ -25,6 +25,12 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 **Self-hosted users**: Make sure the [NudgeBee Server is installed](../../server/) first. You will need the Relay Server URL and Collector Server URL from your server setup — see [Self-Hosted Configuration](#4-for-self-hosted-nudgebee).
 :::
 
+:::tip[Self-hosted: the cluster running your server is already covered]
+The server chart installs an agent alongside itself by default (`agent.enabled: true`) and registers the cluster hosting the control plane as `nb-control-plane-k8s`. **Do not install a second agent into that cluster** — it would register the same cluster twice under a different name.
+
+This page is for every **other** cluster you want monitored. To swap the bundled agent for a standalone one (for example to run the node agent and tracing collector with your own values), set `agent.enabled: false` in the server chart first. See [the bundled agent](../../server/index.md#bundled-agent).
+:::
+
 ### Watch the Walkthrough
 
 <div style={{ position: "relative", paddingBottom: "64.86%", height: 0 }}>
