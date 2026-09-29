@@ -71,5 +71,6 @@ Then attach it to the alert rules whose notifications you want in NudgeBee. Send
 ## Helpful Links
 
 - [Webhooks overview](./index.md)
+- [OpenObserve integration (logs, metrics, traces)](../Observability/openobserve.md)
 - [OpenObserve alert destination documentation](https://openobserve.ai/docs/user-guide/alerts/alert-destinations/)
 - [Workflow triggers](../../features/workflow-builder/triggers.md)
