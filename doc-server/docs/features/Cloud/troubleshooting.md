@@ -22,7 +22,7 @@ flowchart TD
 
     Problem -->|Spends Missing / $0| S1{Check Billing Export}
     S1 -->|AWS| S2[Verify S3 CUR Bucket Path & Daily CSV Format]
-    S1 -->|Azure| S3[Verify Cost Management Export Scope & Blob SAS]
+    S1 -->|Azure| S3[Verify Reader Role & EA View Charges Setting]
     S1 -->|GCP| S4[Verify BigQuery Billing Export Dataset & IAM]
 
     Problem -->|Resources Missing| R1{Check IAM Permissions}

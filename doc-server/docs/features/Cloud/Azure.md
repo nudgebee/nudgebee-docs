@@ -29,9 +29,8 @@ APP=$(az ad app create --display-name "NudgeBee Integration" --query appId -o ts
 # Create a Service Principal for the app
 SP_ID=$(az ad sp create --id $APP --query id -o tsv)
 
-# Assign required roles at subscription scope
+# Assign Reader at subscription scope (Reader also grants read access to cost data)
 az role assignment create --assignee $SP_ID --role "Reader" --scope "/subscriptions/$SUBSCRIPTION_ID"
-az role assignment create --assignee $SP_ID --role "Cost Management Reader" --scope "/subscriptions/$SUBSCRIPTION_ID"
 
 # Create a client secret (save the output — it's shown only once)
 az ad app credential reset --id $APP --display-name "nudgebee-secret" --query password -o tsv
@@ -40,9 +39,7 @@ az ad app credential reset --id $APP --display-name "nudgebee-secret" --query pa
 #### Option B: Using Azure Portal
 
 1.  **[Create an App Registration](https://learn.microsoft.com/en-us/entra/identity-platform/howto-create-service-principal-portal)** in the Azure Portal.
-2.  **Assign the required roles** to this App Registration (Service Principal) at the subscription level. You can find details on all built-in roles in the **[Azure built-in roles documentation](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles)**. The required roles are:
-    * **Cost Management Reader** (for accessing billing and cost data)
-    * **Reader** (for accessing general resource information)
+2.  **Assign the Reader role** to this App Registration (Service Principal) at the subscription level. Reader covers both resource information and cost data, so no billing role is needed. You can find details on all built-in roles in the **[Azure built-in roles documentation](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles)**.
 3.  **Create a Client Secret** for that App Registration.
 
 ### Step 1 — Credentials Fields
@@ -204,9 +201,9 @@ or
 Even though this is a schema error, the error message may suggest missing permissions. Ensure the following:
 
 1. Go to **Azure Portal** → **Subscriptions** → **Your Subscription** → **Access control (IAM)**.
-2. Ensure the service principal has **Cost Management Reader** at subscription scope.
+2. Ensure the service principal has **Reader** (or **Cost Management Reader**) at subscription scope.
 3. If missing:
-   - Click **Add role assignment** → **Cost Management Reader** → select your service principal → **Save**.
+   - Click **Add role assignment** → **Reader** → select your service principal → **Save**.
 
 **Important:** The `Invalid dataset grouping` error occurs **independently of permissions**. Even with correct IAM roles, using an invalid dimension like `ConsumedService` will cause this error. Always validate your query schema first before investigating permissions.
 
@@ -261,8 +258,8 @@ az role assignment create \
 
 ## Troubleshooting Azure Integration
 
-### 1. `AuthenticationFailed: Invalid client secret` on Step 1
-* **Symptom**: Step 1 validation fails with `Invalid client secret or secret has expired`.
+### 1. `AuthenticationFailed: Invalid client secret` when discovering subscriptions
+* **Symptom**: **Discover Subscriptions** fails with `Invalid client secret or secret has expired`.
 * **Root Cause**: The client secret string was entered incorrectly, or the secret expired in Entra ID.
 * **Remediation**:
   1. In Azure Portal $\rightarrow$ Microsoft Entra ID $\rightarrow$ App registrations $\rightarrow$ Select app $\rightarrow$ **Certificates & secrets**.
@@ -284,13 +281,17 @@ az role assignment create \
 
 ---
 
-### 3. Missing Cost Management Data (`Cost Management Reader Required`)
-* **Symptom**: Resources appear in NudgeBee, but Spends shows `$0`.
-* **Remediation**:
-  Ensure the Service Principal is assigned the **Cost Management Reader** role at the subscription or Billing Account scope:
-  ```bash
-  az role assignment create \
-    --assignee <SERVICE_PRINCIPAL_APP_ID> \
-    --role "Cost Management Reader" \
-    --scope "/subscriptions/<SUBSCRIPTION_ID>"
-  ```
+### 3. Missing Cost Data
+* **Symptom**: Resources appear in NudgeBee, but Spends shows `$0`. The account stays connected; the **Spends** row on the account's Agent Health page, and the warning shown at onboarding, say why.
+* **Remediation**: Reader on the subscription already includes cost data, so first check whether Azure's billing setup is blocking it:
+
+  | Message says | Cause | Who can fix it |
+  |---|---|---|
+  | The service principal can read resources but not cost data | The principal has a custom role without cost read | Assign **Reader** (or **Cost Management Reader**) on the subscription |
+  | Turned off in the Enterprise Agreement billing settings | The enterprise admin has disabled **Account owners can view charges** (or **Department admins can view charges**) | An Enterprise Agreement enterprise admin |
+  | The Microsoft partner has not published pricing | Indirect Enterprise Agreement without published pricing | Your Microsoft partner |
+  | Azure does not provide cost data for the offer type | The subscription's offer type isn't supported by Azure Cost Management (for example, a CSP subscription not on a Microsoft Customer Agreement) | Not fixable from the subscription |
+  | Azure has no cost data yet | The subscription is new | Wait up to 48 hours |
+  | Temporarily rate-limiting or failing cost requests | Azure throttling or an Azure-side fault | Nothing; the next daily sync retries |
+
+  If the account shows **not connected**, the service principal can no longer read the subscription at all: check that its client secret has not expired and that it still has **Reader**.
