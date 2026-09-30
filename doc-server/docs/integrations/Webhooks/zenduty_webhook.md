@@ -19,8 +19,10 @@ The ZenDuty webhook integration lets ZenDuty push alerts into NudgeBee. Each ale
 NudgeBee generates a unique webhook URL for the integration, in the same form used by the other inbound webhooks:
 
 ```
-https://<your-nudgebee-domain>/api/webhooks/zenduty_webhook?token=<generated-token>
+https://<your-nudgebee-domain>/api/webhooks/zenduty?token=<generated-token>
 ```
+
+Copy the URL exactly as the integration shows it. The path segment is the provider name — lowercase, no `_webhook` suffix — and nothing may follow it. `zenduty_webhook` is the integration type NudgeBee stores internally, not a URL you can post to; a URL that does not match the route above is answered by the NudgeBee web app with a 404 and never reaches the alert pipeline.
 
 5. **Copy the webhook URL.** You will paste it into ZenDuty in the next step.
 
