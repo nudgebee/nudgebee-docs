@@ -41,6 +41,14 @@ We use [conventional commit](https://www.conventionalcommits.org/)
 prefixes (`docs:`, `fix:`, `feat:`, `chore:`, etc.) for PR titles —
 match the style you see in recent merged commits.
 
+## Release notes
+
+Server release notes live in `doc-server/docs/releases/server/<version>.md`, grouped by product area in this order:
+
+🔍 Troubleshoot · 📊 Dashboards · ⚡ Optimization · 🔄 Workflow · ☸️ Kubernetes · ☁️ Cloud · 🤖 AI · 🔔 Notifications · 🎫 Tickets · 🔌 Integrations
+
+Every change to Custom Dashboards — dashboards, panels, templates, panel data sources and providers, the dashboard editor, import and export — goes under **📊 Dashboards**, never under Troubleshoot. Leave a section out when the release has nothing in it. Each line starts with `feat:` or `fix:` and says what the user sees, in plain language.
+
 ## Developer Certificate of Origin (DCO)
 
 To keep contribution provenance clear, every commit must be signed off
