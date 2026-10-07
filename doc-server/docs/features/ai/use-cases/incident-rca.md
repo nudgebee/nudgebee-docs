@@ -18,7 +18,7 @@ Ask the question you'd ask a senior engineer.
 >
 > Checkout is throwing errors in the demo namespace. What's the root cause?
 
-NuBi checks checkout, then walks the [Knowledge Graph](../../knowledge-graph.md) downstream to follow the failure to its source. It answers with a 5-Whys chain:
+NuBi checks checkout, then walks the [Knowledge Graph](../../knowledge-graph/index.md) downstream to follow the failure to its source. It answers with a 5-Whys chain:
 
 ![NuBi's root cause analysis for the checkout failure: a 5-Whys causality chain ending at the enabled "Product Catalog Fail" feature flag, with supporting evidence and recommended next steps](./img/uc-checkout-rca.png)
 

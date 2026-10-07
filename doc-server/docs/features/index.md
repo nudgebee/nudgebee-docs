@@ -30,7 +30,7 @@ Explore everything NudgeBee offers for Cloud-Ops Intelligence, troubleshooting, 
 
 - **[Service Criticality](./service-criticality.md)** — Tier your workloads so triage surfaces failures on what matters and downranks noise from demo and test.
 
-- **[Semantic Knowledge Graph](./knowledge-graph.md)** — See how everything connects across your entire infrastructure. The Semantic Knowledge Graph correlates logs, metrics, traces, and code into a single visual map of services, workloads, and dependencies — powering NudgeBee's AI analysis.
+- **[Semantic Knowledge Graph](./knowledge-graph/index.md)** — See how everything connects across your entire infrastructure. The Semantic Knowledge Graph correlates logs, metrics, traces, and code into a single visual map of services, workloads, and dependencies — powering NudgeBee's AI analysis.
 
 - **[Kubernetes](./Kubernetes/index.md)** — Monitor all your connected Kubernetes clusters, workloads, pods, and nodes from a single dashboard. Track cluster health, resource utilization, and workload status in real time.
 

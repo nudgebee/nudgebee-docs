@@ -75,4 +75,4 @@ Start with the workloads NudgeBee derived as `high` and decide which are genuine
 ## Related
 
 - [Event Lifecycle & Triage](./troubleshooting/event-lifecycle.md)
-- [Semantic Knowledge Graph](./knowledge-graph.md) — the topology behind fan-in and customer-facing signals
+- [Semantic Knowledge Graph](./knowledge-graph/index.md) — the topology behind fan-in and customer-facing signals

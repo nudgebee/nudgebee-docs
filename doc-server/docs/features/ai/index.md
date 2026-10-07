@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # AI & Pre-built Agents
 
-NudgeBee delivers **Cloud-Ops Intelligence** through **NuBi**, the SRE AI Agent, and a library of 30+ pre-built Cloud-Ops agents. These agents analyze incidents across logs, metrics, traces, and alerts — powered by the [Semantic Knowledge Graph](../knowledge-graph.md) — to identify root causes and recommend actions. The result: MTTR reduced from hours to minutes.
+NudgeBee delivers **Cloud-Ops Intelligence** through **NuBi**, the SRE AI Agent, and a library of 30+ pre-built Cloud-Ops agents. These agents analyze incidents across logs, metrics, traces, and alerts — powered by the [Semantic Knowledge Graph](../knowledge-graph/index.md) — to identify root causes and recommend actions. The result: MTTR reduced from hours to minutes.
 
 NudgeBee's AI capabilities are **pre-packaged but not a black box** — every agent is fully extensible, modular, and controllable, with enterprise guardrails like RBAC, approval workflows, and audit trails.
 
