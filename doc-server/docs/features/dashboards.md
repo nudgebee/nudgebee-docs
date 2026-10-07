@@ -241,4 +241,4 @@ Dashboards warn before you navigate away with unsaved changes. A brand-new dashb
 ## Related
 
 - [Application Grouping](./application-grouping.md) — group workloads so a dashboard can chart them as one application
-- [Semantic Knowledge Graph](./knowledge-graph.md)
+- [Semantic Knowledge Graph](./knowledge-graph/index.md)

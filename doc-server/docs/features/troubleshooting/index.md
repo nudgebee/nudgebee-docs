@@ -3,7 +3,7 @@ sidebar_position: 1
 ---
 # Troubleshooting
 
-NudgeBee's troubleshooting dashboard gives you a real-time view of events, errors, and anomalies across all your connected Kubernetes clusters. Instead of switching between multiple monitoring tools, you get a single pane of glass — powered by the [Semantic Knowledge Graph](../knowledge-graph.md) — that correlates metrics, logs, traces, and code to help you find the root cause of issues faster, reducing MTTR from hours to minutes.
+NudgeBee's troubleshooting dashboard gives you a real-time view of events, errors, and anomalies across all your connected Kubernetes clusters. Instead of switching between multiple monitoring tools, you get a single pane of glass — powered by the [Semantic Knowledge Graph](../knowledge-graph/index.md) — that correlates metrics, logs, traces, and code to help you find the root cause of issues faster, reducing MTTR from hours to minutes.
 
 ![NudgeBee Troubleshoot dashboard showing NuBi's daily briefing above the triage inbox, with event severity and triage scores, and the All Events, Investigations, Event Resolutions, Knowledge Graph, and Analytics tabs](./img/troubleshoot-overview.png)
 
@@ -11,7 +11,7 @@ NudgeBee's troubleshooting dashboard gives you a real-time view of events, error
 
 - **Monitor real-time events** — See pod crashes, OOM kills, deployment failures, and other Kubernetes events as they happen.
 - **AI-powered root cause analysis with NuBi** — When an [LLM is connected](../../integrations/LLM/), NuBi (the SRE AI Agent) and NudgeBee's [pre-built AI agents](../ai/) automatically analyze incidents, correlate signals across the Semantic Knowledge Graph, and suggest root causes in plain language.
-- **Explore the Semantic Knowledge Graph** — Visualize your infrastructure dependencies and trace how issues propagate across services. See [Semantic Knowledge Graph](../knowledge-graph.md).
+- **Explore the Semantic Knowledge Graph** — Visualize your infrastructure dependencies and trace how issues propagate across services. See [Semantic Knowledge Graph](../knowledge-graph/index.md).
 - **Configure alerting rules** — Set up custom alerting rules to get notified when specific conditions are met. See [Alerting](./alerting.md).
 - **Attach event playbooks** — Run evidence-collection actions (logs, metrics, custom SQL, kubectl, cloud CLI, SSH, …) automatically on each event so the LLM has the data it needs. See [Playbook Catalog](./playbook-catalog.md).
 - **Understand the split between playbooks and workflows** — Playbooks gather evidence for the LLM; [workflows](../workflow-builder/index.md) post-process the resulting event (triage, ticketing, remediation). See [Event Playbooks vs Workflows](./event-playbooks-vs-workflows.md).

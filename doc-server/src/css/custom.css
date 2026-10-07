@@ -166,6 +166,16 @@ html {
   color: var(--ifm-color-emphasis-600);
 }
 
+/* Only top-level sections are headings. A nested section (Troubleshooting,
+   Semantic Knowledge Graph) reads like the pages beside it. */
+.menu__list .menu__list .menu__list-item-collapsible .menu__link {
+  font-weight: inherit;
+  text-transform: none;
+  font-size: inherit;
+  letter-spacing: normal;
+  color: inherit;
+}
+
 /* Sidebar chevron icons — SVG-based with rounded ends */
 .menu__link--sublist-caret::after,
 .menu__caret::before {
