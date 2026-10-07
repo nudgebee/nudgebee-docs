@@ -51,7 +51,7 @@ The graph rebuilds every hour. The **Last synced** time at the top of the Filter
 
 Every role that can use Troubleshoot can open the Knowledge Graph, from namespace admins to tenant admins. A user with a custom role needs the `kg:Read` permission; without it the tab is shown but grayed out.
 
-Only tenant admins see the **Settings** button. It controls which accounts and flow sources feed the graph (see [Coverage](./data-sources.md#choose-what-feeds-the-graph-coverage)), and is where dependencies and resources no collector can see are declared by hand.
+Only tenant admins see the **Settings** button. It controls which accounts and flow sources feed the graph (see [Coverage](./data-sources.md#choose-what-feeds-the-graph-coverage)), and is where dependencies and resources no collector can see are declared by hand (see [Manual Declarations](./manual-declarations.md)).
 
 ## In this section
 
@@ -59,6 +59,7 @@ Only tenant admins see the **Settings** button. It controls which accounts and f
 - [Nodes and Relationships](./nodes-and-relationships.md) — reading a node, node and edge details, and the full type reference
 - [Where the Data Comes From](./data-sources.md) — every source, what it needs, rebuild timing, and the Coverage settings
 - [How NudgeBee Uses the Graph](./how-nudgebee-uses-it.md) — AI answers, alert impact, blast radius and criticality
+- [Manual Declarations](./manual-declarations.md) — add dependencies and resources the collectors cannot see, one at a time or from a JSON document
 
 ## Related
 
