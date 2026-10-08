@@ -263,8 +263,8 @@ Two things that look like simple tightening but are not:
 
 * **A region condition needs a matching setting in NudgeBee.** `aws:RequestedRegion`
   scoped to your workload region works only if you also give the account an
-  **AWS Regions** list, and unless it allows `us-east-1` it switches off the
-  global services. See
+  **AWS Regions** list. Unless the condition allows `us-east-1`, it also switches
+  off the global services. See
   [Restricting the role to specific regions](#restricting-the-role-to-specific-regions).
 * **Do not replace `"Resource": "*"` with resource ARNs or tag conditions.** Most
   discovery APIs — `ec2:Describe*`, `cloudwatch:ListMetrics`,
