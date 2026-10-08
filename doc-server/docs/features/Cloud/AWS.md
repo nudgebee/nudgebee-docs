@@ -68,6 +68,7 @@ Open **Admin → Integrations → AWS → Add AWS Account**. The form offers thr
 * **Display Name** (required) — a friendly name to identify this account in NudgeBee (e.g. `aws-production`).
 * **Access Mode** — choose **Standard** (read + write, allows NudgeBee to create CloudWatch alarms and apply recommendations) or **Read-Only** (monitoring only).
 * **Enable SSM Parameter Store access** (CloudFormation method) — lets NudgeBee read SSM parameter values. Only enable this if your parameters do not contain secrets.
+* **AWS Regions (optional)** (IAM Role ARN and Access Keys methods) — a comma-separated list of region codes, for example `ap-southeast-2, us-east-1`. Leave it blank and NudgeBee discovers the account's regions on its own. Fill it in only when the role or user is restricted to specific regions — see [Restricting the role to specific regions](#restricting-the-role-to-specific-regions).
 
 ---
 
@@ -97,7 +98,7 @@ The role's **trust policy** must let NudgeBee's principal call `sts:AssumeRole`,
 `cur:DescribeReportDefinitions` and `s3:GetBucketLocation` / `s3:ListBucket` / `s3:GetObject`
 on the CUR bucket if you want cost data.
 
-1. Enter a **Display Name** and choose an **Access Mode**.
+1. Enter a **Display Name** and choose an **Access Mode**. If the role is restricted to specific regions, also enter them in **AWS Regions**; otherwise leave that field blank.
 2. Paste the **IAM Role ARN** (e.g. `arn:aws:iam::123456789012:role/NudgebeeRole`).
 3. Optionally provide an **External ID** — required only if the role's trust policy specifies one.
 4. Click **Validate** — NudgeBee probes STS, Cost & Usage Report discovery, and CUR S3 access upfront — then click **Connect**.
@@ -112,10 +113,9 @@ which you can add later.
 
 Use this flow when you **cannot grant a cross-account role** (for example, segregated billing accounts or dev/test accounts). Create an IAM user with the same CUR + read-only permissions as the CloudFormation template, then provide its keys.
 
-1. Enter a **Display Name** and choose an **Access Mode**.
+1. Enter a **Display Name** and choose an **Access Mode**. If the user is restricted to specific regions, also enter them in **AWS Regions**; otherwise leave that field blank.
 2. Paste the **AWS Access Key ID** and **AWS Secret Access Key**.
-3. Set the **AWS Region** used to bootstrap the AWS SDK (CUR discovery always runs in `us-east-1`).
-4. Click **Validate**, then **Connect**. As with the Role ARN method, a missing
+3. Click **Validate**, then **Connect**. As with the Role ARN method, a missing
    CUR is a warning rather than a blocker.
 
 ---
@@ -259,12 +259,13 @@ EKS clusters. Delete the individual `<service>:` actions for services you do not
 run; discovery of those then reports `AccessDenied` and is skipped, and the account
 connects normally.
 
-Two things that look like tightening but break the policy outright:
+Two things that look like simple tightening but are not:
 
-* **Do not add a region condition.** `aws:RequestedRegion` scoped to your workload
-  region denies the services that are global or us-east-1 only — `ce`, `cur`,
-  `pricing`, `organizations`, `savingsplans`, `iam`, `route53`, `cloudfront` and
-  `support`. CUR discovery always runs in `us-east-1`.
+* **A region condition needs a matching setting in NudgeBee.** `aws:RequestedRegion`
+  scoped to your workload region works only if you also give the account an
+  **AWS Regions** list. Unless the condition allows `us-east-1`, it also switches
+  off the global services. See
+  [Restricting the role to specific regions](#restricting-the-role-to-specific-regions).
 * **Do not replace `"Resource": "*"` with resource ARNs or tag conditions.** Most
   discovery APIs — `ec2:Describe*`, `cloudwatch:ListMetrics`,
   `elasticloadbalancing:Describe*`, `eks:ListClusters`, `logs:DescribeLogGroups` —
@@ -577,6 +578,52 @@ Two things that look like tightening but break the policy outright:
 
 </details>
 
+### Restricting the role to specific regions
+
+You can scope the role to your workload regions with an `aws:RequestedRegion`
+condition, as long as the account in NudgeBee carries a matching **AWS Regions**
+list.
+
+Without the list, NudgeBee starts in `us-east-1` and asks AWS which regions the
+account has enabled (`ec2:DescribeRegions`); resource discovery and CloudWatch
+alarm collection both depend on the answer. If the condition leaves out
+`us-east-1`, AWS denies that call. If it allows `us-east-1`, the call succeeds,
+NudgeBee reads every enabled region, and AWS denies the regions outside the
+condition. Either way the sync fails, so the account connects and then stays
+empty. With the list, NudgeBee skips the call and reads only the regions you name.
+
+Set the list in either place:
+
+* **When connecting** — fill in **AWS Regions (optional)** on the **IAM Role ARN**
+  or **Access Keys** tab before you click **Validate**. Use comma-separated region
+  codes, for example `ap-southeast-2, us-east-1`.
+* **On a connected account** — open **Admin → Integrations → AWS**, find the
+  account, and choose **Edit AWS Regions** from its **⋮** menu. The new list
+  applies on the next sync; you do not need to reconnect. If your self-hosted
+  version does not show this menu entry, upgrade to a newer release or contact
+  NudgeBee support.
+
+Once the list is set:
+
+* Only the listed regions are monitored. Resources NudgeBee had already found in
+  other regions are marked deleted.
+* NudgeBee makes its first call — including the **Validate** check when you
+  connect — from the first region in the list.
+* List only regions the role allows. One listed region that the role denies fails
+  the sync for every region.
+* Clearing the list returns the account to automatic region discovery.
+
+AWS treats requests to global services as `us-east-1` requests, so a condition
+that leaves out `us-east-1` also denies the global and us-east-1-only services,
+including `ce`, `cur`, `pricing`, `organizations`, `savingsplans`,
+`cost-optimization-hub`, `iam`, `route53`, `cloudfront` and `support`. CUR
+discovery always runs in `us-east-1`. You still get resources, metrics, alarms and
+logs for your regions, but no cost data, no recommendations from Cost Explorer,
+Cost Optimization Hub or Trusted Advisor, and no IAM, Route 53 or CloudFront
+resources. To keep those, either allow `us-east-1` in the condition as well, or
+keep their statements — including the CUR bucket statement — free of the region
+condition. The **AWS Regions** list is required in both cases.
+
 ### Standard access mode with a manual role
 
 **Standard** mode lets NudgeBee create CloudWatch alarms and apply
@@ -649,5 +696,26 @@ setup immediately.
 AWS delivers a newly created CUR within 24 hours, and NudgeBee ingests it on the
 next daily sync — so allow up to two days after creating the report. The account's
 spend status is shown on the **Agent Health** page.
+
+### The account connects but no resources or alarms appear
+
+The role or user is most likely restricted to specific regions while the account
+has no **AWS Regions** list. On a self-hosted install, the collector log shows AWS
+refusing the region lookup:
+
+```text
+... is not authorized to perform: ec2:DescribeRegions
+```
+
+If the role allows `us-east-1`, the log instead shows `AccessDenied` or
+`UnauthorizedOperation` errors for the regions outside the condition.
+
+Give the account the regions the role allows — see
+[Restricting the role to specific regions](#restricting-the-role-to-specific-regions).
+Resources and alarms appear after the next sync.
+
+If the role has no region restriction, the same error means its policy is missing
+`ec2:DescribeRegions`. Add the action back from the
+[permissions policy](#step-2--permissions-policy).
 
 <!-- assets verified -->
