@@ -24,7 +24,7 @@ You do not set up the graph separately. Connect a cluster, an account or an inte
 | **PagerDuty** | On-call services, teams and users | An enabled PagerDuty integration |
 | **Ownership** | Which user or team owns each workload, namespace, cluster and cloud resource | Owners set under **Admin → Access & Users → Ownership** |
 | **Identity** | One node per NudgeBee user, linked to the same person's GitHub, GitLab or PagerDuty account | Users matched to their integration accounts |
-| **You** | Dependencies and resources no collector can see | Declared in Knowledge Graph **Settings** |
+| **You** | Dependencies and resources no collector can see | Declared in Knowledge Graph **Settings → Manual Declarations**. See [Manual Declarations](./manual-declarations.md). |
 
 ## Flow sources
 
