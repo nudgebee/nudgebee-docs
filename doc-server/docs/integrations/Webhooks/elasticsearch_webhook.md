@@ -63,6 +63,7 @@ On every rule whose alerts you want in NudgeBee, add the connector as an action 
   },
   "alert": {
     "id": "{{alert.id}}",
+    "uuid": "{{alert.uuid}}",
     "action_group": "{{alert.actionGroup}}"
   },
   "status": "firing",
@@ -85,6 +86,7 @@ The same body works for every rule. Only `severity` is yours to choose per rule.
 |-------|----------|----------------------------|
 | `rule.name` | Yes | Shown as the alert's rule, and used to find the rule in NudgeBee. |
 | `rule.id`, `alert.id` | Yes | Together they identify one alert. They must be identical in the firing and the recovered body, or the recovery closes nothing. |
+| `alert.uuid` | No | Kibana's id for one firing of the alert: it changes each time the alert recovers and fires again. Include it so NudgeBee can tell a new firing from a repeat of the same one. Available from Kibana 8.8. |
 | `status` | Yes | `firing` or `resolved`. If left out, a `recovered` action group counts as resolved. |
 | `severity` | No | `critical` or `high`, `warning` or `medium`, `low`, `info`. Defaults to `low`. |
 | `title`, `message`, `value`, `conditions` | No | Shown on the event. `conditions` becomes the rule's expression. |
