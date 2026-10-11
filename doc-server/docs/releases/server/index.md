@@ -10,6 +10,7 @@ This section provides a comprehensive overview of all NudgeBee server releases. 
 
 Here's a list of recent NudgeBee server releases, starting with the most recent:
 
+* **v1.10.0** - [View Release Notes](./1.10.0)
 * **v1.9.0** - [View Release Notes](./1.9.0)
 * **v1.8.0** - [View Release Notes](./1.8.0)
 * **v1.7.0** - [View Release Notes](./1.7.0)
