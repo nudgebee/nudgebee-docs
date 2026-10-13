@@ -5,6 +5,10 @@ sidebar_position: 3
 
 Integrate [SigNoz](https://signoz.io/) with the NudgeBee Kubernetes Agent for unified log analysis, trace correlation, and automated incident triage.
 
+:::tip Connecting SigNoz without the agent
+SigNoz can also be connected directly from the NudgeBee console, with no agent involved — useful when SigNoz runs outside your clusters, and the only option for SigNoz Cloud. See [SigNoz integration](../../../../integrations/Observability/signoz.md). That path supports both current and older SigNoz releases with either a password or an API key.
+:::
+
 The agent queries SigNoz through its v3 query APIs:
 - **Log Queries**: `POST /api/v3/query_range`
 - **Attribute Autocomplete**: `GET /api/v3/autocomplete/attribute_keys` and `GET /api/v3/autocomplete/attribute_values`
@@ -57,6 +61,10 @@ When `apiKey` is provided, the agent attaches the `SIGNOZ-API-KEY` HTTP header t
 3. Configure `runner.signoz.apiKey` in your Helm `values.yaml`.
 
 ### Option B: User / Password (Automated JWT Login)
+
+:::caution Older SigNoz releases only
+The agent signs in through `POST /api/v1/login`, which SigNoz removed in releases from about **v0.105**. On a newer SigNoz this login fails, so use **Option A (API key)** instead — or connect SigNoz directly from the console, which detects the login API automatically. See [SigNoz integration](../../../../integrations/Observability/signoz.md).
+:::
 
 If using basic user credentials instead of an API key:
 1. Provide `runner.signoz.user` (email) and `runner.signoz.password`.
@@ -118,6 +126,7 @@ A healthy `/api/v1/health` endpoint returns HTTP 200 with an empty body or JSON 
        -d '{"email":"admin@example.com","password":"your-password"}'
      ```
   3. Ensure no trailing whitespace exists in secret values.
+  4. If that call returns HTML or `404`, your SigNoz is new enough to have dropped the v1 login endpoint. Switch to an API key, or connect SigNoz from the console instead — see [SigNoz integration](../../../../integrations/Observability/signoz.md).
 
 ### Scenario 2: Elasticsearch Overriding SigNoz
 
