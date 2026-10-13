@@ -31,7 +31,7 @@ NudgeBee reads telemetry from the platforms below. Connect any combination — f
 | Prometheus | Metrics | [Connect Prometheus metrics](../../installation/agent/connect/metrics.md) |
 | Grafana Loki | Logs | [Connect Loki](../../installation/agent/connect/logging/loki.md) |
 | Elasticsearch / ELK | Logs | [Connect ELK](../../installation/agent/connect/logging/elk.md) |
-| SigNoz | Logs | [Connect SigNoz](../../installation/agent/connect/logging/signoz.md) |
+| SigNoz | Logs | [SigNoz](./signoz.md) — connect directly; or [via the agent](../../installation/agent/connect/logging/signoz.md) |
 | OpenTelemetry (Otel) | Traces | [OTel ClickHouse](../../installation/agent/connect/tracing/clickhouse-tracing.md) — created and managed by the agent |
 | Datadog | Metrics, logs, traces | [Datadog](./datadog.md) |
 | New Relic | Metrics, logs, traces | [New Relic](./newrelic.md) |
