@@ -33,6 +33,7 @@ The first time you open it, a welcome card offers a short guided tour of how to 
 |:---|:---|:---|
 | Kubernetes resources | Clusters, namespaces, nodes, workloads, pods, services, ingresses, volumes, config maps | The NudgeBee agent in each cluster |
 | Cloud resources | EC2 instances, load balancers, RDS and Cloud SQL databases, S3 buckets, queues, VPCs, IAM roles | Your connected AWS, GCP and Azure accounts |
+| Self-hosted VMs | On-premises and cloud VMs, with their OS, packages and vulnerability counts | Your Self-Hosted (VM) accounts, from each VM's latest scan |
 | Service-to-service calls | `CALLS` | eBPF, distributed traces, Datadog APM, New Relic APM |
 | Code and on-call | Repositories, teams, users, on-call services | GitHub, GitLab and PagerDuty integrations |
 | Ownership | Which team owns which workload or resource | **Admin → Access & Users → Ownership** (see [User Management](../user-management.md)) |

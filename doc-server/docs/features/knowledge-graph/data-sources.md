@@ -1,7 +1,7 @@
 ---
 sidebar_position: 4
 sidebar_label: Where the Data Comes From
-keywords: [knowledge graph, data sources, flow sources, coverage, ebpf, traces, rebuild]
+keywords: [knowledge graph, data sources, flow sources, coverage, ebpf, traces, rebuild, self-hosted vm]
 ---
 
 # Where the Data Comes From
@@ -20,6 +20,7 @@ You do not set up the graph separately. Connect a cluster, an account or an inte
 |:---|:---|:---|
 | **Kubernetes** | Clusters, namespaces, nodes, workloads, pods, services, ingresses, persistent volumes, config maps, secrets, service accounts, Helm charts, Karpenter node pools | A cluster connected with the NudgeBee agent. Workloads, pods and nodes come from the cluster inventory. Services, volumes, config maps, secrets, ingresses, service accounts and Karpenter objects are read live from the agent, so they drop out while the agent is disconnected and return when it reconnects. |
 | **AWS, GCP, Azure** | Compute, databases, storage, queues, load balancers, networks, DNS, IAM and the rest of the cloud inventory | A connected cloud account. Resources appear once NudgeBee has discovered them. |
+| **Self-hosted VMs** | One node per VM, with its operating system, package count, vulnerability count and last scan | A Self-Hosted (VM) account with a VM Agent. A VM appears once it has been scanned, whether it is on-premises or a cloud instance. |
 | **GitHub, GitLab** | Organizations or groups, repositories or projects, teams, users, and who can access which repository | An enabled GitHub or GitLab integration |
 | **PagerDuty** | On-call services, teams and users | An enabled PagerDuty integration |
 | **Ownership** | Which user or team owns each workload, namespace, cluster and cloud resource | Owners set under **Admin → Access & Users → Ownership** |
@@ -46,6 +47,7 @@ When several sources see the same call, NudgeBee keeps one edge and records what
 After collecting, NudgeBee connects resources that describe the same thing or depend on each other across sources, for example:
 
 - A Kubernetes node `RUNS_ON` the EC2 or Compute Engine instance behind it.
+- A VM scanned through a Self-Hosted (VM) account is `SAME_AS` the EC2, Compute Engine or Azure VM it is, when that cloud account is connected too. The two nodes are one machine: see [Self-hosted VMs](./nodes-and-relationships.md#self-hosted-vms).
 - A cluster `RUNS_ON` its EKS, GKE or AKS cluster.
 - A Kubernetes service account `ASSUMES` the IAM role or GCP service account it is mapped to.
 - A persistent volume is backed by (`PROVIDES_STORAGE`) an EBS volume or persistent disk.
@@ -61,6 +63,7 @@ When traces or eBPF show a call to a hostname, NudgeBee replaces the generic ext
 |:---|:---|
 | The whole graph | Rebuilt every hour. There is no button to rebuild on demand. |
 | A newly connected cluster, account or integration | Appears at the next rebuild after NudgeBee has collected from it. |
+| A self-hosted VM | Appears at the next rebuild after its first scan. Removed once it has not been scanned for 7 days, so a VM whose scanner is stopped for a week drops out and returns after its next scan. |
 | A resource you delete | Disappears at the next rebuild after NudgeBee stops seeing it. |
 | A call between services | Taken from what each flow source observes at each rebuild: the last 2 hours of traces, and the last 24 hours of Datadog APM and New Relic APM data. Removed once it has not been seen for 7 days. |
 | An external dependency (`ExternalService`) | Removed once nothing has called it for 7 days. |
@@ -79,6 +82,7 @@ How the selection works:
 - **Leaving everything ticked means "all"**, including accounts you connect later. If you untick every box, NudgeBee also saves "all", not "none", and says so before you save.
 - **Removing takes effect immediately.** When you untick an account, every node and edge it owns is removed on save. When you untick a flow source, every edge it created is removed. The **Save** button turns red and asks you to confirm.
 - **Adding takes effect at the next hourly rebuild.** Ticking an account or flow source again does not bring its data back until then.
+- **Self-Hosted (VM) accounts follow the same rule.** If you saved a selection of accounts, rather than leaving everything ticked, any Self-Hosted (VM) account that is not ticked stays out of the graph. Tick it to add its VMs at the next rebuild.
 - Every change is recorded in the audit log under the **Knowledge graph** category.
 
 ## Related
