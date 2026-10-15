@@ -3,12 +3,12 @@ sidebar_position: 14
 ---
 # SigNoz
 
-NudgeBee reads **logs** from [SigNoz](https://signoz.io/) — SigNoz Cloud or your own self-hosted instance — by connecting straight to its query API. No NudgeBee agent is involved, so this works for a SigNoz that runs outside your Kubernetes clusters.
+NudgeBee reads **logs** and **metrics** from [SigNoz](https://signoz.io/) — SigNoz Cloud or your own self-hosted instance — and creates and syncs **alert rules** in it, by connecting straight to its API. No NudgeBee agent is involved, so this works for a SigNoz that runs outside your Kubernetes clusters.
 
 Both SigNoz generations are supported. NudgeBee detects which login API your instance exposes, so current releases and older self-hosted ones (the v0.51 era) both connect with the same settings.
 
-:::note Logs only
-This integration serves logs. SigNoz metrics, traces and alert-rule management are not read through it. See [Limitations](#limitations).
+:::note What this integration covers
+Logs, metrics and alert rules. SigNoz alert notifications come in through the separate [SigNoz Webhook](../Webhooks/signoz_webhook.md). Traces are not read from SigNoz yet. See [Limitations](#limitations).
 :::
 
 :::tip Agent-based SigNoz is a separate path
@@ -69,11 +69,15 @@ Navigate to **Admin** > **Integrations** > **Observability** and select **SigNoz
 
 * **Signoz Api Key** *(Required for `api_key`)*
     * A SigNoz API key, sent as the `SIGNOZ-API-KEY` header. It is stored encrypted.
-    * **Current SigNoz and SigNoz Cloud:** **Settings → Service Accounts**, then add a key. The **Viewer** role is enough for logs.
+    * **Current SigNoz and SigNoz Cloud:** **Settings → Service Accounts**, then add a key. The **Viewer** role is enough to read logs and metrics; creating alert rules from NudgeBee needs **Editor**.
     * **Older self-hosted releases:** **Settings → Access Tokens**.
 
 * **Make Signoz default Log Provider**
     * Turn this on so the account's Logs pages and Nubi read from SigNoz.
+
+* **Make Signoz default Metrics Provider**
+    * Turn this on so the account's metrics pages, workload charts and Nubi read metrics from SigNoz, and so alert rules created for the account go to SigNoz.
+    * SigNoz serves metrics **only** when this is on. A SigNoz connected for logs is never picked for metrics on its own, so turning on the integration does not move an account's existing metrics source.
 
 ### Which authentication should I choose?
 
@@ -143,6 +147,39 @@ A filter on `app` or `workload` matches a workload of **any** kind, so a Statefu
 
 **Log levels ignore case.** `level = error` matches records stored as `ERROR`, and `warn` also matches `WARNING`.
 
+### Metrics
+
+Once SigNoz is the account's **default metrics provider**, these read from it:
+
+- **Monitoring → Metrics → Query Metrics**, in **Builder** and **Code** modes. The builder lists SigNoz's metric names, labels and label values.
+- The cluster **Summary** utilisation (CPU and memory usage, totals, p50/p90 and peak)
+- A workload's CPU and memory columns and its **Utilization Trends** charts, against its requests and limits
+- Node CPU and memory against allocatable capacity
+- **Nubi**, for metric questions
+- Metric evidence on events that uses the same charts
+
+**Query language.** SigNoz runs PromQL. Metrics sent by SigNoz's OpenTelemetry collectors keep their dotted names, which PromQL writes in quoted form:
+
+```
+sum by ("k8s.deployment.name") ({"k8s.pod.memory.working_set", "k8s.namespace.name"="shop"})
+```
+
+You can also type the names bare, for example `sum by (k8s.deployment.name) (k8s.pod.memory.working_set{k8s.namespace.name="shop"})`. NudgeBee quotes dotted names before sending the query.
+
+**Charts need SigNoz's Kubernetes collector.** The workload, node and cluster charts are built on the metrics that SigNoz's `k8s-infra` collector publishes, such as `container.cpu.usage`, `container.memory.working_set`, `k8s.container.cpu_request` and `k8s.node.allocatable_cpu`. These are gauges already in cores and bytes. If SigNoz holds none of them, the charts say so instead of drawing empty lines.
+
+> **Reference:** [SigNoz Kubernetes infrastructure monitoring](https://signoz.io/docs/infrastructure-monitoring/k8s-metrics/)
+
+### Alert rules
+
+When SigNoz is the account's default metrics provider, an alert rule created in NudgeBee (for example from a workload's **Create Alert**) is created in SigNoz. NudgeBee can also update, disable and delete those rules, and sync the rules that already exist in SigNoz into NudgeBee.
+
+- **PromQL rules.** Write the condition the Prometheus way, for example `max by ("k8s.pod.name") ({"k8s.container.restarts"}) > 5`. Every series the expression returns fires, as on Prometheus. A **duration** means the condition must hold for that whole window.
+- **Log rules** (SigNoz v0.118 and later) count the log lines that match a filter expression.
+- **Notifications go to NudgeBee.** Every rule NudgeBee creates is routed to the SigNoz channels that post to this account's [SigNoz Webhook](../Webhooks/signoz_webhook.md), so firing alerts come back as NudgeBee events. Set that webhook and channel up first; rule creation fails with a message naming the missing channel otherwise.
+- **SigNoz versions.** NudgeBee reads your SigNoz release and writes the rule format it accepts: the current format from v0.118, the older one before.
+- **Credentials.** Rule management uses the same login as logs and metrics. An API key must belong to a service account with the **Editor** role.
+
 ---
 
 ## Verify the Integration
@@ -151,6 +188,7 @@ A filter on `app` or `workload` matches a workload of **any** kind, so a Statefu
 2. Go to **Monitoring** > **Logs** > **Query Log** and filter on `namespace`. Confirm records appear.
 3. Open the **Log Groups** tab. Confirm error groups appear with counts and a recent **Last Time**.
 4. Ask Nubi a log question, for example "show error logs from the last hour", and confirm the answer cites SigNoz records.
+5. If SigNoz is the default metrics provider: open **Monitoring** > **Metrics** > **Query Metrics**, confirm the provider shows **SigNoz**, and run a query. Then open a workload's **Utilization Trends** and confirm CPU and memory charts render.
 
 ---
 
@@ -164,13 +202,18 @@ A filter on `app` or `workload` matches a workload of **any** kind, so a Statefu
 | `sorting by "<column>" is not supported with an OR filter` | A non-time sort cannot be applied across OR branches | Sort by time, or remove the OR |
 | Logs from other clusters appear | One SigNoz holds several clusters | Add a **Default Log Filter** on `k8s.cluster.name`. See [Advanced Settings](./advanced-settings.md) |
 | Password login worked before and now fails | The organization switched to SSO-only | Switch **Signoz Auth Type** to `api_key` |
+| Metrics pages still show another provider | SigNoz is not the account's default metrics provider | Turn on **Make Signoz default Metrics Provider** |
+| Charts say SigNoz has no Kubernetes metrics | SigNoz's `k8s-infra` collector is not installed on the cluster | Install it, or query the metrics you do have from **Query Metrics** |
+| A query with a classic name such as `container_cpu_usage_seconds_total` returns nothing | Current SigNoz stores the dotted OpenTelemetry names | Use the dotted name, for example `container.cpu.usage` |
+| Creating an alert rule fails with "no SigNoz notification channel posts to this account's Nudgebee SigNoz webhook" | No SigNoz channel carries this account's webhook URL | Set up the [SigNoz Webhook](../Webhooks/signoz_webhook.md) and add its URL as a channel in SigNoz |
 
 ---
 
 ## Limitations
 
-- **Logs only.** Metrics and traces are not read from SigNoz. Connect another provider for those; see the [Observability integrations overview](./index.md).
-- **No alert-rule management.** NudgeBee does not create or manage alert rules in SigNoz.
+- **No traces yet.** Traces are not read from SigNoz. Connect another trace provider; see the [Observability integrations overview](./index.md).
+- **Some workload panels stay empty.** Network, disk I/O and HTTP panels are not built from SigNoz metrics yet.
+- **Metrics only as the marked default.** SigNoz serves metrics only when **Make Signoz default Metrics Provider** is on.
 - **The agent path is configured separately.** Connecting SigNoz here does not change an agent that has its own `runner.signoz` settings.
 
 ---
@@ -178,6 +221,7 @@ A filter on `app` or `workload` matches a workload of **any** kind, so a Statefu
 ## Helpful Links
 
 - [SigNoz documentation](https://signoz.io/docs/)
+- [SigNoz Webhook](../Webhooks/signoz_webhook.md)
 - [Connect SigNoz via the NudgeBee agent](../../installation/agent/connect/logging/signoz.md)
 - [Default filters and field mapping](./advanced-settings.md)
 - [Observability integrations overview](./index.md)

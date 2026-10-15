@@ -29,6 +29,7 @@ Create any of these from **Admin** > **Integrations** > **Webhooks**.
 | [OpenObserve Webhook](./openobserve_webhook.md) | Receive OpenObserve alert notifications into NudgeBee. |
 | [Splunk Webhook](./splunk_webhook.md) | Receive Splunk alert notifications into NudgeBee. |
 | [CubeAPM Webhook](./cubeapm_webhook.md) | Receive CubeAPM alert notifications, and close the event when the alert resolves. |
+| [SigNoz Webhook](./signoz_webhook.md) | Receive SigNoz alert notifications, attached to the workload the alert names. |
 
 ### Also Available
 
