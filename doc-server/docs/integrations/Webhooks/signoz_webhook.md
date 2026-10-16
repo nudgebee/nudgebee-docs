@@ -45,7 +45,7 @@ The `token` query parameter authenticates the sender and identifies the NudgeBee
 Leave the payload as SigNoz sends it. SigNoz's webhook body is Alertmanager-compatible, which is what this integration reads.
 
 :::info One channel per NudgeBee account
-NudgeBee recognises a channel by the token in its URL. If one SigNoz serves several NudgeBee accounts or environments, create one SigNoz Webhook integration per account and one channel per integration. Rules NudgeBee creates for an account are routed only to that account's channels.
+NudgeBee recognizes a channel by the token in its URL. If one SigNoz serves several NudgeBee accounts or environments, create one SigNoz Webhook integration per account and one channel per integration. Rules NudgeBee creates for an account are routed only to that account's channels.
 :::
 
 > **Reference:** [SigNoz alert channels documentation](https://signoz.io/docs/alerts-management/notification-channel/webhook/)
