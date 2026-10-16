@@ -152,7 +152,7 @@ A filter on `app` or `workload` matches a workload of **any** kind, so a Statefu
 Once SigNoz is the account's **default metrics provider**, these read from it:
 
 - **Monitoring → Metrics → Query Metrics**, in **Builder** and **Code** modes. The builder lists SigNoz's metric names, labels and label values.
-- The cluster **Summary** utilisation (CPU and memory usage, totals, p50/p90 and peak)
+- The cluster **Summary** utilization (CPU and memory usage, totals, p50/p90 and peak)
 - A workload's CPU and memory columns and its **Utilization Trends** charts, against its requests and limits
 - Node CPU and memory against allocatable capacity
 - **Nubi**, for metric questions
