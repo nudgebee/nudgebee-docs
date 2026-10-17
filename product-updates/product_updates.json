@@ -54,7 +54,7 @@
     "title": "NudgeBee 1.7.0 is Here",
     "body": "Here's a quick overview of the latest updates and improvements we've made to NudgeBee.",
     "category": "announcement",
-    "url": "https://docs.nudgebee.com/docs/installation/server/release/1.7.0/",
+    "url": "https://docs.nudgebee.com/docs/releases/server/1.7.0/",
     "highlight": true,
     "is_active": true,
     "published_at": "2026-08-24T00:00:00Z"
@@ -124,7 +124,7 @@
     "title": "Faster AI investigations",
     "body": "Investigations now **stream results incrementally** and cite the exact telemetry they used, so you can follow the agent's reasoning as it works.\n\n- Lower time-to-first-insight\n- Inline evidence for every step",
     "category": "feature",
-    "url": "https://docs.nudgebee.com/features/investigations/",
+    "url": "https://docs.nudgebee.com/docs/features/ai/",
     "highlight": true,
     "is_active": true,
     "published_at": "2026-06-18T09:00:00Z"
