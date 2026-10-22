@@ -29,6 +29,13 @@ NudgeBee includes four purpose-built AI assistants, each focused on a specific d
 | **CloudOps AI-Assistant** | Cloud infrastructure management, security posture analysis, and operational recommendations. |
 | **K8s AI-Assistant** | Kubernetes-specific debugging, upgrade guidance, and workload optimization. |
 
+## Getting the Most from NuBi
+
+- **[What NuBi Can Do](./nubi.md)** — investigations, product questions with `@nubi`, and where you can talk to NuBi.
+- **[Improve NuBi's Answers](./improve-accuracy.md)** — account context, Facts vs SOPs, skills and per-agent knowledge.
+- **[b-Cortex](./b-cortex.md)** — memory, knowledge bases, re-syncing integrations and marking documents.
+- **[Custom Agents](./custom-agents.md)** — create agents, override a built-in prompt, or add tools.
+
 ## Configuring and Governing AI
 
 - **[AI Gateway](./ai-gateway.md)** — One endpoint in front of every LLM provider, with routing, tier aliases, quotas and per-user cost attribution.

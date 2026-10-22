@@ -16,6 +16,10 @@ Once an account is connected, the **Account Detail** view summarizes your cloud 
 * [Azure](./Azure)
 * [GCP](./GCP)
 
+## What We Collect
+
+* **[Supported Cloud Services](./supported-services.md)** — every AWS, Azure and GCP service NudgeBee collects, with inventory, metrics, recommendations, fixes and events for each.
+
 ## Multi-Account & Fleet Operations
 
 * **[Cloud Fleet Onboarding (AWS Organizations, Bulk Azure & GCP)](./cloud-fleet-onboarding.md)** — Step-by-step fleet onboarding using AWS StackSets, Azure Management Groups, and GCP Organizations.
