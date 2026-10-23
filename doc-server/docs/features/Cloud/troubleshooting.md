@@ -84,7 +84,7 @@ Omit `--external-id` only if the configured role does not require one. The query
 | Symptom | Usual cause | What to do |
 |---|---|---|
 | A new resource doesn't appear | Created after the last daily resource sync | Wait for the next sync or use **Sync Now** — see [section 5](#5-a-resource-is-missing-from-inventory) |
-| Resources missing for a whole subscription, project or account | The NudgeBee identity has no read role there | Azure: **Reader** on the subscription or management group. GCP: `roles/viewer` on the project or organisation. AWS: the NudgeBee role can be assumed |
+| Resources missing for a whole subscription, project or account | The NudgeBee identity has no read role there | Azure: **Reader** on the subscription or management group. GCP: `roles/viewer` on the project or organization. AWS: the NudgeBee role can be assumed |
 | Spends show but resources don't | Billing and inventory use different permissions | Check the inventory role above; billing access alone is not enough |
 | Metrics empty for a service | The service has no default metric set | Ask NuBi for the specific metric — see [Supported Cloud Services](./supported-services.md) (**Metrics** column) |
 | A recommendation can't be applied | It is guidance-only for that service, or (AWS) the account is in read-only access mode | Apply it in the cloud console; the **Fixes** column lists what NudgeBee can apply |

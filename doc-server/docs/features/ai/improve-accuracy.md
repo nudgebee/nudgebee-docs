@@ -68,9 +68,9 @@ Turn on **Always load** for a prioritized knowledge base to put its full text in
 
 ## Knowledge retrieval policy
 
-**b-Cortex → Knowledge → Knowledge Base → Knowledge retrieval: \<mode\>** (select an account first)
+**b-Cortex → Knowledge → Knowledge Base →** `Knowledge retrieval: <mode>` (select an account first)
 
-| Option | Behaviour |
+| Option | Behavior |
 |---|---|
 | **Auto (default)** | Recommended for most requests. Searches automatically when knowledge may help and skips some simple requests; the model can also search when needed. |
 | **Always discover** | Searches on every non-empty request. Use it when requests regularly depend on internal documentation; it adds latency and retrieval cost, and does not guarantee every document is read. |

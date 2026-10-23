@@ -50,7 +50,7 @@ Each row shows its **Source status**, **Use in answers**, the number of **Docs**
 - **Type** — **Fact** (background that's true about your environment) or **SOP** (how to do something, step by step). Default is Fact. See [Facts and SOPs](./improve-accuracy.md#facts-and-sops).
 - **Content** — **Upload File** (`.txt`, or `.pdf` up to 5 MB) or type the content (up to 5,000 characters).
 - **Name**, **Description** and **Context Tags**.
-- Tenant admins also choose **Who can use it**: this account, selected accounts, or the whole organisation.
+- Tenant admins also choose **Who can use it**: this account, selected accounts, or the whole organization.
 
 ### Sync from Confluence or ServiceNow
 
@@ -92,7 +92,7 @@ Each page shows its automatic **Classifier** label under the title. Your mark al
 
 ## Who can change knowledge
 
-Creating, retriggering and marking knowledge needs write access to the account you are viewing. Tenant admins can also create organisation-wide knowledge bases from the tenant-wide view and choose which accounts can use them.
+Creating, retriggering and marking knowledge needs write access to the account you are viewing. Tenant admins can also create organization-wide knowledge bases from the tenant-wide view and choose which accounts can use them.
 
 ## Related
 
