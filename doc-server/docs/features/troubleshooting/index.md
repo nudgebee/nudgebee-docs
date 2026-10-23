@@ -86,6 +86,7 @@ Click **Apply Fix** in the UI to create the secret, or click **Create Jira Ticke
 
 ### Incident Triage, Events & Playbooks
 
+- **[Triage Inbox](./triage-inbox.md)** — View and prioritize deduplicated alert groups, inspect triage scores, and manage priority overrides.
 - **[Understand & Manage the Event Lifecycle](./event-lifecycle.md)** — 6-stage lifecycle from raw ingestion to fingerprint deduplication, triage classification, Knowledge Graph correlation, and resolution.
 - **[Snooze, Suppress, Disable, and Resolve Alerts](./alert-state-management.md)** — Event triage states, suppression scope, snooze expiry, and notification controls.
 - **[Why Am I Not Receiving Alerts?](./alert-pipeline-troubleshooting.md)** — End-to-end diagnosis of the alert delivery pipeline from monitoring source to Slack/Teams/PagerDuty.
