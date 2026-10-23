@@ -184,6 +184,7 @@ These values only control the alert rules the chart ships. Getting alerts to the
 | `runner.es.sslVerify` | bool | `false` | Verify the ES TLS certificate (https URLs). |
 | `runner.signoz.url` | string | `""` | SigNoz endpoint. |
 | `runner.signoz.apiKey` / `user` / `password` | string | `""` | `apiKey` takes precedence over user/password. |
+| `logs.collection` | string | `"none"` | Where container logs are collected (`none` or `node-agent`). In `node-agent` mode, container stdout/stderr ships to ClickHouse through the bundled collector. |
 
 See [Logging Integration](../connect/logging/index.md).
 
@@ -199,6 +200,7 @@ See [Logging Integration](../connect/logging/index.md).
 | `clickhouse.auth.password` | string | `""` | Empty = the subchart generates one on first install, stored in the `<release>-clickhouse` Secret under `admin-password`. |
 | `runner.clickhouse_enabled` | bool | `true` | Runner reads traces from ClickHouse. |
 | `runner.clickhouse_secret` | string | `""` | Secret holding the ClickHouse password (key `admin-password`). Empty = the bundled `<release>-clickhouse` Secret. |
+| `runner.serviceMapSource` | string | `"prometheus"` | Where `service_map` reads eBPF edge and container metrics: `prometheus` (default), `shadow`, or `clickhouse`. |
 | `runner.jaeger.queryUrl` / `token` | string | `""` | In-cluster Jaeger query endpoint for `jaeger_query_*` actions. |
 | `runner.chronosphere.url` / `apiKey` | string | `""` | Chronosphere trace queries. |
 | `runner.chronosphere.tracesEnabled` | bool | `true` | Report Chronosphere as the traces provider when `url` is set. |
@@ -253,7 +255,7 @@ The chart sets no `GOMEMLIMIT` or other Go heap tuning, so `runner.resources.lim
 |---|---|---|---|
 | `nodeAgent.enabled` | bool | `true` | eBPF DaemonSet for network metrics, logs, and profiles. |
 | `nodeAgent.image.repository` | string | `ghcr.io/nudgebee/node-agent` | |
-| `nodeAgent.image.tag` | string | `0.1.5` | |
+| `nodeAgent.image.tag` | string | `0.1.11` | |
 | `nodeAgent.resources.requests` | object | `100m` / `500Mi` | |
 | `nodeAgent.resources.limits` | object | `1` / `1Gi` | |
 | `nodeAgent.podmonitor.enabled` | bool | `true` | Render a `PodMonitor` so Prometheus scrapes the node agent. |

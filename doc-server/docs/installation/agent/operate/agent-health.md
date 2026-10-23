@@ -91,7 +91,7 @@ Below is the complete reference of every field displayed on the Agent Health car
   2. **Elasticsearch / OpenSearch**: Probes `GET <ES_URL>/_cluster/health` (authenticated)
   3. **SigNoz**: Probes `GET <SigNozURL>/api/v1/health`
   4. **Grafana Loki**: Probes `GET <LokiURL>/ready`
-* **Healthy State**: `Connected` (Green), displaying the active provider name (e.g. `Loki`, `Elasticsearch`, `SigNoz`).
+* **Healthy State**: `Connected` (Green), displaying the active provider name (e.g. `Loki`, `Elasticsearch`, `SigNoz`). The agent also reports ClickHouse logs table connectivity (`clickhouseLogsConnection` and `clickhouseLogsTable`) alongside the provider.
 * **Failure Causes**:
   * Incorrect log service URL.
   * Elasticsearch credentials missing or index pattern (`ELASTICSEARCH_LOG_INDEX`) does not match.

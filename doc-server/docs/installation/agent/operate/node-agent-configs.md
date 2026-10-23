@@ -138,6 +138,16 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   -f values.yaml
 ```
 
+### Node-agent metrics in ClickHouse
+
+To send node-agent metrics to ClickHouse through the bundled OpenTelemetry collector, pass `node-agent-metrics-values.yaml`:
+
+```bash
+helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent -n nudgebee-agent \
+  --reuse-values \
+  -f https://raw.githubusercontent.com/nudgebee/k8s-agent/main/node-agent-metrics-values.yaml
+```
+
 ## Troubleshooting Node Agent Failures
 
 When Agent Health displays **Node Agent: 0** or **Node Agent: Disconnected**, troubleshoot in two layers:
