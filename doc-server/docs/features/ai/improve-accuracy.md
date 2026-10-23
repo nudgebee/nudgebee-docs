@@ -15,13 +15,29 @@ NuBi starts every investigation knowing only what it can read from your accounts
 | **Skills** | A packaged procedure, loaded on demand or with `/skill-name` | Repeatable tasks your team keeps in Git |
 | **Prioritize knowledge** | Reserves room for chosen knowledge in one agent's search results, optionally always loading it | Making a specific agent always use a specific runbook |
 
+## Which one should I use?
+
+| You want NuBi to… | Use | Loaded |
+|---|---|---|
+| Always know a few facts or rules about this account, in every agent | **Account context** | Every conversation, every agent |
+| Know background it can look up when relevant | A **Fact** knowledge base, or synced Confluence/ServiceNow pages | When a search finds it |
+| Follow a procedure when the situation calls for it | An **SOP** knowledge base, or a **skill** from GitHub | When a search finds it, or when you type `/skill-name` |
+| Follow a short procedure on **every** run of one agent | A skill you wrote, **prioritized** for that agent with **Always load** on | Every run of that agent |
+
+Rules of thumb:
+
+- **Account context is for facts, not procedures.** It has no agent targeting and is sent on every message, so keep it short — naming, ownership, what never to touch.
+- **A skill is for how to do something.** Write it as an SOP. NuBi loads it only when it is relevant, so you can have many without slowing every request.
+- **Always load is for the exception:** one short runbook a specific agent must never skip. If every agent needs the text, put it in account context instead — Always load can't be set for *All agents*.
+- **Long reference material** (architecture docs, Confluence spaces) stays searchable; don't paste it into account context.
+
 All of these are managed in **[b-Cortex](./b-cortex.md)** (the **b-Cortex** button on the left rail), except *Prioritize knowledge*, which is set per agent under **Admin → AI & Tools → Agents**.
 
 ## Account context
 
 **b-Cortex → Knowledge → Account Context → Add Account Context**
 
-Account-level knowledge used by the AI planner on every conversation for this account. Keep it short and factual — it is included every time, so long text costs on every run.
+Account-level knowledge used by the AI planner on every conversation for this account. Keep it short and factual — it is included every time, so long text costs on every run. Content is limited to about 10 KB, even though the upload accepts larger `.txt` files.
 
 Good account context:
 
@@ -53,10 +69,12 @@ If NuBi is reading a runbook as background instead of following it, mark the pag
 
 A skill is a knowledge item NuBi can load in full when it needs it. Skills come from:
 
-- **knowledge bases you write yourself** (typed text, Fact or SOP — not PDFs or synced Confluence/ServiceNow pages), and
-- a **GitHub repository**: in **b-Cortex → Knowledge → Knowledge Base → Repositories → Add repository** (tenant admins), every folder containing a `SKILL.md` becomes a skill. Private repositories use your GitHub integration.
+- **knowledge bases you write yourself** — the **User** tab (typed or `.txt` text, Fact or SOP; not PDFs), and
+- a **GitHub repository**: in **b-Cortex → Knowledge → Knowledge Base → Repositories → Add repository** (tenant admins), every folder containing a `SKILL.md` becomes a skill. See [Add skills from GitHub](./b-cortex.md#add-skills-from-github).
 
-In **Ask NudgeBee** you can load a skill explicitly by typing `/skill-name` (up to three per message). Otherwise agents find relevant skills themselves. Mark a procedure **SOP** so it is followed step by step once loaded.
+Knowledge synced from Confluence or ServiceNow (the **Integration** tab) is search-only: it is not a skill and can't be loaded by name or always loaded.
+
+In **Ask NudgeBee**, type `/` to pick a skill from the list (name and description), or type `/skill-name` yourself — up to three per message. The skill's text (up to 16,000 characters) goes in ahead of your question. Otherwise agents find relevant skills themselves. Mark a procedure **SOP** so it is followed step by step once loaded.
 
 ## Prioritize knowledge for one agent
 
@@ -64,7 +82,7 @@ In **Ask NudgeBee** you can load a skill explicitly by typing `/skill-name` (up 
 
 Every agent can already use all of the account's knowledge bases. *Prioritized* knowledge bases get reserved space in that agent's search results, so they are not crowded out by other matches.
 
-Turn on **Always load** for a prioritized knowledge base to put its full text in the agent's prompt on every run. Always load is available for knowledge bases you wrote yourself (not PDFs or synced Confluence/ServiceNow pages) of up to 4,000 characters. Use it for the one runbook an agent must always follow — for example the **Event & Alert Investigator** for alert triage, or the **Azure Troubleshooter** for your Azure runbook. Always-loaded text is sent on every run, so keep it to what is essential.
+Turn on **Always load** for a prioritized knowledge base to put its full text in the agent's prompt on every run. Always load is available for knowledge bases you wrote yourself (not PDFs or synced Confluence/ServiceNow pages) of up to 4,000 characters. Always-loaded text is used even when the knowledge retrieval mode is **Disabled**. For the metrics and traces agents, it reaches the agent that writes the query. Use it for the one runbook an agent must always follow — for example the **Event & Alert Investigator** for alert triage, or the **Azure Troubleshooter** for your Azure runbook. Always-loaded text is sent on every run, so keep it to what is essential.
 
 ## Knowledge retrieval policy
 

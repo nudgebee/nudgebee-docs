@@ -100,6 +100,8 @@ The list has three filters:
 | **Integration** | Knowledge bases synced from Confluence or ServiceNow |
 | **Repositories** | GitHub repositories that provide skills (tenant admins) |
 
+The header has **Test retrieval** (try a question and see what NuBi would find), **Add tool instructions** (a ready-made SOP telling the code agent how to run a tool in your repositories; it is always loaded for that agent) and **Add Knowledge Base**.
+
 Each row shows its **Source status**, **Use in answers**, the number of **Docs**, its **Classification** and when it was **Added**.
 
 | Status | Meaning |
@@ -115,9 +117,12 @@ Each row shows its **Source status**, **Use in answers**, the number of **Docs**
 **Add Knowledge Base** opens *Create Knowledge Base*:
 
 - **Type** — **Fact** (background that's true about your environment) or **SOP** (how to do something, step by step). Default is Fact. See [Facts and SOPs](./improve-accuracy.md#facts-and-sops).
-- **Content** — **Upload File** (`.txt`, or `.pdf` up to 5 MB) or type the content (up to 5,000 characters).
-- **Name**, **Description** and **Context Tags**.
-- Tenant admins also choose **Who can use it**: this account, selected accounts, or the whole organization.
+- **Name** (3–50 characters: letters, digits, `-` and `_`, starting with a letter) and **Description** — say what it covers and when the AI should use it.
+- **Content** — **Upload File** (`.txt` up to 5,000 characters, or `.pdf` up to 5 MB) or type it in **Content**. The placeholder suggests sections: *When to use*, *Agent usage*, *Tool usage*, *About our environment*, *Names we use*, *Always / never*, *Examples*. Diagrams and screenshots in a PDF are sent to your AI provider so they can be read.
+- **Context tags** — services, namespaces or your own tags. They sharpen matching only; they don't restrict which agents see it.
+- Tenant admins also choose **Who can use it**: **This account**, **Organisation** (every account; an account admin can switch it off for theirs) or **Selected accounts**.
+
+A new knowledge base is available to all agents. To give one agent reserved room for it, or to always load it, use [Prioritize knowledge](./improve-accuracy.md#prioritize-knowledge-for-one-agent).
 
 ### Sync from Confluence or ServiceNow
 
@@ -126,11 +131,16 @@ Knowledge integrations are added as integrations, then appear under the **Integr
 - **Confluence** — add it under **Admin → Integrations** (Docs). The space key limits the sync to one space; leave it blank to sync all spaces. See [Confluence](../../integrations/Docs/confluence.md).
 - **ServiceNow** — in the ServiceNow integration, turn on **Sync Knowledge Base** to sync knowledge articles. See [ServiceNow](../../integrations/Tickets/servicenow.md).
 
-Other sources (Google Drive, arbitrary URLs) are not synced today; upload their content as a file instead.
+Integration knowledge bases re-sync automatically (about every 30 minutes by default) and are search-only. Other sources (Google Drive, arbitrary URLs) are not synced today; upload their content as a file instead.
 
 ### Add skills from GitHub
 
-**Repositories → Add repository**: enter the **Repository** (`owner/name` or a GitHub URL), the **Folder** and the **Branch**. Every folder with a `SKILL.md` becomes a skill. Private repositories use your [GitHub integration](../../integrations/Code%20Repository/GitHub/github-integration.md). Use **Sync now** on the row to pull changes. Status: Pending, Syncing, Synced or Sync failed.
+**Repositories → Add repository** (tenant admins): enter the **Repository** (`owner/name` or a GitHub URL), the **Folder** (blank for the whole repository) and the **Branch** (blank for the default), and choose **Who can use its skills**: **Organisation** or **Selected accounts**. Private repositories use your [GitHub integration](../../integrations/Code%20Repository/GitHub/github-integration.md).
+
+- **What becomes a skill:** every folder with a `SKILL.md` whose frontmatter (the `---` block at the top) has a `description`. The `name` should be 1–64 lowercase letters, digits and hyphens; without one the folder name is used. Skills with duplicate names, or over 1 MB per file / 10 MB in total, are skipped — the row's **N skipped** shows why.
+- **Columns:** **Repository**, **Status** (Pending, Syncing, Synced, Sync failed), **Last synced** with the commit, **Skills** (click to see them and switch each one's **Use in answers**) and **Used by**.
+- **Syncing:** repositories re-sync automatically (about every 30 minutes by default); **Sync now** pulls changes immediately. Edit a skill in the repository, not in NudgeBee — synced skills show a **Synced** badge and are read-only here.
+- **Skill details** on a skill shows its path, commit, license, allowed tools, requirements and files.
 
 ## Re-sync a knowledge base
 
@@ -160,7 +170,7 @@ Each page shows its automatic **Classifier** label under the title. Your mark al
 *"Account-level rules and identity that define how your AI debugger/planner behaves and reasons — set once, applies to all sessions."* It is included in every conversation on the account, so keep it to what NuBi must always know. See [Account context](./improve-accuracy.md#account-context) for what to put in it.
 
 - **One per account.** Select the account first; in the tenant-wide view you can see every account's context but not create one. Once an account has a context, **Add Account Context** is disabled — edit the existing one instead.
-- **Create Account Context:** **Name** (for example `account_ctx_01`), **Description**, and **Content** — type or paste it, or upload a `.txt` file up to 5 MB. A character count shows the length.
+- **Create Account Context:** **Name** (for example `account_ctx_01`), **Description**, and **Content** — type or paste it, or upload a `.txt` file. A character count shows the length; content is limited to about 10 KB.
 - Each context card has **Edit** and **Delete**. Changing it needs write access to the account.
 
 ## Knowledge Graph
