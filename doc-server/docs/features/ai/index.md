@@ -29,12 +29,22 @@ NudgeBee includes four purpose-built AI assistants, each focused on a specific d
 | **CloudOps AI-Assistant** | Cloud infrastructure management, security posture analysis, and operational recommendations. |
 | **K8s AI-Assistant** | Kubernetes-specific debugging, upgrade guidance, and workload optimization. |
 
+## Getting the Most from NuBi
+
+- **[What NuBi Can Do](./nubi.md)** — investigations, product questions with `@nubi`, and where you can talk to NuBi.
+- **[Improve NuBi's Answers](./improve-accuracy.md)** — account context, Facts vs SOPs, skills and per-agent knowledge.
+- **[b-Cortex](./b-cortex.md)** — memory, knowledge bases, re-syncing integrations and marking documents.
+- **[Agents & Custom Agents](./custom-agents.md)** — create agents, override a built-in prompt, or add tools.
+- **[AI & Tools](./ai-and-tools.md)** — every admin tab for configuring the AI, and who can use each.
+
 ## Configuring and Governing AI
 
 - **[AI Gateway](./ai-gateway.md)** — One endpoint in front of every LLM provider, with routing, tier aliases, quotas and per-user cost attribution.
 - **[LLM Analyser](./llm-analyser.md)** — Where NudgeBee's own AI spend goes, by conversation, model, agent, tool and user.
 - **[Egress Filter](./egress-filter.md)** — Scan what leaves for secrets, PII and PHI, and detect, redact, block, or swap personal data for reversible tokens.
-- **[Tools & MCP](./tools-and-mcp.md)** — What the agents are able to do, and which MCP servers are connected.
+- **[Tools & MCP](./tools-and-mcp.md)** — What the agents are able to do, MCP servers and their approvals, and automations offered to NuBi.
+- **[Tool Approvals](./tool-approvals.md)** — Rules that let specific, known-safe commands run without asking.
+- **[Budgets & Limits](./budgets-and-limits.md)** — Spend and conversation limits per tenant and account, and model pricing.
 - **[Memory Policy](./memory-policy.md)** — The tenant-wide opt-out for each layer of AI memory.
 - **[RCA Format](./rca-format.md)** — The Markdown template the AI fills in when it writes a root cause analysis.
 

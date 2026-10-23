@@ -5,7 +5,9 @@ sidebar_label: Egress Filter
 
 # Egress Filter
 
-**Admin → AI & Tools → Egress Filter**
+**AI & Tools → Security → Egress Filter** (Enterprise edition)
+
+The **Security** tab has two parts: **Egress Filter**, described here, and **[Tool Approvals (Beta)](./tool-approvals.md)**.
 
 Scans what NudgeBee sends to an LLM for secrets and personal data, and either records it, masks it, or refuses the call. This is the control you point at when someone asks what stops a leaked credential in a log line — or a patient name in a ticket body — from reaching a model provider.
 

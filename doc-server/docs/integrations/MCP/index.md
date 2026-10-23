@@ -23,7 +23,9 @@ There are **two ways to connect** to an MCP server. Pick the one that matches wh
 
 ## Setting Up an Integration
 
-In the NudgeBee UI, open **Integrations**, switch to the **LLM** tab, and add a new **MCP** integration.
+Open **Admin → Integrations**, pick the **LLM** tab and the **MCP** card, and add a new connection. Link it to the accounts whose NuBi chats and automations should use it — its tools are offered only in those accounts, and only while the integration is enabled.
+
+Connected servers are also listed, with their health, at **AI & Tools → Tools & MCP → MCP Servers** (see [Tools & MCP](../../features/ai/tools-and-mcp.md#mcp-servers)).
 
 Fields are dynamic — what you see changes based on the **Connection Mode** and **Transport** you pick.
 
@@ -96,12 +98,24 @@ Stdio caveats:
 - If the spawned process needs environment variables (API keys, `HOME`, etc.), set them via Forager's local YAML config rather than the UI — the integration form does not currently expose `env` or `working_dir`. See [Advanced: Local YAML datasource](#advanced-local-yaml-datasource-on-forager) below.
 - For Docker on macOS dev machines, Forager must be running under a user that can reach the Docker Desktop socket. Running Forager as a system root daemon while Docker Desktop runs in user space can fail.
 
+## Choose Which Tools Need Approval
+
+The integration's **Tools that need approval** field lists the server's own tools. Pick the ones that change something (**Mark all tools** and **Clear** help), or type names before the first save. Tenant admins can also change it later with **Manage** on the MCP Servers list.
+
+- A listed tool **always asks** a person before it runs. Every other tool on the server **never asks** — there is no per-call decision for MCP tools, so mark anything that writes.
+- Automatic alert investigations never run a tool that needs approval.
+- A [Tool Approvals](../../features/ai/tool-approvals.md) rule can skip the prompt for specific calls.
+- Names the server no longer offers are kept but have no effect until it offers them again.
+
 ## Using an MCP Integration
 
-Once the integration is saved and reports **Connected**, two things happen:
+1. **Tool discovery.** NudgeBee calls `tools/list` on the server for each linked account. Each tool appears as `<integration name>_<tool name>` — the integration name lowercased, with spaces and dashes turned into `_`.
+2. **Tool use.** NuBi's Kubernetes and cloud agents get the server's tools; a [custom agent](../../features/ai/custom-agents.md) can select them by name. **LLM Instructions** on the integration tell NuBi when to use them. When a tool is picked, NudgeBee sends `tools/call` through the same path (cloud → relay → server, or cloud → relay → forager → server). A call times out after 120 seconds by default.
+3. **When the server is down.** If discovery fails, NudgeBee retries after about 1, 2, 4, 8, 16 and 32 minutes, then every 30 minutes. Meanwhile NuBi sees a placeholder tool `<integration name>_unavailable` and tells you the server can't be reached instead of silently ignoring it.
 
-1. **Tool discovery.** NudgeBee calls `tools/list` on the server (cached for 30 minutes per account). Each discovered tool becomes available to NuBi and to workflow `llm.mcp_call` tasks.
-2. **Tool invocation.** When the LLM or a workflow picks a tool, NudgeBee sends `tools/call` through the same path (cloud → relay → server, or cloud → relay → forager → server).
+### Health
+
+The MCP Servers list shows each server's **Health**: **Connected**, **Not checked yet**, **Error**, **Can't reach server** or **Login rejected**, with the reason, the tool count and when it was last checked. Health comes from NuBi's own calls to the server; a failure has to last about 2 minutes before the server is shown as down. Saving the integration, or enabling or disabling it, resets health to **Not checked yet**. **Check now** (needs permission to run integrations) tests it on the spot. For a VM Agent server checked from several accounts, the worst account is shown, as *n of m accounts*.
 
 In the [`llm.mcp_call`](../../features/workflow-builder/ai-tasks.md#llmmcp_call) workflow task, set **Connection Mode = Integration** and pick the integration from the dropdown. The tool name dropdown is then populated from the live `tools/list` response.
 
@@ -133,7 +147,7 @@ Protocol details (informational):
 
 - All calls use MCP protocol version `2024-11-05`.
 - Sequence: `initialize` → `notifications/initialized` → `tools/list` (discovery) or `tools/call` (execution).
-- For Direct HTTP, the relay caches the MCP session (`Mcp-Session-Id`) for 30 minutes per (URL, account) pair to avoid re-initializing on every call.
+- Each NuBi chat (and each automation run) gets its own MCP session (`Mcp-Session-Id`) per server and account, so a stateful server sees one client per conversation. A session idle for 30 minutes is closed. If the server forgets a session, NudgeBee starts a new one and retries once. Servers that don't use sessions work too. Stdio servers are one shared process, so they don't get per-chat sessions.
 - The relay auto-detects `Content-Type: text/event-stream` on the response and parses SSE frames transparently. You don't pick SSE vs HTTP in the UI.
 - For Stdio, Forager keeps one long-lived process per integration; messages are line-delimited JSON.
 
@@ -172,10 +186,13 @@ For a fully UI-managed integration, use the form instead — Forager registers t
 
 | Symptom | Likely cause |
 |---|---|
-| Integration saves but **Connected: No** | Direct mode: URL unreachable / TLS error / auth rejected. VM Agent: Forager not connected to relay, or Forager host can't reach the MCP server / can't run the command. |
+| Health shows **Can't reach server**, **Login rejected** or **Error** | Direct mode: URL unreachable / TLS error / auth rejected. VM Agent: Forager not connected to relay, or Forager host can't reach the MCP server / can't run the command. Fix it, then **Check now**. |
+| NuBi says the server is unavailable | Discovery failed and NudgeBee is retrying (see [When the server is down](#using-an-mcp-integration)). Check Health and the server. |
+| NuBi doesn't use the server's tools | The integration isn't linked to this account, or is disabled. |
+| A tool that changes something ran without asking | It isn't in **Tools that need approval** — add it. |
 | Tool list empty after save | `tools/list` returned 0 tools, or the server requires a non-default `protocolVersion`. Check Forager / relay logs. |
 | Stdio integration fails on first call | Command path wrong or not executable as Forager's user; Docker daemon down; image not pulled (first-call cold start can also exceed timeout — pre-pull). |
 | `robots.txt` errors from `mcp/fetch` | The fetch server respects robots.txt by default. Test against `httpbin.org` or `example.com`. |
-| Stale tool list after server change | Tool list is cached 30 minutes per account. Edit and resave the integration to force a refresh. |
+| Stale tool list after server change | Start a new chat, then use **Check now** to confirm the tool count. |
 
 For Forager-side diagnostics, see the [Proxy Agent troubleshooting guide](../../installation/proxy-agent/troubleshooting.md).
