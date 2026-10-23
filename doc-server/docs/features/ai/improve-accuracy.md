@@ -94,5 +94,5 @@ With the tenant feature **Memory across conversations** turned on (**Admin → T
 ## Related
 
 - [b-Cortex: Memory and Knowledge](./b-cortex.md)
-- [Custom Agents](./custom-agents.md)
+- [Agents & Custom Agents](./custom-agents.md)
 - [Memory Policy](./memory-policy.md)

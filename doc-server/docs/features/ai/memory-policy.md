@@ -5,7 +5,11 @@ sidebar_label: Memory Policy
 
 # Memory Policy
 
-**Admin → AI & Tools → Memory Policy**
+**AI & Tools → Memory Policy** (Enterprise edition)
+
+The tab needs **Memory across conversations** on in [Tenant Settings → Features](../tenant-settings.md#features); otherwise it shows *b-Cortex not enabled*.
+
+Tenant admins can change these switches; everyone else sees them read-only. Each user can restrict further for themselves in **b-Cortex → Memory → Privacy**.
 
 The tenant-wide opt-out for AI memory. NudgeBee's assistant can carry context between conversations — your preferences, decisions you made during past investigations, patterns it has observed. This page decides which of those layers it may use for everyone in the tenant.
 

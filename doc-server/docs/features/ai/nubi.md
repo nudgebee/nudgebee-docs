@@ -13,7 +13,7 @@ This page lists what NuBi does today and where each capability lives. To make it
 
 When you ask about a problem — a crashing pod, a slow service, a cost spike, a failing alert — NuBi routes the question to the assistant for that account type (Kubernetes, AWS, Azure, GCP, VM) and its specialist agents (logs, metrics, traces, events, databases, code, tickets). See **[AI & Pre-built Agents](./index.md)** for the list and **[NuBi Use Cases](./use-cases/index.md)** for worked examples.
 
-- **Changes need approval.** In chat, a step that would change a system — a cluster, cloud resource, repository or database — is held for your approval. Automations can be configured by their author to run approved steps without asking.
+- **Changes need approval.** In chat, a step that would change a system — a cluster, cloud resource, repository or database — is held for your approval. Admins can let specific, known-safe commands run without asking with [Tool Approvals](./tool-approvals.md), and automations can be configured by their author to run without asking.
 - **Scoped to the selected account.** Investigations run on the account you have selected and reach another connected account only when you ask about it. Product questions (accounts, integrations, documentation) can cover every account you are allowed to see.
 - **Alerts are investigated automatically** when investigation is enabled for the event; you can ask follow-up questions in the same conversation.
 
@@ -40,7 +40,8 @@ NuBi searches your **knowledge bases** (Confluence, ServiceNow, uploaded documen
 
 ## Build on it
 
-- **[Custom Agents](./custom-agents.md)** — create your own agents, override a built-in agent's prompt, or add tools to it.
+- **[Agents & Custom Agents](./custom-agents.md)** — create your own agents, override a built-in agent's prompt, or add tools to it.
+- **[AI & Tools](./ai-and-tools.md)** — every admin setting for the AI, from budgets to security.
 - **[Tools & MCP](./tools-and-mcp.md)** — the tools agents can call, and external MCP servers.
 - **[Workflow Builder](../workflow-builder/index.md)** — run agents inside automations.
 
@@ -48,7 +49,7 @@ NuBi searches your **knowledge bases** (Confluence, ServiceNow, uploaded documen
 
 | Where | What works |
 |---|---|
-| **Ask NudgeBee** (app) | Full conversations, approvals, `/skill-name` to load a skill, `@nubi` for product questions |
+| **Ask NudgeBee** (app) | Full conversations, approvals, image attachments, **Select agent** to ask a specific agent, `/skill-name` to load a skill, `@nubi` for product questions |
 | **Slack** | Mention the NudgeBee app in a channel; alert cards have an **Ask NuBi to Analyse!** button. See [Slack](../../integrations/Notifications/slack.md). |
 | **Microsoft Teams** | `@Nubi` in a channel or thread; alert cards with Ask NuBi, and approval cards. Standard channels only. See [Microsoft Teams](../../integrations/Notifications/msteams.md). |
 
@@ -58,5 +59,5 @@ NuBi searches your **knowledge bases** (Confluence, ServiceNow, uploaded documen
 
 - [Improve NuBi's Answers](./improve-accuracy.md)
 - [b-Cortex: Memory and Knowledge](./b-cortex.md)
-- [Custom Agents](./custom-agents.md)
+- [Agents & Custom Agents](./custom-agents.md)
 - [Memory Policy](./memory-policy.md)
