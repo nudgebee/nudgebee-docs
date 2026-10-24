@@ -62,6 +62,7 @@ Above the canvas:
 - **Controls** at the top left zoom in and out, fit the graph to the screen, and lock the canvas.
 - **MiniMap** at the bottom right shows an overview of the whole graph and where you are in it. It is hidden on graphs of more than 1,000 nodes.
 - When you zoom far out, nodes shrink to dots with short labels so a large graph stays readable.
+- **Download** at the top right saves **CSV** (the relationships on screen, or every matching node when the graph is too large to draw) or **Image (PNG)** (up to 500 nodes — filter further or use CSV for more). It is disabled when the graph is empty.
 - **Hover Relationships** at the top right for a legend of the common relationship types. The full list is in [Nodes and Relationships](./nodes-and-relationships.md#relationship-types).
 
 ![Hovering a node highlights it and its connections and fades the rest](../img/knowledge-graph-hover.png)
@@ -75,6 +76,7 @@ The canvas draws at most **1,500 nodes**. When the current selection is larger y
 |:---|:---|
 | **Building your Knowledge Graph** | The tenant has no graph yet. It appears at the first hourly rebuild after NudgeBee has collected from your first cluster or account. |
 | **No nodes match your filters** | The filters exclude everything. Try another node, a broader Level, or **Clear Filters**. |
+| **The knowledge graph could not be loaded** | The request failed — this is not an empty result. Click **Retry**. |
 
 ## Tips
 

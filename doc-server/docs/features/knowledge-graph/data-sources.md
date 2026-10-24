@@ -24,11 +24,12 @@ You do not set up the graph separately. Connect a cluster, an account or an inte
 | **PagerDuty** | On-call services, teams and users | An enabled PagerDuty integration |
 | **Ownership** | Which user or team owns each workload, namespace, cluster and cloud resource | Owners set under **Admin → Access & Users → Ownership** |
 | **Identity** | One node per NudgeBee user, linked to the same person's GitHub, GitLab or PagerDuty account | Users matched to their integration accounts |
-| **You** | Dependencies and resources no collector can see | Declared in Knowledge Graph **Settings** |
+| **Self-hosted VMs** | VMs from [self-hosted VM accounts](../VM/index.md), linked to the cloud instance they run on where known | A self-hosted VM account with discovery. A VM drops out after 7 days without a scan. |
+| **You** | Dependencies and resources no collector can see | Declared in Knowledge Graph **Settings** — see [Manual Declarations](./manual-declarations.md) |
 
 ## Flow sources
 
-Flow sources add the calls between services, as `CALLS` relationships. Each one can be switched off under [Coverage](#choose-what-feeds-the-graph-coverage).
+Flow sources add the calls between services, as `CALLS` relationships. eBPF, Traces, Datadog APM, Elastic APM and New Relic APM can each be switched off under [Coverage](#choose-what-feeds-the-graph-coverage).
 
 | Flow source | What it observes | You need |
 |:---|:---|:---|
@@ -36,6 +37,10 @@ Flow sources add the calls between services, as `CALLS` relationships. Each one 
 | **Traces** | Calls in your OpenTelemetry traces, from the last 2 hours at each rebuild | A cluster with the agent connected, and a trace provider connected for its account. See [Observability integrations](../../integrations/Observability/index.md). |
 | **Datadog APM** | Service-to-service calls Datadog APM has observed | A Datadog integration with an API key and application key, linked to an account |
 | **New Relic APM** | Outgoing calls in New Relic span data, from the last 24 hours | A New Relic integration with an API key and account id, linked to an account |
+| **Elastic APM** | Service-to-service calls in Elastic APM data | An Elasticsearch integration with APM data, linked to an account |
+| **GCP Cloud Trace** | Calls in Cloud Trace spans | A connected GCP account |
+| **AWS VPC Flow Logs** | Accepted traffic as calls, and rejected traffic as rejected connections; unknown peers appear as *Unidentified addresses* | VPC Flow Logs enabled for a connected AWS account |
+| **VM service map** | Calls between services on self-hosted VMs | The [VM service map](../VM/observability.md) set up |
 
 eBPF and Traces can add a service or an external dependency the graph did not have yet. Datadog APM and New Relic APM only add calls between resources that are already in the graph.
 
@@ -59,9 +64,10 @@ When traces or eBPF show a call to a hostname, NudgeBee replaces the generic ext
 
 | What | When it updates |
 |:---|:---|
-| The whole graph | Rebuilt every hour. There is no button to rebuild on demand. |
+| The whole graph | Rebuilt every hour. There is no button to rebuild on demand. If a build would be unusually large, it is stopped and the previous graph is kept. |
+| A single resource that changes | Many changes — cloud resources added or deleted through real-time events, Kubernetes deletions, and inventory changes picked up every few minutes — update the graph within minutes, without waiting for the hourly rebuild. |
 | A newly connected cluster, account or integration | Appears at the next rebuild after NudgeBee has collected from it. |
-| A resource you delete | Disappears at the next rebuild after NudgeBee stops seeing it. |
+| A resource you delete | Usually disappears within minutes; otherwise at the next rebuild after NudgeBee stops seeing it. |
 | A call between services | Taken from what each flow source observes at each rebuild: the last 2 hours of traces, and the last 24 hours of Datadog APM and New Relic APM data. Removed once it has not been seen for 7 days. |
 | An external dependency (`ExternalService`) | Removed once nothing has called it for 7 days. |
 | An account that is disabled or deleted | Its resources are removed at the next rebuild, or straight away when the account is deleted. |
@@ -71,7 +77,7 @@ When traces or eBPF show a call to a hostname, NudgeBee replaces the generic ext
 Tenant admins can choose which cloud accounts and flow sources feed the graph.
 
 1. Open **Troubleshoot → Knowledge Graph** and click **Settings**.
-2. On the **Coverage** tab, tick the **Cloud accounts** and **Flow sources** to include. Use **Search accounts** to find an account by name, number or provider.
+2. On the **Coverage** tab, tick the **Cloud accounts** and **Flow sources** (eBPF, Traces, Datadog APM, Elastic APM, New Relic APM) to include. Use **Search accounts** to find an account by name, number or provider.
 3. Click **Save**.
 
 How the selection works:
@@ -85,5 +91,6 @@ How the selection works:
 
 - [Explore the Graph](./exploring.md)
 - [Nodes and Relationships](./nodes-and-relationships.md)
+- [Manual Declarations](./manual-declarations.md)
 - [Connect a Kubernetes cluster](../../installation/agent/index.md)
 - [Cloud accounts](../Cloud/index.md)
