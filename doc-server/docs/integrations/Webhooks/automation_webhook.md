@@ -25,14 +25,14 @@ HTTP POST to the generated webhook URL
 NudgeBee matches the URL to a workflow_webhook integration
         │
         ├── Evaluates the trigger's filter expression (if set)
-        └── Starts the linked workflow, exposing the body as webhook_payload
+        └── Starts the linked workflow, exposing the body to tasks as Inputs.webhook_json (parsed) and Inputs.webhook_payload (raw)
 ```
 
 ---
 
 ## Step 1: Create the Integration
 
-You can create it up front, or let the workflow editor create it for you.
+Create the integration first; the workflow's Webhook trigger then picks it.
 
 **From the integrations page** — Navigate to **Admin** > **Integrations** > **Webhooks**, select **Automation Webhook**, then click **Add Workflow Webhook Account**.
 
@@ -44,21 +44,21 @@ You can create it up front, or let the workflow editor create it for you.
 * **Select Account(s) \*** (Required)
     * One or more NudgeBee accounts this webhook serves. Selecting several lets a single endpoint fan out across clusters.
 
-**From the workflow editor** — Add a [Webhook trigger](../../features/workflow-builder/triggers.md#webhook-trigger) to a workflow and enter an integration name in the sidebar. NudgeBee creates the integration for you, named `wf-<workflow-id>-<name>`.
+**In the workflow editor** — Add a [Webhook trigger](../../features/workflow-builder/triggers.md#webhook-trigger) and pick the integration in its **Webhook Integration** field.
 
 ![The Automation Webhook form, which takes only a name and an account](../../../static/img/integrations/webhook-automation.png)
 
 ## Step 2: Copy the Webhook URL
 
-The URL is generated once the integration is **linked to a workflow**, and is shown in that workflow's Webhook trigger configuration — click the copy icon beside it. There is no URL to copy on the integrations page itself, because the endpoint is bound to the workflow, not to the integration alone.
+The URL is generated once the integration is **linked to a workflow**, and is shown in that workflow's Webhook trigger configuration (it ends in `/api/webhooks/workflow?token=…`) — click the copy icon beside it. There is no URL to copy on the integrations page itself, because the endpoint is bound to the workflow, not to the integration alone.
 
 ## Step 3: Configure the Sender
 
-Point your external system at the copied URL with an HTTP `POST` and a JSON body. Any JSON shape is accepted; NudgeBee does not require a schema.
+Point your external system at the copied URL with an HTTP `POST` and a JSON body. Any JSON shape is accepted; NudgeBee does not require a schema. If the integration has a secret, send it in the `X-Webhook-Secret` header.
 
 ## Step 4: Filter Which Requests Run the Workflow
 
-A webhook that fires on every request usually runs too often. Set a **Filter Expression** on the trigger — a template expression evaluated against the request body, which runs the workflow only when it renders to `true` or `1`. The body is available as `webhook_payload`, and the expression is limited to 500 characters.
+A webhook that fires on every request usually runs too often. Set a **Filter Expression** on the trigger — a template expression evaluated against the request body, which runs the workflow only when it renders to exactly `true` (any letter case; `1` does not match). In the filter, the parsed body is available as `webhook_payload`, and the expression is limited to 500 characters.
 
 | Expression | Behavior |
 |-----------|----------|
@@ -72,7 +72,7 @@ See [workflow triggers](../../features/workflow-builder/triggers.md#webhook-trig
 
 ## Using the Payload in Tasks
 
-The request body is exposed to the run as `webhook_payload`, so tasks can read fields from it directly — for example `{{ webhook_payload.repository.full_name }}` in a [notification task](../../features/workflow-builder/notification-tasks.md), or as an input to a [ticket task](../../features/workflow-builder/ticket-tasks.md). See [templating](../../features/troubleshooting/templating.md) for expression syntax.
+In task parameters, the parsed JSON body is `Inputs.webhook_json` and the raw body is the string `Inputs.webhook_payload`. Read fields from the parsed body — for example `{{ Inputs.webhook_json.repository.full_name }}` in a [notification task](../../features/workflow-builder/notification-tasks.md), or as an input to a [ticket task](../../features/workflow-builder/ticket-tasks.md). See [templating](../../features/troubleshooting/templating.md) for expression syntax.
 
 ---
 
@@ -88,7 +88,7 @@ The request body is exposed to the run as `webhook_payload`, so tasks can read f
    ```
 
 3. Open the workflow's run history. A run should appear within a few seconds.
-4. Open the run and confirm the tasks that read `webhook_payload` received the fields you sent.
+4. Open the run and confirm the tasks that read `Inputs.webhook_json` received the fields you sent.
 
 :::tip
 Test with the filter expression removed first. If the run appears without a filter and not with one, the expression is the problem, not the endpoint.
@@ -101,10 +101,10 @@ Test with the filter expression removed first. If the run appears without a filt
 | Symptom | Likely Cause | Fix |
 |---------|-------------|-----|
 | No webhook URL is shown | The integration is not linked to a workflow yet | Save the workflow with the integration selected in its Webhook trigger; the URL appears afterwards. |
-| Request accepted, workflow never runs | The filter expression did not render `true` | Remove the filter and retry. Then check the expression against the payload you actually send — a missing key renders empty, not `true`. |
+| Request accepted, workflow never runs | The filter expression did not render exactly `true` (`1` doesn't count) | Remove the filter and retry. Then check the expression against the payload you actually send — a missing key renders empty, not `true`. |
 | Integration name is rejected | Name contains a space or another disallowed character | Use only letters, numbers, dots, hyphens and underscores, up to 200 characters. |
-| Tasks see an empty `webhook_payload` | The request had no JSON body, or the wrong content type | Send `Content-Type: application/json` with a JSON object body. |
-| Workflow runs twice per event | Two integrations, or two workflows, are bound to the same sender | Check whether the workflow editor auto-created a `wf-...` integration alongside one you made yourself, and disable the one you do not want. |
+| Tasks see empty `Inputs.webhook_json` fields | The request had no JSON body, or the wrong content type | Send `Content-Type: application/json` with a JSON object body. |
+| Workflow runs twice per event | Two integrations, or two workflows, are bound to the same sender | Check for a second integration (for example an older `wf-...` one) bound to the same sender, and disable the one you do not want. |
 | Requests never arrive | The NudgeBee URL is not reachable from the sender | Confirm the endpoint is reachable from the sending system's network. |
 
 ---
