@@ -16,7 +16,7 @@ Search the cluster's logs.
 - **Modes:** **Builder** (not offered for Datadog), **Code** (Elasticsearch also lets you choose **DSL** or **KQL**) and **AI** (write the question in plain language; not offered for Datadog, Prometheus, Chronosphere or VictoriaMetrics). Builder is the default for SigNoz, Loggly, Loki and ClickHouse; Code for the others.
 - Choose a **Limit** (50–1000 lines), run, browse your query history, or **Download**. The default window is the last hour.
 
-Cloud accounts have the same screen as **Cloud Logs**.
+Cloud accounts have their own **Cloud Logs** screen, which works differently from this one — see [Cloud Monitoring](../Cloud/monitoring.md#cloud-logs).
 
 ## Log Groups
 

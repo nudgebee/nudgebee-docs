@@ -59,7 +59,7 @@ below.
 
 ## Connecting a Single Account
 
-Open **Admin → Integrations → AWS → Add AWS Account**. The form offers three connection methods as tabs — **CloudFormation**, **IAM Role ARN**, and **Access Keys** — so you can pick whichever fits your AWS setup.
+Open **Admin → Integrations → Kubernetes & Cloud → AWS → Add AWS Account**. The form offers three connection methods as tabs — **CloudFormation**, **IAM Role ARN**, and **Access Keys** — so you can pick whichever fits your AWS setup.
 
 ![Switching between the three AWS connection methods — CloudFormation, IAM Role ARN, and Access Keys — in the Add AWS Account form](./img/aws-connection-methods.gif)
 
@@ -597,7 +597,7 @@ Set the list in either place:
 * **When connecting** — fill in **AWS Regions (optional)** on the **IAM Role ARN**
   or **Access Keys** tab before you click **Validate**. Use comma-separated region
   codes, for example `ap-southeast-2, us-east-1`.
-* **On a connected account** — open **Admin → Integrations → AWS**, find the
+* **On a connected account** — open **Admin → Integrations → Kubernetes & Cloud → AWS**, find the
   account, and choose **Edit AWS Regions** from its **⋮** menu. The new list
   applies on the next sync; you do not need to reconnect. If your self-hosted
   version does not show this menu entry, upgrade to a newer release or contact
@@ -641,17 +641,24 @@ collector uses today:
 | ECS remediations | `ecs:UpdateService` |
 | Run Command on instances | `ssm:SendCommand`, `ssm:GetCommandInvocation`, `ssm:ListCommandInvocations`, `ssm:DescribeInstanceInformation` |
 
-The template also deploys EventBridge rules in every region that forward resource
-state-change events — EC2 state changes, RDS events, CloudWatch alarm state
-changes — to the SQS queue configured for your NudgeBee deployment. On a
-self-hosted install that queue lives in **your own AWS account** and is read by
-the collector running in your cluster; the events do not leave your account.
+### Real-time events (EventBridge)
 
-These rules ship with the template's **Standard** mode, so they are not available
-with a manual role, and today they cannot be enabled separately from the write
-actions above. Without them NudgeBee learns about changes on its daily sync
-rather than in near real time. Contact NudgeBee support if you want the event
-pipeline without the write permissions.
+EventBridge rules forward events to NudgeBee in near real time: EC2 instance state
+changes, RDS instance events, ECS service actions and task state changes,
+CloudWatch alarm state changes, and API calls (through CloudTrail) for EC2, RDS,
+ECS, Lambda, load balancers, SQS and SNS. On a self-hosted install they are sent to
+the SQS queue configured for your deployment, in **your own AWS account**, and read
+by the collector running in your cluster; the events do not leave your account.
+
+Accounts onboarded with the CloudFormation template in **Standard** mode get these rules automatically. For accounts that don't have them — Read-Only accounts or accounts connected with a manually created role —
+open **Admin → Integrations → Kubernetes & Cloud → AWS**, choose **Connect EventBridge** in the account's
+row menu and deploy the EventBridge stack it offers. That stack creates only the
+EventBridge resources. Without it NudgeBee learns about changes on its daily sync.
+See [Access Modes & Real-Time Events](./access-modes-and-real-time-events.md) for the
+**Real-Time Events** status values.
+
+To change the access mode of an account connected with the CloudFormation template,
+use **Update Permissions** in the account's row menu.
 
 ---
 
@@ -681,7 +688,7 @@ Other causes worth checking:
 For an account already connected without cost data:
 
 1. Create the CUR in AWS if you have not already ([Creating a CUR](#creating-a-cur)).
-2. In NudgeBee, open **Admin → Integrations → AWS**, find the account, and choose
+2. In NudgeBee, open **Admin → Integrations → Kubernetes & Cloud → AWS**, find the account, and choose
    **Edit Billing Config** from its **⋮** menu.
 3. Enter the **CUR Report Name**. The **CUR S3 Bucket** is optional — supply it
    only if several reports share a name.
