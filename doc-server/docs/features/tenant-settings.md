@@ -73,7 +73,7 @@ Some product surfaces are gated by a feature here rather than by a permission �
 | AI assistant | **Memory across conversations** — enables b-Cortex memory | Off |
 | | **Assistant can run automations** | Off |
 | | **Follow chat channels** — NuBi watches chosen Slack channels | Off |
-| | **Answer confidence on investigations** | Off |
+| | **Answer confidence on investigations** — a confidence chip on investigation answers ([what it shows](./ai/nubi-chat.md#reading-an-answer)) | Off |
 | | **Worker Bees** | Off |
 | Cost & optimisation | **AI usage and cost tab** (LLM Analyser) | Off |
 | | **Daily AI cost digest** | Off |

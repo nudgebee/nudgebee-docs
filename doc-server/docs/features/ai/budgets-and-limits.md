@@ -18,7 +18,7 @@ Budgets apply separately to two modules:
 | Module | Covers |
 |---|---|
 | **Event Analysis (Automated)** | Automatic investigations of events and alerts |
-| **NuBi Chat (User)** | Conversations people start in Ask NudgeBee, Slack or Teams |
+| **NuBi Chat (User)** | Conversations people start in the NuBi chat, Slack or Teams |
 
 For each module, at **tenant** level and at **account** level, you can set up to four limits:
 
@@ -33,7 +33,7 @@ Budgets are per tenant and per account, not per user. To cap individual users, u
 
 ### When a limit is reached
 
-The next request for that module is **refused** with a message saying the daily or monthly budget, or the investigation count limit, was exceeded for your organization or for this account. Limits are checked tenant first, then account. Nothing is refused if the budget check itself cannot run. When the tenant budget is exhausted, the tab shows *"Tenant budget exhausted"* and asks you to contact support to re-enable NuBi and event analysis.
+The next request for that module is **refused**. In the chat this shows as *Monthly Budget Limit exceeded for this account. Contact … Support team.* — the same wording whether the account's or the tenant's limit was reached. Limits are checked tenant first, then account. Nothing is refused if the budget check itself cannot run. When the tenant budget is exhausted, the tab shows *"Tenant budget exhausted"* and asks you to contact support to re-enable NuBi and event analysis.
 
 ### Defaults
 
