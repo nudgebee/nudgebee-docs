@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 sidebar_label: Nodes and Relationships
-keywords: [knowledge graph, node types, relationship types, edges, node details]
+keywords: [knowledge graph, node types, relationship types, edges, node details, self-hosted vm]
 ---
 
 # Nodes and Relationships
@@ -40,6 +40,25 @@ Kubernetes resources have more tabs:
 |:---|:---|
 | Namespace, Node, Pod | Utilization Trends, Related Events |
 | Workload, Job, CronJob | Utilization Trends, Related Events, Traces (last 24 hours), Logs (last 60 minutes), App Dashboard, Log Group |
+
+## Self-hosted VMs
+
+Each VM scanned through a Self-Hosted (VM) account is a `ComputeInstance` node with the sub-type `SelfHostedVM` and a server icon, owned by that account. It shows in the **Account** filter under **SELFHOSTED**, and its **Labels** carry what the scan found:
+
+| Label | What it is |
+|:---|:---|
+| **Host Kind** | `cloud_identified` for a VM that is an EC2, Compute Engine or Azure instance; `on_prem` for one with no cloud identity |
+| **Instance ID**, **Instance Provider** | The cloud instance the VM is, for a `cloud_identified` VM |
+| **OS Family**, **OS Version** | The operating system the scan found |
+| **Package Count**, **Finding Count** | Installed packages and open vulnerability findings from the last scan |
+| **Scan Status**, **Scanned At** | How the last scan ended and when it ran |
+| **Private IP**, **Public IP** | The VM's addresses |
+
+A `cloud_identified` VM and the cloud instance node for it are the **same machine**, joined by `SAME_AS`. The graph treats them as one:
+
+- A walk from either node starts from both. Picking the VM in **Node** at Level 1 shows its cloud instance and what runs on that instance, such as a Kubernetes node.
+- A blast radius started from either node lists the same dependents, and neither is listed as a dependent of the other.
+- The cloud instance node keeps only what its cloud account reports. The scan data is on the VM node, one hop away.
 
 ## Edge details
 
@@ -100,6 +119,7 @@ Read each one as *source → destination*.
 | `MANAGES` | The source manages the destination, for example a CloudFormation stack and its resources, or a Karpenter node pool and the node claims it creates. |
 | `ASSOCIATED_WITH` | The two are attached, for example an elastic IP and an instance. |
 | `PROTECTS` | A security group or firewall protects the destination. |
+| `SAME_AS` | A self-hosted VM is the same machine as the EC2, Compute Engine or Azure VM node for it. See [Self-hosted VMs](#self-hosted-vms). |
 
 ### Storage, configuration and images
 
@@ -133,7 +153,7 @@ Read each one as *source → destination*.
 |:---|:---|
 | `OWNS` | A user or team owns a workload, namespace, cluster or cloud resource; an organization, group or user owns a repository; a team owns an on-call service. |
 | `MEMBER_OF` | A user or team belongs to a team or organization. |
-| `SAME_AS` | A GitHub, GitLab or PagerDuty user is the same person as a NudgeBee user. |
+| `SAME_AS` | A GitHub, GitLab or PagerDuty user is the same person as a NudgeBee user. (Between machines, see [Infrastructure](#infrastructure).) |
 
 ## Related
 

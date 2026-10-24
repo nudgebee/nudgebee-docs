@@ -20,7 +20,7 @@ Choose filters, then click **Apply Filters**. The button stays disabled until so
 
 | Filter | What it does |
 |:---|:---|
-| **Account** | Show only resources owned by the selected accounts, grouped by cloud provider. Leave it empty to include every connected AWS, GCP, Azure and Kubernetes account. |
+| **Account** | Show only resources owned by the selected accounts, grouped by cloud provider. Leave it empty to include every connected AWS, GCP, Azure, Kubernetes and Self-Hosted (VM) account. |
 | **Node Type** | Show only certain kinds of resource. Each broad type, such as **ComputeInstance**, **Database** or **Workload**, can be expanded to pick only some of its sub-types, for example just **EC2Instance** under ComputeInstance. |
 | **Node** | Center the graph on one or more specific resources. Each option shows where it came from, its type, its name, and where it lives (cluster · namespace for Kubernetes, region · VPC for cloud). Typing matches name, cluster, namespace, region and type. |
 | **Level** | How many relationship hops to expand out from the selected nodes: **1 - Direct neighbors**, **2 - 2 hops** or **3 - 3 hops**. It only applies when a node is selected. |
@@ -32,6 +32,7 @@ Things worth knowing:
 - **Selecting a node clears Account, Node Type, Label and Attribute.** The node becomes the center of the graph and everything else is reached from it by Level.
 - **Once nodes are selected, the Node list narrows to their neighbors,** so you can keep picking the next hop.
 - **Several label or attribute conditions must all match** (they are combined with AND). The only comparison is equals.
+- **A self-hosted VM and its cloud instance are one machine.** Selecting either in **Node** shows both, and Level counts from both, so Level 1 already reaches what runs on the machine. Filtering by a Self-Hosted (VM) **Account** shows only its VM nodes; pick one in **Node** to see its cloud instance. See [Self-hosted VMs](./nodes-and-relationships.md#self-hosted-vms).
 - **Filters are not saved.** They reset when you reload the page, and there is no link that carries them.
 
 ## Search and focus
