@@ -22,7 +22,7 @@ When a rule has **Require approval** on, each run lists its planned changes and 
 
 **Review** (write access) opens *Review planned changes* with each **Workload** and **Planned change**. Choose **Approve and apply** or **Reject**. A comment is optional when approving and required when rejecting.
 
-In Slack and Microsoft Teams the request arrives with **Approve** and **Reject** buttons; other channels get a link to this page.
+In Slack and Microsoft Teams, the request arrives with **Approve** and **Reject** buttons; other channels get a link to this page.
 
 ## What to expect
 

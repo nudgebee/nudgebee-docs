@@ -28,7 +28,7 @@ The cards at the top act as a category filter — click one, click again to clea
 
 ### The table
 
-Columns: **Severity**, **Resource**, **Recommendation**, **Category**, **Safety**, **Savings** and **Last Seen**. Savings is the estimated change per month; a red negative value means applying it raises cost. Some cloud findings show *The cloud provider flags this as a cost finding but gives no savings figure*. See [how savings are calculated](./index.md#how-right-sizing-recommendations-are-calculated).
+Columns: **Severity**, **Resource**, **Recommendation**, **Category**, **Safety**, **Savings** and **Last Seen**. Savings are the estimated change per month; a red negative value means applying it raises cost. Some cloud findings show *The cloud provider flags this as a cost finding but gives no savings figure*. See [how savings are calculated](./index.md#how-right-sizing-recommendations-are-calculated).
 
 Row actions:
 
@@ -38,7 +38,7 @@ Row actions:
 
 ## Configuration
 
-Configuration has no cards or Savings filter. With no rule or search selected it groups findings by check — **Check**, **Severity**, **Findings**, **Accounts**. Open a check to see its resources: **Resource**, **Severity**, **Account**, **Last Seen**.
+Configuration has no cards or Savings filter. With no rule or search selected, it groups findings by check — **Check**, **Severity**, **Findings**, **Accounts**. Open a check to see its resources: **Resource**, **Severity**, **Account**, **Last Seen**.
 
 ## Recommendation details
 

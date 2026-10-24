@@ -10,10 +10,10 @@ keywords: [optimize summary, potential savings, do this first, top findings, cos
 ## Filters
 
 - **Account** — one account, or *All accounts*.
-- **Environment** — *All*, *Production* or *Non-production* (accounts are classed by their environment setting, or by "prod" in the account name).
+- **Environment** — *All*, *Production* or *Non-production* (accounts are classified by their environment setting, or by "prod" in the account name).
 - **Clear filters** resets both.
 
-When there are many findings the page shows the most urgent and most valuable ones and says so — *Top N of M, by urgency + impact*. Totals always cover everything.
+When there are many findings, the page shows the most urgent and most valuable ones and says so — *Top N of M, by urgency + impact*. Totals always cover everything.
 
 ## What NuBi found
 
@@ -25,7 +25,7 @@ Clicking a tile opens the matching list: **Critical findings** opens Cost filter
 
 ## Do this first
 
-Five cards with the findings worth fixing first, weighed by savings, confidence, how recent they are and severity. Each card links to the resource and has **Ask NuBi**.
+Five cards with the findings worth fixing first, weighted by savings, confidence, how recent they are and severity. Each card links to the resource and has **Ask NuBi**.
 
 ## Top findings
 
