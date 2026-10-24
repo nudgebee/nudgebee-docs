@@ -147,7 +147,7 @@ The chart ships three sizing tiers. A plain install is **Small**. Size from what
 Medium and Large are values files inside the chart (`values-medium.yaml`, `values-large.yaml`). Pull the chart to get them, then pass the file to `helm upgrade`:
 
 ```shell
-helm pull $NUDGEBEE_CHART --untar          # creates ./nudgebee/ with values-medium.yaml and values-large.yaml
+helm pull $NUDGEBEE_CHART --version <chart-version> --untar   # creates ./nudgebee/ with values-medium.yaml and values-large.yaml
 helm upgrade nudgebee $NUDGEBEE_CHART -f nudgebee/values-medium.yaml -f values.yaml --install --namespace nudgebee
 ```
 
@@ -335,7 +335,7 @@ The server creates the first admin user and their organization **during install*
 
 Other things worth knowing:
 
-- **Upgrades are never checked.** An existing deployment already has an admin, so `admin.email` is only validated on `helm install` of a new release.
+- **Only checked on a fresh install.** An existing deployment already has an admin, so `admin.email` is validated on `helm install` of a new release, not on upgrades.
 - **The address is validated.** A malformed address fails the install.
 - **Sign in with this address** plus the generated bootstrap password — see [Access the UI](#4-access-the-ui--authenticate).
 
@@ -374,7 +374,7 @@ This is the common case when **upgrading** an existing self-hosted deployment, w
 :::
 
 :::caution[GitOps (Argo CD, Flux): set `agent.accessKey` and `agent.accessSecret`]
-Offline rendering cannot read the existing credential back from the cluster, and the chart refuses to silently regenerate it — a fresh credential paired with the old hash in Postgres would leave the agent unable to authenticate. On an upgrade rendered offline the chart fails unless you supply both explicitly. Read them from the live cluster:
+Argo CD renders the chart offline, so it can't read the existing credential back from the cluster — and generated values would be created anew on every sync. Flux runs a real Helm install/upgrade, but setting the values explicitly is still the safe choice. The chart refuses to silently regenerate the credential — a fresh credential paired with the old hash in Postgres would leave the agent unable to authenticate. On an upgrade rendered offline the chart fails unless you supply both explicitly. Read them from the live cluster:
 
 ```shell
 kubectl get secret nudgebee-bootstrap -n nudgebee \
@@ -451,7 +451,7 @@ kubectl get pods -n nudgebee
 
 | Pod Name Pattern | Ready State | Status | Role |
 |---|---|---|---|
-| `app-*` | `1/1` | `Running` | Main UI and GraphQL/REST API |
+| `app-*` | `2/2` | `Running` | Main UI and GraphQL/REST API (with its nginx sidecar) |
 | `services-server-*` | `1/1` | `Running` | Core backend (also provisions the admin and the bundled agent's account) |
 | `k8s-collector-*` | `1/1` | `Running` | Telemetry receiver for agents |
 | `relay-server-*` | `1/1` | `Running` | WebSocket agent relay server |
@@ -523,10 +523,10 @@ Sign in with the address you set in `admin.email` (or the address carried by you
 If the login screen rejects the address, check that the install actually provisioned it:
 
 ```shell
-kubectl logs -n nudgebee deploy/services-server | grep -i 'first run'
+kubectl logs -n nudgebee deploy/services-server | grep -iE 'not entitled|does not match the licen'
 ```
 
-`no admin address configured, leaving provisioning to first login` means neither `admin.email` nor a license address reached the server — the deployment falls back to provisioning whoever signs in first.
+`not entitled to provision an admin` means the deployment has no valid license entitlement (for example the license failed to load). `admin.email does not match the licence` means the license's own address is used instead of `admin.email` — sign in with that one.
 :::
 
 :::caution Production Security
@@ -682,7 +682,7 @@ helm upgrade nudgebee $NUDGEBEE_CHART \
   -f values.yaml \
   --install \
   --namespace nudgebee \
-  --wait \
+  --wait --timeout 20m \
   --kube-context $KUBE_CONTEXT
 ```
 
@@ -752,7 +752,7 @@ temporal:
 
 If your server needs TLS, add the matching TLS settings to both Temporal datastores as well. Without the Temporal settings, Temporal keeps trying the bundled `postgresql:5432` and `workflow-server` doesn't start.
 
-For external **RabbitMQ** set `rabbitmq.enabled: false` and `RABBIT_MQ_HOST`, `RABBIT_MQ_PORT`, `RABBIT_MQ_USERNAME` and `RABBIT_MQ_PASSWORD` under `nudgebee_secret`. For external **Redis** set `redis.enabled: false` and `REDIS_SERVER_HOST`, `REDIS_SERVER_PORT`, `REDIS_USER_NAME` and `REDIS_USER_PASSWORD`.
+For external **RabbitMQ** set `rabbitmq.enabled: false` and `RABBIT_MQ_HOST`, `RABBIT_MQ_PORT`, `RABBIT_MQ_USERNAME` and `RABBIT_MQ_PASSWORD` under `nudgebee_secret`. For external **Redis** set `redis.enabled: false`, `CACHE_PROVIDER: "redis"` and `REDIS_SERVER_HOST`, `REDIS_SERVER_PORT`, `REDIS_USER_NAME` and `REDIS_USER_PASSWORD`. Without `CACHE_PROVIDER`, the services use an in-memory cache and ignore the Redis settings.
 
 ### Change the default passwords
 
@@ -795,7 +795,7 @@ Use this diagnostic playbook if your Helm deployment encounters errors or pods f
 | **`[ERROR] NUDGEBEE_ENCRYPTION_KEY is required`** | The key is empty or still `__REPLACE__` | Fresh install: `openssl rand -hex 32`. Upgrading from the old default: see [Upgrade](./upgrade.md#encryption-key) |
 | **`error pinging postgres: lookup postgres`** | Incorrect DB hostname or bundled vs external mismatch | Check `nudgebee_secret.APP_DATABASE_URL`<br/>Bundled: `postgresql:5432`<br/>External: Verify RDS / Cloud SQL endpoint |
 | **RabbitMQ connection refused / CrashLoop** | RabbitMQ broker not ready or bad AMQP credentials | Check: `kubectl logs statefulset/rabbitmq -n nudgebee`<br/>Verify `RABBIT_MQ_HOST: "rabbitmq"` and port `5672` |
-| **Server runs as Community after adding a license** | The license failed to load (expired, invalid, or wrong key) | `kubectl logs -n nudgebee deploy/services-server \| grep -i license` — look for `license: load failed` |
+| **Enterprise features or the bootstrap login are missing** | The license failed to load (invalid, or already expired at startup). The server then runs without Enterprise entitlements: the bootstrap login and first-run admin creation stay off until a valid license is loaded | `kubectl logs -n nudgebee deploy/services-server \| grep -i license` — look for `license: load failed` |
 | **502 Bad Gateway / WebSocket Disconnects** | Ingress missing WebSocket upgrade or timeout annotations | Add `nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"` to Ingress manifest |
 | **Pod Exit Code 137 (`OOMKilled`)** | Node under memory pressure or insufficient pod limit | Check: `kubectl describe pod <name> -n nudgebee`<br/>Fix: Increase RAM request/limit in `values.yaml` |
 
@@ -823,7 +823,7 @@ helm upgrade nudgebee $NUDGEBEE_CHART \
   --install \
   --namespace nudgebee \
   --wait \
-  --timeout 10m
+  --timeout 20m
 ```
 
 #### 2. Database Connection or DNS Lookup Failure

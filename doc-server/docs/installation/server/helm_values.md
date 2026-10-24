@@ -48,7 +48,7 @@ side-by-side examples.
 | global.storageClass | string | `""` | StorageClass for every volume the stack creates (PostgreSQL, Redis, RabbitMQ, ClickHouse, Qdrant, and the bundled agent's ClickHouse). Empty uses the cluster default. **Set it before the first install** — a volume's StorageClass can't be changed later. |
 | global.initImages.postgres / global.initImages.curl | string | `ghcr.io/nudgebee/...` | Full image references for init containers. Not covered by `global.image.registry`. |
 | global.testImage | string | `"ghcr.io/nudgebee/busybox:1.37.0"` | Image for `helm test` pods. |
-| global.sizingProfile | string | `"small"` | Label for the sizing tier. Choose a tier with the `values-medium.yaml` / `values-large.yaml` files in the chart — see [Sizing tiers](./index.md#sizing-tiers). |
+| global.sizingProfile | string | — | A label the tier files set (`small`, `medium`, `large`); nothing changes based on it. Choose a tier with the `values-medium.yaml` / `values-large.yaml` files in the chart — see [Sizing tiers](./index.md#sizing-tiers). |
 | additional_env_vars | map | `{}` | Extra environment variables for all services. Use this for any setting that isn't an accepted `nudgebee_secret` key. |
 | global.image.registry | string | `"registry.nudgebee.com"` |  |
 | global.imagePullSecrets[0].name | string | `"nudgebee-registry-secret"` |  |
@@ -169,6 +169,9 @@ rabbitmq:
 |---|---|
 | Init and test images | `global.initImages.postgres`, `global.initImages.curl`, `global.testImage` |
 | PostgreSQL, Redis, RabbitMQ | `postgresql.image.registry`, `redis.image.registry`, `rabbitmq.image.registry` |
+| PostgreSQL metrics exporter (on by default) | `postgresql.metrics.image.registry` |
+| App nginx sidecar | `app.nginx.image.registry` |
+| Bundled agent | `nudgebee-agent.runner.image.repository`, `nudgebee-agent.kubewatch.image.repository`, `nudgebee-agent.nodeAgent.image.repository`, `nudgebee-agent.opentelemetry-collector.image.repository`, `nudgebee-agent.clickhouse.image.registry`, `nudgebee-agent.runner.profilerImage` |
 | Qdrant | `nudgebee-qdrant-server.image.repository` |
 | Temporal | `temporal.server.image.repository`, `temporal.admintools.image.repository`, `temporal.web.image.repository` |
 | Security scanners | `services-server.env.NOVA_IMAGE`, `TRIVY_IMAGE`, `POPEYE_IMAGE`, `KUBE_BENCH_IMAGE` |

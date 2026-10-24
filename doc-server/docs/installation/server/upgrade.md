@@ -22,7 +22,7 @@ Recent charts install the agent alongside the server by default (`agent.enabled:
 
 - **This cluster is already monitored by a separately installed agent** → set `agent.enabled: false` in your `values.yaml`. Otherwise the same cluster registers a second time under a different name and shows up twice in **Kubernetes**.
 - **This cluster is not monitored yet** → leave the default on and set `agent.clusterName` to the name you want it to appear under (default `nb-control-plane-k8s`).
-- **You render offline (Argo CD, Flux) with the agent enabled** → you must also set `agent.accessKey` and `agent.accessSecret` from the live `nudgebee-bootstrap` Secret, or the upgrade fails by design rather than regenerate a credential the database no longer matches.
+- **You deploy with GitOps (Argo CD, Flux) with the agent enabled** → set `agent.accessKey` and `agent.accessSecret` from the live `nudgebee-bootstrap` Secret. Argo CD renders the chart offline and can't read the existing credential, so without them the render fails by design rather than regenerate a credential the database no longer matches. Flux runs a real Helm upgrade, but setting them explicitly is still the safe choice.
 
 `admin.email` is **not** required on upgrade — it is only validated on a fresh install, since an existing deployment already has an admin. See [the bundled agent](./index.md#bundled-agent) and [`admin.email`](./index.md#admin-email) for the full detail.
 :::
@@ -37,7 +37,7 @@ In production environments, **always pin explicit chart versions** using `--vers
 Review the [Server Release Notes](../../releases/server/index.md) before upgrading to check for breaking schema migrations, minimum agent version requirements, or deprecated Helm values.
 
 ### Export Active Configuration & Stored Values
-Helm merges your supplied `-f values.yaml` with values stored in the Helm release secret from the previous deployment. Stored values can carry obsolete parameters across major chart revisions.
+Without `--reuse-values`, `helm upgrade` uses the new chart's defaults plus only what you pass with `-f` — values from the previous release are **not** merged in. Anything you leave out of `-f` is dropped, including `NUDGEBEE_ENCRYPTION_KEY`, so always pass your full values file. (`--reuse-values` does the opposite and can carry obsolete parameters across chart versions.)
 
 Before upgrading, export both your user-supplied overrides and the full computed release state:
 
@@ -73,7 +73,7 @@ NudgeBee database schema migrations run automatically during upgrades and are ty
 # Uses pg_dumpall to capture all databases (application state, temporal, and temporal_visibility).
 # Note: Target the postgresql container explicitly (-c postgresql) as the pod contains the postgres-exporter metrics sidecar.
 kubectl exec -i postgresql-0 --namespace nudgebee -c postgresql -- \
-  pg_dumpall -U postgres | gzip > "nudgebee-postgres-preupgrade-$(date +%Y%m%d%H%M%S).sql.gz"
+  sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" pg_dumpall -U postgres' | gzip > "nudgebee-postgres-preupgrade-$(date +%Y%m%d%H%M%S).sql.gz"
 
 # For AWS RDS (Single Instance):
 aws rds create-db-snapshot \
@@ -83,7 +83,7 @@ aws rds create-db-snapshot \
 # For AWS Aurora PostgreSQL (Cluster):
 aws rds create-db-cluster-snapshot \
   --db-cluster-identifier <your-aurora-cluster-id> \
-  --db-snapshot-identifier "nudgebee-preupgrade-$(date +%Y%m%d%H%M%S)"
+  --db-cluster-snapshot-identifier "nudgebee-preupgrade-$(date +%Y%m%d%H%M%S)"
 ```
 
 ---
@@ -175,7 +175,7 @@ helm upgrade nudgebee $NUDGEBEE_CHART \
   --namespace nudgebee \
   -f user-values.yaml \
   --wait \
-  --timeout 15m
+  --timeout 20m
 ```
 
 :::tip[Avoiding Stale Values]
@@ -273,20 +273,28 @@ Bundled stateful services (PostgreSQL, RabbitMQ, Redis, Qdrant) use Kubernetes `
 ### PVC Volume Expansion
 The default bundled PostgreSQL PVC request is `50Gi` (`postgresql.primary.persistence.size: 50Gi`).
 
-To increase volume size during an upgrade:
-1. Verify your cluster's `StorageClass` has volume expansion enabled:
+Changing `postgresql.primary.persistence.size` in your values alone fails: Kubernetes doesn't allow a StatefulSet's volume template to change. To grow the volume:
+
+1. Check that your `StorageClass` allows volume expansion:
    ```bash
    kubectl get storageclass -o custom-columns=NAME:.metadata.name,ALLOWEXPANSION:.allowVolumeExpansion
    ```
-   If `ALLOWEXPANSION` is `false`, you must enable it first (`kubectl patch storageclass <name> -p '{"allowVolumeExpansion": true}'`).
-2. Update the size in your `user-values.yaml`:
+   If `ALLOWEXPANSION` is `false`, expansion isn't possible on that StorageClass without changing it (`kubectl patch storageclass <name> -p '{"allowVolumeExpansion": true}'`, if your storage supports it).
+2. Resize the existing volume:
+   ```bash
+   kubectl patch pvc data-postgresql-0 -n nudgebee -p '{"spec":{"resources":{"requests":{"storage":"100Gi"}}}}'
+   ```
+3. Remove the StatefulSet object without touching its pod or volume:
+   ```bash
+   kubectl delete sts postgresql -n nudgebee --cascade=orphan
+   ```
+4. Set the same size in your values file and run `helm upgrade`, which recreates the StatefulSet:
    ```yaml
    postgresql:
      primary:
        persistence:
          size: 100Gi
    ```
-3. Apply the upgrade. Kubernetes will expand the PVC metadata. Once the PostgreSQL pod restarts, the underlying filesystem is expanded online.
 
 ### ReadWriteOnce (RWO) Multi-Attach Errors
 During rolling upgrades on cloud block storage (AWS EBS, Azure Disk, GCP Persistent Disk), a rescheduled stateful pod may become stuck in `ContainerCreating`:
@@ -366,6 +374,7 @@ nudgebee_secret:
   RABBIT_MQ_PORT: "5672"
   RABBIT_MQ_USERNAME: "nb_user"
   RABBIT_MQ_PASSWORD: "YourRabbitPass"
+  CACHE_PROVIDER: "redis"                # required, or services use an in-memory cache
   REDIS_SERVER_HOST: "redis.internal.net"
   REDIS_SERVER_PORT: "6379"
   REDIS_USER_NAME: "default"
@@ -404,7 +413,7 @@ temporal:
 rabbitmq:
   enabled: false
 
-# 3. Disable bundled Redis (set the REDIS_SERVER_* / REDIS_USER_* keys above)
+# 3. Disable bundled Redis (set CACHE_PROVIDER and the REDIS_SERVER_* / REDIS_USER_* keys above)
 redis:
   enabled: false
 
@@ -415,7 +424,7 @@ clickhouse:
 
 :::caution[Pre-Create External Databases]
 Before running `helm upgrade` with external databases:
-- The target PostgreSQL instance must have your application database (the one in `APP_DATABASE_URL`), `temporal`, and `temporal_visibility` pre-created.
+- The target PostgreSQL instance must have your application database (the one in `APP_DATABASE_URL`). The chart creates `temporal` and `temporal_visibility` if the database user has `CREATEDB`; otherwise pre-create them.
 - The connecting user must have `CREATE TABLE`, `CREATE INDEX`, and schema migration privileges.
 :::
 
@@ -482,7 +491,7 @@ kubectl wait --for=condition=ready pod/postgresql-0 --namespace nudgebee --timeo
 
 # 3. Restore the pre-upgrade backup (pg_dumpall recreates the postgres, temporal and temporal_visibility databases)
 gunzip -c nudgebee-postgres-preupgrade-<TIMESTAMP>.sql.gz | \
-  kubectl exec -i postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres
+  kubectl exec -i postgresql-0 --namespace nudgebee -c postgresql -- sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" psql -U postgres'
 
 # 4. Roll back Kubernetes resources via Helm (this also scales the Deployments back up)
 helm rollback nudgebee <REVISION> --namespace nudgebee --wait --timeout 20m
@@ -524,10 +533,15 @@ aws rds create-db-instance \
   --db-instance-class <instance-class> \
   --engine aurora-postgresql
 
-# 3. Update APP_DATABASE_URL and Temporal datastore endpoints in user-values.yaml
-# to point to the restored RDS/Aurora endpoint, then execute the Helm rollback:
-# Helm automatically reverts manifests and scales pods back up to their configured revision replica counts
+# 3. Roll back Kubernetes resources. `helm rollback` reuses the old revision's stored
+# values, so it ignores any edits in user-values.yaml. Either:
+#  a) restore the snapshot under the ORIGINAL instance/cluster identifier (so the
+#     endpoint in your values is unchanged) and run:
 helm rollback nudgebee <REVISION> --namespace nudgebee --wait --timeout 20m
+#  b) or, if the restored database has a new endpoint, update APP_DATABASE_URL and the
+#     Temporal datastores in user-values.yaml and redeploy the old version instead:
+helm upgrade nudgebee $NUDGEBEE_CHART --version <previous-version> -f user-values.yaml \
+  --namespace nudgebee --wait --timeout 20m
 ```
 
 ---
@@ -548,7 +562,7 @@ kubectl run curl-test --rm -it --image=curlimages/curl --restart=Never -- \
   -sS http://services-server.nudgebee.svc.cluster.local:8000/health
 
 # 4. Verify connected agents can reach relay-server
-kubectl logs --namespace nudgebee -l app.kubernetes.io/name=relay-server --tail=50 | grep -i "handshake"
+kubectl get pods --namespace nudgebee -l app.kubernetes.io/name=relay-server   # should be Running and Ready
 ```
 
 For general installation setup, refer to the [Server Installation Guide](./index.md) and [Helm Values Reference](./helm_values.md).
