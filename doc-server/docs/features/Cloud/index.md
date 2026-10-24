@@ -25,7 +25,7 @@ What NudgeBee collects for each service is listed in **[Supported Cloud Services
 
 If no cloud account is connected yet, the page shows *Get started with Cloud monitoring*. Users who can manage integrations get a **Connect Cloud Account** button; others see *Need admin permission to connect a cloud account*.
 
-Self-hosted VM accounts have their own page under **Infra → VM**.
+Self-hosted VM accounts have their own page under **Infra → VM** — see [Self-hosted VMs](../VM/index.md).
 
 ## Tabs
 

@@ -60,7 +60,7 @@ Managing integrations needs a tenant admin or a role with **integrations** write
 
 * **[Kubernetes clusters](../features/Kubernetes/)** — EKS, AKS, GKE, OpenShift and self-managed clusters, connected through the [NudgeBee agent](../installation/agent/). **Required**.
 * **[AWS](../features/Cloud/AWS.md)**, **[Azure](../features/Cloud/Azure.md)**, **[GCP](../features/Cloud/GCP.md)** — Sync cloud accounts for cost, inventory and configuration context. See [Cloud fleet onboarding](../features/Cloud/cloud-fleet-onboarding.md). **Optional**.
-* **Self-Hosted VMs** and **[Cloud Foundry](../features/Cloud/CloudFoundry.md)** — Bring non-Kubernetes workloads under the same monitoring and optimization model. **Optional**.
+* **[Self-Hosted VMs](../features/VM/index.md)** and **[Cloud Foundry](../features/Cloud/CloudFoundry.md)** — Bring non-Kubernetes workloads under the same monitoring and optimization model. **Optional**.
 
 ### Observability
 

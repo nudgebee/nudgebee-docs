@@ -18,6 +18,16 @@ The **Agent Health** view in the NudgeBee Console provides real-time visibility 
 
 The page has three tabs: **Agent**, **Observability** and **Proxy Agent**. Components show **Connected** or **Disconnected**; OpenCost can show **Managed server-side**, and Prometheus, Logs and Traces can show **Served by integration** when an integration rather than the agent provides them. The Observability tab shows **Not configured** for a source that isn't set up. Banners: *The Agent is not connected* and *The … services are disconnected.* (naming the disconnected components)
 
+### Self-hosted VM accounts
+
+For a [self-hosted VM account](../../../features/VM/index.md), Agent Health shows only the **Proxy Agent** tab. With no proxy agent yet it shows *Get started with Proxy Agent monitoring* and **Connect VM Agent** (without write access: *Need admin permission to connect a VM agent*). Once an agent exists, it shows:
+
+- **Metrics**, **Logs** and **Alerts** cards. Metrics and Logs show **Connected**, **No data**, **Not connected**, **Unreachable** or **Check failed**; Alerts shows **Receiving alerts**, **No alerts yet**, **Disabled** or **Not connected**. Each says what to connect when it isn't.
+- **Proxy Agents** — **Agent**, **Connection** (Connected / Disconnected), **Configuration**, **Version** and **Last Connected**, with **Manage** to open **Admin → Integrations → Servers**. *No proxy agent installed* appears when health data exists but no proxy agent integration is listed.
+- The agent's datasources — including its discovery datasource — with their status, last check and any error.
+
+Proxy agent versions are shown, but there is no "update available" notice for them yet.
+
 ## 1. Agent Health Dashboard Overview
 
 On each periodic telemetry tick, the agent runner executes local lightweight probes against all configured datasources and reports their state to the NudgeBee backend.
