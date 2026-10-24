@@ -24,17 +24,9 @@ nudgebee_secret:
   AZURE_ARM_TEMPLATE_URL: "https://nudgebee-documents-v2.s3.amazonaws.com/nudgebee-azure-arm-template.json"
 ```
 
-### 3. (Optional) Service Bus for Backward Compatibility
+### 3. Service Bus (no longer used)
 
-If you have existing Azure accounts using Service Bus delivery, keep the Service Bus configuration. New accounts will use the webhook delivery method automatically.
-
-```yaml
-nudgebee_secret:
-  # Service Bus connection (only needed for existing accounts using Service Bus delivery)
-  CLOUD_COLLECTOR_AZURE_SERVICE_BUS_CONNECTION_STRING: "<connection-string>"
-  CLOUD_COLLECTOR_AZURE_SERVICE_BUS_NAMESPACE: "<namespace-name>"
-  CLOUD_COLLECTOR_AZURE_SERVICE_BUS_QUEUE_NAME: "<queue-name>"
-```
+Event delivery uses webhooks. The old Service Bus settings (`CLOUD_COLLECTOR_AZURE_SERVICE_BUS_CONNECTION_STRING`, `_NAMESPACE`, `_QUEUE_NAME`) are no longer read. Don't add them under `nudgebee_secret` — unknown keys make the install fail.
 
 ### 4. Ingress Configuration
 
@@ -132,10 +124,11 @@ nudgebee_secret:
   # ARM template URL (required for Azure Event Grid onboarding UI)
   AZURE_ARM_TEMPLATE_URL: "https://nudgebee-documents-v2.s3.amazonaws.com/nudgebee-azure-arm-template.json"
 
-  # Optional: Service Bus connection (only for backward compatibility with existing accounts)
-  # CLOUD_COLLECTOR_AZURE_SERVICE_BUS_CONNECTION_STRING: "<connection-string>"
-  # CLOUD_COLLECTOR_AZURE_SERVICE_BUS_NAMESPACE: "<namespace-name>"
-  # CLOUD_COLLECTOR_AZURE_SERVICE_BUS_QUEUE_NAME: "<queue-name>"
 ```
 
 For full configuration reference, see [NudgeBee Configurations](./secret_configs.md#cloud-integration).
+
+## Related
+
+- [Server Installation](./index.md)
+- [Configuration Options](./secret_configs.md)

@@ -49,8 +49,18 @@ helm get values nudgebee --namespace nudgebee > user-values.yaml
 helm get values nudgebee --namespace nudgebee --all > computed-active-values.yaml
 ```
 
+#### Preserve the encryption key {#encryption-key}
+
 :::warning[Preserve the Encryption Key]
-Check `user-values.yaml` to ensure `nudgebee_secret.NUDGEBEE_ENCRYPTION_KEY` is preserved and recorded in your secure secrets vault. 
+Check `user-values.yaml` to ensure `nudgebee_secret.NUDGEBEE_ENCRYPTION_KEY` is preserved and recorded in your secure secrets vault.
+
+If it isn't there, your install used the chart's **old built-in default**, and the new chart refuses to render (`[ERROR] NUDGEBEE_ENCRYPTION_KEY is required`). Set it to that old default so existing data stays readable:
+
+```yaml
+nudgebee_secret:
+  NUDGEBEE_ENCRYPTION_KEY: "3030303030303030303030303030303030303030303030303030303030303030"
+```
+
 
 This 32-byte hexadecimal key encrypts all integration credentials, OAuth secrets, and private tokens stored in PostgreSQL. **Never regenerate or lose this key across upgrades.** If changed, existing encrypted records in PostgreSQL become permanently unreadable.
 :::
@@ -62,7 +72,7 @@ NudgeBee database schema migrations run automatically during upgrades and are ty
 # For bundled PostgreSQL (use -i without -t to prevent TTY character corruption on piped stdout):
 # Uses pg_dumpall to capture all databases (application state, temporal, and temporal_visibility).
 # Note: Target the postgresql container explicitly (-c postgresql) as the pod contains the postgres-exporter metrics sidecar.
-kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- \
+kubectl exec -i postgresql-0 --namespace nudgebee -c postgresql -- \
   pg_dumpall -U postgres | gzip > "nudgebee-postgres-preupgrade-$(date +%Y%m%d%H%M%S).sql.gz"
 
 # For AWS RDS (Single Instance):
@@ -89,7 +99,7 @@ Set the chart reference to the public GitHub Container Registry:
 
 ```bash
 export NUDGEBEE_CHART="oci://ghcr.io/nudgebee/charts/nudgebee"
-export TARGET_VERSION="0.2.0" # Set to target version
+export TARGET_VERSION="<version>" # A release tag, see the Server Releases page
 ```
 
 </TabItem>
@@ -100,7 +110,7 @@ Log in to the NudgeBee Enterprise registry using your license key:
 ```bash
 export NUDGEBEE_LICENSE_KEY="<your-license-key>"
 export NUDGEBEE_CHART="oci://registry.nudgebee.com/nudgebee"
-export TARGET_VERSION="0.2.0" # Set to target version
+export TARGET_VERSION="<version>" # A release tag, see the Server Releases page
 
 # Authenticate to the OCI registry
 helm registry login registry.nudgebee.com \
@@ -179,7 +189,7 @@ Avoid using `--reuse-values` when upgrading across minor or major versions. `--r
 NudgeBee relies on two automated database migration mechanisms during upgrades: the PostgreSQL schema migration job and Temporal schema setup.
 
 :::note[Resource Naming Convention]
-In standard Helm installations without custom overrides, Kubernetes workloads are prefixed with the release name (e.g., `nudgebee-app`, `nudgebee-postgresql-0`, `nudgebee-services-server`). If your `values.yaml` specifies `fullnameOverride` (the default in some bundled configurations), the prefix is omitted (e.g., `app`, `postgresql-0`, `services-server`). Adjust the command-line resource names according to your deployment.
+The chart sets a fixed name for every component, so resources are **not** prefixed with the release name: `app`, `services-server`, `postgresql-0`, `rabbitmq-0`, `temporal-frontend`, the migration Job `postgres-migration-job`, and so on. The commands on this page use those names.
 :::
 
 ```mermaid
@@ -210,12 +220,12 @@ sequenceDiagram
 
 ### PostgreSQL Migration Hook (`postgres-migration-job`)
 The primary schema migration is defined as a Helm hook:
-- **Hook Trigger**: `"helm.sh/hook": pre-install,pre-upgrade` (runs and completes before application pods are rolled out)
+- **Hook Trigger**: `"helm.sh/hook": post-install,pre-upgrade` — on a fresh install it runs after the release (the bundled database has to exist first); on an upgrade it runs and completes before application pods are rolled out
 - **Hook Weight**: `"-5"`
 - **Retry Policy**: `spec.backoffLimit: 0` and `restartPolicy: Never`
 - **Delete Policy**: `"helm.sh/hook-delete-policy": before-hook-creation`
 
-Because `backoffLimit: 0` is enforced, any migration SQL failure immediately halts the job without retrying, preventing infinite crash loops while keeping Helm waiting until timeout.
+Because `backoffLimit: 0` is enforced, any migration failure stops the job without retrying. On an upgrade, Helm then marks the upgrade failed and the **previous version keeps running** on the old schema.
 
 #### Diagnostic Runbook for Failed Migrations:
 If `helm upgrade` times out or fails at the hook stage, inspect the migration pods:
@@ -225,33 +235,33 @@ If `helm upgrade` times out or fails at the hook stage, inspect the migration po
 kubectl get pods --namespace nudgebee -l app.kubernetes.io/instance=nudgebee
 
 # 2. Inspect the database readiness init container
-kubectl logs --namespace nudgebee job/nudgebee-postgres-migration-job -c db-check
+kubectl logs --namespace nudgebee job/postgres-migration-job -c db-check
 
 # 3. Inspect the migration execution logs
-kubectl logs --namespace nudgebee job/nudgebee-postgres-migration-job -c postgres-migration-job
+kubectl logs --namespace nudgebee job/postgres-migration-job -c postgres-migration-job
 ```
 
 #### Common Root Causes & Remediations:
 1. **Init Container Deadlock (`Waiting for PostgreSQL to be ready...`)**:
-   - The init container parses `APP_DATABASE_URL` to poll `pg_isready`.
+   - The init container parses `APP_DATABASE_URL` to poll `pg_isready`. Make sure the URL includes an explicit port (`host:5432`).
    - Verify PostgreSQL is running: `kubectl get pods --namespace nudgebee -l app.kubernetes.io/name=postgresql`.
    - If using external PostgreSQL, verify that security groups, firewalls, and DNS allow egress from the Kubernetes worker nodes.
 2. **DDL Lock Timeout on Large Tables**:
    - Long-running queries from active worker pods can block `ALTER TABLE` locks.
    - Scale down background workers temporarily:
      ```bash
-     kubectl scale deployment nudgebee-k8s-collector nudgebee-cloud-collector-server --namespace nudgebee --replicas=0
+     kubectl scale deployment k8s-collector cloud-collector-server --namespace nudgebee --replicas=0
      ```
 3. **Clearing a Failed Job for Re-Run**:
    - The chart specifies `before-hook-creation`, so re-running `helm upgrade` will automatically clean up the old job.
    - To clean up immediately for manual testing:
      ```bash
-     kubectl delete job nudgebee-postgres-migration-job --namespace nudgebee
+     kubectl delete job postgres-migration-job --namespace nudgebee
      ```
 
 ### Temporal Schema Migrations
 Temporal persistence runs against its own PostgreSQL databases (`temporal` and `temporal_visibility`).
-- In the NudgeBee umbrella chart (pinning Temporal Helm chart 1.6.0), both `temporal.schema.setup.registerWithHelmHooks: false` and `temporal.schema.update.registerWithHelmHooks: false` (as well as `temporal.schema.registerWithHelmHooks: false`) are configured intentionally. This ensures the schema migration job runs as a standard Kubernetes Job alongside PostgreSQL rather than a pre-install hook, eliminating bootstrap deadlocks when PostgreSQL is bundled in the same release.
+- The NudgeBee chart sets `temporal.schema.useHelmHooks: false` on purpose, so Temporal's schema Job runs as a normal Kubernetes Job alongside PostgreSQL instead of a Helm hook. This avoids a deadlock when PostgreSQL is bundled in the same release. The schema setup and update are idempotent and run on every deploy.
 - **Invariant**: The shard count `temporal.server.config.persistence.numHistoryShards` is pinned to **`512`**. **Do not modify this value.** Changing shard counts corrupts existing workflow execution history.
 
 ---
@@ -294,7 +304,7 @@ kubectl get volumeattachment | grep <pv-name>
 kubectl get node <old-node-name>
 
 # 3. If the old pod is lingering in Terminating on the old node, force-terminate:
-kubectl delete pod nudgebee-postgresql-0 --namespace nudgebee --grace-period=0 --force
+kubectl delete pod postgresql-0 --namespace nudgebee --grace-period=0 --force
 ```
 
 ### StatefulSet Immutable Field Violations
@@ -309,7 +319,7 @@ Delete the StatefulSet definition **without deleting the running pods or PVCs** 
 
 ```bash
 # 1. Delete the StatefulSet object, leaving pods and underlying PVCs untouched
-kubectl delete statefulset nudgebee-postgresql --namespace nudgebee --cascade=orphan
+kubectl delete statefulset postgresql --namespace nudgebee --cascade=orphan
 
 # 2. Re-run the helm upgrade to recreate the StatefulSet with the new specification
 helm upgrade nudgebee $NUDGEBEE_CHART --version $TARGET_VERSION -f user-values.yaml --namespace nudgebee
@@ -336,8 +346,8 @@ graph TD
 
     SVC -->|"APP_DATABASE_URL"| RDS
     SVC -->|"temporal default/visibility datastores"| RDS
-    SVC -->|"AMQP_URL"| MQ
-    SVC -->|"REDIS_HOST / Secret"| REDIS
+    SVC -->|"RABBIT_MQ_HOST / PORT / USERNAME / PASSWORD"| MQ
+    SVC -->|"REDIS_SERVER_HOST / PORT / USER_NAME / USER_PASSWORD"| REDIS
     SVC -.->|"Traces & Logs"| CH
 ```
 
@@ -350,6 +360,16 @@ postgresql:
 
 nudgebee_secret:
   APP_DATABASE_URL: "postgresql://nb_user:YourSecretPass@rds-postgres.internal.net:5432/nudgebee?sslmode=require"
+  TEMPORAL_DB_PASSWORD: "YourSecretPass"   # Temporal reads its password from the `nudgebee-temporal` Secret
+  # External RabbitMQ and Redis (see 2 and 3 below)
+  RABBIT_MQ_HOST: "rabbitmq.internal.net"
+  RABBIT_MQ_PORT: "5672"
+  RABBIT_MQ_USERNAME: "nb_user"
+  RABBIT_MQ_PASSWORD: "YourRabbitPass"
+  REDIS_SERVER_HOST: "redis.internal.net"
+  REDIS_SERVER_PORT: "6379"
+  REDIS_USER_NAME: "default"
+  REDIS_USER_PASSWORD: "YourRedisPass"
 
 # Ensure Temporal persistence points to the same external database host
 # Note: Temporal chart 1.x (bundled in NudgeBee) nests stores under 'datastores' with 'defaultStore' / 'visibilityStore'.
@@ -363,28 +383,28 @@ temporal:
         datastores:
           default:
             sql:
-              pluginName: "postgres"
+              pluginName: postgres12          # keep the chart's plugin
               connectAddr: "rds-postgres.internal.net:5432"
               databaseName: "temporal"
               user: "nb_user"
-              password: "YourSecretPass"
+              existingSecret: nudgebee-temporal  # password = TEMPORAL_DB_PASSWORD
               # tls:
               #   enabled: true
           visibility:
             sql:
-              pluginName: "postgres"
+              pluginName: postgres12
               connectAddr: "rds-postgres.internal.net:5432"
               databaseName: "temporal_visibility"
               user: "nb_user"
-              password: "YourSecretPass"
+              existingSecret: nudgebee-temporal
               # tls:
               #   enabled: true
 
-# 2. Disable bundled RabbitMQ
+# 2. Disable bundled RabbitMQ (set the RABBIT_MQ_* keys above)
 rabbitmq:
   enabled: false
 
-# 3. Disable bundled Redis
+# 3. Disable bundled Redis (set the REDIS_SERVER_* / REDIS_USER_* keys above)
 redis:
   enabled: false
 
@@ -395,7 +415,7 @@ clickhouse:
 
 :::caution[Pre-Create External Databases]
 Before running `helm upgrade` with external databases:
-- The target PostgreSQL instance must have the `nudgebee`, `temporal`, and `temporal_visibility` databases pre-created.
+- The target PostgreSQL instance must have your application database (the one in `APP_DATABASE_URL`), `temporal`, and `temporal_visibility` pre-created.
 - The connecting user must have `CREATE TABLE`, `CREATE INDEX`, and schema migration privileges.
 :::
 
@@ -436,7 +456,7 @@ Helm rollback automatically reverts Kubernetes Deployments, ConfigMaps, Secrets,
 Simply roll back the Helm release to the target revision (e.g. revision 1):
 
 ```bash
-helm rollback nudgebee 1 --namespace nudgebee --wait --timeout 10m
+helm rollback nudgebee <REVISION> --namespace nudgebee --wait --timeout 20m
 ```
 
 Verify service recovery:
@@ -447,30 +467,25 @@ kubectl logs -n nudgebee -l app.kubernetes.io/name=services-server --tail=100
 #### Scenario B: Rollback for Destructive Migrations
 
 ##### Option 1: Bundled PostgreSQL Restoration
-For installations running the bundled PostgreSQL StatefulSet:
+For installations running the bundled PostgreSQL StatefulSet. The bundled application data lives in the `postgres` database, so restore onto a **fresh volume** rather than dropping databases in place:
 
 ```bash
-# 1. Scale down application microservices, collectors, and Temporal pods to prevent write conflicts & active connections
-kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
-  nudgebee-k8s-collector nudgebee-cloud-collector-server \
-  nudgebee-temporal-frontend nudgebee-temporal-history nudgebee-temporal-matching nudgebee-temporal-worker \
-  --namespace nudgebee --replicas=0
+# 1. Stop everything that writes to the database
+kubectl scale deployment --all --namespace nudgebee --replicas=0
 
-# 2. Terminate active connections and drop existing databases to prevent duplicate key/relation conflicts during restore
-kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres \
-  -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname IN ('nudgebee', 'temporal', 'temporal_visibility') AND pid <> pg_backend_pid();" \
-  -c "DROP DATABASE IF EXISTS nudgebee;" \
-  -c "DROP DATABASE IF EXISTS temporal;" \
-  -c "DROP DATABASE IF EXISTS temporal_visibility;"
+# 2. Replace the PostgreSQL volume with an empty one (this deletes current data — only with a verified backup)
+kubectl scale statefulset postgresql --namespace nudgebee --replicas=0
+kubectl get pvc --namespace nudgebee            # find the PostgreSQL volume, for example data-postgresql-0
+kubectl delete pvc <postgresql-pvc-name> --namespace nudgebee
+kubectl scale statefulset postgresql --namespace nudgebee --replicas=1
+kubectl wait --for=condition=ready pod/postgresql-0 --namespace nudgebee --timeout=5m
 
-# 3. Restore PostgreSQL database from the pre-upgrade backup snapshot
-# (pg_dumpall includes database creation and connection directives)
+# 3. Restore the pre-upgrade backup (pg_dumpall recreates the postgres, temporal and temporal_visibility databases)
 gunzip -c nudgebee-postgres-preupgrade-<TIMESTAMP>.sql.gz | \
-  kubectl exec -i nudgebee-postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres
+  kubectl exec -i postgresql-0 --namespace nudgebee -c postgresql -- psql -U postgres
 
-# 4. Roll back Kubernetes resources via Helm
-# Helm automatically reverts manifests and scales pods back up to their configured revision replica counts
-helm rollback nudgebee 1 --namespace nudgebee --wait --timeout 10m
+# 4. Roll back Kubernetes resources via Helm (this also scales the Deployments back up)
+helm rollback nudgebee <REVISION> --namespace nudgebee --wait --timeout 20m
 ```
 
 :::note[Benign Errors During pg_dumpall Restore]
@@ -482,10 +497,7 @@ For installations backed by external managed cloud databases:
 
 ```bash
 # 1. Scale down application microservices, collectors, and Temporal pods to cut off active traffic
-kubectl scale deployment nudgebee-app nudgebee-services-server nudgebee-workflow-server nudgebee-notifications \
-  nudgebee-k8s-collector nudgebee-cloud-collector-server \
-  nudgebee-temporal-frontend nudgebee-temporal-history nudgebee-temporal-matching nudgebee-temporal-worker \
-  --namespace nudgebee --replicas=0
+kubectl scale deployment --all --namespace nudgebee --replicas=0
 
 # 2. Restore database from your pre-upgrade snapshot
 # AWS RDS (Single Instance):
@@ -515,7 +527,7 @@ aws rds create-db-instance \
 # 3. Update APP_DATABASE_URL and Temporal datastore endpoints in user-values.yaml
 # to point to the restored RDS/Aurora endpoint, then execute the Helm rollback:
 # Helm automatically reverts manifests and scales pods back up to their configured revision replica counts
-helm rollback nudgebee 1 --namespace nudgebee --wait --timeout 10m
+helm rollback nudgebee <REVISION> --namespace nudgebee --wait --timeout 20m
 ```
 
 ---
@@ -533,10 +545,16 @@ kubectl get pods --namespace nudgebee --field-selector=status.phase!=Running
 
 # 3. Verify core API readiness endpoint
 kubectl run curl-test --rm -it --image=curlimages/curl --restart=Never -- \
-  -sS http://nudgebee-services-server.nudgebee.svc.cluster.local:8080/healthz
+  -sS http://services-server.nudgebee.svc.cluster.local:8000/health
 
 # 4. Verify connected agents can reach relay-server
 kubectl logs --namespace nudgebee -l app.kubernetes.io/name=relay-server --tail=50 | grep -i "handshake"
 ```
 
 For general installation setup, refer to the [Server Installation Guide](./index.md) and [Helm Values Reference](./helm_values.md).
+
+## Related
+
+- [Server Installation](./index.md)
+- [Configuration Options](./secret_configs.md)
+- [Helm Values Reference](./helm_values.md)

@@ -44,7 +44,12 @@ side-by-side examples.
 | cost-server.fullnameOverride | string | `"cost-server"` |  |
 | cost-server.image.repository | string | `"nudgebee-cost-server"` |  |
 | cost-server.image.tag | string | `""` |  |
-| global.existingNudgebeeSecretName | string | `""` | Name of an existing Kubernetes secret to use for NudgeBee configurations (e.g., NUDGEBEE_LICENSE, BASE_URL). When set, these configurations are managed within this secret. |
+| global.existingNudgebeeSecretName | string | `""` | Name of the Secret the services and the migration job load their settings from (default `nudgebee`). Use together with `nudgebee_secret.existingSecretName` — see [Managing Secrets Externally](./index.md#managing-secrets-externally). Your Secret must hold every key the chart would otherwise generate. |
+| global.storageClass | string | `""` | StorageClass for every volume the stack creates (PostgreSQL, Redis, RabbitMQ, ClickHouse, Qdrant, and the bundled agent's ClickHouse). Empty uses the cluster default. **Set it before the first install** — a volume's StorageClass can't be changed later. |
+| global.initImages.postgres / global.initImages.curl | string | `ghcr.io/nudgebee/...` | Full image references for init containers. Not covered by `global.image.registry`. |
+| global.testImage | string | `"ghcr.io/nudgebee/busybox:1.37.0"` | Image for `helm test` pods. |
+| global.sizingProfile | string | `"small"` | Label for the sizing tier. Choose a tier with the `values-medium.yaml` / `values-large.yaml` files in the chart — see [Sizing tiers](./index.md#sizing-tiers). |
+| additional_env_vars | map | `{}` | Extra environment variables for all services. Use this for any setting that isn't an accepted `nudgebee_secret` key. |
 | global.image.registry | string | `"registry.nudgebee.com"` |  |
 | global.imagePullSecrets[0].name | string | `"nudgebee-registry-secret"` |  |
 | k8s-collector.fullnameOverride | string | `"k8s-collector"` |  |
@@ -69,43 +74,44 @@ side-by-side examples.
 | notifications.image.tag | string | `""` |  |
 | nudgebee-qdrant-server.enabled | bool | `true` | Vector store backing RAG and knowledge-base search. |
 | nudgebee-qdrant-server.fullnameOverride | string | `"nudgebee-qdrant-server"` |  |
-| nudgebee-qdrant-server.image.repository | string | `"qdrant/qdrant"` |  |
+| nudgebee-qdrant-server.image.repository | string | `"ghcr.io/nudgebee/qdrant"` | Full image reference; not covered by `global.image.registry`. |
 | nudgebee-qdrant-server.image.tag | string | `"v1.19.0"` |  |
 | nudgebee_registry_secret.enabled | bool | `true` |  |
 | nudgebee_registry_secret.existingSecretName | string | `""` |  |
 | nudgebee_registry_secret.password | string | `""` |  |
 | nudgebee_registry_secret.username | string | `"nudgebee"` |  |
-| nudgebee_secret.APP_DATABASE_URL | string | `""` |  |
+| nudgebee_secret.APP_DATABASE_URL | string | `"postgresql://postgres:password@postgresql:5432/postgres?sslmode=disable"` | Bundled database by default. With an external database, also set Temporal's datastores. |
 | nudgebee_secret.AUTH_DEFAULT_ROLE | string | `"tenant_admin_readonly"` | Sets the default role for new users during self-onboarding. Valid options are `tenant_admin_readonly` and `tenant_admin`. |
 | nudgebee_secret.BASE_URL | string | `"http://localhost:3000"` |  |
 | nudgebee_secret.EMAIL_FROM | string | `""` |  |
 | nudgebee_secret.EMAIL_SERVER_HOST | string | `""` |  |
 | nudgebee_secret.EMAIL_SERVER_PASSWORD | string | `""` |  |
 | nudgebee_secret.EMAIL_SERVER_USER | string | `""` |  |
-| nudgebee_secret.JWT_PRIVATE_KEY | string | `""` |  |
-| nudgebee_secret.JWT_PUBLIC_KEY | string | `""` |  |
-| nudgebee_secret.NUDGEBEE_ENCRYPTION_KEY | string | `""` |  |
+| nudgebee_secret.NUDGEBEE_ENCRYPTION_KEY | string | `"__REPLACE__"` | **Required.** The chart fails while it is empty or `__REPLACE__`. Generate with `openssl rand -hex 32`. |
 | nudgebee_secret.NUDGEBEE_LICENSE | string | `""` |  |
 | nudgebee_secret.RELAY_SERVER_SECRET_KEY | string | `""` |  |
-| nudgebee_secret.existingSecretName | string | `""` |  |
+| nudgebee_secret.existingSecretName | string | `""` | When set, the chart doesn't render its own `nudgebee` Secret (and skips its key checks). Pair with `global.existingNudgebeeSecretName`. |
 | postgres_migrations.fullnameOverride | string | `"postgres_migrations"` |  |
-| postgres_migrations.image.repository | string | `"migrations"` |  |
+| postgres_migrations.image.repository | string | `"nudgebee-migration"` | Community: `migrations`. |
 | postgres_migrations.image.tag | string | `""` |  |
 | postgresql.auth.existingSecret | string | `"postgresql"` |  |
 | postgresql.enabled | bool | `true` |  |
 | postgresql.fullnameOverride | string | `"postgresql"` |  |
+| postgresql.auth.database | string | `"postgres"` | The bundled application database. |
+| postgresql.primary.persistence.size | string | `"50Gi"` |  |
+| postgresql.image.registry | string | `"ghcr.io/nudgebee"` | Not covered by `global.image.registry`. |
 | rabbitmq.auth.existingErlangSecret | string | `"rabbitmq"` |  |
 | rabbitmq.auth.existingPasswordSecret | string | `"rabbitmq"` |  |
 | rabbitmq.auth.securePassword | bool | `false` |  |
 | rabbitmq.enabled | bool | `true` |  |
 | rabbitmq.fullnameOverride | string | `"rabbitmq"` |  |
 | rabbitmq.metrics.enabled | bool | `true` |  |
-| rabbitmq.metrics.prometheusRule.enabled | bool | `true` |  |
-| rabbitmq.metrics.serviceMonitor.enabled | bool | `true` |  |
+| rabbitmq.metrics.prometheusRule.enabled | bool | `false` | Turn on with the chart's `values-monitoring.yaml`. |
+| rabbitmq.metrics.serviceMonitor.enabled | bool | `false` | Turn on with the chart's `values-monitoring.yaml`. |
 | rabbitmq.metrics.serviceMonitor.path | string | `"/metrics/per-object"` |  |
-| rabbitmq.registry | string | `"registry.nudgebee.com"` |  |
-| rabbitmq.repository | string | `"rabbitmq"` |  |
-| rabbitmq.tag | string | `"3.13.7-debian-12-r5-nb-1"` |  |
+| rabbitmq.image.registry | string | `"ghcr.io/nudgebee"` | Not covered by `global.image.registry`. |
+| rabbitmq.image.repository | string | `"rabbitmq"` |  |
+| rabbitmq.image.tag | string | `"3.13.7-debian-12-r5-nb1"` |  |
 | rag-server.enabled | bool | `true` |  |
 | rag-server.fullnameOverride | string | `"rag-server"` |  |
 | rag-server.image.repository | string | `"nudgebee-rag-server"` |  |
@@ -115,6 +121,11 @@ side-by-side examples.
 | redis.enabled | bool | `true` |  |
 | redis.fullnameOverride | string | `"redis"` |  |
 | redis.replica.replicaCount | int | `0` |  |
+| redis.image.registry | string | `"ghcr.io/nudgebee"` | Not covered by `global.image.registry`. |
+| services-server.env.NOVA_IMAGE / TRIVY_IMAGE / POPEYE_IMAGE / KUBE_BENCH_IMAGE | string | `ghcr.io/nudgebee/...` | Images for the security scanner jobs. Full references; mirror them for air-gapped installs. |
+| llm-server.env.LLM_SERVER_AGENT_CODEAGENT_IMAGE | string | `"registry.nudgebee.com/code-analysis-agent:latest"` | Image for the code-analysis workspace. Community: `ghcr.io/nudgebee/code-analysis-agent:latest`. |
+| nudgebee_secret.NEXT_PUBLIC_DEFAULT_IMAGE_REGISTRY | string | `"ghcr.io/nudgebee"` | Registry the UI's agent installer puts in generated install commands. |
+| nudgebee_secret.RELAY_WSSERVER_ENDPOINT / K8S_COLLECTOR_ENDPOINT | string | in-cluster addresses | Relay and collector URLs used in the UI's agent install commands. Set to your public hosts for agents in other clusters. |
 | relay-server.fullnameOverride | string | `"relay-server"` |  |
 | relay-server.image.repository | string | `"nudgebee-relay-server"` |  |
 | relay-server.image.tag | string | `""` |  |
@@ -138,14 +149,34 @@ side-by-side examples.
 ---
 
 :::note ServiceMonitor & PrometheusRule CRDs
-`rabbitmq.metrics.serviceMonitor.enabled` and `rabbitmq.metrics.prometheusRule.enabled` are **enabled by default**. These require the **ServiceMonitor** and **PrometheusRule** CRDs to be present in your cluster (installed by [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) or the Prometheus Operator). If your cluster does not have these CRDs, set them to `false` to avoid installation errors:
+`rabbitmq.metrics.serviceMonitor.enabled` and `rabbitmq.metrics.prometheusRule.enabled` are **off by default**, because they need the **ServiceMonitor** and **PrometheusRule** CRDs (from [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) or the Prometheus Operator). If you have them, turn monitoring on with the `values-monitoring.yaml` file in the chart, or set them yourself:
 
 ```yaml
 rabbitmq:
   metrics:
     serviceMonitor:
-      enabled: false
+      enabled: true
     prometheusRule:
-      enabled: false
+      enabled: true
 ```
 :::
+
+## Mirroring images (air-gapped) {#mirroring-images-air-gapped}
+
+`global.image.registry` only applies to NudgeBee's own service images. To pull everything from a private registry, mirror and override these as well:
+
+| Images | Values |
+|---|---|
+| Init and test images | `global.initImages.postgres`, `global.initImages.curl`, `global.testImage` |
+| PostgreSQL, Redis, RabbitMQ | `postgresql.image.registry`, `redis.image.registry`, `rabbitmq.image.registry` |
+| Qdrant | `nudgebee-qdrant-server.image.repository` |
+| Temporal | `temporal.server.image.repository`, `temporal.admintools.image.repository`, `temporal.web.image.repository` |
+| Security scanners | `services-server.env.NOVA_IMAGE`, `TRIVY_IMAGE`, `POPEYE_IMAGE`, `KUBE_BENCH_IMAGE` |
+| Code-analysis workspace | `llm-server.env.LLM_SERVER_AGENT_CODEAGENT_IMAGE` |
+| Agent install commands shown in the UI | `nudgebee_secret.NEXT_PUBLIC_DEFAULT_IMAGE_REGISTRY` |
+
+## Related
+
+- [Server Installation](./index.md)
+- [Configuration Options](./secret_configs.md)
+- [Upgrade](./upgrade.md)

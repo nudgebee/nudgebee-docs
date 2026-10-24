@@ -257,6 +257,8 @@ nudgebee_secret:
 
   # EventBridge events (optional)
   CLOUD_COLLECTOR_AWS_EVENTBRIDGE_SQS: "<SQSQueueUrl from eventbridge stack>"
+  # Optional: template used by "Connect EventBridge" for accounts onboarded without it
+  # AWS_EVENTBRIDGE_ADDON_TEMPLATE_URL: "<template-url>"
 
   # Organization onboarding (optional)
   AWS_ORG_SNS_TOPIC_ARN: "<SNSTopicArn from org-registration stack>"
@@ -264,3 +266,8 @@ nudgebee_secret:
 ```
 
 For full configuration reference, see [NudgeBee Configurations](./secret_configs.md#cloud-integration).
+
+## Related
+
+- [Server Installation](./index.md)
+- [Configuration Options](./secret_configs.md)
