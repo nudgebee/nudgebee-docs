@@ -16,12 +16,12 @@ Triage rules act on events as they arrive: they **suppress** or **drop** noise, 
 
 | View | Path |
 |---|---|
-| All accounts (view only) | **Troubleshoot → All Events → Triage Rules** |
+| All accounts | **Troubleshoot → All Events → Triage Rules** |
 | A Kubernetes cluster | Cluster → **Troubleshoot** → **Triage Rules** |
 | An AWS, Azure or GCP account | Account → **Troubleshoot** → **Triage Rules** |
 
 :::note Where is **Create Rule**?
-A rule always belongs to one account, so **Create Rule** appears only on a cluster's or cloud account's **Triage Rules** tab — not on the all-accounts Troubleshoot page. It also needs write access to events on that account.
+A rule always belongs to one account, so **Create Rule** appears only on a cluster's or cloud account's **Triage Rules** tab — not on the all-accounts Troubleshoot page. It also needs write access to that account. In the all-accounts view you can still edit, disable, enable and delete your own rules on accounts you have write access to; only **Create Rule** and the system-rule toggle are missing.
 :::
 
 ## The rules list
@@ -44,6 +44,8 @@ Row menu:
 
 - **Your rules:** **Edit**, **Disable** / **Enable**, **Delete**. Disabling stops the rule matching new events immediately; deleting can't be undone. A rule past its expiry must be edited (extend or clear the expiry) before it can be enabled again.
 - **System rules:** **Disable for this Account** / **Enable System Rule**, on a cluster's or cloud account's tab only.
+
+Rules created from a priority override show their type as `priority_pin` and aren't offered in the **Rule Type** filter.
 
 ## Create a rule
 
@@ -78,14 +80,16 @@ Row menu:
    | Classification | **False Positive** | Suppressed |
    | Classification | **Duplicate** | Duplicate |
 
-5. **Apply to Existing Events** — also update matching events that are still open. A preview shows how many events will change and what they become. Events already in **Action Required** are not changed.
+   This table is what happens to **new** events.
+5. **Apply to Existing Events** — also update matching events that are currently **Open**. A preview shows how many events will change and what they become. Suppression rules apply their status as above; existing events matched by a **Classification** rule are set to **Resolved**, and the preview says so.
 6. **Expiration (Optional)** — **Expires At**, a future date after which the rule stops matching.
 
 ## How rules combine
 
 - Rules run in **Priority** order, lowest first.
-- For **suppression** and **classification**, the first matching rule wins. If both match, suppression wins, and **Drop** beats **Suppress**.
+- Within suppression rules, and within classification rules, the first matching rule by priority wins. If both a suppression and a classification rule match, suppression wins.
 - **Scoring** rules all apply: every matching rule's adjustment is added up. Adjustments still apply to suppressed events, but not to dropped ones.
+- With **AI alert prioritisation** on, the score stays within the AI's priority band after rule adjustments — a scoring rule can't move an event out of that band.
 - A priority you set by hand (see [Triage Scoring](./triage-scoring.md#override-a-priority)) always beats scoring rules.
 - Changes take effect within about a minute.
 

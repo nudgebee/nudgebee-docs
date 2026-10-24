@@ -39,12 +39,12 @@ A dropped event stops after step 2.
 
 Every event gets a **fingerprint** that identifies the alert it came from; which fields make it up depends on the source. Firings with the same fingerprint on the same account form a **run**:
 
-- A new run starts when the first event of the current run is **resolved**, or when more than **24 hours** pass between firings.
+- A new run starts when the run's first event has the triage status **Resolved**, or when more than **24 hours** pass between firings (measured start to start).
 - Within a run, the built-in **System: Auto-mark Duplicates** rule marks every firing after the first as **Duplicate**, so the inbox shows the issue once. It can be turned off per account in [Triage Rules](./triage-rules.md#built-in-and-generated-rules).
 
 ## Grouped alerts
 
-Different alerts on the **same resource** within about **15 minutes** — for example an OOM kill followed by CrashLoopBackOff on one pod — are grouped under one leading alert. The others score slightly lower. Alerts that fire constantly never become the leader. Use the **Grouped** view on **Events**, or a row's **Grouped Alerts** tab in the [Triage Inbox](./events-and-triage-inbox.md#triage-inbox).
+Alerts on the **same resource** — and on connected or dependent services — are grouped under one leading alert while they keep arriving within about **15 minutes** of each other (the window renews each time an alert joins). For example, an OOM kill followed by CrashLoopBackOff on one pod. The others score slightly lower, and alerts that fire constantly never become the leader. Use the **Grouped** view on **Events**, or a row's **Grouped Alerts** tab in the [Triage Inbox](./events-and-triage-inbox.md#triage-inbox).
 
 ## Classification and triage
 

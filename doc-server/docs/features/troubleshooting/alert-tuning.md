@@ -13,7 +13,7 @@ Every noisy alert has the same root cause: a threshold that was a guess. Alert T
 
 ## What it does
 
-Suggestions are made for alerts that fired **5 or more times in the last 30 days**, and refreshed once a day — a new noisy alert can take a day to appear. For each one, NudgeBee:
+Suggestions are made for alerts that fired **5 or more times in the last 30 days**, and the list is refreshed daily — a new noisy alert can take a day to appear. A suggestion based on the metric itself is recomputed about once a week. For each one, NudgeBee:
 
 1. Extracts the alert definition — the metric, comparison operator, threshold and evaluation window — from the rule that produced it.
 2. Fetches the metric's history from the source API.
@@ -65,7 +65,7 @@ Open a suggestion's **Evidence** tab. Two buttons, offered depending on what the
 - **Apply directly** — NudgeBee rewrites the rule at the source and the change takes effect immediately.
 - **Raise PR** — NudgeBee opens a pull request against the repository holding the rule (choose the Git integration, repository, base branch and rule file). Available for **Prometheus rule files** only, through a GitHub or GitLab integration, and not for a change that only lengthens the wait.
 
-A **Disable Alert** suggestion is never applied from here — disable or mute the rule with the alert-rule controls instead. Risky suggestions ask you to check a confirmation first. After applying, **View in audit log** shows the change. Applying and reverting need update access to events.
+A **Disable Alert** suggestion is never applied from here — disable or mute the rule with the alert-rule controls instead. Risky suggestions ask you to check a confirmation first. After applying, **View in audit log** shows the change. Applying and reverting need write access to the account.
 
 You can override the suggested threshold or duration before applying. A manual override is written even when the engine recommended no retune, so **Investigate** and **Not Enough Data** suggestions can still be used to push a value you have decided on yourself.
 

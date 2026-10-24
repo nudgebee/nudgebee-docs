@@ -28,7 +28,7 @@ Availability and latency SLOs are measured from the HTTP and gRPC request metric
 | **Observation (30D)** | What was measured over 30 days |
 | **CPU Forecast** | Forecast CPU throttling and saturation |
 
-Filter by **Namespace** and **Workload**. Expand a row for **Latency Traces** and **Availability Traces** — the requests behind the numbers.
+Filter by **Namespace** and **Workload**. Expand a row for **Latency Traces** and **Availability Traces** — the requests behind the numbers — plus **Report** and **CPU Alerts**.
 
 ## Add an SLO
 
@@ -38,13 +38,13 @@ Filter by **Namespace** and **Workload**. Expand a row for **Latency Traces** an
 |---|---|---|
 | **Availability** | **Objective %** — the share of requests that should not fail | Requests that don't return a 5xx, fail, or end with a non-OK gRPC status |
 | **Latency** | **Objective %** and a **Threshold** — 5, 10, 25, 50, 100, 125, 500, 1000, 2500, 5000 or 10000 ms | Requests that complete within the threshold |
-| **CPU** | **Throttling %** and **Saturation %** | Forecast from the last 3 days of CPU usage. **Check now** runs a forecast; **Remove** deletes the CPU objective. |
+| **CPU** | **Throttling %** and **Saturation %** | Forecast from the last 3 days of CPU usage. **Check now** runs a forecast; **Remove** deletes the CPU objective. You can save a CPU objective only if the workload has a CPU limit and your metrics provider is supported. |
 
-The request objectives are evaluated over a **1-hour window**, every hour. You don't write queries — NudgeBee measures them from the agent's request metrics.
+Request objectives are checked every hour. You don't write queries — NudgeBee measures them from the agent's request metrics. Hours with no traffic show no data.
 
 ## When an SLO is missed
 
-NudgeBee raises an event titled *"`name` SLO violation for `workload` in namespace `namespace`"* with high priority and finding type **SLO**. It appears in [Troubleshoot](./troubleshooting/events-and-triage-inbox.md), is [triaged and scored](./troubleshooting/triage-scoring.md) like any other event, and goes to your [notification channels](./notifications.md). The event closes when the workload recovers.
+For an availability or latency objective, NudgeBee raises an event when the agent's burn-rate check reports the objective being missed. The event is titled *"`name` SLO violation for `workload` in namespace `namespace`"*, with high priority and finding type **SLO**. It appears in [Troubleshoot](./troubleshooting/events-and-triage-inbox.md), is [triaged and scored](./troubleshooting/triage-scoring.md) like any other event, and goes to your [notification channels](./notifications.md). The event closes when the workload recovers. A CPU objective raises **forecast** events instead, when throttling or saturation is forecast to cross your threshold.
 
 ## Watch a Walkthrough
 

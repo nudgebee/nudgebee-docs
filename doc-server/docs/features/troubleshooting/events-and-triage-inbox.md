@@ -54,7 +54,7 @@ Search alert, resource or message, and filter by account, namespace, workload, s
 
 ## Events
 
-One row per event. The columns are the same as above, plus **Message**; **Event Type** and **Triage Status** are hidden by default.
+One row per event, with the columns **Triage Score**, **Source Severity**, **Application**, **Message**, **Event Type**, **Alert Status**, **Triage Status** and **Action**. **Event Type** and **Triage Status** are hidden by default.
 
 - **All** shows every firing. **Grouped** folds alerts on the same resource under their leading alert (for example an OOM kill and the CrashLoopBackOff it caused). **Unique** shows one row per issue.
 - Filters add **Search by alert labels** (`key:value`, comma-separated), **Subject Type**, **Event Name** and **Sort By** (time or triage score).

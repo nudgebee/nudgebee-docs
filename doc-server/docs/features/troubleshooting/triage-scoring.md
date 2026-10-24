@@ -50,7 +50,7 @@ The score comes from the source's severity and the environment, then adjusted fo
 
 ### Then: scoring rules
 
-[Triage rules](./triage-rules.md) of type **Scoring** add or subtract from the score. Built-in service-tier rules raise events on ingress, gateways, databases, caches and queues.
+[Triage rules](./triage-rules.md) of type **Scoring** add or subtract from the score. Built-in service-tier rules raise events on ingress, gateways, databases, caches and queues. With AI alert prioritisation on, the result is kept within the AI's priority band, so a scoring rule can't move an event out of it.
 
 ## Grouped alerts
 

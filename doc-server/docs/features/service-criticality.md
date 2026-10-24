@@ -46,7 +46,7 @@ Apart from an operator label, these rules never set `critical`. An AI review of 
 
 Criticality is resolved **per event**, against the specific workload that alerted. Two workloads with the same name in different accounts get their own tiers.
 
-**Every tier adjusts the alert's score:**
+With **AI alert prioritisation** on ([Tenant Settings → Features](./tenant-settings.md#features)), **every tier adjusts the alert's score:**
 
 | Tier | Score adjustment |
 |---|---|
@@ -57,7 +57,7 @@ Criticality is resolved **per event**, against the specific workload that alerte
 
 Those magnitudes sit alongside the other scoring terms — enough to reorder a queue, not enough to overrule the alert's own semantics.
 
-**Only an operator's tier moves the priority band.** A tier you set yourself can overrule a band the AI verdict capped lower:
+Also only with AI alert prioritisation on, **only an operator's tier moves the priority band.** A tier you set yourself can overrule a band the AI verdict capped lower:
 
 | Your tier | Band effect |
 |---|---|

@@ -54,7 +54,7 @@ Classify the event as **False Positive** (see below) or create a [suppression ru
 
 - **This Event Only** affects the selected event.
 - **All Similar Events** — every past and future event with the same fingerprint.
-- **Time Limited** — the same, until **Expires At** (at most 30 days).
+- **Time Limited** — future events with the same fingerprint, until **Expires At** (at most 30 days). Existing events aren't changed.
 
 Use rule preview when available to inspect existing matches. A preview is not a guarantee of future event volume. Review the saved rule when troubleshooting later alerts with the same fingerprint.
 
@@ -69,7 +69,7 @@ Use rule preview when available to inspect existing matches. A preview is not a 
 | **Benign Positive** | Resolved | Maintenance Window, Expected Behavior, Batch Job, Deployment |
 | **Duplicate** | Duplicate — linked to the first event | Duplicate Incident |
 
-**Correct Priority (Optional)** sets P0–P3. With **All Similar Events** or **Time Limited**, a corrected priority becomes a **Pin** rule for that alert. Classifying needs update access to events.
+**Correct Priority (Optional)** — offered for **True Positive** and **Benign Positive** — sets P0–P3. With **All Similar Events** or **Time Limited**, a corrected priority becomes a **Pin** rule for that alert. Classifying needs update access to events.
 
 ## Stop an alert from an investigation
 
