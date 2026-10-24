@@ -336,7 +336,7 @@ Ensure `globalConfig.prometheus_url` points to the exact Prometheus service runn
 If your cluster enforces default-deny egress NetworkPolicies, the runner will fail with `WebSocket dial timeout`:
 
 **Resolution:**
-Apply a NetworkPolicy allowing outbound TCP traffic on port 443 from the `nudgebee-agent` namespace. This example allows only 443 and DNS — also allow the in-cluster ports of your Prometheus (9090), Alertmanager, Loki (3100), ClickHouse (8123, 9000) and OpenCost, or those show as Disconnected:
+Apply a NetworkPolicy allowing outbound TCP traffic on port 443 from the `nudgebee-agent` namespace. This example allows only 443 and DNS — also allow the in-cluster ports of your Prometheus (9090), Alertmanager, Loki (3100), ClickHouse (8123, 9000) and OpenCost; otherwise those components show as Disconnected:
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy

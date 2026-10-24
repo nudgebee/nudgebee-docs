@@ -38,7 +38,7 @@ The script needs bash. `sh installation.sh` fails on systems where `sh` is not b
 | `-x true` | Keep OpenCost off (it is off by default). |
 | `-t true` | Don't install the OpenTelemetry collector and ClickHouse (no traces). |
 | `-d <any value>` | Don't install the node agent (eBPF). **Any** value turns it off — even `-d false`. The script also turns it off by itself for some old kernels (3.x, 4.0, 4.1 and 4.10–4.15; its version check lets 4.2–4.9 through). |
-| `-o <any value>` | OpenShift mode (SCCs, adjusted security contexts). **Any** value turns it on — even `-o false`. |
+| `-o <any value>` | OpenShift mode (SCCs, adjusted security contexts). **Any** value turns it on — even `-o false`. If you grant SCCs yourself, grant them to `<release>-runner-service-account` — the node agent DaemonSet uses that ServiceAccount too. |
 | `-C <storage class>` | StorageClass for ClickHouse, Prometheus and Loki. |
 | `-s <secret>` | Load extra environment variables for the runner from this Kubernetes Secret. |
 | `-w <url>` | Relay address (self-hosted), e.g. `wss://relay.yourcompany.com/register`. |

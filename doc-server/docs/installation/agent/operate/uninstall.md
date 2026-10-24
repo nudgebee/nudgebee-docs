@@ -19,9 +19,9 @@ This removes everything the chart created: the runner, event watcher, node agent
 
 | Left behind | Why | Remove with |
 |---|---|---|
-| The `nudgebee-agent` namespace | It was created at install time (`--create-namespace`), not by the chart | `kubectl delete namespace nudgebee-agent` |
-| ClickHouse volume (50 Gi by default) | Helm doesn't delete StatefulSet volume claims | `kubectl get pvc -n nudgebee-agent`, then `kubectl delete pvc <name> -n nudgebee-agent` — or delete the namespace |
-| Alert rules created from NudgeBee, scanner Jobs | The agent created them at runtime, so Helm doesn't track them | Deleting the namespace removes them |
+| The release namespace (default `nudgebee-agent`) | It was created at install time (`--create-namespace`), not by the chart | `kubectl delete namespace nudgebee-agent` |
+| ClickHouse volume (50 Gi by default) | Helm doesn't delete StatefulSet volume claims | `kubectl get pvc -n nudgebee-agent`, then `kubectl delete pvc <name> -n nudgebee-agent` — or delete the release namespace |
+| Alert rules created from NudgeBee, scanner Jobs | The agent created them at runtime, so Helm doesn't track them | Deleting the release namespace removes them |
 
 If the install script also installed Prometheus or Loki for you, they are separate releases with their own volumes (50 Gi and 10 Gi by default):
 
