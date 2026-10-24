@@ -39,7 +39,7 @@ Create the integration first; the workflow's Webhook trigger then picks it.
 ![The Automation Webhook tile in the Webhooks tab of the integrations catalog](../../../static/img/integrations/webhook-automation-card.png)
 
 * **Name of Workflow Webhook \*** (Required)
-    * The integration name, also used by the workflow's trigger. Must match `^[a-zA-Z0-9._-]+$` — letters, numbers, dots, hyphens and underscores only, maximum 200 characters.
+    * The integration name, picked in the automation's Webhook trigger. Use letters, numbers, dots, hyphens and underscores — the automation's trigger panel rejects other characters.
     * Name it after the source system, e.g. `github_ci_webhook` or `jira-service-desk-wb`.
 * **Select Account(s) \*** (Required)
     * One or more NudgeBee accounts this webhook serves. Selecting several lets a single endpoint fan out across clusters.
@@ -54,7 +54,7 @@ The URL is generated once the integration is **linked to a workflow**, and is sh
 
 ## Step 3: Configure the Sender
 
-Point your external system at the copied URL with an HTTP `POST` and a JSON body. Any JSON shape is accepted; NudgeBee does not require a schema. If the integration has a secret, send it in the `X-Webhook-Secret` header.
+Point your external system at the copied URL with an HTTP `POST` and a JSON body. Any JSON shape is accepted; NudgeBee does not require a schema. The `token` in the URL authenticates the request; no extra header is needed.
 
 ## Step 4: Filter Which Requests Run the Workflow
 
@@ -102,7 +102,7 @@ Test with the filter expression removed first. If the run appears without a filt
 |---------|-------------|-----|
 | No webhook URL is shown | The integration is not linked to a workflow yet | Save the workflow with the integration selected in its Webhook trigger; the URL appears afterwards. |
 | Request accepted, workflow never runs | The filter expression did not render exactly `true` (`1` doesn't count) | Remove the filter and retry. Then check the expression against the payload you actually send — a missing key renders empty, not `true`. |
-| Integration name is rejected | Name contains a space or another disallowed character | Use only letters, numbers, dots, hyphens and underscores, up to 200 characters. |
+| The trigger panel rejects the integration name | Name contains a space or another disallowed character | Use only letters, numbers, dots, hyphens and underscores. |
 | Tasks see empty `Inputs.webhook_json` fields | The request had no JSON body, or the wrong content type | Send `Content-Type: application/json` with a JSON object body. |
 | Workflow runs twice per event | Two integrations, or two workflows, are bound to the same sender | Check for a second integration (for example an older `wf-...` one) bound to the same sender, and disable the one you do not want. |
 | Requests never arrive | The NudgeBee URL is not reachable from the sender | Confirm the endpoint is reachable from the sending system's network. |

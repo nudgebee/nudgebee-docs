@@ -75,7 +75,7 @@ Workflows are version-controlled: save drafts freely, publish immutable named ve
 10. Connect the trigger to the task by dragging from the trigger node's output port to the task node's input port
 11. Click the task node to configure its parameters in the sidebar
 12. Click **Publish** (for a new automation) or **Save draft** in the toolbar
-13. Click **Run** to execute your workflow
+13. Click **Run current** to execute your workflow
 
 :::tip
 You can also let AI build your workflow. Click **Create Automation**, then choose **Generate with nubi**. Describe what you want in plain language, review the AI's plan, and approve it to generate the workflow automatically.
@@ -107,7 +107,7 @@ The editor is where you design and configure your workflows visually.
 - **Add Action** - Add a new task to the workflow
 - **Validate** - Check the definition for errors
 - **Save draft** - Save your edits without changing the live version (on a new automation this button is **Publish**)
-- **Run** - Execute the workflow; its menu offers **Run current** (your current edits) and **Run live version**
+- **Run current** - Execute your current edits; the button's menu adds **Run live version** (the published live version)
 - **Dry Run** - Execute with a task-specific dry-run flag; external effects are possible
 - **Ask NuBi AI** - Open the NuBi AI sidebar for conversational editing
 - **Automation Settings** - Open workflow settings
@@ -188,7 +188,7 @@ You can make tasks run conditionally or branch your workflow using special task 
 **Conditional execution on any task:**
 1. Click a task node and open the **Condition** tab
 2. Enter a template expression
-3. The task runs only when the expression renders exactly `true`; anything else — including `1` or `yes` — skips it
+3. The task runs only when the expression renders `true` (in any letter case); anything else — including `1` or `yes` — skips it
 
 **Switch (Conditional) node:**
 1. Add a **Switch** task from the **Core** category
@@ -210,7 +210,7 @@ Template expressions allow you to dynamically pass data between workflow steps, 
 | `{{ Tasks['fetch_logs'].output }}` | The full output of an earlier task, by task ID |
 | `{{ Tasks['fetch_logs'].output.logs }}` | One field of an earlier task's output |
 | `{{ Configs.slack_channel }}` | A shared config of type **Config** |
-| `{{ Secrets.api_token }}` | A shared config of type **Secret** (values are masked in logs and outputs) |
+| `{{ Secrets.api_token }}` | A shared config of type **Secret** (masked in logs, task inputs and errors — not in task outputs) |
 | `{{ Vars.name }}` | A variable set with **Set Variables** on an earlier task |
 | `{{ State.key }}` | Persistent state saved with **Set State** |
 | `{{ Matrix.key }}` | The current combination when a task runs as a matrix |
@@ -303,7 +303,7 @@ Configurations are shared values you can reference across workflows.
 2. The Configuration Manager opens, showing all existing configs
 3. Click **Add** to create a config with a key, value, **Type** and labels:
    - **Config** for regular values — read with `{{ Configs.key_name }}`
-   - **Secret** for sensitive data — read with `{{ Secrets.key_name }}`. Secret values are masked in run logs, and values derived from a secret can't be saved with Set State.
+   - **Secret** for sensitive data — read with `{{ Secrets.key_name }}`. Secret values are masked in run logs, task inputs and errors — but not in task outputs, so don't echo a secret into an output — and values derived from a secret can't be saved with Set State.
 4. Choose the **Scope**: **This Account**, or **Tenant (shared)** to share it with every account (shown to users who can manage the whole tenant)
 5. Edit or delete existing configs from the actions column
 
@@ -312,9 +312,9 @@ Configurations are shared values you can reference across workflows.
 ### Running a Workflow Manually
 
 **From the editor:**
-1. Click **Run** — **Run current** runs your current edits, **Run live version** runs the published live version
+1. Click **Run current** to run your current edits, or pick **Run live version** from its menu
 2. Execution starts
-3. The **Run** button shows "Running..." and nodes update with real-time status colors
+3. The button shows "Running..." and nodes update with real-time status colors
 4. A status message appears when execution completes
 
 **From the listing page:**
@@ -399,7 +399,7 @@ Access workflow-level settings with **Automation Settings** in the toolbar.
 | Max Retry Interval | 1 min | Maximum time between retry attempts |
 | Retries | 3 | Number of retry attempts on failure (0–5) |
 
-Quick presets are available for timeout (1m, 5m, 15m, 30m, 1h) and max interval (30s, 1m, 5m, 10m). See [Limits](#limits) for what applies when a definition sets no value.
+Both fields offer quick presets: 30s, 5m, 30m and 1h. See [Limits](#limits) for what applies when a definition sets no value.
 
 **AI Assistant** (shown when the tenant feature **Assistant can run automations** is on):
 - **Allow the AI assistant to run this automation** — offer it to NuBi as a tool. It needs a **manual trigger** and a description: *"Add a manual trigger to this automation before the assistant can run it."* / *"Write a description for the AI below before turning this on."*
@@ -431,7 +431,7 @@ Each task has additional settings available in the **Settings** tab of the task 
 
 | Setting | Description |
 |---------|-------------|
-| Condition (Condition tab) | Template expression — the task runs only when it renders exactly `true` |
+| Condition (Condition tab) | Template expression — the task runs only when it renders `true` (any letter case) |
 | Disable task | Skip the task without deleting it |
 | Timeout | Task-specific timeout that overrides the workflow default |
 | Set State | Persistent JSON state that survives workflow retries |
@@ -454,7 +454,7 @@ To run one task outside any automation, use the **Task Runner** tab on the Autom
 Results appear inline in the task configuration sidebar with a toggle between JSON and formatted views.
 
 :::note
-Some task types cannot be tested individually, including Group, Switch, For Each, Call Workflow, AI Router, Approval, Wait, and AI Event Investigation.
+Some task types cannot be tested individually, including Group, Switch, For Each, Call Workflow, Approval and Wait.
 :::
 
 ### Sub-Workflows and Loops
@@ -490,7 +490,7 @@ Every step checks permissions against the account it acts on, as a specific user
 | Run started by | Acts as |
 |---|---|
 | Manual run, retry, dry run, Task Runner, NuBi | The person who started it |
-| Schedule, event, webhook or optimization trigger | The automation's **owner** — whoever last published a version as live or made a version live |
+| Schedule, event, webhook or optimization trigger | The automation's **owner** — its creator, or whoever last published a version as live or made a version live |
 
 A step the user isn't allowed to do fails with a permission error. If the owner's user is deleted, every step that makes changes fails until someone else publishes or makes a version live. Schedules use the **live** version's cron.
 
@@ -500,7 +500,7 @@ A step the user isn't allowed to do fails with a permission error. If the owner'
 |---|---|
 | Run timeout when the definition sets none | 1 hour (dry run: 30 minutes) |
 | Step timeout when neither the step nor the automation sets one | 10 minutes, one attempt (no retry) |
-| Hook actions | 30 seconds |
+| Hook actions | 5 seconds per attempt, up to 5 attempts |
 | Matrix | Up to 1,000 combinations |
 | Webhook request body | 5 MB |
 
@@ -553,7 +553,7 @@ See [Configuring Triggers](./triggers.md) for full details on each trigger type,
 
 | Problem | Cause | Solution |
 |---------|-------|----------|
-| "Workflow name is required" when saving | Workflow has no name | Click the pencil icon in the header and enter a name |
+| "Automation name is required" when saving | Workflow has no name | Click the pencil icon in the header and enter a name |
 | "At least one task is required" when saving | No action nodes on the canvas | Add at least one task using the **Add Action** button |
 | Tasks have validation errors on save | Required fields are missing in task configuration | Click each flagged task and fill in the required parameters |
 | "Cannot save: JSON is invalid" | The JSON panel has syntax errors | Switch to the JSON panel, fix the errors, and click **Apply** |
@@ -562,7 +562,7 @@ See [Configuring Triggers](./triggers.md) for full details on each trigger type,
 | "Integration name is required for webhook triggers" | Webhook trigger has no integration | Pick a **Webhook Integration** in the trigger configuration |
 | "Filter expression has unmatched template braces" | Event filter has malformed template syntax | Ensure your filter uses balanced `{{ }}` braces |
 | "Invalid JSON format" when triggering | Input parameters are not valid JSON | Check your JSON syntax - ensure proper quoting and structure |
-| "Duration must be in single-unit format" | Catchup window uses an invalid format | Use a single-unit duration like `60s`, `10m`, `1h`, or `7d`. Compound values like `1h30m` aren't accepted. |
+| `Duration must be in Go format (e.g., "10m", "1h", "24h")` | A duration field uses an invalid format | Use a duration such as `10m`, `1h` or `24h`. |
 | Workflow execution timed out | Execution exceeded the configured timeout | Increase the timeout in **Automation Settings** or optimize long-running tasks |
 | A step fails with a permission error | The user the run acts as can't do that on the account | See [Whose permissions a run uses](#whose-permissions-a-run-uses) |
 | Workflow execution failed | One or more tasks encountered errors | Open the **Executions** tab, select the execution, and click the failed node to see error details |
@@ -580,8 +580,8 @@ Editing and saving a workflow does not affect executions that are already in pro
 **Can I use outputs from one task in another task's configuration?**
 Yes. Use template expressions like `{{ Tasks['task_id'].output.value }}` in any text field. The task configuration sidebar shows available outputs from previous tasks that you can drag into fields.
 
-**What is the difference between Run and Dry Run?**
-**Run** executes the workflow and performs all real actions (sending notifications, running scripts, etc.). **Dry Run** executes tasks with a flag that only dry-run-aware tasks honor. Other tasks can still change external systems. Use isolated targets and follow [Dry Run & Validation](./workflow-dry-run-validation.md).
+**What is the difference between Run current and Dry Run?**
+**Run current** executes the workflow and performs all real actions (sending notifications, running scripts, etc.). **Dry Run** executes tasks with a flag that only dry-run-aware tasks honor. Other tasks can still change external systems. Use isolated targets and follow [Dry Run & Validation](./workflow-dry-run-validation.md).
 
 **How do I share configuration values across multiple workflows?**
 Use the **Configuration Manager** (click **Configs** on the listing page). Reference configs with `{{ Configs.key_name }}` and secrets with `{{ Secrets.key_name }}`.

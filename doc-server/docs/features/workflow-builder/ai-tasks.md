@@ -209,7 +209,7 @@ Call a tool on an external MCP (Model Context Protocol) compatible server.
 
 | Name | Type | Required | Default | Visibility | Description |
 |:---|:---|:---|:---|:---|:---|
-| `connection_mode` | string | Yes | `integration` | Always | How to connect to the MCP server. Options: `integration` (use a saved MCP integration) or `direct` (provide URL and auth inline). |
+| `connection_mode` | string | Yes | — | Always | How to connect to the MCP server. Options: `integration` (use a saved MCP integration) or `direct` (provide URL and auth inline). |
 | `integration_id` | integration | Conditional | — | `connection_mode` = `integration` | Select an MCP integration to use. Manage integrations under **Settings > Integrations**. |
 | `url` | string | Conditional | — | `connection_mode` = `direct` | The URL of the MCP server. **Tip:** Save connection details as an MCP integration under **Settings > Integrations** for reuse. |
 | `tool_name` | string | Yes | — | Always | The name of the tool to invoke. The tool name dropdown is dynamically populated — it connects to the MCP server (via integration or direct URL) and fetches available tools using the `tools/list` MCP method. |

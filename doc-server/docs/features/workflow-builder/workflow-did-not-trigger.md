@@ -40,7 +40,7 @@ See [Schedule Trigger](./triggers.md#schedule-trigger) for supported values.
 
 ## 5. Check whose permissions the run uses
 
-Triggered runs act as the automation's owner — whoever last published a version as live or made a version live. If that user lacks a permission on the account, or their user was deleted, steps that make changes fail. See [Whose permissions a run uses](./index.md#whose-permissions-a-run-uses).
+Triggered runs act as the automation's owner — its creator, or whoever last published a version as live or made a version live. If that user lacks a permission on the account, or their user was deleted, steps that make changes fail. See [Whose permissions a run uses](./index.md#whose-permissions-a-run-uses).
 
 ## 6. Collect evidence for a missing run
 

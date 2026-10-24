@@ -72,7 +72,7 @@ Runs the workflow when an HTTP request is sent to a generated webhook URL.
 
 1. Pick the **Webhook Integration**.
 2. The webhook URL is displayed (it ends in `/api/webhooks/workflow?token=…`) - click the copy icon to copy it.
-3. Send HTTP requests to this URL to trigger the workflow. If the integration has a secret, send it in the `X-Webhook-Secret` header.
+3. Send HTTP requests to this URL to trigger the workflow. The `token` in the URL authenticates the request — no extra header is needed.
 
 **Reading the request in tasks:** in task parameters, the parsed JSON body is `Inputs.webhook_json` and the raw body is the string `Inputs.webhook_payload`. For example, `{{ Inputs.webhook_json.repository.name }}`.
 
@@ -147,22 +147,10 @@ Workflows created before structured filters used a single `params.event_type` fi
 Runs the workflow when a new **optimization recommendation** is created and matches the configured filters. Pick **at least one** of Cluster, Category or Rule Name — a trigger with none is rejected when you save.
 
 - **Cluster** (optional) - Filter by Kubernetes cluster. Dropdown grouped by cloud provider.
-- **Category** (optional) - Filter by recommendation category. One of:
-  - `PodRightSizing`
-  - `RightSizing`
-  - `K8sInstanceRecommendation`
-  - `K8sSpotRecommendation`
-  - `Configuration`
-  - `Security`
-  - `K8sMissingAttribute`
-- **Rule Name** (optional) - Filter by specific optimization rule. One of:
-  - `vertical_rightsize`
-  - `horizontal_rightsize`
-  - `pvc_rightsize`
-  - `continuous_rightsize`
-  - `replica_right_sizing`
-  - `Spot instance recommendation`
-  - `Abandoned resource`
+- **Category** (optional) - Filter by recommendation category: **Right Sizing**, **Infra Upgrade**, **Config** or **Spot Instance**.
+- **Rule Name** (optional) - Filter by optimization rule. The options load from your recommendation data, narrowed to the selected category.
+
+If you write the trigger in JSON, a filter expression also satisfies the at-least-one-filter rule.
 
 The recommendation payload is exposed in the workflow as `event` — use `{{ event.cluster }}`, `{{ event.category }}`, etc. in trigger expressions, and `{{ Inputs.event.cluster }}` inside downstream task params (see [Event Payload Schema](#event-payload-schema)).
 

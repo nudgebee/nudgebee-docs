@@ -128,6 +128,7 @@ Add an emoji reaction to a message on Slack or Google Chat.
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `provider` | string | Yes | Platform. Options: `slack`, `google_chat`. |
+| `team_id` | string | No | Slack workspace (team) ID, when the tenant has more than one workspace. |
 | `channel_id` | string | Yes | Channel or space ID. |
 | `message_id` | string | Yes | Message timestamp (Slack) or message ID (Google Chat). |
 | `emoji` | string | Yes | Emoji to add. Slack: name without colons (e.g., `thumbsup`). Google Chat: unicode (e.g., `👍`). |
@@ -193,6 +194,7 @@ Find or create a Slack channel or Google Chat space. Reuses an existing one with
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `provider` | string | Yes | Notification provider: `slack` or `google_chat`. |
+| `team_id` | string | No | Slack workspace (team) ID, when the tenant has more than one workspace. |
 | `name` | string | Yes | Channel or space name to find or create. |
 | `is_private` | boolean | No | Create a private channel. |
 | `description` | string | No | Channel description. |
@@ -206,6 +208,7 @@ Find or create a Slack channel or Google Chat space. Reuses an existing one with
 | `url` | string | Channel or space URL. |
 | `provider` | string | Notification provider. |
 | `created` | boolean | `true` if a new channel was created, `false` if an existing one was reused. |
+| `team` | string | Team ID, when the platform returns one. |
 
 ---
 
@@ -222,7 +225,7 @@ Add users to a Slack channel or Google Chat space. Typically paired with `notifi
 | `provider` | string | Yes | Notification provider: `slack` or `google_chat`. |
 | `channel_id` | string | Yes | Channel or space ID to add users to. |
 | `user_ids` | array | Yes | User IDs to add, in the provider's own format: Slack member IDs (e.g., `U12345678`) or people IDs for Google Chat. |
-| `team_id` | string | No | For `slack`, optionally picks a specific workspace installation when the tenant has more than one. |
+| `team_id` | string | No | JSON only (not shown in the editor). For `slack`, picks a specific workspace when the tenant has more than one. |
 
 ### Output
 
@@ -233,6 +236,7 @@ Add users to a Slack channel or Google Chat space. Typically paired with `notifi
 | `added` | array | User IDs successfully added. |
 | `already_members` | array | User IDs that were already members. |
 | `failed` | array | Users that could not be added, each with a `user_id` and `error`. |
+| `team` | string | Team ID, when the platform returns one. |
 
 ## Related
 
