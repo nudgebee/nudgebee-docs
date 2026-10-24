@@ -65,7 +65,7 @@ Some product surfaces are gated by a feature here rather than by a permission �
 | Category | Feature | Default |
 |---|---|---|
 | AI investigation & events | **Automatic event analysis** — investigate events as they arrive | On |
-| | **Investigate events without service labels** — analyse events that carry no service label | Off |
+| | **Investigate events without service labels** — analyze events that carry no service label | Off |
 | | **Auto-raise fix PRs** — open draft pull requests for fixes NuBi finds; nothing merges automatically | Off |
 | | **Post event analysis to chat** — post each analysis to the incident's Slack channel | Off |
 | | **AI alert prioritisation** — set P0–P3 priority by classifying each alert | On for new tenants |
