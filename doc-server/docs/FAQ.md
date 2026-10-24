@@ -111,7 +111,7 @@ NudgeBee natively integrates with Atlassian Confluence, ServiceNow, Notion, Goog
 Yes, NudgeBee automatically learns from resolved incidents. Resolution notes and verified postmortems flow directly into the knowledge base to continually improve future triage accuracy.
 
 ### How does NudgeBee handle event deduplication and aggregation?
-NudgeBee generates unique fingerprints for each incoming alert. These fingerprints form the foundation for intelligent aggregation and deduplication, consolidating cascading alert storms into single, actionable incidents.
+Each incoming alert gets a fingerprint that identifies the alert it came from. Repeat firings of the same alert within a run are marked as duplicates; a new run starts when the first event's triage status is Resolved or after a 24-hour gap. Alerts on the same resource or on connected services that keep arriving within about 15 minutes of each other are grouped under one leading alert, so the Triage Inbox shows each issue once. See [Event Lifecycle & Triage](./features/troubleshooting/event-lifecycle.md).
 
 ### What is NudgeBee's Knowledge Graph and how does it correlate events?
 NudgeBee uses a live Semantic Knowledge Graph to establish topological links between workloads, pods, nodes, cloud services, metrics, traces, git commits, and tickets. When an incident occurs, the system correlates dependent entities across the timeline to identify the precise triggering change.

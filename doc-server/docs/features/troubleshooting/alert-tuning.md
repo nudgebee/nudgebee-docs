@@ -5,7 +5,7 @@ sidebar_label: Alert Tuning
 
 # Alert Tuning
 
-**Troubleshoot → All Events → Alert Tuning**
+**Troubleshoot → All Events → Alert Tuning**, or a cloud account's **Troubleshoot → Alert Tuning**. Kubernetes clusters have no Alert Tuning tab — Prometheus suggestions are on the Troubleshoot page.
 
 Every noisy alert has the same root cause: a threshold that was a guess. Alert Tuning reads seven days of the metric behind an alert, works out what the threshold should have been, and — where the rule is reachable — writes the new value back to the alert source for you.
 
@@ -13,7 +13,7 @@ Every noisy alert has the same root cause: a threshold that was a guess. Alert T
 
 ## What it does
 
-For each alert that has fired recently, NudgeBee:
+Suggestions are made for alerts that fired **5 or more times in the last 30 days**, and the list is refreshed daily — a new noisy alert can take a day to appear. A suggestion based on the metric itself is recomputed about once a week. For each one, NudgeBee:
 
 1. Extracts the alert definition — the metric, comparison operator, threshold and evaluation window — from the rule that produced it.
 2. Fetches the metric's history from the source API.
@@ -35,18 +35,20 @@ Splitting baseline from firing is what makes the verdict trustworthy. An alert t
 
 ### Recommendation type
 
-| Type | What it proposes |
+| Shown as | What it proposes |
 |---|---|
-| `tune_threshold` | Move the threshold. |
-| `increase_duration` | Keep the threshold, lengthen the evaluation window so brief spikes stop paging. |
-| `tune_both` | Both of the above. |
-| `disable` | The alert carries no signal worth keeping. |
-| `review_alert` | A human needs to look — the rule may be measuring the wrong thing. |
-| `investigate_signal` | The metric is behaving oddly in a way retuning will not fix. |
-| `insufficient_data` | Too few samples to make a call. |
-| `not_eligible` / `none` | Nothing to suggest. |
+| **Tune Threshold** | Move the threshold. |
+| **Increase Duration** | Keep the threshold, lengthen the evaluation window so brief spikes stop paging. |
+| **Tune Both** | Both of the above. |
+| **Disable Alert** | The alert carries no signal worth keeping. |
+| **Review Alert** | A human needs to look — the rule may be measuring the wrong thing. |
+| **Investigate** | The metric is behaving oddly in a way retuning will not fix. |
+| **Not Enough Data** | Too few samples to make a call. |
+| **No Change** / **Nothing to Tune** | Nothing to suggest. |
 
-`investigate_signal` and `insufficient_data` carry a suggested value equal to the current one — they are verdicts, not proposals.
+The list also shows the **Threshold** (current → suggested), **Confidence** and **Noise Reduction** (the share of firings the change would remove), with chips such as **Applied**, **PR pending**, **Apply failed**, **Reverted** and **Needs review**.
+
+**Investigate** and **Not Enough Data** carry a suggested value equal to the current one — they are verdicts, not proposals.
 
 ### Risk level
 
@@ -58,17 +60,19 @@ The panel shows the metric's P50, P90, P95, P99, median and MAD, the estimated r
 
 ## Applying a suggestion
 
-Two methods, offered per suggestion depending on what the source supports:
+Open a suggestion's **Evidence** tab. Two buttons, offered depending on what the source supports — a disabled button explains why on hover:
 
-- **Direct** — NudgeBee rewrites the rule at the source and the change takes effect immediately.
-- **Pull request** — NudgeBee opens a PR against the repository holding the rule, through a configured Git integration. Use this where alert rules are managed as code.
+- **Apply directly** — NudgeBee rewrites the rule at the source and the change takes effect immediately.
+- **Raise PR** — NudgeBee opens a pull request against the repository holding the rule (choose the Git integration, repository, base branch and rule file). Available for **Prometheus rule files** only, through a GitHub or GitLab integration, and not for a change that only lengthens the wait.
 
-You can override the suggested threshold or duration before applying. A manual override is written even when the engine recommended no retune, so `investigate_signal` and `insufficient_data` suggestions can still be used to push a value you have decided on yourself.
+A **Disable Alert** suggestion is never applied from here — disable or mute the rule with the alert-rule controls instead. Risky suggestions ask you to check a confirmation first. After applying, **View in audit log** shows the change. Applying and reverting need write access to the account.
 
-**Revert** restores the previous threshold and duration. NudgeBee stores them when it applies a change, so revert works without you having recorded the old values.
+You can override the suggested threshold or duration before applying. A manual override is written even when the engine recommended no retune, so **Investigate** and **Not Enough Data** suggestions can still be used to push a value you have decided on yourself.
 
-:::note PR-applied changes revert differently
-A suggestion applied through the PR path is reverted by a second PR, not by an immediate write. The revert is not live until that PR merges.
+**Revert** restores the previous threshold and duration for a change made with **Apply directly**. NudgeBee stores them when it applies a change, so revert works without you having recorded the old values.
+
+:::note Changes made by pull request
+A change applied with **Raise PR** can't be reverted from here — open a revert pull request in your repository yourself.
 :::
 
 ## Supported alert sources

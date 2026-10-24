@@ -41,7 +41,7 @@ An automation's *investigate event* task runs whatever the tenant and account sw
 | **Automatic event analysis** | Investigates events as they arrive. Can also be turned off for one account — useful when trialing, or for a noisy account that should be analyzed only on request. | On |
 | **Investigate events without service labels** | Analyzes events even when they carry no service label, accepting lower-confidence results while labeling is fixed upstream. | Off |
 | **Post event analysis to chat** | Delivers each analysis into the incident's Slack channel or thread as it completes. | Off |
-| **AI alert prioritisation** | Classifies each alert and applies a fixed policy to set a P0–P3 priority, instead of the severity × environment formula. Priority decides what is analyzed automatically. | On for new tenants |
+| **AI alert prioritisation** | Classifies each alert and applies a fixed policy to set a P0–P3 priority, instead of the severity × environment formula. Priority decides what is analyzed automatically — see [Triage Scoring & Priority](../troubleshooting/triage-scoring.md). | On for new tenants |
 | **Auto-raise fix PRs** | Opens a draft pull request with a proposed fix when log analysis finds a code-level cause. Nothing merges automatically. | Off |
 | **Alert remediation loop** | Builds a fix plan for each alert and posts it in the alert's Slack thread, where each step can be run or declined. | Off |
 

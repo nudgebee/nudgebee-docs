@@ -3,13 +3,13 @@ sidebar_position: 1
 ---
 # Troubleshooting
 
-NudgeBee's troubleshooting dashboard gives you a real-time view of events, errors, and anomalies across all your connected Kubernetes clusters. Instead of switching between multiple monitoring tools, you get a single pane of glass — powered by the [Semantic Knowledge Graph](../knowledge-graph/index.md) — that correlates metrics, logs, traces, and code to help you find the root cause of issues faster, reducing MTTR from hours to minutes.
+NudgeBee's troubleshooting dashboard gives you a real-time view of events, errors, and anomalies across all your connected accounts — Kubernetes clusters and AWS, Azure and GCP accounts. Instead of switching between multiple monitoring tools, you get a single pane of glass — powered by the [Semantic Knowledge Graph](../knowledge-graph/index.md) — that correlates metrics, logs, traces, and code to help you find the root cause of issues faster, reducing MTTR from hours to minutes.
 
 ![NudgeBee Troubleshoot dashboard showing NuBi's daily briefing above the triage inbox, with event severity and triage scores, and the All Events, Investigations, Event Resolutions, Knowledge Graph, and Analytics tabs](./img/troubleshoot-overview.png)
 
 ### What You Can Do Here
 
-- **Monitor real-time events** — See pod crashes, OOM kills, deployment failures, and other Kubernetes events as they happen.
+- **Monitor real-time events** — See pod crashes, OOM kills, deployment failures, cloud alarms and other events as they happen, ranked by priority in the [Triage Inbox](./events-and-triage-inbox.md).
 - **AI-powered root cause analysis with NuBi** — When an [LLM is connected](../../integrations/LLM/), NuBi (the SRE AI Agent) and NudgeBee's [pre-built AI agents](../ai/) automatically analyze incidents, correlate signals across the Semantic Knowledge Graph, and suggest root causes in plain language.
 - **Explore the Semantic Knowledge Graph** — Visualize your infrastructure dependencies and trace how issues propagate across services. See [Semantic Knowledge Graph](../knowledge-graph/index.md).
 - **Configure alerting rules** — Set up custom alerting rules to get notified when specific conditions are met. See [Alerting](./alerting.md).
@@ -17,7 +17,7 @@ NudgeBee's troubleshooting dashboard gives you a real-time view of events, error
 - **Understand the split between playbooks and workflows** — Playbooks gather evidence for the LLM; [workflows](../workflow-builder/index.md) post-process the resulting event (triage, ticketing, remediation). See [Event Playbooks vs Workflows](./event-playbooks-vs-workflows.md).
 
 :::info Prerequisites
-To use troubleshooting features, you need at least one [Kubernetes cluster connected](../../installation/agent/installation/) and an [observability source integrated](../../integrations/Observability/). For AI-powered analysis, an [LLM connection](../../integrations/LLM/) is also needed.
+To use troubleshooting features, you need at least one [Kubernetes cluster](../../installation/agent/installation/) or cloud account connected and an [observability source integrated](../../integrations/Observability/). For AI-powered analysis, an [LLM connection](../../integrations/LLM/) is also needed.
 :::
 
 ---
@@ -86,6 +86,9 @@ Click **Apply Fix** in the UI to create the secret, or click **Create Jira Ticke
 
 ### Incident Triage, Events & Playbooks
 
+- **[Events & Triage Inbox](./events-and-triage-inbox.md)** — The Troubleshoot tabs, NuBi's briefing, the Triage Inbox and Events lists, and Investigations.
+- **[Triage Rules](./triage-rules.md)** — Suppress, drop, score or classify events automatically, and why **Create Rule** is per account.
+- **[Triage Scoring & Priority](./triage-scoring.md)** — How the triage score and P0–P3 priority are worked out, and how to override them.
 - **[Understand & Manage the Event Lifecycle](./event-lifecycle.md)** — 6-stage lifecycle from raw ingestion to fingerprint deduplication, triage classification, Knowledge Graph correlation, and resolution.
 - **[Snooze, Suppress, Disable, and Resolve Alerts](./alert-state-management.md)** — Event triage states, suppression scope, snooze expiry, and notification controls.
 - **[Why Am I Not Receiving Alerts?](./alert-pipeline-troubleshooting.md)** — End-to-end diagnosis of the alert delivery pipeline from monitoring source to Slack/Teams/PagerDuty.
