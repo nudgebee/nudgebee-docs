@@ -4930,7 +4930,7 @@ query ListUserGroups($limit: Int) {
 
 ## Actions Without a Schema Entry
 
-These 106 actions are routed by the gateway but declare no types in the schema, so they have no signature above. They are callable; their arguments and response shape have to be confirmed against a live environment. Descriptions come from the routing table.
+These 113 actions are routed by the gateway but declare no types in the schema, so they have no signature above. They are callable; their arguments and response shape have to be confirmed against a live environment. Descriptions come from the routing table.
 
 | Action | Description |
 |---|---|
@@ -5004,11 +5004,18 @@ These 106 actions are routed by the gateway but declare no types in the schema, 
 | `kg_create_manual_dependency` | declare one service-to-service dependency. Endpoints take node_type + name (required) plus optional namespace/cluster/arn/account_id/region. Resolver runs synchronously; response carries post-resolve status. |
 | `kg_update_manual_dependency` | edit endpoint identifiers (e.g. add a namespace to disambiguate) and auto-rerun the resolver. |
 | `kg_delete_manual_dependency` | soft-delete one row AND remove the matching source='manual' edge from the KG in one transaction. Prevents ghost edges from outliving deleted declarations. |
-| `kg_import_manual_dependencies` | bulk import declarations from CSV. Required header columns - source_node_type, source_name, dest_node_type, dest_name. Optional - source_namespace, source_cluster, source_arn, source_account_id, source_region, and the corresponding dest_ columns, plus relationship_type (defaults to CALLS) and notes. Returns per-row imported/rejected status. |
 | `kg_resolve_manual_dependency` | operator-disambiguate an ambiguous row by picking source_node_id and/or destination_node_id from source_match_candidates / dest_match_candidates. |
 | `kg_reresolve_manual_dependency` | force re-resolve a single row regardless of current status. Useful after the missing referenced node is later ingested into the KG. |
 | `kg_reresolve_manual_dependencies` | bulk re-resolve. Default filter targets every non-resolved row (pending, unmatched, ambiguous, too_many_matches, node_inactive). Pass all_rows=true to also re-resolve already-resolved rows. |
 | `kg_delete_all_manual_dependencies` | panic-button rollback. Soft-deletes every manual_dependencies row for the tenant AND removes every source='manual' edge from the KG. tenant_admin only. |
+| `kg_get_manual_node_schema` | where nodes can be declared by hand (each connected cloud account, plus outside any connected account) and, per place, the declarable types with their compulsory key fields and optional schema properties. Drives the declare-node form. |
+| `kg_list_manual_nodes` | list the tenant's manually declared KG nodes with status (active, adopted by a collector, possible_duplicate of a collected node). |
+| `kg_create_manual_node` | declare one KG node and write it into the graph at once. In a connected account the node gets the id the collector writes for the same resource, so it merges when collected; 409 when the resource is already in the graph. |
+| `kg_update_manual_node` | edit a declared node's description, optional properties and labels. Identity fields (account, type, name, region, network) cannot change - delete and declare again. |
+| `kg_delete_manual_node` | withdraw a declaration and retire its node with the edges touching it. An adopted node is left to the collector that now owns it. |
+| `kg_apply_manual_node_merge` | resolve a possible_duplicate declaration in favour of the collected node it matches - dependencies pinned to the declared node move to it and the declaration is withdrawn. |
+| `kg_create_manual_declarations` | declare KG nodes and dependencies from one JSON document, `{"nodes": [...], "dependencies": [...]}`. A node is a kg_create_manual_node request plus an optional ref (defaults to name, unique in the document). A dependency side is a ref to a node of the document, or an endpoint object with node_type, name and optional namespace, cluster, arn, account_id for a node already in the graph; relationship_type defaults to CALLS. Nodes land first; one already declared or collected comes back as existing and still links, and a dependency already declared comes back as existing. Invalid JSON, an unknown field, a duplicate or unknown ref, more than 1 MB or more than 500 items is a 400 with nothing written. Returns per-item results - nodes and dependencies, each created, existing or rejected. |
+| `kg_delete_all_manual_nodes` | panic-button rollback. Withdraws every manual node declaration for the tenant and retires every node still owned by one, with its edges. tenant_admin only. |
 | `product_updates_list` | List platform-wide product updates (changelog) |
 | `notifications_list_watchable_channels` | List Slack channels Nubi can watch, with per-channel watch state |
 | `notifications_enable_channel_watch` | Enable Nubi channel awareness for a channel (posts an in-channel disclosure) |
