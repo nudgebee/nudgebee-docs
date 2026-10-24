@@ -64,7 +64,7 @@ additional_env_vars:
 
 #### Embeddings
 
-The RAG server uses an **on-device** embedding model (`BAAI/bge-small-en-v1.5`) by default, so no embeddings provider is needed to start. To use a hosted one, set `EMBEDDINGS_PROVIDER` (`bedrock`, `azure`, `openai`, `googleai`, `vertexai`, `huggingface`, `ollama`, `sagemaker`), `EMBEDDINGS_MODEL_NAME`, and as needed `EMBEDDINGS_PROVIDER_API_KEY`, `EMBEDDINGS_PROVIDER_API_ENDPOINT`, `EMBEDDINGS_PROVIDER_API_VERSION`, `EMBEDDINGS_PROVIDER_API_TYPE` and `EMBEDDINGS_PROVIDER_REGION`.
+The RAG server's default embeddings provider is `ondevice` (model `BAAI/bge-small-en-v1.5`), so no embeddings provider is needed to start. To use a hosted one, set `EMBEDDINGS_PROVIDER` (`ondevice`, `bedrock`, `azure`, `openai`, `googleai`, `vertexai`, `huggingface`, `ollama`, `sagemaker`), `EMBEDDINGS_MODEL_NAME`, and as needed `EMBEDDINGS_PROVIDER_API_KEY`, `EMBEDDINGS_PROVIDER_API_ENDPOINT`, `EMBEDDINGS_PROVIDER_API_VERSION`, `EMBEDDINGS_PROVIDER_API_TYPE`, `EMBEDDINGS_PROVIDER_API_STYLE` (Azure: `v1` or `classic`), `EMBEDDINGS_PROVIDER_REGION` and `EMBEDDINGS_DIMENSIONS` (to shorten the embedding vectors).
 
 ---
 

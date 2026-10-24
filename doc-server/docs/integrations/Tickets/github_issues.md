@@ -21,7 +21,7 @@ Go to **Admin → Integrations → Ticketing → GitHub** (the same GitHub conne
 | Method | What you do |
 |---|---|
 | **Application** | Click **Authenticate with Github App** and install the NudgeBee GitHub App. It supports **organization** repositories only, not personal ones |
-| **User Token** | Enter a **Name**, your GitHub **Username** and the personal access **Token** from above. The username must be the account that owns the token |
+| **User Token** | Enter a **Name**, your GitHub **Username** (a valid GitHub login) and the personal access **Token** from above |
 
 **Test Connection** checks the credentials before you save. NudgeBee connects to public github.com; GitHub Enterprise Server URLs can't be set.
 

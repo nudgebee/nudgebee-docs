@@ -79,6 +79,7 @@ RAG Server uses an on-device embedding model by default, so you only need this t
 EMBEDDINGS_PROVIDER=openai
 EMBEDDINGS_MODEL_NAME=<embedding model>
 EMBEDDINGS_PROVIDER_API_KEY=<key for that provider>
+EMBEDDINGS_PROVIDER_API_VERSION=<version> # required for openai
 ```
 
 See [OpenAI](../OpenAI/index.md), [AWS Bedrock](../Aws/bedrock.md) or [Ollama](../Ollama/index.md) for the provider you choose.

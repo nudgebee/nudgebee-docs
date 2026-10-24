@@ -42,7 +42,7 @@ Navigate to **Admin** → **Integrations** → **Ticketing** tab and select **Ze
 | Field | What to enter |
 |---|---|
 | **Name \*** | A name for this connection |
-| **Account URL** | ZenDuty API URL, default `https://www.zenduty.com/api` |
+| **Account URL** | ZenDuty host, default `www.zenduty.com`. NudgeBee adds `https://` and `/api` itself |
 | **Email \*** | Your ZenDuty account email |
 | **API Token \*** | Your ZenDuty API token. Stored encrypted |
 | **Post RCA analysis to ZenDuty incidents** | When on, NudgeBee posts its root-cause analysis on the originating ZenDuty incident |

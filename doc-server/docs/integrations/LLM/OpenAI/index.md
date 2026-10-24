@@ -73,8 +73,8 @@ EMBEDDINGS_PROVIDER=openai
 EMBEDDINGS_MODEL_NAME=<Embedding model name> # e.g., "text-embedding-3-small"
 EMBEDDINGS_PROVIDER_API_KEY=<Your OpenAI API key>
 EMBEDDINGS_PROVIDER_API_VERSION=<API version> # required for the openai embeddings provider
-EMBEDDINGS_PROVIDER_API_ENDPOINT=<Custom endpoint URL> # Optional, for OpenAI-compatible endpoints
 EMBEDDINGS_PROVIDER_API_TYPE=openai # Optional
+# Custom endpoints aren't supported for OpenAI embeddings
 ```
 
 ### Available Embedding Models

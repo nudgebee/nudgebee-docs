@@ -131,7 +131,7 @@ Knowledge integrations are added as integrations, then appear under the **Integr
 - **Confluence** — add it under **Admin → Integrations** (Docs). The space key limits the sync to one space; leave it blank to sync all spaces. See [Confluence](../../integrations/Docs/confluence.md).
 - **ServiceNow** — in the ServiceNow integration, turn on **Sync Knowledge Base** to sync knowledge articles. See [ServiceNow](../../integrations/Tickets/servicenow.md).
 
-Integration knowledge bases re-sync automatically (about every 30 minutes by default) and are search-only. Other sources (Google Drive, arbitrary URLs) are not synced today; upload their content as a file instead.
+Integration knowledge bases re-sync automatically once a day (08:00 UTC by default) and are search-only. Use **Retrigger** to sync one now. Other sources (Google Drive, arbitrary URLs) are not synced today; upload their content as a file instead.
 
 ### Add skills from GitHub
 

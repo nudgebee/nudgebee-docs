@@ -54,7 +54,8 @@ Update the environment variables in the RAG server to connect to the deployed mo
 EMBEDDINGS_PROVIDER=azure
 EMBEDDINGS_MODEL_NAME=<Model name in Azure AI Foundry>
 EMBEDDINGS_PROVIDER_API_VERSION=<API version for Azure embeddings>
-EMBEDDINGS_PROVIDER_API_ENDPOINT=<Azure embeddings endpoint URL>
+EMBEDDINGS_PROVIDER_API_ENDPOINT=https://<resource>.openai.azure.com
+EMBEDDINGS_PROVIDER_API_STYLE=v1 # default; use classic together with EMBEDDINGS_PROVIDER_API_VERSION
 EMBEDDINGS_PROVIDER_API_KEY=<Credential for accessing Azure embeddings>
 ```
 

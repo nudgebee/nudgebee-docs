@@ -39,29 +39,28 @@ Google Vertex AI is a unified platform that brings together Google Cloud's machi
 
 ## Add it in NudgeBee (UI)
 
-In **Admin → Integrations → LLM → Add LLM Provider**, choose **vertexai**, enter the **LLM Model Name** and an **API Key**. See [Add an LLM Provider](../add-llm-provider.md). **Test Connection** checks the configuration for Vertex AI but doesn't call the model, so send a test question to NuBi after saving.
+In **Admin → Integrations → LLM → Add LLM Provider**, choose **vertexai** and enter the **LLM Model Name**. Vertex AI authenticates with Application Default Credentials — the service account available to the LLM Server's pod — not an API key. The form still asks for an **API Key**; enter any placeholder, it is ignored. See [Add an LLM Provider](../add-llm-provider.md). **Test Connection** checks the configuration for Vertex AI but doesn't call the model, so send a test question to NuBi after saving.
 
 ## Integrating with LLM Server (environment variables)
 
 ```bash
 LLM_PROVIDER=vertexai
 LLM_MODEL_NAME=<Vertex AI model name, e.g. gemini-2.5-flash>
-LLM_PROVIDER_REGION=<location, default us-central1>
+LLM_PROVIDER_REGION=<your Vertex location, e.g. us-central1>
 GOOGLE_CLOUD_PROJECT=<your project id>
-LLM_PROVIDER_API_KEY=<optional; leave unset to use Application Default Credentials>
 ```
 
-The project comes from `GOOGLE_CLOUD_PROJECT` and the location from `LLM_PROVIDER_REGION` (default `us-central1`). With no API key, the LLM Server uses the service account available to its pod (Application Default Credentials).
+The project comes from `GOOGLE_CLOUD_PROJECT` and the location from `LLM_PROVIDER_REGION`. Always set the region: if it's unset it falls back to `us-west-2`, which isn't a Vertex AI location for most models. Authentication uses the service account available to the pod (Application Default Credentials).
 
 ## Integrating with RAG Server
 
 ```bash
 EMBEDDINGS_PROVIDER=vertexai
 EMBEDDINGS_MODEL_NAME=<embedding model, e.g. text-embedding-005>
-EMBEDDINGS_PROVIDER_REGION=<location>
+EMBEDDINGS_PROVIDER_REGION=<your Vertex location, e.g. us-central1>
 ```
 
-Both the model name and the region are required for Vertex AI embeddings.
+Set the region explicitly — `EMBEDDINGS_PROVIDER_REGION` also defaults to `us-west-2`.
 
 ## Related
 

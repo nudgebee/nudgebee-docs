@@ -83,7 +83,7 @@ Once configured, NudgeBee can perform the following operations with ServiceNow:
 
 ### Knowledge Base Sync
 
-When **Sync Knowledge Base** is enabled, NudgeBee creates an organization-wide knowledge base from your ServiceNow Knowledge Base articles and re-syncs it automatically, every 30 minutes by default. It appears in **b-Cortex → Knowledge → Knowledge Base** under **Integration**. These articles are then used by the AI engine to provide context-aware troubleshooting recommendations based on your organization's documented procedures and solutions.
+When **Sync Knowledge Base** is enabled, NudgeBee creates an organization-wide knowledge base from your ServiceNow Knowledge Base articles and re-syncs it automatically once a day (08:00 UTC by default); use **Retrigger** on the knowledge base to sync now. It appears in **b-Cortex → Knowledge → Knowledge Base** under **Integration**. These articles are then used by the AI engine to provide context-aware troubleshooting recommendations based on your organization's documented procedures and solutions.
 
 ---
 

@@ -59,7 +59,7 @@ annotations:
 **Option A: User Token**
 - Generate a token at: GitHub → Settings → Developer settings → Personal access tokens
 - Required scopes: `repo`, `workflow`
-- Enter a **Name**, your GitHub **Username** (it must be the account that owns the token) and the **Token**
+- Enter a **Name**, your GitHub **Username** (a valid GitHub login) and the **Token**
 
 **Option B: Application (Recommended)**
 - Click **Authenticate with Github App** and install the app on your organization
@@ -259,7 +259,7 @@ annotations:
 | `ci.nudgebee.com/git.hash` | No | - | Git commit SHA of deployed version |
 | `ci.nudgebee.com/helm.values.rootPath` | No | - | JSON path prefix for all values (e.g., `app.resources`) |
 | `ci.nudgebee.com/helm.values.cpuRequestJsonPath`, `cpuLimitJsonPath`, `memoryRequestJsonPath`, `memoryLimitJsonPath`, `replicaJsonPath` | No | - | Exact JSON paths for each value when your chart doesn't follow the default layout |
-| `ci.nudgebee.com/inPlaceResize` | No | in-place for CPU and memory | Adds a `resizePolicy` to the PR so the workload can be resized without a restart. `false` turns it off; `restart-memory` restarts the container on memory changes |
+| `ci.nudgebee.com/inPlaceResize` | No | in-place for CPU and memory (Kubernetes 1.35 or later) | On Kubernetes 1.35 or later, adds a `resizePolicy` to the PR so the workload can be resized without a restart; on older clusters no resize policy is added. `false` turns it off; `restart-memory` restarts the container on memory changes |
 
 ### Source Code Annotations (`workloads.nudgebee.com/`)
 

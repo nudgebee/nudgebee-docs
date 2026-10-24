@@ -77,7 +77,7 @@ For Entra ID instead of a key, set `LLM_AUTH_TYPE=oauth_client_credentials` with
 EMBEDDINGS_PROVIDER=azure
 EMBEDDINGS_MODEL_NAME=<embedding deployment> # e.g., "text-embedding-3-small"
 EMBEDDINGS_PROVIDER_API_VERSION=<API version for Azure embeddings> # e.g., "2023-05-15"
-EMBEDDINGS_PROVIDER_API_ENDPOINT=<Azure embeddings endpoint URL> # e.g., "https://your-resource-name.openai.azure.com/openai/deployments/your-deployment-name"
+EMBEDDINGS_PROVIDER_API_ENDPOINT=https://<resource>.openai.azure.com # v1 style (the default); for classic set EMBEDDINGS_PROVIDER_API_STYLE=classic
 EMBEDDINGS_PROVIDER_API_KEY=<Credential for accessing Azure embeddings>
 ```
 

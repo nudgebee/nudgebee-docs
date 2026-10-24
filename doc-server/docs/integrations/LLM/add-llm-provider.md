@@ -28,12 +28,12 @@ The credential fields that follow depend on the provider:
 | `openai` | **API Key**; optional **API Endpoint** and **API Type** |
 | `anthropic` | **API Key**, **API Endpoint** |
 | `googleai` (Gemini API) | **API Key** |
-| `vertexai` | **API Key** — see [Vertex AI](./Google/vertex-ai.md) |
-| `azure` | **Authentication** (**API key** or **OAuth2 client credentials**), **API Endpoint** (`https://<resource>.openai.azure.com`), **API Style** (**v1 (recommended)** or **Classic (api-version)**); **API Version** only with Classic. See [Azure OpenAI](./Azure/azure-openai.md) |
+| `vertexai` | **API Key** (required by the form but not used — Vertex AI uses the pod's service account; enter any placeholder). See [Vertex AI](./Google/vertex-ai.md) |
+| `azure` | **Authentication** (**API key** or **OAuth2 client credentials**), **API Key** (with API-key auth) or the OAuth2 fields, **API Endpoint** (`https://<resource>.openai.azure.com`), **API Style** (**v1 (recommended)** or **Classic (api-version)**); **API Version** only with Classic, optional **Extra request headers (JSON)**. See [Azure OpenAI](./Azure/azure-openai.md) |
 | `bedrock` | **Region**, **AWS Access Key**, **AWS Secret Key** (required) |
 | `sagemaker` | **API Endpoint** (the SageMaker endpoint name), **Region** |
 | `huggingface` | **API Key**, **API Endpoint**, optional **API Type**, **Adapter ID** and **Require Adapter ID** |
-| `custom` | **Authentication**, **API Key** (or OAuth2 fields), **API Endpoint**, optional **API Type**, **API Version**, **Deployment Name**, **Extra request headers (JSON)** |
+| `custom` | **Authentication**, **API Key** (or OAuth2 fields), **API Endpoint**, optional **API Type** and **Extra request headers (JSON)**. **API Version** and **Deployment Name** appear when **API Type** is **Azure (api-key header)** or **Azure AD (Bearer token)** |
 
 ### Custom: OpenRouter, vLLM, Ollama and other gateways
 
@@ -51,7 +51,7 @@ For gateways that need a bearer token instead of a static key, choose **OAuth2 c
 
 ## Test Connection
 
-**Test Connection** sends a short real request to every provider and model the form uses — the main model, each override and the fallback — and **Save** stays disabled until it passes. For Vertex AI the test checks the configuration but does not call the model.
+**Test Connection** sends a short real request to every provider and model the form uses — the main model, each override and the fallback — and **Save** stays disabled until it passes. When you edit a configuration that is already connected, you can save without testing again. For Vertex AI the test checks the configuration but does not call the model.
 
 ## Related
 

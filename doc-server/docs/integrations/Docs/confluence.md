@@ -55,7 +55,7 @@ Navigate to **Admin** > **Integrations** > **Docs** and select **Confluence**, t
 Click **Test Connection**, then **Save**. The test signs in, and also checks that the **Namespace** space exists and that the pages in **Limit to pages** can be found.
 
 :::note Network access
-NudgeBee connects to Confluence directly from its own servers, not through your cluster agent. A Confluence Data Center instance must be reachable from NudgeBee over HTTPS, with a certificate from a public certificate authority.
+NudgeBee connects to Confluence directly from its own servers, not through your cluster agent. A Confluence Data Center instance must be reachable from NudgeBee. If it uses HTTPS, its certificate must come from a public certificate authority.
 :::
 
 :::tip
@@ -80,7 +80,7 @@ Start narrow. Index one space — or a handful of pages — that your team genui
 | `404` on the base URL | Missing context path | Data Center instances behind a path need it included, e.g. `https://wiki.example.com/confluence`. |
 | Connection succeeds, nothing is retrieved | The account cannot read the space, or the space key is wrong | Space keys are case-sensitive; confirm the account can open the space in a browser. |
 | Only some pages are found | **Limit to pages** is set | Clear it to index the whole space. |
-| Answers cite stale content | The page changed after the last sync | Confluence content is re-synced automatically, every 30 minutes by default. To sync now, use **Retrigger** on its knowledge base in **b-Cortex → Knowledge → Knowledge Base**. |
+| Answers cite stale content | The page changed after the last sync | Content is re-synced automatically once a day (08:00 UTC by default). Use **Retrigger** on its knowledge base in **b-Cortex → Knowledge → Knowledge Base** to sync now. |
 
 ---
 
