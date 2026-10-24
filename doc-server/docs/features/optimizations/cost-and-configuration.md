@@ -32,9 +32,9 @@ Columns: **Severity**, **Resource**, **Recommendation**, **Category**, **Safety*
 
 Row actions:
 
-- **Optimize** (with write access, for workload right-sizing, unused and oversized volumes, abandoned workloads, and gp2 volumes) — opens the fix for that recommendation.
+- **Optimize** (with write access, for workload right-sizing, unused and oversized volumes, abandoned workloads, and gp2 volumes while the item is Open) — opens the fix for that recommendation.
 - **Ask NuBi**.
-- The **⋮** menu: **Create ticket** (or the existing ticket), **Dismiss / snooze** or **Reactivate**, and **Copy CLI command**.
+- The **⋮** menu: **Create ticket** (or the existing ticket; disabled without ticket access), **Dismiss / snooze** or **Reactivate** (write access, only for Open or Dismissed items — not In progress), and **Copy CLI command** (only when a command exists).
 
 ## Configuration
 
@@ -50,14 +50,14 @@ The actions depend on the recommendation:
 |---|---|---|
 | **Resolve** | Workload right-sizing | Opens *Resolve this issue* — see [Kubernetes → Optimize](../Kubernetes/optimize.md#apply-a-recommendation) |
 | **Reclaim Volume** | Unused volumes | Type the volume name and confirm **Delete Volume**. This can't be undone. |
-| **Resize Volume** | Oversized volumes | Enter the **New size** (Gi), pre-filled with the recommended size. Use a maintenance window. |
+| **Resize Volume** | Oversized volumes | Enter the **New size** (Gi) — pre-filled when the finding includes a recommended size. Use a maintenance window. |
 | **Scale Down Workload** | Abandoned workloads | Type the name and confirm **Scale Down**. Scales to 0 replicas and keeps the manifest. |
-| **Upgrade to gp3** | gp2 EBS volumes | Converts the volume in place, with no downtime, in the background |
-| **Setup HPA AutoPilot** | Replica right-sizing | Creates a [Horizontal Right Sizing](./autopilot/auto_optimize/index.md) rule |
+| **Upgrade to gp3** | gp2 EBS volumes (while Open) | Converts the volume in place, with no downtime, in the background |
+| **Setup HPA AutoPilot** | Replica right-sizing | Opens Automations in a new tab |
 | **Create Alarm** | Configuration findings that include an alarm | Creates the CloudWatch alarm |
 | **Create Ticket**, **Copy Command**, **Ask NuBi** | Any | — |
 
-Volume and workload actions run through the cluster's agent, so they're unavailable while it's disconnected (*Agent not connected*). Each is queued and shows up in [Resolutions](./resolutions.md).
+**Reclaim Volume**, **Resize Volume** and **Scale Down Workload** run through the cluster's agent, so they're unavailable while it's disconnected (*Agent not connected*). **Upgrade to gp3** is a cloud action and doesn't need the agent. Each is queued and shows up in [Resolutions](./resolutions.md).
 
 ### Dismiss or snooze
 

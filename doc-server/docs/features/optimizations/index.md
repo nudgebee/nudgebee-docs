@@ -39,15 +39,15 @@ For a Kubernetes workload, NudgeBee looks at **14 days** of CPU and memory usage
 | **CPU request** | The 99th percentile (P99) of observed CPU usage |
 | **CPU limit** | Not set |
 | **Memory request** | Peak observed usage plus 15% |
-| **Memory limit** | At least the request, and above the container's highest recorded memory plus 15% |
-| **After OOM kills** | Memory is raised by a further 25% |
-| **Minimums** | 100m CPU and 100 MB memory |
+| **Memory limit** | At least the request, and at least the container's highest recorded memory plus 15% (no higher than the current limit if the container never exceeded it or got OOM-killed) |
+| **After OOM kills** | Memory is set to at least 25% above the limit the container had when it was OOM-killed |
+| **Minimums** | 10m CPU and 100 MiB memory |
 
 When you apply a recommendation you can choose a different algorithm (**NB Algo**, **P99**, **P97** or **P95**) and add a CPU or memory buffer — see [Kubernetes → Optimize](../Kubernetes/optimize.md#apply-a-recommendation).
 
 **Savings** are the reduction in requested CPU and memory, multiplied by the node's price per unit, the hours in a month and the number of replicas. They are shown in **USD per month**, even when an account is billed in another currency. A **negative** value means the recommendation *raises* cost — usually because a workload is under-provisioned; totals leave these out.
 
-An **unused volume** is a persistent volume that no running pod mounts.
+An **unused volume** is a persistent volume that isn't mounted by any running pod, as reported by the cluster agent.
 
 ## Raise a pull request instead of patching
 

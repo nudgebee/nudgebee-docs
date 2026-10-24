@@ -20,7 +20,7 @@ keywords: [auto optimize, autopilot, continuous rightsizing, scheduled rightsizi
 
 ## Create a rule
 
-Choose **Create Auto Optimize** (top right) and a category. You can also start one from a recommendation — **Continuous Auto Optimize** or **Schedule Auto Optimize** in *Resolve this issue*, or **Setup HPA AutoPilot** — or from a workload's row menu on the cluster page. Creating a rule needs write access to the cluster.
+Choose **Create Auto Optimize** (top right) and a category. You can also start one from a recommendation — **Continuous Auto Optimize** or **Schedule Auto Optimize** in *Resolve this issue* — or from a workload's row menu on the cluster page. Creating a rule needs write access to the cluster.
 
 ### Scheduled Vertical Right Sizing
 
