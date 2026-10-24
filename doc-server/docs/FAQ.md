@@ -51,7 +51,7 @@ sidebar_position: 100
 
 - **Raise PRs from NudgeBee**: Create automated pull requests with rightsized resource limits directly to your Git repository.
 - **GitOps Reconciliation (Flux / Argo CD)**: Annotate manifests or configure automated PR merges to ensure GitOps state remains the single source of truth.
-- **NudgeBee Autopilot Reconciliation**: Apply `nudgebee.io/ignore: "true"` annotations to exclude specific workloads from automated rightsizing.
+- **Auto Optimize scope**: Auto Optimize only changes the namespaces and applications you select in each rule, and **Raise Git Pull Request** sends changes through your repository instead of patching. See [Auto Optimize](./features/optimizations/autopilot/auto_optimize/index.md).
 
 ### Can NudgeBee work on K3s/Kind/Minikube?
 Yes, please refer to the [Server Installation Guide](/docs/installation/server/) and [Agent Installation Guide](/docs/installation/agent/installation/) for local evaluation instructions.

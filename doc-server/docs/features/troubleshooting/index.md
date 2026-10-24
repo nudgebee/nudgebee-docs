@@ -47,7 +47,7 @@ graph LR
 NudgeBee is designed with strict enterprise safety controls:
 
 - **Default Mode (Human-in-the-Loop)**: NuBi produces diagnostic conclusions and generates exact remediation commands (e.g. `kubectl patch`, rollback commands, or secret creations). NuBi **never runs destructive commands automatically** without explicit human one-click approval in the UI or Slack.
-- **Autopilot Mode (Policy-Gated)**: If you enable [Autopilot](../optimizations/autopilot/autopilot.md), safe non-destructive operations (such as pod restarts, vertical right-sizing, or node drains) can be executed automatically according to rules and schedules you define.
+- **Automated actions**: [Auto Optimize](../optimizations/autopilot/auto_optimize/index.md) can apply right-sizing for you, continuously or on a schedule, with optional approval. Other automatic responses — restarting a workload, deleting a pod, draining a node — are built as [Automations](../workflow-builder/index.md), with an Approval step where you want one.
 - **Audit Logging**: Every action proposed, approved, or executed is logged with user attribution for compliance.
 
 ---
