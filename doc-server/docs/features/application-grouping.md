@@ -50,7 +50,7 @@ Open a group to see it on its own page. Switch between groups at the top, and us
 
 | Tab | Shows |
 |---|---|
-| **Summary** | **Application Summary** — the number of applications, SLO status (last 30 days), events, critical log errors and API failures, and **Optimizations** with links to Right Sizing, Unused Volumes and Spot. **Events/Errors** — events by type and by application, and trace groups |
+| **Summary** | **Application Summary** — the number of applications, SLO status (last 30 days), events, critical log errors and API failures, and **Optimizations** with links to Right Sizing, Unused Volumes and **Spot Recommendations**. **Events/Errors** — events by type and by application, and trace groups. Charts for HTTP Request, CPU, Memory and Error Calls |
 | **Events** (beta) | Events for the group's workloads |
 | **Applications** (beta) | The group's workloads |
 | **Monitoring** | Not available yet |

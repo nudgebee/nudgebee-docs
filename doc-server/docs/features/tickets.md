@@ -40,7 +40,7 @@ Filters: **Account**, **Priority**, **Tool**, **Status**, **Assignee** (All Tick
 |---|---|
 | **Ticket ID** | The external ticket's ID — click it to open the ticket in its tool, or copy it |
 | **Tool** | Which ticketing tool it lives in |
-| **Title**, **Priority**, **Status** | As held in the external tool |
+| **Title**, **Priority**, **Status** | As held in the external tool. A ticket with no priority shows **Critical** |
 | **Account** | The NudgeBee account it was raised for |
 | **Created By**, **Assignee** | Who raised it and who it's assigned to |
 | **Created At** | When it was created (sortable) |
@@ -76,12 +76,12 @@ The **Create Ticket** dialog asks for:
 | **Select Ticket Config** | Which connected ticketing integration to use |
 | Project | Named for the tool: **Select Jira Project**, **Select Github Repository**, **Select GitLab Project**, **Select Table** (ServiceNow), **Select PagerDuty Service**, **Select ZenDuty Service** or **Select Freshdesk Group** |
 | **Select Issue** | The issue type |
-| **Severity** | The ticket's priority. For ServiceNow, priority is set by ServiceNow from Impact and Urgency |
+| **Priority** / **Urgency** | **Priority** (Jira, Freshdesk) or **Urgency** (PagerDuty, ZenDuty) sets the ticket's priority. For ServiceNow, a read-only **Severity** is set from Impact and Urgency |
 | **Subject**, **Description** | Pre-filled from the event or recommendation; edit as needed |
 
-You need read access to the account, or permission to write tickets. Without it the action reads *Create Ticket · requires account access*.
+You need read access to the account, or permission to write tickets. On events, grouped events and VM vulnerabilities, the action reads *Create Ticket · requires account access* when you don't have it.
 
-**No duplicates.** If a ticket already exists for the same item in the same tool and project, NudgeBee adds a comment to it instead of opening a new one, and tells you *Existing ticket found, added comment.* with a link. If the external tool created the ticket but NudgeBee couldn't record it, you'll see a warning — don't retry, or you'll create a duplicate.
+**No duplicates.** If a ticket already exists for the same item in the same ticket integration and project (the project is compared only when one is given), NudgeBee adds a comment to it instead of opening a new one, and tells you *Existing ticket found, Added comment successfully* with a link. If the external tool created the ticket but NudgeBee couldn't record it, you'll see a warning — don't retry, or you'll create a duplicate.
 
 Once an event has a ticket, the triage status badge no longer offers **Create Ticket**.
 

@@ -49,11 +49,11 @@ To add panels to a dashboard, use **Add panel** in edit mode: **From library** (
 
 1. **What should it show?** — describe it in plain English.
 2. **Account** — metric names are looked up on this account, and the panels are scoped to it.
-3. **Generate** — NuBi builds a preview. Check it (*Check before saving*), then open it as a draft and **Save**.
+3. **Generate** — NuBi builds a preview. Check it (*Check before saving*), then **Open in editor** to open it as an unsaved draft, and **Save**.
 
-Generated dashboards are built from **metrics** only: time series, stat and gauge panels plus text, up to 24 panels with up to 5 queries each.
+Generated dashboards are built from **metrics** only: time series, stat, gauge, bar and table panels plus text, up to 24 panels with up to 5 queries each.
 
-You can also ask for a dashboard in the [NuBi chat](./ai/nubi-chat.md). When the answer is ready, **Open as dashboard** opens it here as an unsaved draft. If the link has expired you'll see *The generated dashboard was not found. Open it again from the conversation.*
+You can also ask for a dashboard in the [NuBi chat](./ai/nubi-chat.md). When the answer is ready, **Open as dashboard** opens the *Generate a dashboard with NuBi* preview, with its panel check; from there **Open in editor** opens it as an unsaved draft. If the link has expired you'll see *The generated dashboard was not found. Open it again from the conversation.*
 
 ## Viewing and editing
 
@@ -171,7 +171,7 @@ Numbers are formatted the way the rest of the product formats them: currency as 
 
 ### PostgreSQL, Redis, RabbitMQ and kubectl
 
-These four run a command against a connected integration and render what comes back. All three are read-only by construction — the allow-lists below are enforced server-side, not just in the editor.
+These four run a command against a connected integration and render what comes back. All four are read-only by construction — the allow-lists below are enforced server-side, not just in the editor.
 
 **PostgreSQL** takes a single read-only statement beginning with `SELECT`, `WITH`, `SHOW`, `EXPLAIN`, `TABLE` or `VALUES`. No writes anywhere in it — including data-modifying CTEs — no semicolons, and no double quotes. Single quotes for values are fine.
 

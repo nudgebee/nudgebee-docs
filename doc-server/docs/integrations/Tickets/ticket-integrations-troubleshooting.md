@@ -61,7 +61,7 @@ flowchart TD
 
 ### Failure 4: Jira Ticket Status Is Stale
 
-NudgeBee checks each open ticket in its tool **every hour** (there is no webhook), so a change can take up to an hour to show. Tickets already in a final state (resolved, closed, done, rejected, cancelled) are no longer checked. The Jira sync fetches issue details and updates NudgeBee ticket records. Check the linked issue ID, configured credentials, access to that issue, and ticket-server sync errors. See [Jira troubleshooting](./jira.md#4-jira-ticket-status-is-stale).
+NudgeBee checks each open ticket in its tool **every hour** (there is no webhook), so a change can take up to an hour to show. Tickets already in a final state (resolved, closed, done, complete/completed, rejected, cancelled/canceled, declined) are no longer checked. The Jira sync fetches issue details and updates NudgeBee ticket records. Check the linked issue ID, configured credentials, access to that issue, and ticket-server sync errors. See [Jira troubleshooting](./jira.md#4-jira-ticket-status-is-stale).
 
 Ticket status and event triage status are separate. This flow does not require a Jira status-sync webhook and does not resolve a linked event. A ticket raised for a recommendation does change it: see [What closing a ticket does](../../features/tickets.md#what-closing-a-ticket-does).
 
