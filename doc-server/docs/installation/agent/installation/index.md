@@ -97,7 +97,7 @@ Inside the cluster the runner also needs to reach Prometheus, Alertmanager, Loki
 
 ### Quick install with the script (what the UI gives you)
 
-The **Finish Setup** step in the UI has a **Helm** tab (the default) and a **Shell Script** tab with a one-line `installation.sh` command. The script's default is a minimal install — no bundled Prometheus or traces. See the [Install Script Reference](./install-script.md) for every flag. The Helm steps below are the manual equivalent.
+The **Finish Setup** step in the UI has a **Helm** tab (the default) and a **Shell Script** tab with a one-line `installation.sh` command. The script's default is a minimal install — no bundled Prometheus or traces. See the [Install Script Reference](./install-script.md) for every flag. The Helm steps below are a full install; the UI's **Helm** tab, like the script, is the minimal one.
 
 ### Step 1: Generate Your Auth Key
 

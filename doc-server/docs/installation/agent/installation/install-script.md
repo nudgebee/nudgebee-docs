@@ -18,8 +18,8 @@ The UI adds `-S` when your NudgeBee server has a signing key, `-d true` if you u
 
 The UI's default is a **minimal install**: no bundled Prometheus stack (`-g true`), and no OpenTelemetry collector or ClickHouse (`-t true`) — so **no traces** until you turn tracing on. Drop `-g` and `-t` to get them. OpenCost is off in the chart by default either way (`-x true` only keeps it off); turn it on with `-f` and `opencost.enabled: true`.
 
-:::caution Run it with `bash`
-The script needs bash. `sh installation.sh` fails on systems where `sh` is not bash (for example Debian and Ubuntu).
+:::caution Run it with `bash`, and have `bc` installed
+The script needs bash. `sh installation.sh` fails on systems where `sh` is not bash (for example Debian and Ubuntu). It also needs `bc` for its kernel check and exits if `bc` isn't installed.
 :::
 
 ## Flags
@@ -55,11 +55,11 @@ Unless you pass `-g true` or `-p`, the script looks for Prometheus in the cluste
 - Answer **`yes`** to install `kube-prometheus-stack` as the release `nudgebee-prometheus`.
 - **Any other answer stops the script without installing the agent.** Pass `-p <url>` to use an existing Prometheus, or `-g true` to skip it.
 
-It may also ask whether to install Loki for logs (release `nudgebee-loki`).
+After the agent is installed it may also ask whether to install Loki for logs (release `nudgebee-loki`) — even with `-g true`. Answering anything but `yes` skips Loki; it doesn't undo the agent install.
 
 ## Re-running the script
 
-The script runs `helm upgrade --install` **without** `--reuse-values`. Re-running it with only `-a` resets the agent to the chart defaults — it turns back on the Prometheus stack, OpenTelemetry collector and ClickHouse if your original flags turned them off, and drops self-hosted `-w`/`-c` settings. Pass the same flags you installed with, or upgrade with Helm and `--reuse-values` — see [Upgrade](./upgrade.md).
+The script runs `helm upgrade --install` **without** `--reuse-values`. Re-running it with only `-a` resets the agent to the chart defaults: the bundled Prometheus stack setting (`enablePrometheusStack`) goes back on and the script looks for Prometheus again — asking to install one if it finds none — and the OpenTelemetry collector and ClickHouse come back if your original flags turned them off. Self-hosted `-w`/`-c` settings are dropped. If the script installed Prometheus the first time, the re-run finds that Prometheus and no longer sets `nodeAgent.podmonitor.enabled=false`, so the node agent gets scraped twice — pass `-f` with a values file containing `nodeAgent.podmonitor.enabled: false`. Pass the same flags you installed with, or upgrade with Helm and `--reuse-values` — see [Upgrade](./upgrade.md).
 
 ## Related
 

@@ -60,7 +60,7 @@ bash installation.sh -a <NUDGEBEE_AUTH_KEY> <the same flags you installed with>
 ```
 
 :::caution Pass the same flags again
-The script runs `helm upgrade --install` **without** `--reuse-values`. Re-running it with only `-a` resets the agent to the chart defaults: it turns back on the bundled Prometheus stack, OpenTelemetry collector and ClickHouse if your original flags turned them off (as the UI's minimal install does), drops self-hosted `-w`/`-c` settings, and asks about Prometheus again. The command the UI shows under *Update the Agent* / *Re-new Token* has only `-a` — add your other flags, or use the Helm upgrade below.
+The script runs `helm upgrade --install` **without** `--reuse-values`. Re-running it with only `-a` resets the agent to the chart defaults: the bundled Prometheus stack setting (`enablePrometheusStack`) goes back on and the script looks for Prometheus again — asking to install one if it finds none — and the OpenTelemetry collector and ClickHouse come back if your original flags turned them off. Self-hosted `-w`/`-c` settings are dropped. If the script installed Prometheus the first time, the re-run finds that Prometheus and no longer sets `nodeAgent.podmonitor.enabled=false`, so the node agent gets scraped twice — pass `-f` with a values file containing `nodeAgent.podmonitor.enabled: false`. The command the UI shows under *Update the Agent* / *Re-new Token* has only `-a` — add your other flags, or use the Helm upgrade below.
 :::
 
 ---
