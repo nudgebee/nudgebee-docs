@@ -256,6 +256,10 @@ az role assignment create \
 
 ---
 
+## Real-time events (Event Grid)
+
+By default NudgeBee picks up Azure changes on its regular sync. To receive Azure Monitor events in real time, open **Admin → Integrations → Azure** and choose **Connect Event Grid** in the subscription's row menu (**Manage Event Grid** once connected). See [Access Modes & Real-Time Events](./access-modes-and-real-time-events.md).
+
 ## Troubleshooting Azure Integration
 
 ### 1. `AuthenticationFailed: Invalid client secret` when discovering subscriptions

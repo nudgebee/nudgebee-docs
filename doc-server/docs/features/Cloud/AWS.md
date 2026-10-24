@@ -641,17 +641,24 @@ collector uses today:
 | ECS remediations | `ecs:UpdateService` |
 | Run Command on instances | `ssm:SendCommand`, `ssm:GetCommandInvocation`, `ssm:ListCommandInvocations`, `ssm:DescribeInstanceInformation` |
 
-The template also deploys EventBridge rules in every region that forward resource
-state-change events — EC2 state changes, RDS events, CloudWatch alarm state
-changes — to the SQS queue configured for your NudgeBee deployment. On a
-self-hosted install that queue lives in **your own AWS account** and is read by
-the collector running in your cluster; the events do not leave your account.
+### Real-time events (EventBridge)
 
-These rules ship with the template's **Standard** mode, so they are not available
-with a manual role, and today they cannot be enabled separately from the write
-actions above. Without them NudgeBee learns about changes on its daily sync
-rather than in near real time. Contact NudgeBee support if you want the event
-pipeline without the write permissions.
+EventBridge rules forward events to NudgeBee in near real time: EC2 instance state
+changes, RDS instance events, ECS service actions and task state changes,
+CloudWatch alarm state changes, and API calls (through CloudTrail) for EC2, RDS,
+ECS, Lambda, load balancers, SQS and SNS. On a self-hosted install they are sent to
+the SQS queue configured for your deployment, in **your own AWS account**, and read
+by the collector running in your cluster; the events do not leave your account.
+
+You can add them at any time, including to an account connected with a manual role:
+in **Admin → Integrations → AWS**, choose **Connect EventBridge** in the account's
+row menu and deploy the EventBridge stack it offers. That stack creates only the
+EventBridge resources. Without it NudgeBee learns about changes on its daily sync.
+See [Access Modes & Real-Time Events](./access-modes-and-real-time-events.md) for the
+**Real-Time Events** status values.
+
+To change the access mode of an account connected with the CloudFormation template,
+use **Update Permissions** in the account's row menu.
 
 ---
 
