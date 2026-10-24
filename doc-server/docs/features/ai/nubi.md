@@ -15,7 +15,8 @@ When you ask about a problem — a crashing pod, a slow service, a cost spike, a
 
 - **Changes need approval.** In chat, a step that would change a system — a cluster, cloud resource, repository or database — is held for your approval. Admins can let specific, known-safe commands run without asking with [Tool Approvals](./tool-approvals.md), and automations can be configured by their author to run without asking.
 - **Scoped to the selected account.** Investigations run on the account you have selected and reach another connected account only when you ask about it. Product questions (accounts, integrations, documentation) can cover every account you are allowed to see.
-- **Alerts are investigated automatically** when investigation is enabled for the event; you can ask follow-up questions in the same conversation.
+- **Alerts are investigated automatically** — high-priority events by default, controlled by tenant and account settings; you can ask follow-up questions in the same conversation. See [Automatic Event Analysis](./event-analysis.md).
+- **It can keep watching.** Ask NuBi to tell you when something finishes and it checks in the background — see [Watches](./watches.md).
 
 ## Answer questions about NudgeBee itself
 
@@ -50,8 +51,8 @@ NuBi searches your **knowledge bases** (Confluence, ServiceNow, uploaded documen
 | Where | What works |
 |---|---|
 | **Nubi** (app) and the **⌘J** drawer | Full conversations, approvals, image attachments, `@` to ask a specific agent, `/skill-name` to load a skill, `@nubi` for product questions, and **Ask Nubi** buttons on logs, traces, tables and events. See [Using the Chat](./nubi-chat.md). |
-| **Slack** | Mention the NudgeBee app in a channel; alert cards have an **Ask Nubi to Analyse!** button (named after your assistant). See [Slack](../../integrations/Notifications/slack.md). |
-| **Microsoft Teams** | `@Nubi` in a channel or thread; alert cards with Ask NuBi, and approval cards. Standard channels only. See [Microsoft Teams](../../integrations/Notifications/msteams.md). |
+| **Slack** | `@Nubi` in a channel or thread, or a direct message; Nubi replies in a thread (mention it again to continue). Alert cards have **Ask Nubi to Analyse!**, approvals have one button per option, and **Watched Channels** give Nubi channel context. See [Using Nubi in Slack](../../integrations/Notifications/slack.md#using-nubi-in-slack). |
+| **Microsoft Teams** | `@Nubi` in a channel or thread; alert cards with **Ask Nubi**, and approval cards (buttons stop working after 7 days). Standard channels only. See [Microsoft Teams](../../integrations/Notifications/msteams.md). |
 
 **Notifications are separate from chat.** Alert notifications are delivered to Slack, Microsoft Teams, Google Chat, Discord or webhooks according to your notification rules. Automations can also send messages to Slack, Microsoft Teams or Google Chat with the *Send message* task.
 

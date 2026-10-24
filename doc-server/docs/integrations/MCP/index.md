@@ -100,7 +100,10 @@ Stdio caveats:
 
 ## Choose Which Tools Need Approval
 
-The integration's **Tools that need approval** field lists the server's own tools. Pick the ones that change something (**Mark all tools** and **Clear** help), or type names before the first save. Tenant admins can also change it later with **Manage** on the MCP Servers list.
+There are two places to choose which tools need approval:
+
+- **Admin → Integrations → MCP** → edit the integration → **Tools that need approval**. It lists the server's own tools; pick the ones that change something (**Mark all tools** and **Clear** help), or type names before the first save.
+- **Admin → AI & Tools → Tools & MCP → MCP Servers** → **Manage** on the server's row (tenant admins). The **Manage** button is on this list, not on the Integrations page.
 
 - A listed tool **always asks** a person before it runs. Every other tool on the server **never asks** — there is no per-call decision for MCP tools, so mark anything that writes.
 - Automatic alert investigations never run a tool that needs approval.

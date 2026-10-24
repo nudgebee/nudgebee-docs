@@ -45,7 +45,10 @@ Use [Notification Rules](../../features/notifications.md) to fine-tune which ale
 
 - **Ask a question.** Mention `@Nubi` in a channel or a thread, or message Nubi directly. If you have access to more than one account, Nubi asks which one to use. In a channel mapped to an account, or in an alert's thread, it uses that account straight away.
 - **Act on alerts.** Alert cards have **Ask Nubi**, which posts an analysis in the card's thread, and **Suppress…**, which creates a suppression rule. Suppressing needs an account admin role.
-- **Approve workflows.** Approval steps sent to Teams have **Approve** and **Reject** buttons.
+- **Approve workflows.** An approval card has one button per option the automation offers (a choice list and **Submit** when there are more than three). You need edit access to the account. An already-answered request shows *This approval was already answered.*; an expired one shows *This approval request has expired.*
+- **Suppress durations.** **Suppress…** offers this alert for 1 h, 4 h, 24 h or 7 days, or every alert of the type for 4 h, 24 h or 7 days.
+- **Rate answers** with **👍 Helpful** / **👎 Not helpful**. Very long analyses are cut, with a link to the full one in NudgeBee.
+- **Cards expire.** Buttons on a card more than 7 days old no longer work; open the alert in NudgeBee instead.
 
 Nubi recognizes you by the email address of your Teams account, which must belong to a user in your NudgeBee workspace.
 
