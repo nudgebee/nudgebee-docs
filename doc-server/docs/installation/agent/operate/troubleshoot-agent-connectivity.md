@@ -16,7 +16,7 @@ This guide helps you diagnose and resolve connectivity issues between your infra
 
 ## 1. What Agent Connectivity Status Means
 
-NudgeBee monitors the health of all registered agents using an active telemetry heartbeat loop:
+An agent's **Connected** / **Not Connected** status comes from its **relay connection** — the WebSocket the agent keeps open to the relay — not from telemetry. The relay marks the agent Connected when it connects and Not Connected when it disconnects, and refreshes a last-seen time every 10 minutes while it stays connected. A background check also marks an agent Not Connected when both its **Last Connected** time (updated by relay connects/disconnects and by every telemetry post) and the relay's last-seen time are more than **30 minutes** old. Telemetry (below) also reports datasource health:
 
 ```mermaid
 sequenceDiagram
@@ -40,21 +40,19 @@ sequenceDiagram
 
 | Status | Badge | Meaning |
 | :--- | :--- | :--- |
-| **Connected** | 🟢 Green | The agent is actively reporting telemetry and sending periodic heartbeats. |
-| **Not Connected** | 🔴 Red | No telemetry heartbeat has been received within the connection threshold, or the agent process is stopped. |
-| **Degraded / Warning** | 🟡 Yellow | The core agent is connected, but one or more critical subsystems (e.g., Prometheus, Logs, Traces) failed their local health probe. |
-| **Pending / Initializing** | ⚪ Gray | The agent registration has been created, but the initial heartbeat has not yet been received. |
+| **Connected** | 🟢 Green | The agent's relay connection is open. |
+| **Not Connected** | 🔴 Red | The relay connection closed, or nothing has been seen from the agent for more than 30 minutes. |
 
 ---
 
 ## 2. Key Connectivity Concepts
 
 ### What Does "Last Connected" Mean?
-`Last Connected` represents the exact UTC timestamp when the NudgeBee backend last received and validated a telemetry payload or heartbeat ping from the agent (`last_connected_at`).
+`Last Connected` (`last_connected_at`) is the latest of: the agent's last relay connect or disconnect, and its last telemetry post (about every 60 seconds). While the relay connection stays open, the relay also records a last-seen time every 10 minutes.
 
 ### Heartbeat Staleness & Recovery
-- **Heartbeat Interval**: The Kubernetes agent periodically posts telemetry snapshots to the backend.
-- **Automatic Recovery**: As soon as the agent recovers and delivers a successful heartbeat tick, the backend automatically transitions the status back to `Connected` without requiring manual intervention or cluster restarts.
+- **Staleness**: an agent is marked Not Connected once both its **Last Connected** time (relay events and telemetry) and the relay's last-seen time are more than 30 minutes old.
+- **Automatic Recovery**: As soon as the agent reconnects to the relay, the status goes back to `Connected` — no manual step or restart needed.
 
 ### Why Does an Agent Alternate (Flap) Between Connected and Not Connected?
 Frequent status toggling usually indicates one of three root causes:
@@ -108,9 +106,8 @@ kubectl logs -n nudgebee-agent deploy/nudgebee-agent-runner -c runner --tail=100
 
 **What to look for in logs:**
 - `starting telemetry poster`: Confirms heartbeat service has booted.
-- `telemetry tick succeeded`: Confirms backend received the payload.
-- `relay connection established`: Confirms reverse proxy tunnel is live.
-- `error posting telemetry`: Indicates network egress or authentication token mismatch.
+- `relay connected`: The live relay connection is up (`relay session ended` when it drops).
+- `telemetry post failed`: Telemetry couldn't reach the collector — network egress or the agent key.
 
 ---
 
@@ -145,7 +142,7 @@ For GCP connections:
   ```bash
   helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
     --namespace nudgebee-agent \
-    --set runner.nudgebee.endpoint="https://api.nudgebee.yourdomain.com" \
+    --set runner.nudgebee.endpoint="https://collector.yourcompany.com" \
     --set runner.nudgebee.auth_secret_key="<CORRECT_SECRET_KEY>" \
     --reuse-values
   ```

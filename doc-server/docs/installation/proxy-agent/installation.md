@@ -4,6 +4,11 @@ sidebar_position: 3
 
 # Installation
 
+
+:::note Install commands in the UI
+The UI's install commands download from `registry.nudgebee.com` (installer, image `registry.nudgebee.com/nudgebee-forager`, chart `oci://registry.nudgebee.com/nudgebee-forager-chart`) rather than GitHub and GHCR — allow that host if you use them. The UI's Linux command has no `sudo`, but the installer must run as root: add `sudo` as in the examples below. The UI also has a **macOS** tab.
+:::
+
 ## Prerequisites
 
 - Network access to your NudgeBee Relay Server on port 443 (the relay URL is provided in the NudgeBee UI when you create a Proxy Agent account)
@@ -18,9 +23,10 @@ Downloads and installs Forager as a **systemd** service on Linux. Requires root 
 
 ```bash
 curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install.sh | \
-  NB_RELAY_URL=<RELAY_URL> \
+  sudo NB_RELAY_URL=<RELAY_URL> \
   NB_ACCESS_KEY=<ACCESS_KEY> \
   NB_ACCESS_SECRET=<ACCESS_SECRET> \
+  NB_SIGNING_PUBLIC_KEY=<SIGNING_PUBLIC_KEY> \
   bash
 ```
 
@@ -171,7 +177,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/nudgebee/forager
   pullPolicy: IfNotPresent
-  tag: "latest"
+  tag: ""   # empty = the chart's own version; pin e.g. "0.1.5"
 
 forager:
   relayURL: wss://<RELAY_HOST>/register   # provided in the NudgeBee UI

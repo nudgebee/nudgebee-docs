@@ -40,9 +40,10 @@ import TabItem from '@theme/TabItem';
 
 ```bash
 curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install.sh | \
-  NB_RELAY_URL=<RELAY_URL> \
+  sudo NB_RELAY_URL=<RELAY_URL> \
   NB_ACCESS_KEY=<ACCESS_KEY> \
   NB_ACCESS_SECRET=<ACCESS_SECRET> \
+  NB_SIGNING_PUBLIC_KEY=<SIGNING_PUBLIC_KEY> \
   bash
 ```
 
