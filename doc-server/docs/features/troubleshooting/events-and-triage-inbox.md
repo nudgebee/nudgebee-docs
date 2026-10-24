@@ -18,7 +18,7 @@ provider: all
 | **Investigations** | **Auto Investigated**, **Manual Investigated** |
 | **Event Resolutions** | See [Event Resolutions](./event-resolutions.md) |
 | **Knowledge Graph** | See [Semantic Knowledge Graph](../knowledge-graph/index.md) |
-| **Analytics** | Whether things are getting better over time |
+| **Analytics** | Whether things are getting better over time — see [Analytics](./analytics.md) |
 
 A tab you don't have access to is grayed out. **Investigations** needs access to AI conversations and **Knowledge Graph** needs access to the knowledge graph.
 
@@ -66,9 +66,30 @@ Kubernetes configuration-change events are not listed here.
 
 ## Investigations
 
-- **Auto Investigated** — events NudgeBee analyzed by itself ([which ones](../ai/event-analysis.md#which-events-are-analyzed)): severity, resource, message, triage priority and status. **Investigate** opens the analysis.
-- **Manual Investigated** — investigations people started: user, question, when and status (Completed, Failed, In Progress, Waiting, Needs User Input, Terminated, Killed). Tenant admins can filter by user.
-- The cards at the top — **Total Investigations**, **Total Triage**, **Total Time Saved** and savings — always cover the last 24 hours, whatever the date filter says.
+Two sub-tabs. Both have an **Account** filter, a date range (default: last 24 hours) and **Download**.
+
+- **Auto Investigated** — events NudgeBee analyzed by itself ([which ones](../ai/event-analysis.md#which-events-are-analyzed)). Columns: **Severity**, **Resource/Instance**, **Message**, **Triage Priority** and **Status** — the alert's status (Firing, Resolved, Closed), which you can also filter by. **Investigate** opens the analysis.
+- **Manual Investigated** — investigations people started. Columns: **User**, **Query**, **When** and **Status** (Completed, Failed, In Progress, Waiting, Needs User Input, Terminated, Killed). Filter by **Status** or **Search by title**; tenant admins (including read-only) can also filter by **User**. **Check Details** opens the conversation in a new tab.
+
+### Summary cards
+
+| Card | What it shows |
+|---|---|
+| **Total Investigations** | Investigations in the last 24 hours, with the change against the 24 hours before. On **Auto Investigated** it counts automatic investigations; on **Manual Investigated**, the ones people started. |
+| **Total Triage** | Currently shows the same count as Total Investigations. |
+| **Total Time Saved** | Engineer time saved in the last 24 hours, and the share of manual effort that was automated |
+| **NudgeBee Savings** | Time saved × the engineer hourly rate (labeled with your assistant's brand name). The small badge shows the change in investigation volume. |
+
+The cards always cover the last 24 hours, counted from when you opened the page. They ignore both the date and the **Account** filters and roll up every account you can see.
+
+### How time saved is calculated
+
+1. Only investigations that **completed** count.
+2. NudgeBee measures how long its agents were actively working on each one, and takes the average.
+3. **Time saved = completed investigations × (manual baseline − average agent time)**, never below zero.
+4. **Savings = time saved × engineer hourly rate.**
+
+The default manual baseline is **25 minutes** per investigation and the default rate is **$30 an hour**. Both are set by whoever operates your NudgeBee installation. [Analytics](./analytics.md) shows the same idea for automatic investigations, following its own Account and date filters.
 
 ## Related
 

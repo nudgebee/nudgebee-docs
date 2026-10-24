@@ -44,8 +44,8 @@ NudgeBee also links resources across sources, for example a Kubernetes node to t
 The graph rebuilds every hour. The **Last synced** time at the top of the Filters panel shows when the last rebuild finished.
 
 - Calls between services come from what each flow source observes at each rebuild. A call that has not been seen for 7 days drops out.
-- A resource you delete from a cluster or account disappears at the next rebuild after NudgeBee stops seeing it.
-- There is no button to rebuild on demand; changes appear at the next hourly rebuild.
+- Many single-resource changes, such as a cloud resource created or updated through real-time events or a deleted Kubernetes workload or node, show up within minutes; everything else at the next hourly rebuild.
+- There is no button to rebuild on demand.
 
 ## Who can see it
 
@@ -58,6 +58,7 @@ Only tenant admins see the **Settings** button. It controls which accounts and f
 - [Explore the Graph](./exploring.md) — filters, search, focus, traversal and the canvas controls
 - [Nodes and Relationships](./nodes-and-relationships.md) — reading a node, node and edge details, and the full type reference
 - [Where the Data Comes From](./data-sources.md) — every source, what it needs, rebuild timing, and the Coverage settings
+- [Manual Declarations](./manual-declarations.md) — add nodes and dependencies no collector can see
 - [How NudgeBee Uses the Graph](./how-nudgebee-uses-it.md) — AI answers, alert impact, blast radius and criticality
 
 ## Related
