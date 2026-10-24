@@ -33,7 +33,7 @@ Filter by **Namespace**, **Workload Type** or name, pick a date range (default l
 
 ## Pods
 
-Columns **Pod Name**, **Namespace**, **Cost**, **CPU**, **Memory**, status and **Restarts**; filter by **Namespace**, **Workload Type**, **State**, **Status** or name. The row menu has **Logs**, and with write access **Delete Pod** and **Debug Pod**. Click a pod to open its page.
+Columns **Pod Name**, **Namespace**, **Created At**, **Cost**, **CPU**, **Memory**, **Status/State**, **Restarts** and **Error Count (24h)**; filter by **Namespace**, **Workload Type**, **State**, **Status** or name. The row menu has **Logs**, and with write access **Delete Pod** and **Debug Pod**. Click a pod to open its page.
 
 ### Pod page
 
@@ -41,7 +41,7 @@ Tabs: **Pod Details**, **Utilization Trends**, **Cost Trends**, **Recent Events*
 
 ## Nodes
 
-Columns **Node Name**, **Type**, **Pods**, **IP**, **Cost**, **CPU (vCPU)**, **Memory (GiB)**, **Status** and **Created**; filter by **State** or name; **Node Trends** charts the node count. Rows expand to Details, Pods, Utilization Trends and Cost Trends.
+Columns **Node Name**, **Type**, **Pods**, **IP**, **Cost**, **CPU (vCPU)**, **Memory (GiB)**, **Status** and **Created**; filter by **State** or name; **Node Trends** charts the node count. Rows expand to Details, Pods, Utilization Trends, Cost Trends, Recent Events, Network, Storage and Disk I/O.
 
 ## Namespace
 

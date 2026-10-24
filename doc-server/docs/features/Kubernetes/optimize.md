@@ -6,7 +6,7 @@ keywords: [right sizing, rightsizing, optimize, deploy fix, create pr, continuou
 
 # Optimize
 
-**Cluster → Optimize.** Cost and reliability recommendations for the cluster. Each sub-tab shows how many recommendations it has.
+**Cluster → Optimize.** Cost and reliability recommendations for the cluster. Right Sizing, Unused Volumes, Best Practices, Abandoned Apps, PVC Rightsizing, Replica Rightsizing and Spot Recommendations show how many recommendations they have.
 
 | Sub-tab | Shows |
 |---|---|
@@ -21,7 +21,7 @@ keywords: [right sizing, rightsizing, optimize, deploy fix, create pr, continuou
 | **Spot Recommendations** | Workloads that could run on spot nodes |
 | **Recommendation Resolution** | What happened to recommendations you acted on |
 
-The same recommendations for all clusters are under **Optimize** in the sidebar.
+The same recommendations for all clusters are under **Optimize → Cost** in the sidebar.
 
 ## Right Sizing
 
@@ -29,21 +29,26 @@ Columns **Name**, **Namespace**, **Kind**, **CPU Req/Recommended (Core)**, **Mem
 
 ### Apply a recommendation
 
-Click **Optimize** on the row (needs write access; it says **Configured** once an autopilot is set up). *Resolve this issue* shows the recommended values per container, which you can adjust, and four ways to apply them:
+Click **Optimize** on the row (needs write access; it says **Configured** once an autopilot is set up). *Resolve this issue* shows the recommended values per container, which you can adjust. Its footer has:
 
-| Button | What it does |
+| Control | What it does |
 |---|---|
-| **Create PR** (Beta) | Opens a pull request with the new values in your repository. Pick the Git integration and repository in the dialog. You can also link the workload to its repository with **Git** on its row menu |
-| **Deploy Fix** | Applies the change to the cluster now. If the workload is managed by GitOps, the next sync reverts it — use **Create PR** instead. |
-| **Continuous Auto Optimize** | Keeps applying recommendations automatically |
-| **Schedule Auto Optimize** | Applies them on a schedule |
+| **Cancel** | Close without changes |
+| **No-restart (in-place)** | On by default. *Resize running pods without a restart on Kubernetes 1.35+. Older clusters automatically fall back to a rolling restart.* |
+| **Create Ticket** | File a ticket for the change instead |
+| **Create PR** (Beta) | Open a pull request with the new values. The dialog asks for a **Git Integration** and an **In-place resize policy** (*In-place — resize without restart*, *Restart container on memory change*, or *Don't configure*). The repository is detected from the workload's CI or ArgoCD annotations; if none are found it says *No source configuration detected*. |
+| **Continuous Auto Optimize** (Beta) | Keep applying recommendations automatically |
+| **Schedule Auto Optimize** | Apply them on a schedule |
+| **Deploy Fix** | Apply the change now. *Deploy Fix* patches the running pods directly, so on a GitOps-managed workload the change is reverted on the next sync — use **Create PR** instead. |
 
-**No-restart (in-place)** resizes running pods without restarting them, on Kubernetes 1.35 and later. Large changes ask you to confirm.
+Continuous and Schedule are alternatives: if one is already active for the workload, its button opens that autopilot. A change of more than 4× up or 75% down asks you to confirm, and recommendations rated Review or Risky need an extra safety acknowledgement.
 
 ## Other sub-tabs
 
-- **Best Practices** — **Name**, **Severity**, **Object Type**, **Namespaces**, **Object Names**, **Description**; filter by rule, namespace, severity or status.
-- **Abandoned Apps** — **Resource Name**, **Object Type**, **Network Traffic (bytes)**, **Observation Duration**, **Savings/mo**.
+- **Unused Volumes** — **Name**, **Last Namespace**, **Last Claim**, **Size**, **Savings/mo**, **Created At**, **Updated At**; download as CSV or Excel.
+- **Best Practices** — **Name**, **Severity**, **Object Type**, **Namespaces**, **Object Names**, **Updated At**, **Description**; filter by rule, namespace, severity or status.
+- **Abandoned Apps** — **Resource Name**, **Object Type**, **Namespaces**, **Network Traffic (bytes)**, **Observation Duration**, **Savings/mo**, **Updated At**.
+- **Spot Recommendations** — **Application**, **Type**, **Namespace**, **Estimated Savings**, **Updated At**; **Download**.
 - **PVC Rightsizing** and **Replica Rightsizing** need Prometheus. Without it they show *Prometheus is not connected for this cluster* with a link to [Agent Health](../../installation/agent/operate/agent-health.md).
 
 ## Related

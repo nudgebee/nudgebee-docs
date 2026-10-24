@@ -14,11 +14,11 @@ Vulnerabilities in the cluster's container images. Switch between **Apps**, **Im
 
 ## CIS Scan
 
-The cluster checked against the CIS Kubernetes benchmark: **Rule**, **Description**, **Severity**, **Failures**, **Updated At**. The refresh icon (**Trigger Scan**) runs a new scan — results update after a while. Ask NuBi about a rule, or **Dismiss** it. All clusters' CIS results are also under **Optimize → Security** in the sidebar.
+The cluster checked against the CIS Kubernetes benchmark: **Rule**, **Description**, **Severity**, **Failures**, **Updated At**. The refresh icon (**Trigger Scan**, needs write access) runs a new scan — results update after a while. Ask NuBi about a rule, or **Dismiss** it. All Kubernetes clusters' CIS results are also under **Optimize → Security → CIS Scan** in the sidebar, with a **Cluster** column; Trigger Scan is only on the single-cluster view.
 
 ## Sensitive Logs
 
-Log lines that look like secrets or personal data: **Application**, **Name**, **Pattern**. **Create Ticket** files one; **Download** exports the list.
+Log lines that look like secrets or personal data: **Application**, **Name**, **Pattern**, **regex** and **Ticket**. **Create Ticket** files one; **Download** exports the list.
 
 ## Cluster Upgrade (Beta)
 
@@ -36,8 +36,8 @@ A step-by-step upgrade plan with owners and statuses. Needs the tenant feature *
 
 ## Certificate Issues and Helm Upgrade
 
-- **Certificate Issues** — TLS certificates that are expiring or invalid.
-- **Helm Upgrade** — Helm releases with newer chart versions available.
+- **Certificate Issues** — TLS certificates that are expiring or expired: **Namespace**, **Certificate Name**, **Expires In**, **Updated At**, **Actions**.
+- **Helm Upgrade** — Helm releases with newer chart versions: **Chart Name**, **Release Name**, **Severity**, **Issues**, **Installed**, **Latest**, **Updated At**; **Download**.
 
 Both can **Create Ticket**.
 

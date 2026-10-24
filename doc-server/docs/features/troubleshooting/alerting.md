@@ -30,7 +30,7 @@ Open the cluster or cloud account from the top-right account picker. For a Kuber
 
 ![AlertManager listing](./img/alertmanager-listing.png)
 
-Every alert NudgeBee knows about is listed here — Prometheus rules you authored, plus alerts forwarded from external sources. From a row you can **Disable**/**Enable** the rule, **Edit** it, or **Mute in NudgeBee** — when NudgeBee can apply the change where the rule is evaluated. Otherwise the menu says **Change this rule where it is defined**.
+Every alert NudgeBee knows about is listed here — Prometheus rules you authored, plus alerts forwarded from external sources. With write access, a row's menu can **Disable**/**Enable** the rule, **Edit** it, or **Mute in NudgeBee** / **Unmute** it — each only when NudgeBee can apply that change. Muting keeps recording events but marks them **Suppressed**, without notifications. If the rule can't be changed from NudgeBee, the menu says **Change this rule where it is defined**.
 
 ---
 
