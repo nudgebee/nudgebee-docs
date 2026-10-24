@@ -14,6 +14,7 @@ The chart is open source at [`nudgebee/k8s-agent`](https://github.com/nudgebee/k
 |---|---|---|---|
 | https://charts.bitnami.com/bitnami | clickhouse | 3.1.* | `opentelemetry-collector.enabled` |
 | https://open-telemetry.github.io/opentelemetry-helm-charts | opentelemetry-collector | 0.165.0 | `opentelemetry-collector.enabled` |
+| https://opencost.github.io/opencost-helm-chart | opencost | 2.0.1 | `opencost.enabled` |
 
 For task-oriented guidance, see [Enable or Disable Agent Modules](./module-configuration.md) and [Agent Storage and PVCs](./storage-and-pvcs.md).
 
@@ -180,7 +181,7 @@ These values only control the alert rules the chart ships. Getting alerts to the
 | `runner.loki.username` / `password` | string | `""` | Optional HTTP basic auth. |
 | `runner.es.enabled` | bool | `false` | Elasticsearch is off unless you set both `enabled: true` and `url`, so a leftover `url` never quietly takes over from another logs provider. |
 | `runner.es.url` / `apiKey` | string | `""` | Elasticsearch endpoint and API key. |
-| `runner.es.headers` | string | `""` | Extra request headers, comma-separated `Key: Value` pairs. For OpenSearch-compatible services that authenticate on a custom header — Logz.io uses `X-API-TOKEN`. |
+| `runner.es.headers` | string | `""` | Extra request headers, semicolon-separated `Key: Value` pairs. For OpenSearch-compatible services that authenticate on a custom header — Logz.io uses `X-API-TOKEN`. |
 | `runner.es.sslVerify` | bool | `false` | Verify the ES TLS certificate (https URLs). |
 | `runner.signoz.url` | string | `""` | SigNoz endpoint. |
 | `runner.signoz.apiKey` / `user` / `password` | string | `""` | `apiKey` takes precedence over user/password. |
@@ -253,7 +254,7 @@ The chart sets no `GOMEMLIMIT` or other Go heap tuning, so `runner.resources.lim
 |---|---|---|---|
 | `nodeAgent.enabled` | bool | `true` | eBPF DaemonSet for network metrics, logs, and profiles. |
 | `nodeAgent.image.repository` | string | `ghcr.io/nudgebee/node-agent` | |
-| `nodeAgent.image.tag` | string | `0.1.5` | |
+| `nodeAgent.image.tag` | string | `0.1.11` | |
 | `nodeAgent.resources.requests` | object | `100m` / `500Mi` | |
 | `nodeAgent.resources.limits` | object | `1` / `1Gi` | |
 | `nodeAgent.podmonitor.enabled` | bool | `true` | Render a `PodMonitor` so Prometheus scrapes the node agent. |

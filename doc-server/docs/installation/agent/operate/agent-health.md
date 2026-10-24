@@ -14,6 +14,10 @@ The **Agent Health** view in the NudgeBee Console provides real-time visibility 
 
 ---
 
+### Status values
+
+The page has three tabs: **Agent**, **Observability** and **Proxy Agent**. Components show **Connected** or **Disconnected**; OpenCost can show **Managed server-side**, and Prometheus, Logs and Traces can show **Served by integration** when an integration rather than the agent provides them. The Observability tab shows **Not configured** for a source that isn't set up. Banners: *The Agent is not connected* and *The {X} services are disconnected.*
+
 ## 1. Agent Health Dashboard Overview
 
 On each periodic telemetry tick, the agent runner executes local lightweight probes against all configured datasources and reports their state to the NudgeBee backend.
@@ -50,7 +54,7 @@ Below is the complete reference of every field displayed on the Agent Health car
 * **Probe Mechanism**: Continuous WebSocket keepalive ping.
 * **Failure Causes**:
   * Outbound firewall blocks TCP port `443` to the Relay server.
-  * `RELAY_SERVER_SECRET_KEY` mismatch between agent and server.
+  * A wrong or revoked agent key (`runner.nudgebee.auth_secret_key`) — the relay authenticates the agent with it.
   * Intermediate reverse proxy drops long-lived WebSocket connections (missing `Upgrade: websocket` headers).
 
 ---
@@ -103,7 +107,7 @@ Below is the complete reference of every field displayed on the Agent Health car
 * **Supported Backends**:
   * **ClickHouse / OTel Collector**: Probes HTTP `/ping` on port `8123` (or `CLICKHOUSE_PORT`).
   * **Chronosphere Traces / Jaeger**: Reported as enabled when their configuration and query URL are present; this status is not an end-to-end query probe.
-* **Healthy State**: `Connected` (Green) or `Disabled` (Gray if tracing is not configured).
+* **Healthy State**: `Connected` (Green). The Observability tab shows `Not configured` when tracing isn't set up.
 * **Failure Causes**: ClickHouse service down, credentials invalid, or `TRACES_ENABLED` set to `false`.
 
 ---
@@ -138,7 +142,7 @@ Below is the complete reference of every field displayed on the Agent Health car
 ---
 
 ### 10. Agent Version & Latest Version
-* **Purpose**: Displays the currently running agent container image tag compared against the latest stable release published by NudgeBee.
+* **Purpose**: Shows the agent version (the Helm chart version the agent reports) against the latest stable release. When they differ you see **Update available.** See [Upgrade](../installation/upgrade.md).
 * **Upgrade Recommended**: The Console asks you to update whenever the running version differs from the latest version returned by the server.
 
 ---

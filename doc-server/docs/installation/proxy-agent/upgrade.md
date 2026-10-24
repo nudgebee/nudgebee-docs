@@ -65,9 +65,10 @@ Re-run the installer. It stops the service, replaces the binary in `/usr/local/b
 
 ```bash
 curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install.sh | \
-  NB_RELAY_URL=<RELAY_URL> \
+  sudo NB_RELAY_URL=<RELAY_URL> \
   NB_ACCESS_KEY=<ACCESS_KEY> \
   NB_ACCESS_SECRET=<ACCESS_SECRET> \
+  NB_SIGNING_PUBLIC_KEY=<SIGNING_PUBLIC_KEY> \
   bash
 ```
 
@@ -133,7 +134,7 @@ Compose re-creates the container with the fresh image and keeps the volume. If y
 # docker-compose.yaml
 services:
   forager:
-    image: ghcr.io/nudgebee/forager:v0.1.1  # change this
+    image: ghcr.io/nudgebee/forager:0.1.5  # change this
 ```
 
 Then:
@@ -182,13 +183,13 @@ After any upgrade:
 
 ## Rollback
 
-If the new version misbehaves, roll back to a known-good tag. Forager images are tagged by release version (e.g. `v0.1.1`). List published versions with the GitHub CLI:
+If the new version misbehaves, roll back to a known-good tag. Forager images are tagged by release version without a `v` (e.g. `0.1.5`; also `0.1` and `latest`), while GitHub releases are named `v0.1.5`. List published versions with the GitHub CLI:
 
 ```bash
 gh release list -R nudgebee/forager --limit 20
 ```
 
-Or browse them at [github.com/nudgebee/forager/releases](https://github.com/nudgebee/forager/releases). The same list is also visible in the NudgeBee UI under **Admin → Integrations → Servers → Proxy Agent**.
+Or browse them at [github.com/nudgebee/forager/releases](https://github.com/nudgebee/forager/releases). For self-hosted VM fleet accounts, NudgeBee shows each agent's version under **Agent Health → Proxy Agent**.
 
 **Linux / Windows:** re-run the installer with `NB_VERSION=<older-tag>`:
 ```bash

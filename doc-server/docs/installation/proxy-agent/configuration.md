@@ -145,6 +145,7 @@ datasources:
 | `relay_url` | `NB_RELAY_URL` | Yes | NudgeBee Relay Server WebSocket URL |
 | `access_key` | `NB_ACCESS_KEY` | Yes | Agent access key |
 | `access_secret` | `NB_ACCESS_SECRET` | Yes | Agent access secret |
+| `signing_public_key` | `NB_SIGNING_PUBLIC_KEY` | Recommended | Public key used to verify commands signed by NudgeBee. Shown with the install command in the UI; Helm value `forager.signingPublicKey`. |
 | `data_dir` | `NB_DATA_DIR` | No | Local storage directory (default: `/var/lib/nudgebee` on Linux, `/data` in Docker) |
 | `health_check_interval_min` | `NB_HEALTH_CHECK_INTERVAL_MIN` | No | Health check interval in minutes (default: `10`) |
 
