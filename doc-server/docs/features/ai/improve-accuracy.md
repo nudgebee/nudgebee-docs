@@ -22,7 +22,7 @@ NuBi starts every investigation knowing only what it can read from your accounts
 | Always know a few facts or rules about this account, in every agent | **Account context** | Every conversation, every agent |
 | Know background it can look up when relevant | A **Fact** knowledge base, or synced Confluence/ServiceNow pages | When a search finds it |
 | Follow a procedure when the situation calls for it | An **SOP** knowledge base, or a **skill** from GitHub | When a search finds it, or when you type `/skill-name` |
-| Follow a short procedure on **every** run of one agent | A skill you wrote, **prioritized** for that agent with **Always load** on | Every run of that agent |
+| Follow a short procedure on **every** run of one agent | A skill you wrote (up to 4,000 characters), turned on under **Admin → AI & Tools → Agents → (agent row menu) → Prioritize knowledge → Always load** | Every run of that agent |
 
 Rules of thumb:
 
@@ -74,7 +74,7 @@ A skill is a knowledge item NuBi can load in full when it needs it. Skills come 
 
 Knowledge synced from Confluence or ServiceNow (the **Integration** tab) is search-only: it is not a skill and can't be loaded by name or always loaded.
 
-In **Ask NudgeBee**, type `/` to pick a skill from the list (name and description), or type `/skill-name` yourself — up to three per message. The skill's text (up to 16,000 characters) goes in ahead of your question. Otherwise agents find relevant skills themselves. Mark a procedure **SOP** so it is followed step by step once loaded.
+In the NuBi chat, type `/` to pick a skill from the list (name and description), or type `/skill-name` yourself — up to three per message. The skill's text (up to 16,000 characters) goes in ahead of your question. Otherwise agents find relevant skills themselves. Mark a procedure **SOP** so it is followed step by step once loaded.
 
 ## Prioritize knowledge for one agent
 

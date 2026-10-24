@@ -9,7 +9,7 @@ b-Cortex is where you see and manage what NuBi knows: what it remembers from pas
 
 | Tab | What it holds |
 |---|---|
-| **Memory** | What NuBi remembered from past conversations: **Patterns**, **Decisions**, **Sessions**, **Soul**, **Privacy** and the tenant-wide **Collective** |
+| **Memory** | What NuBi remembered from past conversations — **Patterns**, **Decisions**, **Sessions** and the tenant-wide **Collective** — plus **Soul** (your style profile: tone, verbosity, how much reasoning to show) and **Privacy** (what NuBi may remember about you) |
 | **Preferences** | **Inferred** preferences NuBi picked up and **Typed** preferences you set |
 | **Knowledge** | **Knowledge Base** (documents, integrations, skill repositories) and **Account Context** |
 | **Knowledge Graph** | Services and dependencies from the [Semantic Knowledge Graph](../knowledge-graph/index.md) |
@@ -40,7 +40,7 @@ Your **Soul**, **Typed** preferences and the current **Session** are given to Nu
 
 ### Decisions
 
-*"Decisions — your decision history: 'You decided X because Z.'"* Choices you made during investigations, with the rationale, the area (for example AI-SRE, AI-FinOps) and the date. Decisions are never overwritten: **Edit** adds a correction and keeps the original in history (**Show all history** to see it). **Save to global** shares a personal decision with the whole tenant. With an account selected, **View** opens the conversation where it was made.
+*"Decisions — your decision history: 'You decided X because Z.'"* Choices you made during investigations, with the rationale, the area (for example AI-SRE, AI-FinOps) and the date. Decisions are never overwritten: **Edit** adds a correction and keeps the original in history (**Show all history** to see it). **Save to global** shares a personal decision with the whole tenant. With an account selected, **View** opens the conversation where it was made. A thumbs up or down on an answer that names a root cause is also recorded here, as agreeing or disagreeing with it.
 
 ### Sessions
 
@@ -48,7 +48,7 @@ Your **Soul**, **Typed** preferences and the current **Session** are given to Nu
 
 ### Soul
 
-*"Soul — your style profile. Curated, not inferred."* How NuBi should talk to you, loaded on every message:
+*"Soul — your style profile. Curated, not inferred."* The b-Cortex Soul tab sets how NuBi should talk to you — tone, verbosity, how much reasoning to show and preferred formats. It is not a persona or a memory of past conversations; you write it, and it is loaded on every message:
 
 | Setting | Options |
 |---|---|

@@ -73,7 +73,7 @@ Open a row for the details: attempts, destination, account, the send ID, and —
 
 ## Troubleshoot a missing notification
 
-1. Open **Delivery history** and filter by the time and type. If the notification is listed, its status and *why it wasn't sent* tell you what happened.
+1. Open **Admin → Notification Rules → Delivery history** and filter by the time and type. If the notification is listed, its status and *why it wasn't sent* tell you what happened.
 2. If it isn't listed, confirm the event exists in NudgeBee and check its status and priority.
 3. Use **Check where it goes** to see which rules match — look for a **Don't send** rule or a pause.
 4. Check **When no rule matches** if no rule covers it.

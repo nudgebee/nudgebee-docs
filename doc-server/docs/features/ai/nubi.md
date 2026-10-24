@@ -5,9 +5,9 @@ sidebar_label: What NuBi Can Do
 
 # What NuBi Can Do
 
-NuBi is NudgeBee's AI assistant. Ask it in plain language — from **Ask NudgeBee** in the app, from Slack, or from Microsoft Teams — and it picks the right specialist agents, gathers evidence from your accounts, and answers with the evidence it used.
+NuBi is NudgeBee's AI assistant. Ask it in plain language — from **Nubi** in the app (or **⌘J** on any page), from Slack, or from Microsoft Teams — and it picks the right specialist agents, gathers evidence from your accounts, and answers with the evidence it used.
 
-This page lists what NuBi does today and where each capability lives. To make its answers more accurate for your environment, see **[Improve NuBi's Answers](./improve-accuracy.md)**.
+This page lists what NuBi does today and where each capability lives. For the chat screen itself — attachments, queued messages, approvals, reading an answer, your conversation list — see **[Using the Chat](./nubi-chat.md)**. To make its answers more accurate for your environment, see **[Improve NuBi's Answers](./improve-accuracy.md)**.
 
 ## Investigate your environment
 
@@ -49,14 +49,15 @@ NuBi searches your **knowledge bases** (Confluence, ServiceNow, uploaded documen
 
 | Where | What works |
 |---|---|
-| **Ask NudgeBee** (app) | Full conversations, approvals, image attachments, **Select agent** to ask a specific agent, `/skill-name` to load a skill, `@nubi` for product questions |
-| **Slack** | Mention the NudgeBee app in a channel; alert cards have an **Ask NuBi to Analyse!** button. See [Slack](../../integrations/Notifications/slack.md). |
+| **Nubi** (app) and the **⌘J** drawer | Full conversations, approvals, image attachments, `@` to ask a specific agent, `/skill-name` to load a skill, `@nubi` for product questions, and **Ask Nubi** buttons on logs, traces, tables and events. See [Using the Chat](./nubi-chat.md). |
+| **Slack** | Mention the NudgeBee app in a channel; alert cards have an **Ask Nubi to Analyse!** button (named after your assistant). See [Slack](../../integrations/Notifications/slack.md). |
 | **Microsoft Teams** | `@Nubi` in a channel or thread; alert cards with Ask NuBi, and approval cards. Standard channels only. See [Microsoft Teams](../../integrations/Notifications/msteams.md). |
 
 **Notifications are separate from chat.** Alert notifications are delivered to Slack, Microsoft Teams, Google Chat, Discord or webhooks according to your notification rules. Automations can also send messages to Slack, Microsoft Teams or Google Chat with the *Send message* task.
 
 ## Related
 
+- [Using the Chat](./nubi-chat.md)
 - [Improve NuBi's Answers](./improve-accuracy.md)
 - [b-Cortex: Memory and Knowledge](./b-cortex.md)
 - [Agents & Custom Agents](./custom-agents.md)

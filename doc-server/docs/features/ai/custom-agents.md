@@ -63,7 +63,7 @@ Write instructions as you would brief a new engineer: what to check first, what 
 
 ## Use an agent in chat
 
-In **Ask NudgeBee**, click the agent icon in the message box (**Select agent**) and pick an agent to send your question straight to it. Without a choice, NuBi routes the question itself.
+In the NuBi chat, click the agent button in the message box (tooltip *Agents — mention one with @*) or type `@` at the start of your message, and pick an agent to send your question straight to it. Clear the choice with ✕. Only enabled agents are listed; if there are none, the button says no agent is connected. Without a choice, NuBi routes the question itself.
 
 ## Related
 

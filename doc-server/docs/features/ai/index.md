@@ -32,6 +32,7 @@ NudgeBee includes four purpose-built AI assistants, each focused on a specific d
 ## Getting the Most from NuBi
 
 - **[What NuBi Can Do](./nubi.md)** — investigations, product questions with `@nubi`, and where you can talk to NuBi.
+- **[Using the Chat](./nubi-chat.md)** — the chat screen: attachments, agents and skills, queued messages, approvals, reading an answer, your conversations.
 - **[Improve NuBi's Answers](./improve-accuracy.md)** — account context, Facts vs SOPs, skills and per-agent knowledge.
 - **[b-Cortex](./b-cortex.md)** — memory, knowledge bases, re-syncing integrations and marking documents.
 - **[Agents & Custom Agents](./custom-agents.md)** — create agents, override a built-in prompt, or add tools.
