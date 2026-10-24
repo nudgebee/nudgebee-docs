@@ -16,7 +16,7 @@ Choose the mechanism according to the work you need to perform and the controls 
 | --- | --- | --- |
 | Event playbooks | Attaching diagnostic actions and evidence to event investigations | The configured actions, permissions, and their possible side effects |
 | Workflows | Multi-step orchestration using event, optimization, schedule, webhook, or manual triggers | Trigger input, task parameters, approvals, retry behavior, and recovery |
-| AutoOptimize | Supported scheduled optimization actions | Target resources, algorithm/settings, schedule, and approval configuration |
+| Auto Optimize | Continuous or scheduled right-sizing (vertical, horizontal, PVC) | Target resources, algorithm/settings, schedule (UTC cron), and approval — continuous rules run without approval |
 
 ## Investigation
 
@@ -30,6 +30,6 @@ See [Event-Triggered Automation](./create-event-automation.md) and [Approvals an
 
 ## Scheduled optimization
 
-Use [Auto Optimize](../optimizations/autopilot/auto_optimize/index.md) for the optimization categories supported by its configuration form. Use a recommendation-triggered workflow for custom follow-up logic, starting with a notification and verifying the payload before adding changes.
+Use [Auto Optimize](../optimizations/autopilot/auto_optimize/index.md) for continuous or scheduled vertical, horizontal and PVC right-sizing; scheduled, horizontal and PVC rules can wait for [approval](../optimizations/autopilot/auto_optimize/approvals.md) before each run. Use a recommendation-triggered workflow for custom follow-up logic, starting with a notification and verifying the payload before adding changes.
 
 Resource changes can affect availability. Establish verification and recovery steps before enabling them; neither workflow history nor a previous workflow version provides a universal automatic infrastructure rollback.

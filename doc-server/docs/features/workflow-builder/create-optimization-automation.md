@@ -52,4 +52,4 @@ The payload also contains `event_type`, `cloud_account_id`, `tenant_id`, `severi
 
 Choose a task appropriate to the recommendation and explicitly supply its required account, resource, and action parameters. Insert an [Approval](./workflow-operations-approvals.md) task where review is needed, and verify decision handling before the change task.
 
-Use [Auto Optimize](../optimizations/autopilot/auto_optimize/index.md) for supported scheduled optimization configurations. Before direct changes, record the previous resource settings and the recovery procedure. Workflow history does not provide a universal one-click infrastructure rollback.
+Use [Auto Optimize](../optimizations/autopilot/auto_optimize/index.md) to apply right-sizing continuously or on a schedule, with optional [approval](../optimizations/autopilot/auto_optimize/approvals.md) (continuous rules run without approval). Before direct changes, record the previous resource settings and the recovery procedure. Workflow history does not provide a universal one-click infrastructure rollback.

@@ -76,7 +76,7 @@ Select the path that matches your evaluation and security requirements:
 | **NudgeBee Agent** | **In-Cluster Collector** | Lightweight DaemonSet & runner deployed inside monitored Kubernetes clusters to stream metrics, events, and eBPF network telemetry. |
 | **NudgeBee Server** | **Control Plane** | Hosts the web dashboard, API, Semantic Knowledge Graph, database, and workflow orchestration engine. |
 | **Semantic Knowledge Graph (SKG)** | **Relational Dependency Map** | Live topological graph correlating pods, nodes, cloud services, metrics, traces, git commits, and tickets. |
-| **Autopilot** | **Automated Operations** | Policy-gated automated right-sizing and self-healing runbooks with configurable human approval checkpoints. |
+| **Auto Optimize & Automations** | **Automated Operations** | Automatic right-sizing with optional approval, and event-driven automations with approval steps. |
 
 ---
 
@@ -117,7 +117,7 @@ flowchart LR
     classDef integ fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#065f46,rx:8,ry:8;
 
     INFRA["<b>Monitored Infrastructure</b><br/><small>• Kubernetes Clusters<br/>• VMs & Bare Metal<br/>• Cloud Provider Accounts</small>"]:::infra
-    PLATFORM["<b>NudgeBee Platform</b><br/><small>• Cortex Intelligence & Graph<br/>• DAIR Adaptive Router & SLMs<br/>• SRE Agents & Autopilot Runbooks</small>"]:::platform
+    PLATFORM["<b>NudgeBee Platform</b><br/><small>• Cortex Intelligence & Graph<br/>• DAIR Adaptive Router & SLMs<br/>• SRE Agents, Auto Optimize & Automations</small>"]:::platform
     INTEG["<b>Actions & Integrations</b><br/><small>• Slack / Teams Incident Triage<br/>• Jira / PagerDuty Sync<br/>• Automated GitOps PRs</small>"]:::integ
 
     INFRA -->|"Outbound Telemetry (WSS :443)"| PLATFORM
@@ -162,7 +162,7 @@ NudgeBee ships with 30+ pre-built Cloud-Ops Agents and 30+ integrations. Capabil
 |---|---|---|
 | **[Kubernetes cluster](./installation/agent/installation/index.md)** or **[Cloud account](./features/Cloud/index.md)** | Core monitoring, [Semantic Knowledge Graph](./features/knowledge-graph/index.md), [cost optimizations](./features/optimizations/index.md) | **Required for infrastructure visibility** |
 | **[Observability source](./integrations/Observability/index.md)** (Prometheus, Datadog, New Relic, etc.) | Metrics, [SLOs](./features/slo.md), alerting, [troubleshooting](./features/troubleshooting/index.md) | **Required for metrics, SLOs, and utilization graphs** |
-| **[LLM connection](./integrations/LLM/index.md)** (BYOM) | NuBi AI agent, natural-language triage, [auto-runbooks](./features/optimizations/autopilot/auto_runbook/index.md) | **Required for NuBi and AI-powered features** |
+| **[LLM connection](./integrations/LLM/index.md)** (BYOM) | NuBi AI agent, natural-language triage, [AI tasks in automations](./features/workflow-builder/ai-tasks.md) | **Required for NuBi and AI-powered features** |
 | **[IM channel](./integrations/Notifications/index.md)** (Slack, Teams, Google Chat) | [Notifications](./features/notifications.md), interactive alerts, ChatOps | **Optional; recommended for operational alerting** |
 | **Email** | Email notifications and daily reports | Optional |
 | **[GitHub](./integrations/Code%20Repository/GitHub/github-integration.md)** / **[GitLab](./integrations/Code%20Repository/GitLab/gitlab-integration.md)** | Auto-PRs for optimization recommendations, code-level troubleshooting | Optional |

@@ -16,7 +16,7 @@ Explore everything NudgeBee offers for Cloud-Ops Intelligence, troubleshooting, 
 
 - **[Workflow Builder](./workflow-builder/index.md)** — Automate any operational process in minutes with the AI-Agentic Workflow Engine. Build visual, multi-step workflows using drag-and-drop — triggered manually, on a schedule, via webhook, or in response to events — with no coding required.
 
-- **[Autopilot](./optimizations/autopilot/autopilot.md)** — Eliminate repetitive toil with self-healing automation. Configure automated runbooks that detect issues and take corrective action — restarting pods, scaling workloads, creating tickets — before your team even sees the alert.
+- **[Auto Optimize](./optimizations/autopilot/auto_optimize/index.md)** — Apply right-sizing automatically, continuously or on a schedule, with optional approval. Automatic responses to events — restarting pods, scaling workloads, creating tickets — are built as [Automations](./workflow-builder/index.md).
 
 - **[Notifications](./notifications.md)** — Stay informed without watching dashboards. Route alerts for critical events, anomalies, and recommendations to the right Slack channel, Teams room, or Google Chat space — with rules to suppress noise from non-production environments.
 
