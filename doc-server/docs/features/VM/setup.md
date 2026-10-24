@@ -14,7 +14,7 @@ Open **Infra → VM** and click **Add Self-Hosted Account**, or go to **Admin �
 
 | Field | What to enter |
 |---|---|
-| **Account Name** | 4–50 characters: letters, digits, spaces, hyphens and underscores (not at the start or end) — for example `on-prem-fleet` |
+| **Account Name** | Letters, numbers, spaces, hyphens and underscores, with no repeated separators — for example `on-prem-fleet` |
 | Environment | Production or non-production |
 
 Click **Save**. No credentials are issued here; a reminder banner stays until a proxy agent connects for the account.
@@ -23,9 +23,9 @@ Click **Save**. No credentials are issued here; a reminder banner stays until a 
 
 Go to **Admin → Integrations → Servers → Proxy Agent**, add a proxy agent, give it a name and select the self-hosted account. If you select several accounts, the agent is created on the first one.
 
-The **Proxy Agent Credentials** dialog then shows the **Access Key** and **Access Secret** — *Save these credentials now. The secret will not be shown again.* — and ready-made install commands for **Linux**, **macOS**, **Windows**, **Docker**, **Docker Compose** and **Helm**. The relay URL and signing key are already inside the commands.
+The **Proxy Agent Credentials** dialog then shows the **Access Key** and **Access Secret** — *Save these credentials now. The secret will not be shown again.* — and ready-made install commands for **Linux**, **macOS**, **Windows**, **Docker**, **Docker Compose** and **Helm**. The relay URL is already inside the commands, and so is the signing key when one is configured.
 
-Run the command on a machine that can reach the VMs over SSH. The dialog shows *Waiting for the agent to connect from your machine* until the agent connects, then *Agent connected*. See [Proxy Agent installation](../../installation/proxy-agent/installation.md) for each method.
+Run the command on a machine that can reach the VMs over SSH. The dialog shows *Waiting for the agent to connect from your machine* until the agent connects, then *Agent connected*. If the account already has a connected agent, it shows *This account already has a connected agent*. See [Proxy Agent installation](../../installation/proxy-agent/installation.md) for each method.
 
 ## 3. Add a discovery datasource on the proxy agent
 

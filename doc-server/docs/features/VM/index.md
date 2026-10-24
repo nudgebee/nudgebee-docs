@@ -40,7 +40,7 @@ The proxy agents for the account are shown in **Agent Health → Proxy Agent**, 
 
 If the tenant has no self-hosted account yet, the page shows *Get started with self-hosted VMs* with an **Add Self-Hosted Account** button (users without write access see *Need admin permission to add a self-hosted account*).
 
-Home also shows a **VM fleet** card for the selected self-hosted account, with **View all** linking here.
+Home also shows a **VM Fleet** card for the selected self-hosted account, with **View all** linking here.
 
 ## Permissions
 

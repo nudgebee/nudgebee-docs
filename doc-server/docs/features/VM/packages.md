@@ -14,7 +14,7 @@ Every package found on the account's VMs by the last scan.
 |---|---|
 | **Package** / **Version** / **Architecture** | The installed package |
 | **Type** | `deb` or `rpm` |
-| **Source** | Where the package came from |
+| **Source** | The source package name and version |
 | **Operating System** / **VM** | Where it is installed |
 | **Last Seen** | When the last scan saw it |
 

@@ -31,8 +31,8 @@ Filter by **Severity**, **Status** (**Open** or **Dismissed / snoozed**), **VM**
 From a row's menu, or the detail panel that opens when you click a row:
 
 - **Create Ticket** — files a ticket (shows the ticket ID once created; needs access to the account).
-- **Ask NuBi** — from the detail panel.
-- **Dismiss / snooze** or **Reactivate** — needs write access. Dismissals are kept across rescans.
+- **Ask NuBi** — an icon on every row, and in the detail panel.
+- **Dismiss / snooze** or **Reactivate** — needs write access. Dismissals are kept across rescans while the finding is still present; a finding that disappears and later reappears comes back Open. Decommissioning a VM archives its findings, dismissed ones included.
 - **Apply Patch** — *Coming Soon*.
 
 With no findings: *No open vulnerabilities — Findings appear here after a VM package scan matches installed packages against the CVE database.*

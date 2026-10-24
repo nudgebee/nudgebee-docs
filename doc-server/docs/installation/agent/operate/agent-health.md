@@ -20,10 +20,10 @@ The page has three tabs: **Agent**, **Observability** and **Proxy Agent**. Compo
 
 ### Self-hosted VM accounts
 
-For a [self-hosted VM account](../../../features/VM/index.md), Agent Health shows only the **Proxy Agent** tab:
+For a [self-hosted VM account](../../../features/VM/index.md), Agent Health shows only the **Proxy Agent** tab. With no proxy agent yet it shows *Get started with Proxy Agent monitoring* and **Connect VM Agent** (without write access: *Need admin permission to connect a VM agent*). Once an agent exists, it shows:
 
-- **Metrics**, **Logs** and **Alerts** cards — each **Connected**, **No data**, **Not connected**, **Unreachable** or **Check failed**, with what to connect when it isn't.
-- **Proxy Agents** — **Agent**, **Connection** (Connected / Disconnected), **Configuration**, **Version** and **Last Connected**, with **Manage** to open the integration. With none: *No proxy agent installed*.
+- **Metrics**, **Logs** and **Alerts** cards. Metrics and Logs show **Connected**, **No data**, **Not connected**, **Unreachable** or **Check failed**; Alerts shows **Receiving alerts**, **No alerts yet**, **Disabled** or **Not connected**. Each says what to connect when it isn't.
+- **Proxy Agents** — **Agent**, **Connection** (Connected / Disconnected), **Configuration**, **Version** and **Last Connected**, with **Manage** to open **Admin → Integrations → Servers**. *No proxy agent installed* appears when health data exists but no proxy agent integration is listed.
 - The agent's datasources — including its discovery datasource — with their status, last check and any error.
 
 Proxy agent versions are shown, but there is no "update available" notice for them yet.

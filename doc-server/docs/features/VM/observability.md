@@ -11,7 +11,7 @@ The **Metrics**, **Service Map**, **Traces** and **Events** tabs show data from 
 | Tab | Needs |
 |---|---|
 | **Metrics** | A metrics store (Prometheus, VictoriaMetrics and others) connected to the account, with VMs reporting to it |
-| **Service Map** | The same metrics store, with the NudgeBee node agent on each VM |
+| **Service Map** | An enabled **Prometheus** integration linked to the account with connection mode **VM agent** (if there are several, exactly one must be the default metrics provider), with the NudgeBee node agent on each VM. Other store types give no map. |
 | **Traces** | A trace store (Jaeger, Tempo, Elasticsearch and others) |
 | **Events** | A Prometheus Alertmanager webhook linked to the account |
 
@@ -43,7 +43,7 @@ Alerts posted to the account's Alertmanager webhook, attached to their VM and gr
 
 ## Data source status
 
-**Agent Health → Proxy Agent** shows a card each for metrics, logs and alerts, with **Connected**, **No data**, **Not connected**, **Unreachable** or **Check failed**. For example, *No log store is connected to this account* means add a Loki integration and make it the default log provider. See [Agent Health](../../installation/agent/operate/agent-health.md#self-hosted-vm-accounts).
+Once the account has a proxy agent, **Agent Health → Proxy Agent** shows a card each for metrics, logs and alerts. Metrics and Logs show **Connected**, **No data**, **Not connected**, **Unreachable** or **Check failed**; Alerts shows **Receiving alerts**, **No alerts yet**, **Disabled** or **Not connected**. For example, *No log store is connected to this account* means add a Loki integration and make it the default log provider. See [Agent Health](../../installation/agent/operate/agent-health.md#self-hosted-vm-accounts).
 
 ## Related
 

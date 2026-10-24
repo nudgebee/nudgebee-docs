@@ -75,20 +75,20 @@ With a local YAML config, put the same datasource block under `datasources:` —
 | `credentials.username` | For inventory | Read-only SSH user that exists on the VMs |
 | `credentials.private_key_file` or `credentials.private_key` | For inventory | SSH key (prefer the file, mounted from a Secret; setting both is an error) |
 
-For a sweep-only agent, leave out the credentials.
+SSH credentials and the content pack are needed for VMs to appear: a host is added to the account only after a successful inventory. An agent with no credentials sweeps but finds nothing to list.
 
 ## The content pack
 
-Inventory commands come from a signed **content pack**, not from the agent itself, so adding OS support never needs an agent upgrade. The agent verifies the pack's signature with `pack_public_key` before running it. Ask NudgeBee support for the signed Linux inventory pack and its public key, then mount the pack into `pack_dir`, for example:
+Inventory commands come from a signed **content pack**, not from the agent itself, so adding OS support never needs an agent upgrade. The agent verifies the pack's signature with `pack_public_key` before running it. Ask NudgeBee support for the signed Linux inventory pack and its public key, then mount the pack into `pack_dir`. A per-VM **Scan** asks for pack **version 2** (`linux-inventory-v2.yaml`); daily and account scans use the highest version present. For example:
 
 ```bash
 kubectl create configmap forager-packs \
-  --from-file=linux-inventory-v1.yaml=./linux-inventory-v1.yaml
+  --from-file=linux-inventory-v2.yaml=./linux-inventory-v2.yaml
 ```
 
 ## Before you enable it
 
-- A sweep makes plain TCP connections to ports 22, 3389 and 5985 across `allowed_hosts`. Allowlist the agent's IP in your IDS first: an unannounced sweep looks like an attack, and `sshd` logs *Did not receive identification string* for each probe, which some fail2ban setups act on.
+- A sweep makes TCP connections to ports 22, 3389 and 5985 across `allowed_hosts`, and with SSH credentials set also logs in to responding hosts to read their cloud identity. Allowlist the agent's IP in your IDS first: an unannounced sweep looks like an attack, and `sshd` logs *Did not receive identification string* for each probe, which some fail2ban setups act on.
 - The agent needs no extra privileges for sweeping.
 - Directory (LDAP / Active Directory) discovery isn't used yet; VMs are found by the sweep only.
 
