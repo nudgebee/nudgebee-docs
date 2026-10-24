@@ -16,7 +16,7 @@ The **Agent Health** view in the NudgeBee Console provides real-time visibility 
 
 ### Status values
 
-The page has three tabs: **Agent**, **Observability** and **Proxy Agent**. Components show **Connected** or **Disconnected**; OpenCost can show **Managed server-side**, and Prometheus, Logs and Traces can show **Served by integration** when an integration rather than the agent provides them. The Observability tab shows **Not configured** for a source that isn't set up. Banners: *The Agent is not connected* and *The {X} services are disconnected.*
+The page has three tabs: **Agent**, **Observability** and **Proxy Agent**. Components show **Connected** or **Disconnected**; OpenCost can show **Managed server-side**, and Prometheus, Logs and Traces can show **Served by integration** when an integration rather than the agent provides them. The Observability tab shows **Not configured** for a source that isn't set up. Banners: *The Agent is not connected* and *The … services are disconnected.* (naming the disconnected components)
 
 ## 1. Agent Health Dashboard Overview
 
