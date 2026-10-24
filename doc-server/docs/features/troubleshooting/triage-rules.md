@@ -42,7 +42,7 @@ Expand a row to see the events it matched in the last 30 days. Filter by name, *
 
 Row menu:
 
-- **Your rules:** **Edit**, **Disable** / **Enable**, **Delete**. Disabling stops the rule matching new events straight away; deleting can't be undone. A rule past its expiry must be edited (extend or clear the expiry) before it can be enabled again.
+- **Your rules:** **Edit**, **Disable** / **Enable**, **Delete**. Disabling stops the rule matching new events immediately; deleting can't be undone. A rule past its expiry must be edited (extend or clear the expiry) before it can be enabled again.
 - **System rules:** **Disable for this Account** / **Enable System Rule**, on a cluster's or cloud account's tab only.
 
 ## Create a rule

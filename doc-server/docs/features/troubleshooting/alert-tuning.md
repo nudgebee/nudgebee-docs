@@ -65,7 +65,7 @@ Open a suggestion's **Evidence** tab. Two buttons, offered depending on what the
 - **Apply directly** — NudgeBee rewrites the rule at the source and the change takes effect immediately.
 - **Raise PR** — NudgeBee opens a pull request against the repository holding the rule (choose the Git integration, repository, base branch and rule file). Available for **Prometheus rule files** only, through a GitHub or GitLab integration, and not for a change that only lengthens the wait.
 
-A **Disable Alert** suggestion is never applied from here — disable or mute the rule with the alert-rule controls instead. Risky suggestions ask you to tick a confirmation first. After applying, **View in audit log** shows the change. Applying and reverting need update access to events.
+A **Disable Alert** suggestion is never applied from here — disable or mute the rule with the alert-rule controls instead. Risky suggestions ask you to check a confirmation first. After applying, **View in audit log** shows the change. Applying and reverting need update access to events.
 
 You can override the suggested threshold or duration before applying. A manual override is written even when the engine recommended no retune, so **Investigate** and **Not Enough Data** suggestions can still be used to push a value you have decided on yourself.
 
