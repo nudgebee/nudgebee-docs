@@ -34,14 +34,14 @@ Removing `nudgebee-prometheus` leaves the Prometheus Operator CRDs (`prometheuse
 
 ## 3. Remove the account in NudgeBee
 
-Uninstalling the agent doesn't delete the cluster from NudgeBee — it shows as **Not Connected**. To remove it, delete the account in **Admin → Integrations → Kubernetes**. Data already collected is kept according to your retention settings.
+Uninstalling the agent doesn't delete the cluster from NudgeBee — it shows as **Not Connected**. To remove it, delete the account in **Admin → Integrations → Kubernetes Clusters**. Data already collected is kept according to your retention settings.
 
 ## Proxy agent (forager)
 
 | Installed with | Remove with |
 |---|---|
-| Helm | `helm uninstall <release> -n <namespace>` |
-| Docker / Compose | Stop and remove the container (`docker rm -f <name>`) or `docker compose down` |
+| Helm | `helm uninstall nudgebee-forager -n <namespace>` (your release name if you changed it) |
+| Docker / Compose | `docker rm -f nudgebee-forager`, or `docker compose down` |
 | Linux (systemd) | `sudo systemctl disable --now nudgebee-forager`, `sudo rm /etc/systemd/system/nudgebee-forager.service && sudo systemctl daemon-reload`, then delete `/usr/local/bin/nudgebee-forager`, `/etc/nudgebee/` and `/var/lib/nudgebee/`, and `sudo userdel nudgebee` |
 
 Then remove the proxy agent's account in **Admin → Integrations**.
