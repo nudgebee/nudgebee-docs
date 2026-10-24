@@ -56,10 +56,10 @@ Global search (⌘K) uses a few different names: *Threshold Suggestions* opens *
 - **Read access** to an account is enough to view every tab and to create tickets.
 - **Write access** is needed for actions that change things: starting or stopping resources, applying a fix, creating an alarm, classifying events and assigning the owner.
 - Users with a custom role need the **cloud** module to see **Infra → Cloud**.
-- AWS accounts connected in **Read-Only** mode show a banner and can't run changes from NudgeBee — see [Access modes & real-time events](./access-modes-and-real-time-events.md).
+- AWS accounts connected in **Read-Only** mode show a banner and can't run changes from NudgeBee — see [Access Modes & Real-Time Events](./access-modes-and-real-time-events.md).
 
 ## Operations
 
-* **[Access modes & real-time events](./access-modes-and-real-time-events.md)** — Standard vs Read-Only, and connecting EventBridge, Event Grid or GCP real-time alerts.
+* **[Access Modes & Real-Time Events](./access-modes-and-real-time-events.md)** — Standard vs Read-Only, and connecting EventBridge, Event Grid or GCP real-time alerts.
 * **[Cloud Agent Synchronization](./cloud-agent-sync.md)** — sync cycles and **Sync Now**.
 * **[Cloud Synchronization & Missing Data Troubleshooting](./troubleshooting.md)** — missing spends, resources and permissions.
