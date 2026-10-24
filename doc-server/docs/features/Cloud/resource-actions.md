@@ -10,18 +10,18 @@ You can start, stop and restart some cloud resources directly from their service
 
 | Resource | Actions |
 |---|---|
-| EC2, Azure VM, Compute Engine | **Start**, **Stop**, **Reboot Instance** |
+| EC2, Azure VM, Compute Engine | **Start Instance**, **Stop Instance**, **Reboot Instance** |
 | EC2 only | **Run Command…** — run an AWS Systems Manager command: *Check disk space*, *Check memory*, *Update SSM agent* or *Install CloudWatch agent* |
-| RDS | **Start**, **Stop**, **Reboot** |
-| Cloud SQL | **Start**, **Stop**, **Restart** |
+| RDS | **Start Instance**, **Stop Instance**, **Reboot Instance** |
+| Cloud SQL | **Start Instance**, **Stop Instance**, **Restart Instance** |
 | Azure SQL Databases | **Resume Database**, **Pause Database** |
 | ECS services | **Redeploy Service**, **Force Redeploy**, **Scale Service** (set the desired number of tasks) |
 
-Azure SQL Managed Instances, storage buckets, ECS clusters and ECS tasks have no actions.
+Azure SQL Managed Instances have no actions. Storage buckets, ECS clusters and ECS tasks have no available actions yet.
 
 ## Confirming an action
 
-Disruptive actions — **Stop**, **Force Redeploy** and **Pause Database** — ask you to type the resource's name to confirm. Other actions ask for a simple confirmation.
+Disruptive actions — **Stop Instance**, **Force Redeploy** and **Pause Database** — ask you to type the resource's name to confirm. Other actions ask for a simple confirmation.
 
 ## Action History
 

@@ -47,7 +47,7 @@ The service tabs depend on the provider:
 | GCP | **Compute Engine**, **Cloud SQL**, **Cloud Storage** |
 | Cloud Foundry | **Apps**, **Organizations**, **Spaces**, **Routes** — see [Cloud Foundry screens](./CloudFoundry.md#screens) |
 
-Cloud Foundry accounts don't have the **Services**, **Optimize** or **Monitoring** tabs. The **Security** and **Tools** tabs are shown but not available yet for cloud accounts.
+Cloud Foundry accounts don't have the **Services** tab, and their **Optimize** and **Monitoring** tabs are shown but not available. The **Security** and **Tools** tabs are shown but not available yet for cloud accounts.
 
 Global search (⌘K) uses a few different names: *Threshold Suggestions* opens **Alert Tuning**, and *Metrics* opens **Cloud Metrics**.
 

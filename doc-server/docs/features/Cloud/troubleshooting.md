@@ -88,7 +88,7 @@ Omit `--external-id` only if the configured role does not require one. The query
 | Spends show but resources don't | Billing and inventory use different permissions | Check the inventory role above; billing access alone is not enough |
 | Metrics empty for a service | The service has no default metric set | Ask NuBi for the specific metric — see [Supported Cloud Services](./supported-services.md) (**Metrics** column) |
 | A recommendation can't be applied | It is guidance-only for that service, or (AWS) the account is in read-only access mode | Apply it in the cloud console; the **Fixes** column lists what NudgeBee can apply |
-| AWS events don't arrive | EventBridge isn't connected for the account, or its stack isn't delivering. It forwards EC2, RDS, ECS, Lambda, load balancer, SQS and SNS events plus CloudWatch alarm state changes | Choose **Connect EventBridge** in the account's row menu (**Admin → Integrations → AWS**) and check its **Real-Time Events** status — see [Access Modes & Real-Time Events](./access-modes-and-real-time-events.md). For other services, use CloudWatch alarms |
+| AWS events don't arrive | EventBridge isn't connected for the account, or its stack isn't delivering. It forwards EC2, RDS, ECS, Lambda, load balancer, SQS and SNS events plus CloudWatch alarm state changes | Choose **Connect EventBridge** in the account's row menu (**Admin → Integrations → Kubernetes & Cloud → AWS**) and check its **Real-Time Events** status — see [Access Modes & Real-Time Events](./access-modes-and-real-time-events.md). For other services, use CloudWatch alarms |
 
 ---
 

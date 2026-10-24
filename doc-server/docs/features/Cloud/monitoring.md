@@ -6,7 +6,7 @@ keywords: [cloud logs, cloudwatch logs insights, log analytics kql, cloud loggin
 
 # Monitoring (Cloud)
 
-**Infra → Cloud → Monitoring** has **Alert Manager**, **Cloud Logs**, **Cloud Metrics**, and **Traces** on GCP accounts. Cloud Foundry accounts don't have this tab.
+**Infra → Cloud → Monitoring** has **Alert Manager**, **Cloud Logs**, **Cloud Metrics**, and **Traces** on GCP accounts. On Cloud Foundry accounts this tab is shown but not available.
 
 ## Alert Manager
 
@@ -26,8 +26,8 @@ The cloud provider's own logs use a plain query box with **Query Help** examples
 | Provider | Choose first | Query language |
 |---|---|---|
 | AWS | **Region** and **Log Group** | CloudWatch Logs Insights |
-| Azure | **Log Analytics Workspace** | KQL |
-| GCP | Optional **Severity** and **Region** (searches the whole project) | Cloud Logging filter |
+| Azure | **Workspace** (a Log Analytics workspace) | KQL |
+| GCP | Optional **Severity**, and **Region** when the project has more than one (searches the whole project) | Cloud Logging filter |
 
 Other log providers offer **Builder** and **Code** modes (Datadog has no Builder). Pick a **Limit** (50, 100, 200, 500 or 1000 lines; default 100), click **Run Query**, and **Download** the results. The default window is the last hour.
 
@@ -37,7 +37,7 @@ This screen is different from the Kubernetes **Query Log** screen — it has no 
 
 Chart metrics from CloudWatch, Azure Monitor or Cloud Monitoring (or another connected metrics provider).
 
-Choose a **Service**, **Region**, one or more **Resources**, one or more **Metrics** and a **Statistic** (Average, Sum, Maximum or Minimum). You can also type extra metric names, separated by commas. Click **Run Query**. The default window is the last 7 days.
+Choose a **Service**, **Region** and a **Resource**, then one or more **Metrics** (they appear after you pick the resource) and a **Statistic** (Average, Sum, Maximum or Minimum). You can also type extra metric names, separated by commas. Click **Run Query**. The default window is the last 7 days.
 
 If a service shows no metrics, see [Metrics empty for a service](./troubleshooting.md).
 

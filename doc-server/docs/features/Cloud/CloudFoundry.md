@@ -54,7 +54,7 @@ Click **Save**.
 
 ## Screens
 
-A Cloud Foundry account opens on **Infra → Cloud** like other cloud accounts, with **Summary**, **Troubleshoot** (Events, Triage Rules, Alert Tuning) and four Cloud Foundry tabs. It has no **Services**, **Optimize** or **Monitoring** tab, and no cost cards. The Summary shows **App Health** (Running, Degraded, Stopped), **Top Resource Consumers**, **Spaces** and a metrics chart.
+A Cloud Foundry account opens on **Infra → Cloud** like other cloud accounts, with **Summary**, **Troubleshoot** (Events, Triage Rules, Alert Tuning) and four Cloud Foundry tabs. It has no **Services** tab; **Optimize** and **Monitoring** are shown but not available, and there are no cost cards. The Summary shows **App Health** (Running, Degraded, Stopped), **Top Resource Consumers**, **Spaces** and a metrics chart.
 
 | Tab | Columns | Expand for |
 |---|---|---|

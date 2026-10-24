@@ -27,7 +27,7 @@ keywords: [cloud recommendations, right sizing, infra upgrade, configuration, se
 
 - **Ask NuBi** — get an explanation or a plan.
 - **Create Ticket** — once created, the row shows the ticket ID.
-- **Apply Mitigation** (in the **Mitigation** tab) — runs the steps in the mitigation, which you can review first; some recommendations let you pick a **Target Instance Type**. Needs write access, an account that isn't in AWS Read-Only mode, and a recommendation that isn't closed or dismissed.
+- **Apply Mitigation** (in the **Mitigation** tab, AWS, Azure and GCP) — shown when the mitigation contains commands NudgeBee can run. It runs them, and you can review the steps first; some recommendations let you pick a **Target Instance Type**. Needs write access, and isn't offered when the recommendation is Closed, Dismissed or Archived. Read-only AWS accounts can't apply it.
 - **Create Alarm** (Configuration recommendations that suggest an alarm) — pick where the alarm notifies: SNS topics on AWS, action groups on Azure, notification channels on GCP. Needs write access and an account not in Read-Only mode.
 
 Some recommendations are guidance only — apply them in the cloud console. The **Fixes** column of [Supported Cloud Services](./supported-services.md) shows what NudgeBee can apply.

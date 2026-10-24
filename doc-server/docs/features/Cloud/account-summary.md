@@ -14,7 +14,7 @@ keywords: [cloud account summary, cloud cost summary, monthly forecast, credits,
 |---|---|
 | **Resource Summary** | The six services with the most resources. **Show N more** lists them all; click a service to open **Services** filtered to it. |
 | **Insights** | Notable findings; each links to the tab where you can act on it. |
-| **Errors** | **Fired Alarm Count** for the last 7 days, with a trend. |
+| **Errors** | **Fired Alarm Count** for the last 7 days. |
 | **Optimizations** | **Optimize Count** — click to open **Optimize → Right Sizing**. |
 | **Recent Events** | The latest five events (Instance ID, Events, Severity, Created at), with a link to all events. |
 

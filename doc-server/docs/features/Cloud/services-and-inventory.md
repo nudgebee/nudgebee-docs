@@ -32,11 +32,12 @@ Each main service has its own tab (for example **EC2**, **RDS**, **S3** and **EC
 | **Events** | The account's events for this service |
 | **Instances** | The resources, described below |
 
+On every **Instances** list — compute, databases, storage and ECS — **Refresh** (write access) reloads the list from the cloud provider.
+
 ### Compute instances (EC2, VM, Compute Engine)
 
 - **Columns:** **Instance ID**, **Instance Name**, **CPU usage**, **Memory usage**, **State**, **Cost**, **Tags**, **Launch Time**. CPU and memory usage need the provider's monitoring agent on the instance (CloudWatch Agent on AWS, Ops Agent on GCP).
 - **Filters:** search by instance ID or name, **State**, **Region**, **Tag Key**, **Tag Value**.
-- **Refresh** (write access) reloads the list from the cloud provider.
 - **Expand an instance** for **Details** (networking, disks, security groups or equivalents, and alarms), **Monitoring**, **Events** and **Action History**.
 - Actions: see [Resource Actions](./resource-actions.md).
 
