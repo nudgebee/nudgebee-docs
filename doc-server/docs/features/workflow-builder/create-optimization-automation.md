@@ -20,7 +20,7 @@ Start with a notification workflow so you can verify recommendation matching bef
 
 ## Configure the trigger
 
-Create a workflow and add an **Optimization Trigger**. Select a Cluster, Category, and Rule Name as needed. An empty configuration matches every recommendation; use a narrow filter for your first workflow. See the [Optimization Trigger reference](./triggers.md#optimization-trigger) for supported values.
+Create a workflow and add an **Optimization Trigger**. Select at least one of Cluster, Category or Rule Name — a trigger with none can't be saved (in JSON, a filter expression also counts). Use a narrow filter for your first workflow. See the [Optimization Trigger reference](./triggers.md#optimization-trigger) for supported values.
 
 The structured trigger does not expose minimum-savings or environment-tag fields. If you need additional logic, evaluate the available payload fields in the workflow before performing an action.
 

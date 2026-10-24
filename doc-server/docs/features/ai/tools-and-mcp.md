@@ -75,6 +75,19 @@ Automations NuBi can run as tools. Create and edit automations in **[Automations
 
 **Manage** opens *Nubi settings* with two switches: **Nubi can run it** and **Runs without asking**. Filter by **Offered to Nubi** or by name.
 
+NuBi also needs a **published** version with an AI description and a manual trigger; changes reach NuBi within 5 minutes. When an automation isn't offered, the row says why:
+
+| Reason shown | What to change |
+|---|---|
+| Automations as Nubi tools are not enabled for this account. | Turn on **Assistant can run automations** in [Tenant Settings → Features](../tenant-settings.md#features) |
+| Nubi is not allowed to run it. | Turn on **Nubi can run it** (or *Allow the AI assistant to run this automation* in the automation's settings) |
+| The automation is paused or inactive. | Activate it |
+| The automation has no published version. | Publish a version |
+| The published version has no manual trigger. | Add a manual trigger and publish |
+| The published version has no AI description. Publish the version that has one. | Add **Description for the AI** in Automation Settings and publish |
+
+See [Workflow Builder → Workflow Settings](../workflow-builder/index.md#workflow-settings) for the settings in the automation itself.
+
 ## Related
 
 - [AI & Tools](./ai-and-tools.md)

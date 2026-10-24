@@ -20,6 +20,10 @@ Confirm that a version is published, made live, and Active. Saving draft edits d
 
 For an Event Trigger, confirm the event exists in Troubleshoot. Compare its actual event type, account, namespace, source, and priority with the configured filters. Structured filters combine with AND. Advanced expressions must render to `true` or `1`.
 
+Check **Listen to accounts**: when it is empty, the trigger only hears events from the automation's own account. An event from another cluster or cloud account needs that account selected.
+
+For a Webhook trigger, the filter expression must render exactly `true` — `1` does not match.
+
 Check the selected lifecycle phase when available: `event.created`, `event.triaged`, and `investigation.completed` are distinct. A trigger listening for investigation completion does not match the creation phase.
 
 Review event classification and suppression to understand which lifecycle processing occurred. Do not assume that a notification suppression rule globally disables every workflow trigger.
@@ -30,12 +34,22 @@ Optimization triggers run for new recommendations matching their cluster, catego
 
 ## 4. Check schedule timing and overlap
 
-Scheduled times use UTC. Review the cron expression, catchup window, and schedule overlap policy. For example, Skip can omit a scheduled run while an earlier run remains active; Buffer One queues one pending scheduled run. These schedule policies should not be assumed to govern all event-triggered executions.
+Scheduled times use UTC, and the schedule comes from the **live** version — a cron changed only in a draft doesn't apply yet. Review the cron expression, catchup window, and schedule overlap policy. For example, Skip can omit a scheduled run while an earlier run remains active; Buffer One queues one pending scheduled run. These schedule policies should not be assumed to govern all event-triggered executions.
 
 See [Schedule Trigger](./triggers.md#schedule-trigger) for supported values.
 
-## 5. Collect evidence for a missing run
+## 5. Check whose permissions the run uses
+
+Triggered runs act as the automation's owner — its creator, or whoever last published a version as live or made a version live. If that user lacks a permission on the account, or their user was deleted, steps that make changes fail. See [Whose permissions a run uses](./index.md#whose-permissions-a-run-uses).
+
+## 6. Collect evidence for a missing run
 
 Record the workflow ID, live version, account, trigger configuration, event or recommendation ID, and expected UTC time. If no execution exists, ask the administrator to inspect workflow-server trigger/consumer logs for that time and account. A missing execution is not itself proof of a filter mismatch.
 
 If a run exists, inspect its task errors and approval state. See [Workflow Operations](./workflow-operations-approvals.md) before retrying or cancelling it.
+
+## Related
+
+- [Configuring Triggers](./triggers.md)
+- [Workflow Versioning](./workflow-versioning.md)
+- [Workflow Operations](./workflow-operations-approvals.md)

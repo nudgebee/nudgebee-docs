@@ -37,6 +37,6 @@ For example, the Kubernetes vertical-rightsize task returns its proposed patch i
 
 ## Publish the validated version
 
-**Save Draft** preserves your working copy. **Publish** creates a version; **Make Live** selects the version used by production triggers. Set the live version to Active when ready. Editing a draft does not stop an existing active live version.
+**Save draft** preserves your working copy. **Publish** creates a version; **Make Live** selects the version used by production triggers. Set the live version to Active when ready. Editing a draft does not stop an existing active live version.
 
 See [Workflow Versioning](./workflow-versioning.md) for the controls and version history. Publishing an older workflow version changes future executions; it does not undo changes already made to infrastructure.

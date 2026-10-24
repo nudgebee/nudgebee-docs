@@ -19,9 +19,13 @@ Reshape or transform data using JSONata expressions or JavaScript. Parse JSON/YA
 |:---|:---|:---|:---|
 | `expression` | string | Yes | The transformation expression (JSONata or JavaScript). |
 | `input` | string | Yes | Raw string data to transform (e.g., JSON from a previous task). |
-| `input_type` | string | No | Format of the input data. Options: `json`, `yaml`. Default: `json`. |
-| `output_type` | string | No | Desired output format. Options: `raw`, `json`, `yaml`. Default: `raw`. |
-| `script_type` | string | No | Transformation engine. Options: `jsonata`, `javascript`. Default: `jsonata`. |
+| `inputType` | string | No | Format of the input data. Options: `json`, `yaml`. Default: `json`. |
+| `outputType` | string | No | Desired output format. Options: `raw`, `json`, `yaml`. Default: `raw`. |
+| `scriptType` | string | No | Transformation engine. Options: `jsonata`, `javascript`. Default: `jsonata`. |
+
+:::caution Key names are camelCase
+Write `inputType`, `outputType` and `scriptType` exactly. A snake_case key such as `input_type` is ignored and the default is used.
+:::
 
 ### Output
 
@@ -50,3 +54,8 @@ Filter a list to keep only items matching a condition. Uses JSONata predicates.
 |:---|:---|:---|
 | `result` | array | Filtered list containing only matching items. |
 
+
+## Related
+
+- [Workflow Builder](./index.md)
+- [Core Tasks](./core-tasks.md)

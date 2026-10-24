@@ -52,17 +52,19 @@ Pause workflow execution for a specified duration before continuing to the next 
 
 **Display Name:** Approval
 
-Pause the workflow and wait for a human to approve or reject before continuing. Optionally sends a notification via Slack or email to prompt the approver.
+Pause the workflow and wait for a human to approve or reject before continuing. By default it waits for an approval in the execution view; it can also send the request to Slack, Microsoft Teams or email.
 
 ### Parameters
 
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `message` | string | Yes | The message shown to the approver explaining what they are approving. |
-| `approval_type` | string | No | Channel to send the approval request. Options: `instant_message`, `email`. |
-| `im_provider` | string | No | IM provider (required when `approval_type` is `instant_message`). Options: `slack`. |
+| `approval_type` | string | No | Where to send the request. `in_app` (default) sends nothing and waits for an approval in the execution view; `instant_message`; or `email`. |
+| `im_provider` | string | No | `slack` or `ms_teams` (required when `approval_type` is `instant_message`). Webhook-only chat integrations can't carry approvals. |
 | `im_channel` | string | No | Channel ID to send the approval request to (required when `approval_type` is `instant_message`). |
-| `im_team_id` | string | No | Team ID (applicable for MS Teams). |
+| `im_team_id` | string | No | Microsoft Teams team the channel is in (required for `ms_teams`). |
+| `message_thread_id` | string | No | Post the prompt into an existing thread, for example `{{ Tasks['notify'].output.message_id }}` from an earlier Send IM step. Empty posts top-level. |
+| `email_recipients` | array | No | Email addresses (required when `approval_type` is `email`). Pick NudgeBee users or type any address. The email links to an approval page in NudgeBee. |
 | `approval_options` | array | No | Custom approval button labels. Default: `["approve", "reject"]`. |
 
 ### Output
@@ -72,6 +74,7 @@ Pause the workflow and wait for a human to approve or reject before continuing. 
 | `status` | string | Approval result — matches one of the `approval_options` values (e.g., `approve`, `reject`). |
 | `approver` | string | Identifier of the person who responded. |
 | `comments` | string | Optional comments left by the approver. |
+| `im_provider`, `im_channel`, `im_message_id`, `im_team_id` | string | Where the chat prompt was posted (chat approvals only). |
 
 ---
 
@@ -154,6 +157,7 @@ Execute another workflow by name as a child workflow and return its result. Usef
 |:---|:---|:---|:---|
 | `workflow_name` | string | Yes | Name of the workflow to execute. |
 | `inputs` | object | No | Input parameters to pass to the child workflow. |
+| `workflow_version` | integer | No | Pin the call to a version number of the target workflow. Empty (or 0) always runs its current **Live** version. |
 
 ### Output
 

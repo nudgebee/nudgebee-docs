@@ -7,6 +7,19 @@ sidebar_label: AI Tasks
 
 Leverage AI for summarization, investigation, classification, and routing.
 
+## Shared parameters
+
+These optional parameters appear on several AI tasks:
+
+| Name | Tasks | Description |
+|:---|:---|:---|
+| `model` | AI Summary, AI Investigation, Ask NuBi, AI Classifier | Model to use, as `provider/model`. Empty uses the account default. |
+| `session_scope` | AI Summary, AI Investigation, Ask NuBi | **Conversation Scope**: `execution` (default) starts a fresh AI conversation on every run; `workflow` reuses one conversation across all runs of this automation, so each run sees earlier runs' context. |
+| `account_id` | AI Investigation, Ask NuBi, MCP Call | **Account** to work in. Empty uses the automation's own account. For an event trigger listening to several accounts, use `{{ Inputs.event.cloud_account_id }}`. |
+| `approved_tools` | Ask NuBi | Tools the agent may use without stopping to ask a human, because the automation already established authority (for example, an approved ticket). Anything not listed still asks — so without it, an agent step that wants to make a change waits for approval. |
+
+AI steps act with the permissions of the user the run acts as — see [Whose permissions a run uses](./index.md#whose-permissions-a-run-uses).
+
 ## `llm.summary`
 
 **Display Name:** AI Summary
@@ -43,13 +56,17 @@ Ask AI to analyze and investigate a problem. The AI will research the issue usin
 
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
-| `message` | string | Yes | Description of the problem or question to investigate. Supports template expressions. |
+| `message` | string | Yes | Description of the problem or question to investigate. Supports template expressions such as `{{ Tasks['task_id'].output.field }}`. |
+| `response_format` | string | No | `text` (default) returns the raw response; `json` extracts a JSON object from it. |
+| `tools` | array | No | Allow-list of tool names. When set, the investigation can use only these tools. |
 
 ### Output
 
 | Name | Type | Description |
 |:---|:---|:---|
-| `data` | string | Investigation findings and recommendations. |
+| `data` | string | Investigation findings and recommendations (an object when `response_format` is `json`). |
+| `parse_error` | string | Set when `response_format` is `json` and no JSON object could be extracted. |
+| `account_id` | string | The account the investigation ran in. |
 | `conversation_id` | string | NuBi conversation ID. |
 | `session_id` | string | NuBi session ID. |
 
@@ -65,15 +82,19 @@ Ask AI to investigate a specific event or alert. Designed for event-triggered wo
 
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
-| `message` | string | Yes | Event or alert details. Typically pass `{{ event }}` for webhook-triggered workflows. |
+| `account_id` | string | Yes | Account that owns the event. In an event-triggered automation, `{{ Inputs.event.cloud_account_id }}`. |
+| `event_id` | string | Yes | Event to investigate. In an event-triggered automation, `{{ Inputs.event.id }}`. |
 
 ### Output
 
 | Name | Type | Description |
 |:---|:---|:---|
-| `data` | string | Root cause analysis and recommendations. |
-| `conversation_id` | string | NuBi conversation ID. |
-| `session_id` | string | NuBi session ID. |
+| `data` | string | Investigation summary (markdown). Falls back to the initial event summary when the deeper analysis was partial. |
+| `log_summary` | string | Short structured event summary. |
+| `log_analysis` | string | Log evidence found. Empty when no logs were available. |
+| `investigation` | string | Root-cause analysis. |
+| `status` | string | `COMPLETED` or `FAILED`. |
+| `status_reason` | string | Why it failed, when `status` is `FAILED`. |
 
 ---
 
@@ -91,11 +112,14 @@ Ask NuBi (NudgeBee's AI assistant) to investigate an issue or answer a question.
 |:---|:---|:---|:---|
 | `message` | string | Yes | Question or issue to ask NuBi about. |
 
+Also takes the [shared parameters](#shared-parameters) `model`, `session_scope`, `account_id` and `approved_tools`.
+
 ### Output
 
 | Name | Type | Description |
 |:---|:---|:---|
 | `data` | string | NuBi's response. |
+| `account_id` | string | The account NuBi worked in. |
 | `conversation_id` | string | NuBi conversation ID. |
 | `session_id` | string | NuBi session ID. |
 
@@ -125,6 +149,10 @@ Use AI to categorize input into one of several predefined options. Useful for ro
 ## `llm.router`
 
 **Display Name:** AI Router
+
+:::caution Deprecated
+Use **AI Classifier** (`llm.classify`) followed by a **Switch** (`core.switch`) instead.
+:::
 
 Use AI to classify input and automatically route to the correct branch of tasks. Define multiple branches with descriptions — the AI selects which branch to execute.
 
@@ -181,11 +209,12 @@ Call a tool on an external MCP (Model Context Protocol) compatible server.
 
 | Name | Type | Required | Default | Visibility | Description |
 |:---|:---|:---|:---|:---|:---|
-| `connection_mode` | string | Yes | `integration` | Always | How to connect to the MCP server. Options: `integration` (use a saved MCP integration) or `direct` (provide URL and auth inline). |
+| `connection_mode` | string | Yes | — | Always | How to connect to the MCP server. Options: `integration` (use a saved MCP integration) or `direct` (provide URL and auth inline). |
 | `integration_id` | integration | Conditional | — | `connection_mode` = `integration` | Select an MCP integration to use. Manage integrations under **Settings > Integrations**. |
 | `url` | string | Conditional | — | `connection_mode` = `direct` | The URL of the MCP server. **Tip:** Save connection details as an MCP integration under **Settings > Integrations** for reuse. |
 | `tool_name` | string | Yes | — | Always | The name of the tool to invoke. The tool name dropdown is dynamically populated — it connects to the MCP server (via integration or direct URL) and fetches available tools using the `tools/list` MCP method. |
 | `arguments` | object | No | `{}` | Always | Tool-specific input arguments. |
+| `account_id` | account | No | — | Always | Account to call the tool in. Empty uses the automation's own account. |
 | `headers` | object | No | — | `connection_mode` = `direct` | Custom HTTP headers to include in the request (e.g., `Authorization`). |
 | `auth_type` | string | No | `""` (none) | `connection_mode` = `direct` | Authentication type. Options: `""` (none) or `oauth2`. For bearer, basic, or API key authentication, use the `headers` parameter directly instead. |
 | `oauth_token_url` | string | Conditional | — | `auth_type` = `oauth2` AND `connection_mode` = `direct` | OAuth 2.0 token endpoint URL. |
@@ -226,4 +255,10 @@ The task supports both immediate JSON responses and Server-Sent Events (SSE) str
 | Name | Type | Description |
 |:---|:---|:---|
 | `content` | array | Content returned by the tool. |
-| `is_error` | boolean | Whether the tool execution resulted in an error. |
+| `isError` | boolean | Whether the tool execution resulted in an error. |
+
+## Related
+
+- [Workflow Builder](./index.md)
+- [Core Tasks](./core-tasks.md)
+- [Tools & MCP](../ai/tools-and-mcp.md)
