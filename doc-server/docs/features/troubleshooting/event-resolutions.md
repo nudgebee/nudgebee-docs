@@ -24,7 +24,7 @@ Actions taken on an event are scattered across the products they touch: a PR liv
 | **Severity** | Priority of the originating event (empty for resolutions raised by an investigation). |
 | **Resolution** | The kind of action taken — links out where the action has a URL. |
 | **Resolution Details** | The specifics: the command that ran (with its exit code when it wasn't 0), CPU and memory requests and limits as before → after, or the change made (Pod Restart, Raise PR, PVC Resize, Scale Replicas, Image Update). |
-| **Status** | **Done**, **Needs checking** (a verification check didn't confirm it), **Outcome unverified** (a command reported no exit code), **Outcome unknown**, **Failed**, **Declined** or **Running**. A message under the status explains failures and unknowns. |
+| **Status** | **Done**, **Needs checking** (a verification check didn't confirm it), **Outcome unverified** (a command reported no exit code), **Outcome unknown**, **Failed**, **Declined** or **Running**. A message under the status explains failures and unknowns, and also appears on Done rows whose reference isn't a link. |
 | **Resolver** | Who or what acted. |
 | **Updated** | When the row last changed. |
 

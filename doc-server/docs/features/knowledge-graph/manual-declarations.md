@@ -12,7 +12,7 @@ Add what no collector can see: a dependency on a third-party API, an on-premises
 
 ## Nodes
 
-**Declare node** adds a resource by hand. The table lists **Node**, **Where** (the account it belongs to, or outside any account), **Declared** and **Status**:
+**Declare node** adds a resource by hand. The table lists **Node**, **Where** (the account it belongs to, or *Outside connected accounts*), **Status** and **Declared**:
 
 | Status | Meaning |
 |---|---|
@@ -20,13 +20,13 @@ Add what no collector can see: a dependency on a third-party API, an on-premises
 | **Adopted** | A collector now sees the same resource, so the collected one is used |
 | **Possible duplicate** | It looks like a resource NudgeBee already collects |
 
-Row actions: **Edit**, **Delete** and **Merge into collected node**, which folds a declared node into the collected one it duplicates.
+Row actions: **Edit** (not on *Adopted* rows), **Delete**, and on *Possible duplicate* rows **Merge into collected node**, which folds the declared node into the collected one. The toolbar also has **Delete all**.
 
 Nodes outside any account can use your own kinds, such as `NetworkSwitch`. A tenant admin introduces a new kind the first time it is used.
 
 ## Dependencies
 
-**Declare dependency** links two nodes. The table lists **Source → Destination**, **Type**, **Matches**, **Status** and **Last resolved**. NudgeBee resolves each end to a node in the graph:
+**Declare dependency** links two nodes. The table lists **Source → Destination**, **Type**, **Status**, **Matches** and **Last resolved**. NudgeBee resolves each end to a node in the graph; statuses that concern one end say which (*Source unmatched* / *Dest unmatched*, *Source ambiguous* / *Dest ambiguous*, *Source: too many* / *Dest: too many*). The **Status** filter groups them:
 
 | Status | Meaning |
 |---|---|
@@ -38,7 +38,7 @@ Nodes outside any account can use your own kinds, such as `NetworkSwitch`. A ten
 | **Node inactive** | An end matched a node that is no longer active |
 | **Invalid payload** | The declaration can't be read; edit it |
 
-Row actions: **Edit**, **Delete**, **Re-resolve** and **Resolve**.
+Row actions: **Edit**, **Delete** and **Re-resolve**; **Resolve** on ambiguous rows, to pick the right match; and **Declare source node** / **Declare destination node** on unmatched rows. The toolbar has **Delete all** and **Re-resolve all**.
 
 ### Relationship types
 
@@ -47,11 +47,11 @@ Row actions: **Edit**, **Delete**, **Re-resolve** and **Resolve**.
 
 ## Import JSON
 
-**Import JSON** adds nodes and dependencies from one document, up to 500 items at a time.
+**Import JSON** adds nodes and dependencies from one document, up to 500 items and 1 MB at a time.
 
 ## Who can declare
 
-Tenant admins open **Settings**. Declarations are checked against your access to the account each node or dependency belongs to.
+Tenant admins open **Settings**. Declarations are checked against your access to the account each node or dependency belongs to. Declaring outside connected accounts, and **Delete all**, need tenant-wide access.
 
 ## Related
 

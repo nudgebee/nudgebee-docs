@@ -29,7 +29,7 @@ You do not set up the graph separately. Connect a cluster, an account or an inte
 
 ## Flow sources
 
-Flow sources add the calls between services, as `CALLS` relationships. eBPF, Traces, Datadog APM, Elastic APM and New Relic APM can each be switched off under [Coverage](#choose-what-feeds-the-graph-coverage).
+Flow sources add the calls between services, as `CALLS` relationships. eBPF, Traces, Datadog APM, Elastic APM and New Relic APM can each be switched off under [Coverage](#choose-what-feeds-the-graph-coverage). GCP Cloud Trace, AWS VPC Flow Logs and the VM service map have no toggle of their own: unticking any flow source in Coverage also stops them.
 
 | Flow source | What it observes | You need |
 |:---|:---|:---|
@@ -37,12 +37,12 @@ Flow sources add the calls between services, as `CALLS` relationships. eBPF, Tra
 | **Traces** | Calls in your OpenTelemetry traces, from the last 2 hours at each rebuild | A cluster with the agent connected, and a trace provider connected for its account. See [Observability integrations](../../integrations/Observability/index.md). |
 | **Datadog APM** | Service-to-service calls Datadog APM has observed | A Datadog integration with an API key and application key, linked to an account |
 | **New Relic APM** | Outgoing calls in New Relic span data, from the last 24 hours | A New Relic integration with an API key and account id, linked to an account |
-| **Elastic APM** | Service-to-service calls in Elastic APM data | An Elasticsearch integration with APM data, linked to an account |
-| **GCP Cloud Trace** | Calls in Cloud Trace spans | A connected GCP account |
-| **AWS VPC Flow Logs** | Accepted traffic as calls, and rejected traffic as rejected connections; unknown peers appear as *Unidentified addresses* | VPC Flow Logs enabled for a connected AWS account |
+| **Elastic APM** | Service-to-service calls in Elastic APM data, from the last 24 hours | A connected cluster whose Elasticsearch integration uses the Elastic APM trace schema. Services are placed through pods that resolve to workloads in that cluster. |
+| **GCP Cloud Trace** | Calls in Cloud Trace spans | A connected GCP account. Off by default; runs only when enabled by whoever operates your installation. |
+| **AWS VPC Flow Logs** | Accepted traffic as calls, and rejected traffic as rejected connections; unknown peers appear as *Unidentified addresses* | A connected AWS account whose VPC Flow Logs are delivered to CloudWatch Logs (not S3). Off by default; runs only when enabled by whoever operates your installation. |
 | **VM service map** | Calls between services on self-hosted VMs | The [VM service map](../VM/observability.md) set up |
 
-eBPF and Traces can add a service or an external dependency the graph did not have yet. Datadog APM and New Relic APM only add calls between resources that are already in the graph.
+eBPF, Traces, Elastic APM, the VM service map and GCP Cloud Trace can add a service or an external dependency the graph did not have yet. Datadog APM and New Relic APM only add calls between resources that are already in the graph.
 
 When several sources see the same call, NudgeBee keeps one edge and records what each source measured. See [Edge details](./nodes-and-relationships.md#edge-details).
 
@@ -65,7 +65,7 @@ When traces or eBPF show a call to a hostname, NudgeBee replaces the generic ext
 | What | When it updates |
 |:---|:---|
 | The whole graph | Rebuilt every hour. There is no button to rebuild on demand. If a build would be unusually large, it is stopped and the previous graph is kept. |
-| A single resource that changes | Many changes — cloud resources added or deleted through real-time events, Kubernetes deletions, and inventory changes picked up every few minutes — update the graph within minutes, without waiting for the hourly rebuild. |
+| A single resource that changes | Many changes update the graph within minutes, without waiting for the hourly rebuild: cloud resources created or updated through AWS EventBridge or Azure Event Grid, Kubernetes workload and node deletions, and inventory changes, which are checked every 10 minutes. |
 | A newly connected cluster, account or integration | Appears at the next rebuild after NudgeBee has collected from it. |
 | A resource you delete | Usually disappears within minutes; otherwise at the next rebuild after NudgeBee stops seeing it. |
 | A call between services | Taken from what each flow source observes at each rebuild: the last 2 hours of traces, and the last 24 hours of Datadog APM and New Relic APM data. Removed once it has not been seen for 7 days. |

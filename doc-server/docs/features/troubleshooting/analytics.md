@@ -12,18 +12,20 @@ A view of whether things are getting better: how many problems NudgeBee explaine
 
 ## Viewing filters
 
-At the top, choose **Account** (default *All accounts*) and a date range. The page opens on the **last 7 days**. Every tile, row and bar opens **All Events → Events** filtered to what you clicked.
+At the top, choose **Account** (default *All accounts*) and a date range. The page opens on the **last 7 days**.
+
+Clicking the **Are we improving?** tiles (except *Problems we have seen before*), a recurring-issue row, a volume bar or most suggestions opens **All Events → Events** filtered to what you clicked; **Review in Alert Tuning** opens Alert Tuning. The four Overview tiles, *Problems we have seen before* and the *Stopped happening* rows aren't clickable.
 
 ## Overview
 
 | Tile | What it shows |
 |---|---|
-| **Investigations finished** | Automatic investigations that finished in this window |
+| **Investigations finished** | Automatic investigations started in this window that have completed |
 | **Problems we explained** | The share of eligible problems NudgeBee analyzed. Eligible problems are high- or critical-priority issues, not duplicates. When this is low, ask an admin to check [Automatic Event Analysis](../ai/event-analysis.md). |
-| **Time to explain a problem** | Average time to explain a problem, in minutes. Shows *—* until at least 5 problems were explained. |
+| **Time to explain a problem** | The typical (median) time to explain a problem, in minutes. Shows *—* until at least 5 problems were explained. |
 | **Engineer time saved** | Hours saved compared with investigating by hand, and the equivalent cost. See [how time saved is calculated](./events-and-triage-inbox.md#how-time-saved-is-calculated). |
 
-**Engineer time saved** here follows the **Account** and date filters and counts automatic investigations only. That is why it can differ from the **Total Time Saved** card on **Investigations**, which always covers the last 24 hours.
+**Engineer time saved** here follows the **Account** and date filters and counts automatic investigations only. Unlike the **Total Time Saved** card on **Investigations** — which always covers the last 24 hours and never goes below zero — it isn't floored at zero; it shows *—* when the saving is under about 0.05 hours or the figures don't add up.
 
 ## Are we improving?
 
@@ -31,7 +33,7 @@ At the top, choose **Account** (default *All accounts*) and a date range. The pa
 - **Problems we rated urgent** — issues ranked P0 or P1.
 - **Problems we have seen before** — the share of the busiest issues that have fired before.
 
-Each is compared against the same length of time immediately before the window.
+*Distinct problems* and *Problems we rated urgent* are compared against the same length of time immediately before the window.
 
 ## The longer view
 

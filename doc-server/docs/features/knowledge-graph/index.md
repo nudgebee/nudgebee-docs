@@ -44,7 +44,7 @@ NudgeBee also links resources across sources, for example a Kubernetes node to t
 The graph rebuilds every hour. The **Last synced** time at the top of the Filters panel shows when the last rebuild finished.
 
 - Calls between services come from what each flow source observes at each rebuild. A call that has not been seen for 7 days drops out.
-- Many single-resource changes, such as a deleted cloud resource or Kubernetes object, show up within minutes; everything else at the next hourly rebuild.
+- Many single-resource changes, such as a cloud resource created or updated through real-time events or a deleted Kubernetes workload or node, show up within minutes; everything else at the next hourly rebuild.
 - There is no button to rebuild on demand.
 
 ## Who can see it
