@@ -81,13 +81,17 @@ To deploy your custom models on SageMaker:
 
 ## Integrating with LLM Server
 
+:::note
+The endpoint setting takes the SageMaker **endpoint name** (for example `your-endpoint-name`), not a URL. SageMaker uses the default AWS credential chain — the pod's IAM role (IRSA) or `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` in the environment; the UI form has no access key fields for SageMaker. The role only needs permission to invoke the endpoint.
+:::
+
 1. **Configure SageMaker in LLM Server**:
 
    Add the following configuration to your LLM Server settings:
 
 ```sh
 LLM_PROVIDER=sagemaker
-LLM_PROVIDER_API_ENDPOINT=<SageMaker_Endpoint_URL> # e.g., https://your-endpoint-name.amazonaws.com
+LLM_PROVIDER_API_ENDPOINT=<SageMaker endpoint name> # e.g., your-endpoint-name
 LLM_PROVIDER_REGION=<AWS_SageMaker_Region> # e.g., us-west-2
 ```
 
@@ -101,9 +105,14 @@ LLM_PROVIDER_REGION=<AWS_SageMaker_Region> # e.g., us-west-2
 ```sh
 EMBEDDINGS_PROVIDER=sagemaker
 EMBEDDINGS_PROVIDER_REGION=<AWS_SageMaker_Region> # e.g., us-west-2
-EMBEDDINGS_PROVIDER_API_ENDPOINT=<SageMaker_Endpoint_URL> # e.g., https://your-endpoint-name.amazonaws.com
+EMBEDDINGS_PROVIDER_API_ENDPOINT=<SageMaker endpoint name> # e.g., your-endpoint-name
 EMBEDDINGS_MODEL_NAME=<Model_Name> # e.g., your-custom-model
 ```
 
 
 #### To deploy NudgeBee AI models on AWS SageMaker and integrate [NudgeBee Model Deployment](./aws_sagemaker.md)
+
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [LLM Integrations](../index.md)

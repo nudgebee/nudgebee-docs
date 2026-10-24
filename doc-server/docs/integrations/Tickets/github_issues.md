@@ -13,3 +13,20 @@ sidebar_position: 2
 3. Click Generate Token. GitHub will display the personal access token only once. Ensure that you copy the token and store it in a safe space.
 
 We will use this token in the Integrations, which will allow you to create issues, raise pull requests in the repositories from GitHub.
+
+## Connect GitHub in NudgeBee
+
+Go to **Admin → Integrations → Ticketing → GitHub** (the same GitHub connection also appears under **Repos**) and choose how to authenticate:
+
+| Method | What you do |
+|---|---|
+| **Application** | Click **Authenticate with Github App** and install the NudgeBee GitHub App. It supports **organization** repositories only, not personal ones |
+| **User Token** | Enter a **Name**, your GitHub **Username** (a valid GitHub login) and the personal access **Token** from above |
+
+**Test Connection** checks the credentials before you save. NudgeBee connects to public github.com; GitHub Enterprise Server URLs can't be set.
+
+## Related
+
+- [GitHub integration (repositories and pull requests)](../Code%20Repository/GitHub/github-integration.md)
+- [Ticket integrations](./index.md)
+

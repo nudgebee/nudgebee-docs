@@ -69,7 +69,7 @@ Navigate to **Admin** > **Integrations** > **Messaging Queue** and select **Rabb
 
 ## Step 3: Test and Save
 
-Click **Test Connection**, then **Save**.
+Click **Test Connection**, then **Save**. The test runs `rabbitmqadmin show overview` against the management API.
 
 ---
 
@@ -98,3 +98,8 @@ Click **Test Connection**, then **Save**.
 - [Message queue tasks in workflows](../../features/workflow-builder/message-queue-tasks.md)
 - [RabbitMQ management plugin](https://www.rabbitmq.com/management.html)
 - [RabbitMQ access control](https://www.rabbitmq.com/access-control.html)
+
+## Related
+
+- [Message queue tasks](../../features/workflow-builder/message-queue-tasks.md)
+- [Integrations](../index.md)

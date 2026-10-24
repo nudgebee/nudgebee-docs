@@ -164,16 +164,19 @@ To set up Auth0 authentication, you need to configure the following environment 
 
 ### Description
 
-Integrate NudgeBee with Teleport as an identity provider. Ensure the NudgeBee `BASE_URL` to your Teleport domain URL.
+Integrate NudgeBee with Teleport as an identity provider. Set the NudgeBee `BASE_URL` to the URL users reach NudgeBee on through Teleport.
 
 ### Configuration
 
 To set up Teleport authentication, you need to configure the following environment variables:
 
 - `TELEPORT_ENABLED`: Set to `true` to enable this provider.
+- `TELEPORT_JWKS_URL` (required): The Teleport proxy's JWKS endpoint, for example `https://<teleport-proxy>/.well-known/jwks.json`. Without it the Teleport sign-in option isn't registered.
+- `TELEPORT_ISSUER` and `TELEPORT_AUDIENCE` (optional): When set, the token's issuer and audience must match.
+- `TELEPORT_SSO_ENABLED` (optional): Set to `true` to sign users in automatically when they reach NudgeBee through Teleport.
 - `TELEPORT_ATTRIBUTE_USERNAME`: Teleport JWT attribute name for username field, defaults to `sub`
 - `TELEPORT_ATTRIBUTE_NAME`: Teleport attribute/trait name for displayname field, defaults to `sub`
-- `TELEPORT_ATTRIBUTE_GROUPS`: Teleport attribute/trait name for nudgebee-groups field, defaults to empty. Note that these groups needs to be available on nudgebee
+- `TELEPORT_ATTRIBUTE_GROUPS`: Teleport attribute/trait name for nudgebee-groups field, defaults to `groups`. These groups need to exist in NudgeBee
 
 ### Notes
 - This integration allows users to link multiple accounts with the same email address.
@@ -256,3 +259,8 @@ To set up LDAP authentication, you need to configure the following environment v
 -   **Multiple Providers:** You can enable multiple authentication providers simultaneously, giving your users flexibility in how they choose to sign in.
 - **Environment Variables**: Ensure all required environment variables are correctly set using Helm chart secrets.
 - If you have any issues or require more details, please contact our support.
+
+## Related
+
+- [SAML](./SAML.md)
+- [Access & Users](../../features/user-management.md)

@@ -46,7 +46,7 @@ Navigate to **Admin** > **Integrations** > **Databases** and select **SQL Server
 
 ## Step 2: Fill In the Connection
 
-* **MSSQL host** — Hostname or IP, e.g. `db.example.com` or `10.0.1.5`. For a named instance, use the host and set the port explicitly rather than the `host\instance` form.
+* **MSSQL host** (required) — Hostname or IP, e.g. `db.example.com` or `10.0.1.5`. For a named instance, use the host and set the port explicitly rather than the `host\instance` form.
 * **MSSQL port** — Defaults to `1433`.
 * **Database name to connect to** — The database NudgeBee opens.
 * **TLS Enabled** — Turn on for connections crossing a network boundary. Azure SQL requires it.
@@ -96,3 +96,7 @@ See the [shared troubleshooting table](./index.md#troubleshooting) first. SQL Se
 - [Proxy Agent installation](../../installation/proxy-agent/installation.md)
 - [Proxy Agent configuration reference](../../installation/proxy-agent/configuration.md)
 - [Database tasks in workflows](../../features/workflow-builder/database-tasks.md)
+
+## Related
+
+- [Database integrations](./index.md)

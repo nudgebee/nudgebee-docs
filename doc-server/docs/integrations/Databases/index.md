@@ -56,6 +56,7 @@ These appear on every database configuration form. Provider pages document only 
 * **Integration name \*** (Required) — A descriptive name for this connection, e.g. `orders-prod`. This is how the database is identified everywhere else in NudgeBee.
 * **Select Account \*** (Required) — The NudgeBee account (cluster or cloud account) this connection belongs to.
 * **Credential Source** — Where the username and password come from. Options: `Cloud Push` (default — stored in NudgeBee and pushed to the agent at runtime), `AWS Sm`, `Gcp Sm`, `Azure Kv`, and `Local`. See [credential sources](../../installation/proxy-agent/credential-sources.md).
+* **Secret name or ARN in the secret manager** — Required when **Credential Source** is `AWS Sm`, `Gcp Sm` or `Azure Kv`; for example `arn:aws:secretsmanager:...:secret:my-db-creds`.
 * **Database username \*** and **Database password \*** (Required) — The account NudgeBee authenticates as. Grant it read access to the schemas and statistics views you want analysed, and nothing more.
 * **Read Only** — Restricts the connection to read-only queries. Leave this on unless a workflow specifically needs to write.
 * **Maximum open connections in the pool** — Caps concurrent connections NudgeBee opens. Set it low on busy production databases.
@@ -91,3 +92,8 @@ Databases running inside a connected cluster may be registered automatically by 
 | Query text shows `insufficient privilege` | The NudgeBee user cannot read other users' statements | Grant the role the provider page describes for statistics access. |
 | Database appears twice | An agent-discovered entry and a manually created one both exist | Disable whichever you do not want to use. |
 | Writes are rejected in a workflow | **Read Only** is enabled | Disable **Read Only** on the connection, or use a separate connection for write tasks. |
+
+## Related
+
+- [PostgreSQL](./postgresql.md)
+- [Proxy Agent](../../installation/proxy-agent/index.md)

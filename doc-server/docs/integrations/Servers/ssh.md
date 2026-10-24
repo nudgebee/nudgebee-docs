@@ -64,7 +64,7 @@ Forager opens the SSH connection. Credentials are configured here; **which hosts
 * **Credential Source** — `Cloud Push` (default), `AWS Sm`, `Gcp Sm`, `Azure Kv` or `Local`. See [credential sources](../../installation/proxy-agent/credential-sources.md).
 * **Username** — Default login user. Optional; a task may override it per command with `user_name`.
 * **Private Key** — The private key in PEM format. Preferred over a password.
-* **Password** — Used only when not authenticating with a key.
+* **Password** — Used only when not authenticating with a key. With **Cloud Push** credentials you must give either a **Private Key** or a **Password**.
 * **Passphrase** — Required if the private key is encrypted.
 
 ![The SSH form in Proxy Agent mode, showing the credential source, username, private key, password and passphrase fields](../../../static/img/integrations/ssh-proxy.png)
@@ -109,3 +109,8 @@ Click **Test Connection**, then **Save**.
 - [Scripting tasks](../../features/workflow-builder/scripting-tasks.md)
 - [Proxy Agent configuration reference](../../installation/proxy-agent/configuration.md)
 - [Credential sources](../../installation/proxy-agent/credential-sources.md)
+
+## Related
+
+- [Proxy Agent](../../installation/proxy-agent/index.md)
+- [Integrations](../index.md)

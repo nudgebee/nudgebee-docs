@@ -356,3 +356,7 @@ GET /api/auth/saml/health
 - Multiple authentication providers can be enabled alongside SAML (e.g., Google OAuth + SAML).
 - The SAML integration uses SP-initiated SSO. The login flow starts from the NudgeBee sign-in page.
 - If you have any issues or require more details, please contact our support.
+
+## Related
+
+- [Authentication](./index.md)

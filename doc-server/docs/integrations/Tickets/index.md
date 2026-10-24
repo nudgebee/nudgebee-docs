@@ -37,3 +37,8 @@ This integration is **optional**. NudgeBee works fully without a ticketing syste
 ## Operational & Diagnostic Guides
 
 *   **[Troubleshoot Ticketing Integrations & Ticket Creation Failures](./ticket-integrations-troubleshooting.md)** — Diagnose mandatory custom field errors, assignee permissions, and bidirectional status synchronization.
+
+## Related
+
+- [Ticket integration troubleshooting](./ticket-integrations-troubleshooting.md)
+- [Integrations](../index.md)
