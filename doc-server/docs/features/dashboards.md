@@ -1,11 +1,12 @@
 ---
 sidebar_position: 13
 sidebar_label: Custom Dashboards
+keywords: [custom dashboards, dashboard list, dashboard templates, generate dashboard, open as dashboard, share dashboard, export dashboard, kubectl panel]
 ---
 
 # Custom Dashboards
 
-**Dashboards → Dashboard List**
+**Home → Dashboard List** (global search: *Custom Dashboards*)
 
 Build your own views over everything NudgeBee already collects — metrics, logs, traces, events, and the databases and queues you have connected — without leaving the product or standing up a separate Grafana.
 
@@ -13,17 +14,58 @@ Build your own views over everything NudgeBee already collects — metrics, logs
 
 ![A dashboard in view mode: title, time range, refresh, export and Edit in the toolbar; panels below](./img/dashboard-overview.png)
 
+## The dashboard list
+
+| Column | Meaning |
+|---|---|
+| **Dashboard** | Title and description — click to open |
+| **Panels** | How many panels it has |
+| **Created At**, **Updated At** | When it was created and last saved |
+
+Search with **Search dashboards** (press Enter). Each row has **Export JSON**, plus **Edit** and **Delete** for dashboards you can change. Deleting a dashboard removes it and its saved history permanently.
+
+**New dashboard** is available if you have write access to at least one account. Built-in dashboards can be opened and exported but not edited or deleted.
+
+If no account can be queried yet, the page shows *Get started with custom dashboards* and offers **Add Cluster** (or asks for an admin to connect one).
+
 ## Starting a dashboard
 
-Three ways in:
+**New dashboard** opens *Create a New Dashboard* with four options. Each opens an unsaved draft — nothing is created until you **Save**.
 
-**From a template.** *Start from a template* opens a gallery of role-shaped dashboards — CTO / VP Engineering, CFO / VP Finance, Director SRE, Director Cloud Ops, SRE On-call, DevOps / Platform Engineer, Cloud Ops Engineer, and an Executive Overview. Picking one opens it in the editor with every panel editable before anything is saved. Nothing is created until you save, so opening a template to see how a panel is built costs nothing.
+| Option | What it does |
+|---|---|
+| **Blank dashboard** | An empty canvas; add panels yourself |
+| **Use a template** | *Start from a template* — a gallery of 14 role-shaped dashboards, filterable by role (CTO, CFO, Manager, SRE, DevOps, Cloud Ops, Developer): CTO / VP Engineering, CFO / VP Finance, Director / VP — SRE, Director — Cloud Ops, SRE — On-call, DevOps / Platform Engineer, Cloud Ops Engineer, Executive Overview, FinOps — Cost & Waste, Reliability Review, SRE — Golden Signals, SRE — Cluster Capacity, DevOps — Workload Health and Developer — My Service. Panels you can't read are left out, and the template says how many |
+| **Generate with NuBi** | Describe the dashboard in plain English — see [Generate a dashboard with NuBi](#generate-a-dashboard-with-nubi) |
+| **Import dashboard** | Paste or upload a dashboard JSON, including Grafana exports and dashboards exported from another NudgeBee tenant |
 
-**From the panel library.** Add pre-built panels one at a time to a blank dashboard.
-
-**By import.** Bring in a Grafana dashboard JSON, or a dashboard exported from another NudgeBee tenant.
+To add panels to a dashboard, use **Add panel** in edit mode: **From library** (pre-built panels) or **Blank panel**.
 
 <!-- ![Template gallery with role dashboards and their panel lists](./img/dashboard-templates.png) -->
+
+## Generate a dashboard with NuBi
+
+**Generate with NuBi** opens *Generate a dashboard with NuBi*:
+
+1. **What should it show?** — describe it in plain English.
+2. **Account** — metric names are looked up on this account, and the panels are scoped to it.
+3. **Generate** — NuBi builds a preview. Check it (*Check before saving*), then open it as a draft and **Save**.
+
+Generated dashboards are built from **metrics** only: time series, stat and gauge panels plus text, up to 24 panels with up to 5 queries each.
+
+You can also ask for a dashboard in the [NuBi chat](./ai/nubi-chat.md). When the answer is ready, **Open as dashboard** opens it here as an unsaved draft. If the link has expired you'll see *The generated dashboard was not found. Open it again from the conversation.*
+
+## Viewing and editing
+
+The view toolbar has the **Accounts** filter, the time range, **Refresh all panels**, **Export as PNG** and **Edit**. In edit mode you can **Add panel**, **Edit JSON**, drag panels to reorder them, and **Discard** or **Save**. A dashboard with no panels shows *No panels yet*.
+
+Each panel's menu has View, Refresh, Edit, **Export JSON**, Export PNG and **Copy link**.
+
+If someone else saved the dashboard while you were editing, you'll see *Someone else saved this dashboard* and can reload their version or overwrite it.
+
+## Sharing
+
+Dashboards belong to the tenant: everyone in the tenant can see every dashboard, and panels only show data from accounts each viewer can read. There is no per-dashboard sharing setting. To point someone at a dashboard, send its link, a panel's **Copy link**, or an exported JSON or PNG.
 
 ## Panels
 
@@ -42,7 +84,7 @@ Each panel pairs a **visualization** with a **data source**. The visualization d
 
 ## Data sources
 
-Seven data sources, in three families: three that query your **observability backends**, one that queries **NudgeBee's own tables**, and three that run a **read-only command against a connected system**.
+Eight data sources, in three families: three that query your **observability backends**, one that queries **NudgeBee's own tables**, and four that run a **read-only command against a connected system**.
 
 | Data source | Family | You write | Answers with |
 |---|---|---|---|
@@ -53,6 +95,7 @@ Seven data sources, in three families: three that query your **observability bac
 | PostgreSQL | Command | One read-only SQL statement | A result set |
 | Redis | Command | One read-only Redis command | Command output |
 | RabbitMQ | Command | One `rabbitmqadmin` list/show | Command output |
+| kubectl | Command | One read-only `kubectl` command (Kubernetes accounts) | Command output |
 
 A data source you have no permission for is offered but disabled, with a tooltip naming the grant to ask for.
 
@@ -126,9 +169,9 @@ Two things worth knowing:
 
 Numbers are formatted the way the rest of the product formats them: currency as money, memory as bytes, CPU as cores, durations as time.
 
-### PostgreSQL, Redis and RabbitMQ
+### PostgreSQL, Redis, RabbitMQ and kubectl
 
-These three run a command against a connected integration and render what comes back. All three are read-only by construction — the allow-lists below are enforced server-side, not just in the editor.
+These four run a command against a connected integration and render what comes back. All three are read-only by construction — the allow-lists below are enforced server-side, not just in the editor.
 
 **PostgreSQL** takes a single read-only statement beginning with `SELECT`, `WITH`, `SHOW`, `EXPLAIN`, `TABLE` or `VALUES`. No writes anywhere in it — including data-modifying CTEs — no semicolons, and no double quotes. Single quotes for values are fine.
 
@@ -147,6 +190,8 @@ INFO replication
 ```
 list queues name messages consumers
 ```
+
+**kubectl** allows read-only verbs such as `get`, `describe`, `logs` and `top`, on Kubernetes accounts. Commands that change anything, or open a shell or tunnel (`exec`, `port-forward` and the like), are refused.
 
 ## Providers and mixed estates
 
@@ -232,13 +277,13 @@ Table panels have their own settings beyond the query:
 - **Hidden columns** — still queried, just not shown. Use it to hide the ids a link is built from so the table stays readable.
 - **Search on enter** — searching submits on Enter rather than filtering per keystroke, which keeps large tables responsive.
 
-## Versions
-
-Every save creates a version. The version list lets you see what changed and roll back.
+## Unsaved changes
 
 Dashboards warn before you navigate away with unsaved changes. A brand-new dashboard always counts as unsaved, so the prompt appears even if you have not typed anything yet.
 
 ## Related
 
-- [Application Grouping](./application-grouping.md) — group workloads so a dashboard can chart them as one application
+- [Home](./home.md)
+- [Application Grouping](./application-grouping.md)
+- [Using the Chat](./ai/nubi-chat.md)
 - [Semantic Knowledge Graph](./knowledge-graph/index.md)

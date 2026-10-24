@@ -1,36 +1,61 @@
 ---
 sidebar_position: 14
 sidebar_label: Application Grouping
+keywords: [application grouping, application group, group workloads, application summary, create grouping]
 ---
 
 # Application Grouping
 
-**Dashboards → Application Grouping**
+**Home → Application Grouping**
 
-Kubernetes knows about workloads and namespaces. It does not know that six Deployments across three namespaces are one application your team is on call for. Application Grouping is where you tell NudgeBee that.
+Kubernetes knows about workloads and namespaces. It does not know that six Deployments across three namespaces are one application your team is on call for. Application Grouping is where you tell NudgeBee that, so you can see that application's events, errors and optimizations in one place.
 
 <!-- ![Application Grouping list showing named groups and their member workloads](./img/application-grouping.png) -->
 
 ## What a group is
 
-A named set of workloads. Members can span namespaces and clusters, so a group can describe an application as it actually runs rather than as it happens to be laid out.
+A named set of workloads **in one cluster**. Members can come from several namespaces in that cluster. To describe an application that runs in several clusters, create one group per cluster.
 
-Once a group exists, NudgeBee can summarise cost, health and events for the application as a whole instead of workload by workload.
+## The list
 
-## Creating one
+| Column | Meaning |
+|---|---|
+| **Group name** | Click it to open the group |
+| **Total Applications** | How many workloads are in the group |
+| **Updated at**, **Created by** | When it was last changed and who created it |
+| **Event Count (1 Hour)** | Firing events across the group's workloads in the last hour |
+| **Error Rate (1 Hour)** | Error rate across the group in the last hour |
 
-1. Go to **Dashboards → Application Grouping** and create a group.
-2. Give it a name — this is what appears everywhere the group is summarised, so use the name your team already uses for the application.
-3. Pick an account, then a cluster, then select the workloads. Repeat for each cluster the application spans.
-4. Save.
+Search with **Search Grouping**, or download the list. Each row's menu has **Edit**. Groups can't be deleted.
 
-Edit the membership at any time; the group's history is preserved.
+## Creating or editing a group
 
-## Where groups show up
+Creating and editing groups needs a **tenant admin**. Other users may see the buttons, but saving fails.
 
-- **Group summary** — cost, utilisation and event volume rolled up across every member workload.
-- **Events grouped by app** — the Troubleshoot events view can group by application, which turns a wall of per-pod alerts into one row per application.
-- **Dashboards** — panels can scope to a group rather than a namespace.
+**Create Application Group** opens *Create Grouping* (*Update Grouping* when editing):
+
+| Field | Rules |
+|---|---|
+| **Grouping Name** | Required. Starts with a letter; letters, numbers and spaces only; must be unique (*Group name already in use*) |
+| **Short Description** | Optional |
+| **Cluster** | The cluster the group belongs to. Changing it clears the workloads you selected |
+| **Namespaces** | Narrows the workload list |
+| Workloads | Tick the workloads that make up the application, or select all |
+
+Use the name your team already uses for the application — it's what appears on the group's page.
+
+## The group page
+
+Open a group to see it on its own page. Switch between groups at the top, and use **Edit Application Group** to change it.
+
+| Tab | Shows |
+|---|---|
+| **Summary** | **Application Summary** — the number of applications, SLO status (last 30 days), events, critical log errors and API failures, and **Optimizations** with links to Right Sizing, Unused Volumes and Spot. **Events/Errors** — events by type and by application, and trace groups |
+| **Events** (beta) | Events for the group's workloads |
+| **Applications** (beta) | The group's workloads |
+| **Monitoring** | Not available yet |
+
+A group with no workloads shows *No data available. Please configure application.*
 
 ## Choosing what to group
 
@@ -38,5 +63,6 @@ Groups earn their keep when the members fail together or are paid for together. 
 
 ## Related
 
+- [Home](./home.md)
 - [Custom Dashboards](./dashboards.md)
-- [Service Criticality](./service-criticality.md) — tiering the workloads inside a group
+- [Kubernetes workloads and pods](./Kubernetes/workloads-and-pods.md)
