@@ -64,7 +64,7 @@ Steps that ran without asking because an admin's [Tool Approvals](./tool-approva
 
 Conversations are grouped into Today, Yesterday, Last 7 Days, Last 30 Days and Older. Each row has **Share** (copies a link), **Save** / **Unsave** and, for your own conversations, **Delete** — which removes its questions, answers and investigation history permanently. The open conversation's header shows **Queries Asked** and **Participants**, with **Save conversation** and **Share**.
 
-Users with a custom role that lacks read access to AI conversations see **Nubi** greyed out on the rail.
+Users with a custom role that lacks read access to AI conversations see **Nubi** grayed out on the rail.
 
 ## When something goes wrong
 
