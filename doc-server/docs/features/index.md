@@ -8,6 +8,8 @@ Explore everything NudgeBee offers for Cloud-Ops Intelligence, troubleshooting, 
 
 ![NudgeBee Home dashboard with the NuBi AI assistant, live Troubleshoot and Optimize summaries, automation statistics, and quick links](./img/home-overview.png)
 
+Start on **[Home](./home.md)** — one account's open issues, savings, security findings and automations at a glance.
+
 - **[Troubleshooting](./troubleshooting/index.md)** — Resolve incidents faster with AI-powered root cause analysis. NuBi correlates events across metrics, logs, and traces to pinpoint the root cause — so your team spends minutes, not hours, on each incident.
 
 - **[Optimizations](./optimizations/index.md)** — Lower your cloud costs with actionable recommendations. The FinOps AI-Assistant continuously analyzes resource utilization and identifies right-sizing, scaling, and cleanup opportunities across all your clusters.
@@ -26,7 +28,7 @@ Explore everything NudgeBee offers for Cloud-Ops Intelligence, troubleshooting, 
 
 - **[Custom Dashboards](./dashboards.md)** — Build your own views over metrics, logs, traces, events and connected databases, starting from a role template or a blank canvas.
 
-- **[Application Grouping](./application-grouping.md)** — Tell NudgeBee which workloads make up one application, so cost, health and events roll up the way your team thinks about them.
+- **[Application Grouping](./application-grouping.md)** — Tell NudgeBee which workloads make up one application, so its events, errors and optimizations show up together.
 
 - **[Service Criticality](./service-criticality.md)** — Tier your workloads so triage surfaces failures on what matters and downranks noise from demo and test.
 
@@ -36,7 +38,7 @@ Explore everything NudgeBee offers for Cloud-Ops Intelligence, troubleshooting, 
 
 - **[Cloud](./Cloud/index.md)** — Connect your AWS, Azure, or GCP accounts for automatic cluster discovery and unified cloud cost visibility. NudgeBee maps your cloud resources and Kubernetes clusters without manual configuration.
 
-- **[Tickets](./tickets.md)** — Turn incidents into trackable tickets automatically. Create, assign, and manage tickets in Jira, ServiceNow, PagerDuty, or GitHub Issues directly from NudgeBee — or let Autopilot do it for you.
+- **[Tickets](./tickets.md)** — Raise tickets in Jira, ServiceNow, PagerDuty, ZenDuty, Freshdesk, GitHub Issues or GitLab Issues from events, recommendations and findings — by hand or from Automations — and track them, with status kept in sync.
 
 - **[SLOs & Error Budgets](./slo.md)** — Define and track Service Level Objectives and multi-window burn rate alerts to ensure your services meet reliability targets.
 

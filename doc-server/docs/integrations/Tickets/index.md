@@ -1,12 +1,12 @@
 # Tickets
 
-NudgeBee integrates with popular ticketing and incident management systems so you can create, track, and manage tickets directly from the NudgeBee platform. Tickets can be created manually from the UI for errors, events, recommendations, and logs — or automated using [Autopilot](../../features/optimizations/autopilot/autopilot.md) to create and assign tickets based on pre-configured rules.
+NudgeBee integrates with popular ticketing and incident management systems so you can create, track, and manage tickets directly from the NudgeBee platform. Tickets can be created manually from the UI for errors, events, recommendations, and logs — or automatically by [Automations](../../features/workflow-builder/index.md) and [Auto Optimize](../../features/optimizations/autopilot/auto_optimize/index.md) rules.
 
 ### Why Connect a Ticketing System?
 
 Connecting a ticketing system allows NudgeBee to:
 
-- **Create tickets automatically** when issues are detected (via Autopilot rules).
+- **Create tickets automatically** when issues are detected (via Automations).
 - **Search for similar past tickets** to help diagnose recurring problems.
 - **Link incidents to existing tickets** for better tracking and context.
 - **Read and respond to tickets** with AI-generated insights and recommended actions.
@@ -23,6 +23,10 @@ This integration is **optional**. NudgeBee works fully without a ticketing syste
 - Automate incident ticket creation from NudgeBee events.
 - Let NudgeBee research historical tickets for similar issues.
 - Centralize incident management alongside NudgeBee's troubleshooting capabilities.
+
+## How tickets appear in NudgeBee
+
+Every ticket NudgeBee raises is listed under **Tickets → All Tickets**, with its status, priority and assignee kept in sync every hour. Raising a ticket for an item that already has one adds a comment to the existing ticket instead of opening a duplicate. See [Tickets](../../features/tickets.md).
 
 ## Available Ticket Integrations
 
