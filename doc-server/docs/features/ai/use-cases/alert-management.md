@@ -36,7 +36,7 @@ NuBi correlates each alert against the service's own latency, error rate, CPU, a
 
 ![NuBi's impact assessment finding no real service degradation behind the recurring alerts, flagging each as noisy with the reason](./img/uc-alert-fatigue-step2.png)
 
-NuBi's point: the triage system is *already* suppressing these with duplicate penalties and environment multipliers. They cost attention and return almost nothing.
+NuBi's point: triage is *already* ranking these low — repeats are marked as duplicates and non-production noise scores lower (see [Triage Scoring](../../troubleshooting/triage-scoring.md)). They cost attention and return almost nothing.
 
 ## Step 3: Classify and decide
 
@@ -58,5 +58,5 @@ NuBi classifies every rule and turns the wall of firings into three concrete act
 
 - **Volume is not noise.** A rule that fires a thousand times but never lines up with degradation is noise. One that fires three times during an outage is signal. Always correlate firings with the service's actual health.
 - **Stale and noisy need different fixes.** A rule firing continuously with no change is stale, so close or silence it. A rule flapping around its threshold needs tuning, not silencing.
-- **Use the triage score as the first filter, then verify.** NuBi already penalizes duplicates and non-production noise. Start there, then confirm against real metrics before you silence anything.
+- **Use the triage score as the first filter, then verify.** Triage already ranks repeats and non-production noise lower. Start there, then confirm against real metrics before you silence anything.
 - **Re-audit periodically.** Traffic and baselines drift. A threshold that was right months ago goes noisy as the service changes.

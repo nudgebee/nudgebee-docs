@@ -24,28 +24,70 @@ NudgeBee keeps its triage state separate from the monitoring source's status. A 
 
 Disabling a notification rule does not stop Prometheus or CloudWatch from evaluating its source alert. Change the source monitoring configuration if that is the intended action.
 
-## NudgeBee status reference
+## Triage statuses
 
-The triage API accepts `OPEN`, `ACTION_REQUIRED`, `SNOOZED`, `SUPPRESSED`, `DROPPED`, `DUPLICATE`, and `RESOLVED`. `ACKNOWLEDGED` and `INVESTIGATING` remain accepted for backward compatibility. `IN_PROGRESS` and `CLOSED` are not values for this field.
+| Status | Meaning | You can change it to |
+|---|---|---|
+| **Open** | No triage done yet. Awaiting review. | Action Required, Snoozed, Resolved |
+| **Action Required** | Triaged. Waiting on action from your team. | Resolved, Snoozed, Open |
+| **Snoozed** | Paused for a while; returns to Open when the snooze ends | Open, Action Required, Resolved |
+| **Suppressed** | Events from this issue won't trigger alerts | Open, Action Required, Resolved |
+| **Dropped** | Dismissed and excluded from triage | Open |
+| **Duplicate** | Automatically identified as a repeat | Open |
+| **Resolved** | The issue has been resolved | Open, Action Required |
+
+Click the status badge to change it; you can add a note, which goes on the event's timeline. Choosing **Action Required** offers to create a ticket. Changing status needs update access to events.
+
+The API also still accepts `ACKNOWLEDGED` and `INVESTIGATING` for backward compatibility. `IN_PROGRESS` and `CLOSED` are not triage statuses.
+
+**Suppressed** events don't send notifications and aren't [analyzed automatically](../ai/event-analysis.md). **Dropped** events also skip correlation and scoring.
 
 Do not infer that changing a status assigns an engineer or creates a ticket. Inspect ownership and linked tickets separately.
 
 ## Snooze an event
 
-Open the event's triage controls, choose a snooze expiry, and confirm the change. Verify the status and expiry on the event. Expiry processing returns it to `OPEN`; the change is not an instantaneous client-side timer.
+Open the event's triage controls and snooze it for **1 hour**, **4 hours**, **1 day** or **1 week**, with an optional note. Expired snoozes go back to **Open** within about five minutes.
 
 ## Suppress recurring noise
 
-Review the classification and scope before saving:
+Classify the event as **False Positive** (see below) or create a [suppression rule](./triage-rules.md). Review the scope before saving:
 
-- **This event** affects the selected event.
-- **This fingerprint** targets matching occurrences.
-- **Time-limited** restricts the matching window.
+- **This Event Only** affects the selected event.
+- **All Similar Events** — every past and future event with the same fingerprint.
+- **Time Limited** — the same, until **Expires At** (at most 30 days).
 
 Use rule preview when available to inspect existing matches. A preview is not a guarantee of future event volume. Review the saved rule when troubleshooting later alerts with the same fingerprint.
+
+## Classify an event
+
+**Classify** sets what the event was, and optionally fixes its priority:
+
+| Classification | Status it gets | Reason codes |
+|---|---|---|
+| **True Positive** | Action Required | Correct Severity, Wrong Service Tier, Missing Dependency |
+| **False Positive** | Suppressed — and, for a wider scope, a suppression rule | Known Noise, Threshold Too Sensitive, Test Alert, Wrong Environment |
+| **Benign Positive** | Resolved | Maintenance Window, Expected Behavior, Batch Job, Deployment |
+| **Duplicate** | Duplicate — linked to the first event | Duplicate Incident |
+
+**Correct Priority (Optional)** sets P0–P3. With **All Similar Events** or **Time Limited**, a corrected priority becomes a **Pin** rule for that alert. Classifying needs update access to events.
+
+## Stop an alert from an investigation
+
+On an event's investigation, **Stop this alert** suppresses future firings:
+
+- **Which alerts** — every alert of that name, or only those on this workload. Each choice shows how many fired in the last 7 days.
+- **For how long** — **7 days** (default), **24 hours**, or **Until I unmute**.
+
+This creates suppression rules you can review in [Triage Rules](./triage-rules.md). To change the alert where it's defined instead, use **Edit in Alert Manager**. Slack and Teams alert cards have their own **Suppress…** options.
 
 ## Notification silence versus event state
 
 Notification-rule suppression and snoozing are separate from event triage status. Inspect both when delivery is missing. A broad matching suppression rule can silence delivery even if another matching rule specifies a channel. See [Notification Rules](../notifications.md).
 
 The available actions depend on the user's account and configured permissions. Ask an administrator to review access when a required control is unavailable.
+
+## Related
+
+- [Events & Triage Inbox](./events-and-triage-inbox.md)
+- [Triage Rules](./triage-rules.md)
+- [Event Lifecycle & Triage](./event-lifecycle.md)

@@ -5,6 +5,8 @@ sidebar_label: Service Criticality
 
 # Service Criticality
 
+**Kubernetes cluster → Troubleshoot → Service Criticality**
+
 Criticality tells NudgeBee how much each workload matters, so incident triage surfaces failures on your important services first and downranks the noise from demo, test and internal tooling.
 
 NudgeBee infers a baseline automatically from topology and AI. You review and correct it here, and your edits are kept — the automatic refresh never overwrites them.
@@ -23,9 +25,10 @@ The **Source** column tells you which of three paths set the tier, and that matt
 
 | Source | Set by | Authority |
 |---|---|---|
-| `user` | An operator, on this screen | Authoritative and sticky. Never overwritten. |
-| `fact_signal` | Derived from observed topology | Advisory. |
-| `llm_inferred` | Inferred by AI | Advisory. |
+| **You** | An operator, on this screen | Authoritative and sticky. Never overwritten. |
+| **Auto · topology** | Derived from observed topology and labels | Advisory. |
+| **Auto · LLM** | Reviewed by AI | Advisory. |
+| **Default** | No tier set — treated as `medium` | — |
 
 ### What the automatic derivation looks at
 
@@ -37,9 +40,7 @@ In precedence order:
 
 A workload with none of those signals is left untiered rather than given a noise row.
 
-:::note Automatic derivation stops at `high`
-`critical` is reserved for an explicit human decision. Most ingress-backed workloads are internal APIs, not genuinely customer-critical, so NudgeBee surfaces them as `high` for you to promote rather than inflating the top tier on its own.
-:::
+Apart from an operator label, these rules never set `critical`. An AI review of the candidates then confirms them, and can **promote** a workload to `critical` or **demote** it to `low`. The derivation refreshes nightly; your own edits are never overwritten.
 
 ## What a tier actually changes
 
@@ -68,7 +69,7 @@ Auto-derived tiers stay advisory: they move the score, never the band. This is t
 
 ## Reviewing
 
-The table lists Namespace, Workload, Kind, Criticality, Source and **Why** — the rationale behind the tier, such as `ingress/LB-backed (customer-facing request path)` or `14 services depend on it (shared dependency)`. Change the tier inline; the row's source becomes `user` and stops being touched by the refresh.
+The table lists Namespace, Workload, Kind, Criticality, Source and **Why** — the rationale behind the tier, such as `ingress/LB-backed (customer-facing request path)` or `14 services depend on it (shared dependency)`. Use the row menu to **Set** a tier (needs write access); the row's source becomes **You** and stops being touched by the refresh. **Reset to derived** hands it back to the automatic tier. Filter by namespace and tier, or turn on **Only classified** to show only workloads with a tier.
 
 Start with the workloads NudgeBee derived as `high` and decide which are genuinely `critical`, then demote the demo and test namespaces to `low`. Those two passes do most of the work.
 
