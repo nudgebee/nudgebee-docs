@@ -44,7 +44,7 @@ Click **Optimize** on the row (needs write access; it says **Configured** once a
 
 - **Best Practices** — **Name**, **Severity**, **Object Type**, **Namespaces**, **Object Names**, **Description**; filter by rule, namespace, severity or status.
 - **Abandoned Apps** — **Resource Name**, **Object Type**, **Network Traffic (bytes)**, **Observation Duration**, **Savings/mo**.
-- **PVC Rightsizing** and **Replica Rightsizing** need Prometheus. Without it they show *Prometheus is not connected for this cluster* with a link to Agent Health.
+- **PVC Rightsizing** and **Replica Rightsizing** need Prometheus. Without it they show *Prometheus is not connected for this cluster* with a link to [Agent Health](../../installation/agent/operate/agent-health.md).
 
 ## Related
 

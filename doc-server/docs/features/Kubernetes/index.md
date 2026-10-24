@@ -52,7 +52,7 @@ Global search uses slightly different names for some tabs. On the page, look for
 
 - **Custom roles.** Users whose access comes only from a custom role need read access to the matching module: **k8s** for Summary and Apps & Infra, **recommendations** for Optimize, **events** for Troubleshoot, **logs** for Monitoring, **security** for Security & Tools. Some sub-tabs need their own module: Anomaly (**anomalies**), Service Criticality (**workload**), Query Metrics (**metrics**), Alert Manager (**alertmanager**), Service Map, Traces, Trace Group and Cross-Zone (**traces**), SLO (**slo**). A sub-tab you can't open is grayed out; a tab with nothing you can open is disabled. Tenant and account roles see every tab.
 - **Write access.** Buttons and row menus that change something (Restart, Scale, Optimize, Create New Alert…) need write access to the account; read-only users see the lists only.
-- **Feature switches and data sources.** Some sub-tabs need a tenant feature (Anomaly, Upgrade Planner), Prometheus (PVC and Replica Rightsizing), a trace provider that supports them (Service Map, Trace Group, Cross-Zone) or a detected tool (Auto Scaler, Grafana). Each page below says what.
+- **Feature switches and data sources.** Some sub-tabs need a tenant feature (Anomaly, Upgrade Planner), Prometheus (PVC and Replica Rightsizing), a trace provider that supports them (Service Map, Trace Group, Cross-Zone) or a detected tool (Auto Scaler, Grafana). Each section below describes these requirements.
 
 Empty tables show *No Data Available* (or *All good here!* for recommendations).
 
@@ -60,7 +60,7 @@ Empty tables show *No Data Available* (or *All good here!* for recommendations).
 
 The **Summary** tab is the cluster's front page:
 
-- **Cluster Summary** — Nodes, Applications and Pods; Potential savings; SLO Status; Insights; **Utilization & Health** counts (Container restarts, Pending pods, Image not found, OOM, Unhealthy Statefulsets); and **Quick Links** to Query Logs, Recent Errors, Query Metrices, View Traces, Service Maps, View Applications, View Pods, Security and more.
+- **Cluster Summary** — Nodes, Applications and Pods; Potential savings; SLO Status; Insights; **Utilization & Health** counts (Container restarts, Pending pods, Image not found, OOM, Unhealthy Statefulsets); and **Quick Links** to Query Logs, Recent Errors, Query Metrics, View Traces, Service Maps, View Applications, View Pods, Security and more.
 - **Cost Summary** and **Utilization** — with a **Frequency** selector; Utilization also shows Events/Errors, *Critical Events - By Type*, *Critical Events - Recent*, *API Errors*, Automation, Optimization rules, Optimizations and Workload right sizing.
 
 If part of the summary can't load (for example you lack access to recommendations), that block is skipped and the rest still shows.
