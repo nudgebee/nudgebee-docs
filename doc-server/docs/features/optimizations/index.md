@@ -51,9 +51,8 @@ graph LR
 ### How to Raise Automated PRs
 
 1. Connect your repository under **Admin → Integrations → Code Repositories** ([GitHub](../../integrations/Code%20Repository/GitHub/github-integration.md) or [GitLab](../../integrations/Code%20Repository/GitLab/gitlab-integration.md)).
-2. Navigate to **Optimizations → Workload Right-Sizing**.
-3. Select the target deployment or StatefulSet.
-4. Click **Create Pull Request**.
+2. Open the recommendation in **Optimize → Right Sizing** (the cluster's tab, or **Optimize** in the sidebar) and click **Optimize** on the workload's row.
+3. In *Resolve this issue*, click **Create PR** and pick the Git integration and repository. See [Kubernetes → Optimize](../Kubernetes/optimize.md#apply-a-recommendation).
 5. NudgeBee creates a new branch, updates the Helm `values.yaml` or Terraform manifest with the recommended CPU/memory requests and limits, and opens a Pull Request with a clear rationale table for your engineering team to review.
 
 ---

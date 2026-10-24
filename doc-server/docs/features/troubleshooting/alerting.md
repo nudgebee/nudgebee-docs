@@ -26,11 +26,11 @@ This works for alerts you create in NudgeBee (Prometheus rules) **and** for aler
 
 ## Where to find it
 
-Open the cloud or cluster account from the top-right account picker, then go to the **Alert Manager** tab.
+Open the cluster or cloud account from the top-right account picker. For a Kubernetes cluster, go to **Monitoring → Alert Manager** — see [Kubernetes → Alert Manager](../Kubernetes/alert-manager.md).
 
 ![AlertManager listing](./img/alertmanager-listing.png)
 
-Every alert NudgeBee knows about is listed here — Prometheus rules you authored, plus alerts forwarded from external sources. From any row you can edit the alert, attach actions to it, or pause it.
+Every alert NudgeBee knows about is listed here — Prometheus rules you authored, plus alerts forwarded from external sources. From a row you can **Disable**/**Enable** the rule, **Edit** it, or **Mute in NudgeBee** — when NudgeBee can apply the change where the rule is evaluated. Otherwise the menu says **Change this rule where it is defined**.
 
 ---
 
