@@ -103,3 +103,7 @@ See the [shared troubleshooting table](./index.md#troubleshooting) first. ClickH
 - [Database tasks in workflows](../../features/workflow-builder/database-tasks.md)
 - [OTel ClickHouse tracing setup](../../installation/agent/connect/tracing/clickhouse-tracing.md)
 - [Proxy Agent configuration reference](../../installation/proxy-agent/configuration.md)
+
+## Related
+
+- [Database integrations](./index.md)

@@ -82,6 +82,10 @@ When calling models on Amazon Bedrock, the model name you provide depends on you
 
 > **Recommended**: While bare model IDs (e.g., `meta.llama3-8b-instruct-v1:0`) work for on-demand inference within the same region, using inference profile IDs is recommended for cross-region routing and better availability. Some newer models may require inference profiles.
 
+## Add it in NudgeBee (UI)
+
+In **Admin → Integrations → LLM → Add LLM Provider**, choose **bedrock** and enter the **LLM Model Name** (model or inference profile ID), **Region**, and the **AWS Access Key** and **AWS Secret Key** — the form requires access keys. To use an IAM role (IRSA) instead, configure Bedrock with environment variables as below. See [Add an LLM Provider](../add-llm-provider.md).
+
 ## Integrating with LLM Server
 
 1. **Configure Bedrock in LLM Server**:
@@ -132,3 +136,8 @@ AWS now enables serverless foundation model access automatically when the requir
 * **Symptom**: API calls fail with `ThrottlingException: Rate exceeded for Bedrock InvokeModel`.
 * **Remediation**:
   Request a Service Quotas increase for `InvokeModel requests per minute` in your AWS Bedrock region.
+
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [LLM Integrations](../index.md)

@@ -10,7 +10,7 @@ provider: all
 
 # Troubleshoot Ticketing Integrations & Ticket Creation Failures
 
-NudgeBee integrates with **Jira**, **ServiceNow**, **GitHub Issues**, **GitLab**, and **PagerDuty** to automate incident creation and ticket tracking. This guide diagnoses common ticket creation failures, custom field mapping errors, and sync issues.
+NudgeBee integrates with **Jira**, **ServiceNow**, **GitHub Issues**, **GitLab**, **PagerDuty**, **ZenDuty** and **Freshdesk** to automate incident creation and ticket tracking. This guide diagnoses common ticket creation failures, custom field mapping errors, and sync issues.
 
 ---
 
@@ -36,7 +36,7 @@ flowchart TD
 * **Symptom**: Ticket creation fails with `Jira API Error 400: Field '<field_name>' is required`.
 * **Cause**: Your Jira project has required fields (e.g. *Component/s*, *Root Cause Category*, *Environment*, *Team*) that were not filled in NudgeBee's default ticket template.
 * **Remediation**:
-  1. In NudgeBee Console, go to **Settings $\rightarrow$ Integrations $\rightarrow$ Tickets $\rightarrow$ Jira**.
+  1. In NudgeBee Console, go to **Admin → Integrations → Ticketing → Jira**.
   2. Inspect the ticket creation form or workflow ticket task for the selected project and issue type.
   3. Supply the required fields using the available field metadata. If a needed field is unavailable, collect the project, issue type, field ID, and error for support.
   4. Save changes and retry ticket creation.
@@ -73,3 +73,7 @@ Ticket status and event triage status are separate. This flow does not require a
 Ask NuBi in chat for guided ticketing integration assistance:
 - *"How do I fix Jira API Error 400 when mandatory custom fields are missing?"*
 - *"What ServiceNow permissions are required for incident creation?"*
+
+## Related
+
+- [Ticket integrations](./index.md)

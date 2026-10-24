@@ -58,6 +58,10 @@ LLM_PROVIDER_API_TYPE=openai # Optional, defaults to "openai"
 - **GPT-4**: `gpt-4`, `gpt-4-32k`, `gpt-4-0613`
 - **GPT-3.5 Turbo**: `gpt-3.5-turbo`, `gpt-3.5-turbo-16k`
 
+## Add it in NudgeBee (UI)
+
+In **Admin → Integrations → LLM → Add LLM Provider**, choose **openai** and enter the **LLM Model Name** and **API Key**. For OpenRouter, vLLM, Ollama and other OpenAI-compatible services, choose **custom** instead — see [Add an LLM Provider](../add-llm-provider.md#custom-openrouter-vllm-ollama-and-other-gateways).
+
 ## Integrating with RAG Server
 
 1. **Configure OpenAI in RAG Server**:
@@ -66,11 +70,11 @@ LLM_PROVIDER_API_TYPE=openai # Optional, defaults to "openai"
 
 ```bash
 EMBEDDINGS_PROVIDER=openai
-EMBEDDINGS_MODEL_ID=<Embedding model name> # e.g., "text-embedding-ada-002", "text-embedding-3-large"
-EMBEDDINGS_API_KEY=<Your OpenAI API key>
-EMBEDDINGS_API_ENDPOINT=<Custom endpoint URL> # Optional, for OpenAI-compatible endpoints
-EMBEDDINGS_API_TYPE=openai # Optional, defaults to "openai"
-EMBEDDINGS_API_VERSION=<API version> # Optional
+EMBEDDINGS_MODEL_NAME=<Embedding model name> # e.g., "text-embedding-3-small"
+EMBEDDINGS_PROVIDER_API_KEY=<Your OpenAI API key>
+EMBEDDINGS_PROVIDER_API_VERSION=<API version> # required for the openai embeddings provider
+EMBEDDINGS_PROVIDER_API_ENDPOINT=<Custom endpoint URL> # Optional, for OpenAI-compatible endpoints
+EMBEDDINGS_PROVIDER_API_TYPE=openai # Optional
 ```
 
 ### Available Embedding Models
@@ -123,3 +127,8 @@ For higher rate limits, increase your usage tier by:
 * **Symptom**: NuBi fails with `The model 'gpt-5' does not exist or you do not have access to it`.
 * **Remediation**:
   Ensure the model specified in `LLM_MODEL_NAME` is available in your OpenAI account tier (e.g. use `gpt-4o` or `gpt-4-turbo`).
+
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [LLM Integrations](../index.md)

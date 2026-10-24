@@ -34,26 +34,23 @@ Use a **General Access REST API Key** (not a read-only key). NudgeBee needs writ
 
 ## PagerDuty Integration Configuration
 
-Navigate to **Settings** > **Integrations** > **Tickets** tab and select **PagerDuty** to open the configuration form.
+Navigate to **Admin** → **Integrations** → **Ticketing** tab and select **PagerDuty** to open the configuration form.
 
 ![PagerDuty in the Tickets tab of the Integrations catalog](../../../static/img/pagerduty_card.png)
 
 ### Configuration Fields
 
-* **API Key \*** (Required)
-    * Your PagerDuty **REST API key** (v2).
-    * This value is stored encrypted in NudgeBee.
-
-* **URL**
-    * PagerDuty API URL. Default: `api.pagerduty.com`.
-    * Only change this if you have a custom PagerDuty endpoint.
-
-* **Username**
-    * Your PagerDuty username or email. Used as the "From" header when creating incidents.
+| Field | What to enter |
+|---|---|
+| **Name \*** | A name for this connection |
+| **Account URL** | Fixed at `api.pagerduty.com`; it can't be changed |
+| **Email \*** | The email of a registered PagerDuty user. It's sent as the `From` header when NudgeBee creates incidents or notes |
+| **API Key \*** | A PagerDuty **REST API key** (v2). Stored encrypted |
+| **Post RCA analysis to PagerDuty incidents** | When on, NudgeBee posts its root-cause analysis as a note on the originating PagerDuty incident |
 
 ![PagerDuty configuration form with Name, Account URL, Email, and API Key fields](../../../static/img/pagerduty_form.png)
 
-**Credential validation**: on save, NudgeBee tests the connection by listing your PagerDuty services. If authentication fails, verify your API key is correct and has sufficient permissions.
+**Test Connection** lists your PagerDuty services to confirm the key works. If authentication fails, verify your API key is correct and has sufficient permissions.
 
 ---
 
@@ -111,8 +108,8 @@ When an incident is created, it triggers PagerDuty's on-call schedule, notificat
 * **Symptom**: Incident creation fails with a missing `From` header error.
 * **Root Cause**: The PagerDuty REST API v2 requires the email address of a registered PagerDuty user in the `From` header for write operations.
 * **Remediation**:
-  1. Go to **Settings $\rightarrow$ Integrations $\rightarrow$ Tickets $\rightarrow$ PagerDuty**.
-  2. Verify that the **Username / Email** field is populated with a valid user email that exists in your PagerDuty account.
+  1. Go to **Admin → Integrations → Ticketing → PagerDuty**.
+  2. Verify that the **Email** field holds the email of a user that exists in your PagerDuty account.
 
 ---
 
@@ -121,7 +118,6 @@ When an incident is created, it triggers PagerDuty's on-call schedule, notificat
 * **Root Cause**: The API key is a scoped or user personal token that was revoked, or an Events API Integration Key was provided instead of a REST API Key.
 * **Remediation**:
   1. Ensure you generated a **General Access REST API Key** (v2) from **Integrations $\rightarrow$ Developer Tools $\rightarrow$ API Access Keys**, not a service-specific Events API routing key.
-  2. If your organization uses European PagerDuty service data residency, set the URL to `api.eu.pagerduty.com`.
 
 ---
 
@@ -131,3 +127,8 @@ When an incident is created, it triggers PagerDuty's on-call schedule, notificat
   1. In PagerDuty, open the target **Service**.
   2. Verify that the service is linked to an active **Escalation Policy** and not in `Maintenance Mode`.
   3. Ensure the service's Incident Creation setting is set to **Create Incidents** (not alerts only).
+
+## Related
+
+- [Ticket integrations](./index.md)
+- [PagerDuty webhook](../Webhooks/index.md)

@@ -11,7 +11,7 @@ Google Gemini is a family of multimodal AI models developed by Google DeepMind. 
 - Google Cloud Platform account
 - Google Cloud project with billing enabled
 - Gemini API enabled for your project
-- API key or service account credentials
+- An API key
 
 ## Setting up Google Gemini Credentials
 
@@ -33,14 +33,13 @@ Google Gemini is a family of multimodal AI models developed by Google DeepMind. 
    - Copy your API key
    - Restrict the API key to Gemini API only
 
-4. **Create a Service Account**:
-   - Go to [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
-   - Click "Create Service Account"
-   - Enter name and description
-   - Add role "Gemini API User"
-   - Create and download the JSON key file
+The Gemini API (`googleai`) authenticates with the API key only; you don't need a service account. To use a service account instead, use [Vertex AI](./vertex-ai.md).
 
-## Integrating with LLM Server
+## Add it in NudgeBee (UI)
+
+In **Admin → Integrations → LLM → Add LLM Provider**, choose **googleai**, enter the **LLM Model Name** and the **API Key**, then **Test Connection**. See [Add an LLM Provider](../add-llm-provider.md).
+
+## Integrating with LLM Server (environment variables)
 
 1. **Configure Gemini in LLM Server**:
 
@@ -60,7 +59,7 @@ Google Gemini is a family of multimodal AI models developed by Google DeepMind. 
    Add the following configuration to your RAG Server settings:
 
 ```bash
-    EMBEDDINGS_PROVIDER=googleai/vertexai
+    EMBEDDINGS_PROVIDER=googleai
     EMBEDDINGS_MODEL_NAME=<Model name in Google Cloud AI> # e.g., "text-embedding-004"
     EMBEDDINGS_PROVIDER_API_KEY=<Credential for accessing Google Cloud embeddings>
 ```
@@ -79,3 +78,9 @@ To request quota increases:
 - Find the Gemini API quotas
 - Select the quota to increase
 - Click "Edit Quotas" and submit your request
+
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [Google Vertex AI](./vertex-ai.md)
+- [LLM Integrations](../index.md)

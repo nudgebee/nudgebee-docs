@@ -100,3 +100,7 @@ Redis running inside a connected cluster may be registered automatically by the 
 - [Database tasks in workflows](../../features/workflow-builder/database-tasks.md)
 - [Proxy Agent configuration reference](../../installation/proxy-agent/configuration.md)
 - [Credential sources](../../installation/proxy-agent/credential-sources.md)
+
+## Related
+
+- [Integrations](../index.md)

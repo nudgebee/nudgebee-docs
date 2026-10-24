@@ -22,47 +22,57 @@ NudgeBee supports BYOM (Bring Your Own Model) with three categories of LLM provi
 | **Self-Hosted / Open Source** | [Ollama](./Ollama/), [HuggingFace](./HuggingFace/), [AWS SageMaker](./Aws/sagemaker.md) | Organizations requiring data privacy, air-gapped environments, or custom-trained models. |
 | **NudgeBee Models** <Enterprise/> <Cloud/> | Pre-trained NudgeBee AI models (nb-llm, nb-slm) | Enterprise/Cloud users who want optimized, purpose-built models for Cloud Ops. |
 
-### BYOM Configuration Matrix & Helm Values Snippets
+### Configure in the UI (recommended)
 
-To configure your own LLM provider on a self-hosted NudgeBee deployment, set the appropriate provider flags under `nudgebee_secret` in your `values.yaml`:
+Add a provider in **Admin → Integrations → LLM → Add LLM Provider** — see [Add an LLM Provider](./add-llm-provider.md). A provider configured there takes precedence over environment variables.
 
-#### 1. Self-Hosted Ollama / vLLM (Private VPC / Air-Gapped)
+### Configure with Helm values (self-hosted)
+
+On a self-hosted install you can also set the provider with environment variables. Only some LLM keys are accepted under `nudgebee_secret` — `LLM_PROVIDER`, `LLM_PROVIDER_API_KEY`, `EMBEDDINGS_PROVIDER_API_KEY`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_DEFAULT_REGION`. Any other key placed there stops the install with `[ERROR] Unknown key`, so put the rest under `additional_env_vars`:
+
+#### 1. Self-hosted Ollama / vLLM / any OpenAI-compatible server
 ```yaml
 nudgebee_secret:
-  LLM_PROVIDER: "ollama"  # or "vllm"
-  OLLAMA_BASE_URL: "http://ollama.ai-infra.svc.cluster.local:11434"
-  OLLAMA_MODEL: "llama3.1:8b"
-  EMBEDDING_MODEL: "nomic-embed-text"
+  LLM_PROVIDER: "custom"
+  # LLM_PROVIDER_API_KEY: "<KEY>"   # only if your server needs one
+additional_env_vars:
+  LLM_MODEL_NAME: "llama3.1:8b"
+  LLM_PROVIDER_API_ENDPOINT: "http://ollama.ai-infra.svc.cluster.local:11434/v1"  # include /v1
 ```
 
-#### 2. AWS Bedrock (Claude 3.5 / Llama 3)
+#### 2. AWS Bedrock
 ```yaml
 nudgebee_secret:
   LLM_PROVIDER: "bedrock"
   AWS_DEFAULT_REGION: "us-east-1"
-  # Bare model IDs (e.g. anthropic.claude-3-5-sonnet-20241022-v2:0) are valid for on-demand regional inference.
-  # Cross-region inference profile IDs (e.g. us.anthropic.claude-3-5-sonnet-20241022-v2:0) provide cross-region availability.
-  AWS_BEDROCK_MODEL_ID: "anthropic.claude-3-5-sonnet-20241022-v2:0"
-  # In EKS, IRSA is recommended; otherwise pass access keys:
+  # In EKS you can use IRSA instead of keys:
   # AWS_ACCESS_KEY_ID: "<YOUR_KEY>"
   # AWS_SECRET_ACCESS_KEY: "<YOUR_SECRET>"
+additional_env_vars:
+  LLM_MODEL_NAME: "anthropic.claude-3-5-sonnet-20241022-v2:0"
+  LLM_PROVIDER_REGION: "us-east-1"
 ```
 
-#### 3. OpenAI / Azure OpenAI
+#### 3. OpenAI
 ```yaml
 nudgebee_secret:
   LLM_PROVIDER: "openai"
-  OPENAI_API_KEY: "<YOUR_OPENAI_API_KEY>"
-  OPENAI_MODEL: "gpt-4o"
+  LLM_PROVIDER_API_KEY: "<YOUR_OPENAI_API_KEY>"
+additional_env_vars:
+  LLM_MODEL_NAME: "gpt-4o"
 ```
+
+#### Embeddings
+
+The RAG server uses an **on-device** embedding model (`BAAI/bge-small-en-v1.5`) by default, so no embeddings provider is needed to start. To use a hosted one, set `EMBEDDINGS_PROVIDER` (`bedrock`, `azure`, `openai`, `googleai`, `vertexai`, `huggingface`, `ollama`, `sagemaker`), `EMBEDDINGS_MODEL_NAME`, and as needed `EMBEDDINGS_PROVIDER_API_KEY`, `EMBEDDINGS_PROVIDER_API_ENDPOINT`, `EMBEDDINGS_PROVIDER_API_VERSION`, `EMBEDDINGS_PROVIDER_API_TYPE` and `EMBEDDINGS_PROVIDER_REGION`.
 
 ---
 
 ## Supported LLM Providers
 
-* [AWS Bedrock](./Aws/bedrock.md) is the default provider for LLM Server and RAG Server applications.
+* With environment configuration, [AWS Bedrock](./Aws/bedrock.md) is the LLM Server's default provider; the RAG Server defaults to on-device embeddings.
 
-Choose from the following LLM providers to integrate with your NudgeBee applications:
+Choose from the following LLM providers to integrate with your NudgeBee applications. For the in-app form, start with [Add an LLM Provider](./add-llm-provider.md).
 
 ### Cloud Provider Services
 - [AWS](./Aws/index.md) - Amazon Web Services integration options including Bedrock and SageMaker
@@ -116,3 +126,8 @@ The **LLM Server** powers intelligent agents that specialize in reasoning, plann
 
 2. **nb-slm**
    - Designed for **task-specific agents**, improving modular AI functionality.
+
+## Related
+
+- [Add an LLM Provider](./add-llm-provider.md)
+- [AI & Tools](../../features/ai/ai-and-tools.md)

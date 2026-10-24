@@ -61,3 +61,8 @@ aws bedrock-runtime invoke-model \
   --content-type application/json \
   --body '{"prompt": "Hello, how can I help you?"}'
 ```
+
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [LLM Integrations](../index.md)

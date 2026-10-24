@@ -20,8 +20,12 @@ NudgeBee supports the following Azure services for LLM integration:
 To integrate with Azure services, you'll need:
 
 1. An active Azure subscription
-2. Access to Azure OpenAI Service (requires application)
+2. Access to Azure OpenAI Service
 3. Azure service principal or managed identity credentials
 4. Resource group and region selection
 
 Select the specific Azure service from the options above to begin the integration process.
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [LLM Integrations](../index.md)

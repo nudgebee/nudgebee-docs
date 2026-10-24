@@ -37,29 +37,34 @@ Google Vertex AI is a unified platform that brings together Google Cloud's machi
      - "Storage Object Admin" (for model artifacts)
    - Create and download the JSON key file
 
-## Integrating with LLM Server
+## Add it in NudgeBee (UI)
 
-1. **Configure Vertex AI in LLM Server**:
+In **Admin → Integrations → LLM → Add LLM Provider**, choose **vertexai**, enter the **LLM Model Name** and an **API Key**. See [Add an LLM Provider](../add-llm-provider.md). **Test Connection** checks the configuration for Vertex AI but doesn't call the model, so send a test question to NuBi after saving.
 
-   Add the following configuration to your LLM Server settings:
+## Integrating with LLM Server (environment variables)
 
 ```bash
-    LLM_PROVIDER=googleai/vertexai
-    LLM_MODEL_NAME=<Model name in Google Cloud AI>
-    LLM_PROVIDER_API_ENDPOINT=<Base URL for Google Cloud AI>
+LLM_PROVIDER=vertexai
+LLM_MODEL_NAME=<Vertex AI model name, e.g. gemini-2.5-flash>
+LLM_PROVIDER_REGION=<location, default us-central1>
+GOOGLE_CLOUD_PROJECT=<your project id>
+LLM_PROVIDER_API_KEY=<optional; leave unset to use Application Default Credentials>
 ```
 
+The project comes from `GOOGLE_CLOUD_PROJECT` and the location from `LLM_PROVIDER_REGION` (default `us-central1`). With no API key, the LLM Server uses the service account available to its pod (Application Default Credentials).
 
 ## Integrating with RAG Server
 
-1. **Configure Vertex AI in RAG Server**:
-
-   Add the following configuration to your RAG Server settings:
-
 ```bash
-    EMBEDDINGS_PROVIDER=googleai/vertexai
-    EMBEDDINGS_MODEL_NAME=<Model name in Google Cloud AI>
-    EMBEDDINGS_PROVIDER_API_ENDPOINT=<Google Cloud embeddings endpoint URL>
+EMBEDDINGS_PROVIDER=vertexai
+EMBEDDINGS_MODEL_NAME=<embedding model, e.g. text-embedding-005>
+EMBEDDINGS_PROVIDER_REGION=<location>
 ```
 
-Note: Google Vertex AI only supports authentication via service accounts. Ensure that the service account has the necessary permissions to access the Vertex AI API and any other resources you plan to use.
+Both the model name and the region are required for Vertex AI embeddings.
+
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [Google Gemini](./gemini.md)
+- [LLM Integrations](../index.md)

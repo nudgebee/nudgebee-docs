@@ -44,7 +44,7 @@ This guide walks you through deploying the NudgeBee AI model on AWS SageMaker.
 ```sh
 EMBEDDINGS_PROVIDER=sagemaker
 EMBEDDINGS_PROVIDER_REGION=<AWS_SageMaker_Region>
-EMBEDDINGS_PROVIDER_API_ENDPOINT=<SageMaker_Endpoint_URL>
+EMBEDDINGS_PROVIDER_API_ENDPOINT=<SageMaker endpoint name>
 EMBEDDINGS_MODEL_NAME=<Model_Name>
 ```
 
@@ -52,7 +52,7 @@ EMBEDDINGS_MODEL_NAME=<Model_Name>
 
 ```sh
 LLM_PROVIDER=sagemaker
-LLM_PROVIDER_API_ENDPOINT=<SageMaker_Endpoint_URL>
+LLM_PROVIDER_API_ENDPOINT=<SageMaker endpoint name>
 LLM_PROVIDER_REGION=<AWS_SageMaker_Region>
 ```
 
@@ -60,3 +60,8 @@ LLM_PROVIDER_REGION=<AWS_SageMaker_Region>
 
 1. Use SageMaker Console > Endpoints > Test
 2. Provide a JSON request and validate response
+
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [LLM Integrations](../index.md)

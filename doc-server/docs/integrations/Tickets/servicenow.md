@@ -19,7 +19,7 @@ Before configuring the integration, ensure you have:
 
 ## Step 1: Add the ServiceNow Account in NudgeBee
 
-1. Navigate to **Settings** > **Integrations** > **Ticketing** tab.
+1. Navigate to **Admin** → **Integrations** → **Ticketing** tab.
 2. Click the **ServiceNow** card.
 
 ![ServiceNow in Ticketing tab](../../../static/img/servicenow.png)
@@ -36,7 +36,7 @@ Before configuring the integration, ensure you have:
 
 4. Click **Save**.
 
-**Credential validation**: on save, NudgeBee tests the connection by querying the incident table. If authentication fails, verify your instance URL, username, and password are correct.
+**Test Connection** queries the incident table to confirm the credentials work. If authentication fails, verify your instance URL, username, and password are correct.
 
 ---
 
@@ -83,7 +83,7 @@ Once configured, NudgeBee can perform the following operations with ServiceNow:
 
 ### Knowledge Base Sync
 
-When **Sync Knowledge Base** is enabled, NudgeBee imports your ServiceNow Knowledge Base articles. These articles are then used by the AI engine to provide context-aware troubleshooting recommendations based on your organization's documented procedures and solutions.
+When **Sync Knowledge Base** is enabled, NudgeBee creates an organization-wide knowledge base from your ServiceNow Knowledge Base articles and re-syncs it automatically, every 30 minutes by default. It appears in **b-Cortex → Knowledge → Knowledge Base** under **Integration**. These articles are then used by the AI engine to provide context-aware troubleshooting recommendations based on your organization's documented procedures and solutions.
 
 ---
 
@@ -128,7 +128,7 @@ When **Sync Knowledge Base** is enabled, NudgeBee imports your ServiceNow Knowle
 * **Symptom**: Incident creation fails with `Mandatory field 'caller_id' or 'category' is missing`.
 * **Remediation**:
   1. In ServiceNow System Definition $\rightarrow$ Tables $\rightarrow$ `incident`, check which columns have `Mandatory = true`.
-  2. Configure default fallback values in NudgeBee ServiceNow Settings (e.g. setting a default Caller ID or Category).
+  2. NudgeBee's ServiceNow connection has no default values for these fields. Make the columns optional, give them a default in ServiceNow (for example with a business rule or dictionary default), or supply them in the ticket task of the automation that creates the incident.
 
 ---
 
@@ -137,3 +137,8 @@ When **Sync Knowledge Base** is enabled, NudgeBee imports your ServiceNow Knowle
 * **Remediation**:
   1. Ensure **Sync Knowledge Base** is toggled **On** in NudgeBee.
   2. Verify that the service user has read access to the `kb_knowledge` table and that the target KB Base has `Workflow state = published`.
+
+## Related
+
+- [Ticket integrations](./index.md)
+- [b-Cortex knowledge](../../features/ai/b-cortex.md)

@@ -52,7 +52,7 @@ For self-hosted GitLab instances, you can also use **Project Access Tokens** or 
 
 ## Step 2: Configure GitLab in NudgeBee
 
-1. In NudgeBee, navigate to **Settings** > **Integrations** > **Repos** tab.
+1. In NudgeBee, navigate to **Admin** → **Integrations** → **Repos** tab.
 2. Click the **Gitlab** tile under the **Connected** or **Available** section.
 
 ![NudgeBee Repos integration page showing GitLab tile](../../../../static/img/gitlab_repos_tile.png)

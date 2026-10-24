@@ -69,9 +69,14 @@ To enable the LLM server to interact with the Azure AI Foundry-hosted model, upd
 LLM_PROVIDER=azure
 LLM_MODEL_NAME=<Model name in Azure AI Foundry>
 LLM_PROVIDER_API_KEY=<Azure authentication token>
-LLM_PROVIDER_API_VERSION=<API version>
+LLM_PROVIDER_API_STYLE=v1 # or "classic", which also needs LLM_PROVIDER_API_VERSION
 LLM_PROVIDER_API_ENDPOINT=<Base URL for Azure AI Foundry>
 ```
 
 
 
+
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [LLM Integrations](../index.md)

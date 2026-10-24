@@ -33,26 +33,23 @@ The API key must have permissions to create and manage incidents across your tea
 
 ## ZenDuty Integration Configuration
 
-Navigate to **Settings** > **Integrations** > **Tickets** tab and select **ZenDuty** to open the configuration form.
+Navigate to **Admin** → **Integrations** → **Ticketing** tab and select **ZenDuty** to open the configuration form.
 
 ![ZenDuty in Tickets tab](../../../static/img/zenduty_card.png)
 
 ### Configuration Fields
 
-* **API Key \*** (Required)
-    * Your ZenDuty **API key**.
-    * This value is stored encrypted in NudgeBee.
-
-* **URL**
-    * ZenDuty API URL. Default: `https://www.zenduty.com/api`.
-    * Only change this if you have a custom ZenDuty endpoint.
-
-* **Username**
-    * Your ZenDuty email address for reference.
+| Field | What to enter |
+|---|---|
+| **Name \*** | A name for this connection |
+| **Account URL** | ZenDuty API URL, default `https://www.zenduty.com/api` |
+| **Email \*** | Your ZenDuty account email |
+| **API Token \*** | Your ZenDuty API token. Stored encrypted |
+| **Post RCA analysis to ZenDuty incidents** | When on, NudgeBee posts its root-cause analysis on the originating ZenDuty incident |
 
 ![ZenDuty configuration form](../../../static/img/zenduty_form.png)
 
-**Credential validation**: on save, NudgeBee tests the connection by fetching your ZenDuty teams. If authentication fails, verify your API key is correct.
+**Test Connection** fetches your ZenDuty teams to confirm the token works. If authentication fails, verify your API key is correct.
 
 ---
 
@@ -127,3 +124,7 @@ Incidents can be created from NudgeBee in two ways:
 - ZenDuty is the only ticket integration that supports **multiple assignees** per incident.
 - ZenDuty supports the full incident lifecycle (create, acknowledge, resolve) directly from NudgeBee.
 - ZenDuty also supports a separate **webhook integration** for receiving ZenDuty alerts into NudgeBee. See the webhook configuration in **Integrations** > **Webhooks**.
+
+## Related
+
+- [Ticket integrations](./index.md)
