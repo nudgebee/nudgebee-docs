@@ -21,19 +21,19 @@ keywords: [applications, workloads, pods, nodes, namespace, pvc, restart deploym
 | **Events (High)** | High-priority events |
 | **Optimisations/Autopilots** | Open recommendations and active autopilots |
 
-Filter by **Namespace**, **Workload Type** or name, pick a date range (default last 30 days), or **Download**. A strip above the list counts workloads by kind, errors, events, **Savings Potential (/yr)** and **MTD Cost**.
+Filter by **Namespace**, **Workload Type** or name, pick a date range (default last 30 days), or **Download**. With write access, **Bulk assign owner** assigns an owner to several workloads at once. A strip above the list counts workloads by kind, errors, events, **Optimization** (Right Sizing, Replica Right Sizing and Abandoned Resource recommendations), **Savings Potential (/yr)** and **MTD Cost**.
 
 **Row menu** (needs write access):
 
 - Every workload: **Logs**, **Edit**, **Scan Image**, **SLO**, **Git**.
-- Deployments, StatefulSets and Rollouts also: **Auto Optimize** (**Horizontal Rightsizing** or **Vertical Rightsizing**), **Restart**, **Scale** and **Delete**. Restart and Delete ask you to confirm; Delete asks you to type the workload name.
+- Deployments, StatefulSets and Rollouts also: **Auto Optimize** (**Horizontal Rightsizing** or **Vertical Rightsizing**), **Restart**, **Scale** and **Delete**. Restart and Delete ask you to confirm; Delete asks you to type the workload name. An Auto Optimize option is grayed out when that kind of autopilot already exists for the workload (Horizontal also when a continuous one exists).
 - **Git** links the workload to its repository: **Git Integration**, **Repository**, **Code Repository URL**, **CI repo is same as code repo**, **CI Repository URL**, **Branch** and **Helm Values File Path**. NudgeBee uses this to open fix pull requests.
 
 **Row tabs:** Details, Ownership, Pods, Utilization Trends, Cost Trends, Recent Events, Service Map, Deployments, Security, SLO, Profilers, Traces (last 24 h), Logs (last 60 min), App Dashboard, Recommendations and Log Group.
 
 ## Pods
 
-Columns **Pod Name**, **Namespace**, **Created At**, **Cost**, **CPU**, **Memory**, **Status/State**, **Restarts** and **Error Count (24h)**; filter by **Namespace**, **Workload Type**, **State**, **Status** or name. The row menu has **Logs**, and with write access **Delete Pod** and **Debug Pod**. Click a pod to open its page.
+Columns **Pod Name**, **Namespace**, **Created At**, **Cost**, **CPU**, **Memory**, **Status/State**, **Restarts** and **Error Count (24h)**; filter by **Namespace**, **Workload Type**, **State**, **Status** or name. With write access, the row menu has **Logs**, **Delete Pod** and **Debug Pod**; read-only users get no row menu. Click a pod to open its page.
 
 ### Pod page
 

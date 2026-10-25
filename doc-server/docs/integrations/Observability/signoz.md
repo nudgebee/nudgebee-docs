@@ -3,7 +3,7 @@ sidebar_position: 14
 ---
 # SigNoz
 
-NudgeBee reads **logs** and **metrics** from [SigNoz](https://signoz.io/) — SigNoz Cloud or your own self-hosted instance — and creates and syncs **alert rules** in it, by connecting straight to its API. No NudgeBee agent is involved, so this works for a SigNoz that runs outside your Kubernetes clusters.
+NudgeBee reads **logs** and **metrics** from [SigNoz](https://signoz.io/) — SigNoz Cloud or your own self-hosted instance — and creates and syncs **alert rules** in it, by connecting to its API, either directly from NudgeBee or through a [Proxy Agent (Forager)](../../installation/proxy-agent/index.md) in your network. No Kubernetes agent is involved, so this works for a SigNoz that runs outside your Kubernetes clusters.
 
 Both SigNoz generations are supported. NudgeBee detects which login API your instance exposes, so current releases and older self-hosted ones (the v0.51 era) both connect with the same settings.
 
@@ -21,11 +21,11 @@ If your SigNoz is in the same cluster as the NudgeBee Kubernetes Agent, you can 
 
 Before configuring the integration, ensure you have:
 
-- A **SigNoz** instance reachable from NudgeBee — a cloud tenant (`https://<tenant>.signoz.cloud`) or your own deployment
+- A **SigNoz** instance — a cloud tenant (`https://<tenant>.signoz.cloud`) or your own deployment
 - **One** of these credentials:
   - a SigNoz **user email and password**, or
   - a SigNoz **API key** (required if your organization is SSO-only)
-- For a self-hosted instance behind a firewall, network access from NudgeBee to its URL
+- For a self-hosted instance NudgeBee can't reach, a [Proxy Agent (Forager)](../../installation/proxy-agent/index.md) running in a network that can reach it
 
 ---
 
@@ -44,6 +44,10 @@ Navigate to **Admin** > **Integrations** > **Observability** and select **SigNoz
 
 * **Account ID**
     * The NudgeBee account or accounts whose workloads this SigNoz holds logs for.
+
+* **Connection Mode**
+    * `direct` — NudgeBee calls SigNoz itself. This is the default, and the only choice for SigNoz Cloud.
+    * `vm_agent` — calls go through a Forager running in your network, for a self-hosted SigNoz NudgeBee cannot reach.
 
 * **Signoz Mode \*** *(Required)*
     * `self_hosted` — your own SigNoz instance. This is the default, and the login API is detected automatically, so old and current releases both work.

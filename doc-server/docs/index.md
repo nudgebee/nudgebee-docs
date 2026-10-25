@@ -167,7 +167,7 @@ NudgeBee ships with 30+ pre-built Cloud-Ops Agents and 30+ integrations. Capabil
 | **Email** | Email notifications and daily reports | Optional |
 | **[GitHub](./integrations/Code%20Repository/GitHub/github-integration.md)** / **[GitLab](./integrations/Code%20Repository/GitLab/gitlab-integration.md)** | Auto-PRs for optimization recommendations, code-level troubleshooting | Optional |
 | **[CI/CD system](./integrations/CICD/argocd-integration.md)** (ArgoCD) | Deployment change correlation, rollback insights | Optional |
-| **[Ticketing system](./integrations/Tickets/index.md)** (Jira, ServiceNow, PagerDuty, GitHub Issues, GitLab Issues) | Ticket creation, auto-responses, similar-issue search, runbook references | Optional |
+| **[Ticketing system](./integrations/Tickets/index.md)** (Jira, ServiceNow, PagerDuty, ZenDuty, Freshdesk, GitHub Issues, GitLab Issues) | Ticket creation, auto-responses, similar-issue search, runbook references | Optional |
 | **[Authentication provider](./integrations/Authentication/index.md)** | OAuth SSO (Google/Okta/Azure AD/Auth0) — all editions. SAML 2.0 — Enterprise/Cloud only. | Optional |
 
 ---
@@ -179,7 +179,7 @@ Follow these steps to go from zero to a working NudgeBee setup. The path differs
 | Step | Cloud SaaS | Self-Hosted |
 |---|---|---|
 | **1. Get access** | [Sign up at app.nudgebee.com](https://app.nudgebee.com) — ready in seconds with zero infrastructure to manage. | [Install the NudgeBee Server](./installation/server/index.md) on a Kubernetes cluster. Takes 15–30 minutes. |
-| **2. Connect AI (LLM)** | Managed LLM included by default. Nothing to configure. | [Connect your BYOM model provider](./integrations/LLM/index.md) (OpenAI, Bedrock, Ollama) under Settings → AI / LLM. |
+| **2. Connect AI (LLM)** | Managed LLM included by default. Nothing to configure. | [Connect your BYOM model provider](./integrations/LLM/index.md) (OpenAI, Bedrock, Ollama) under Admin → Integrations → LLM. |
 | **3. Connect your clusters** | [Install the Agent](./installation/agent/installation/index.md) on each cluster, or [connect a cloud account](./features/Cloud/index.md). | Same — [install the Agent](./installation/agent/installation/index.md) on each monitored cluster. |
 | **4. Verify observability** | Ingest metrics from the agent or connect external tools ([Prometheus, Datadog](./integrations/Observability/index.md)). | Same — verify bundled Prometheus or connect your observability stack. |
 | **5. Run first investigation** | Open the **NuBi AI drawer** to run your first cluster health investigation. | Same — run your first natural-language triage investigation with NuBi. |
@@ -255,7 +255,7 @@ If you encounter an issue during initial setup, use this decision tree to pinpoi
    └── YES → Proceed to step 4
 
 4. Does NuBi answer natural-language cluster questions?
-   ├── NO  → Verify BYOM model provider API key under Settings → AI / LLM.
+   ├── NO  → Verify BYOM model provider API key under Admin → Integrations → LLM.
    └── YES → Setup is healthy and complete!
 ```
 
@@ -265,7 +265,7 @@ If you encounter an issue during initial setup, use this decision tree to pinpoi
 
 Once you are logged in, here is what to explore first:
 
-1. **Start saving on cloud costs** — Go to **Optimizations** to see immediate cost-saving and performance improvement recommendations. The FinOps AI-Assistant has already analyzed your resource utilization and identified right-sizing, scaling, and cleanup opportunities — most teams find actionable savings within minutes.
+1. **Start saving on cloud costs** — Go to **Optimizations** to see immediate cost-saving and performance improvement recommendations. NuBi's FinOps Cost Advisor has already analyzed your resource utilization and identified right-sizing, scaling, and cleanup opportunities — most teams find actionable savings within minutes.
 
 2. **Resolve incidents faster with AI** — Navigate to **Troubleshoot** to see real-time events across your clusters. If an LLM is connected, NuBi (the SRE AI Agent) can analyze incidents and suggest root causes in plain language — reducing your MTTR from hours to minutes.
 

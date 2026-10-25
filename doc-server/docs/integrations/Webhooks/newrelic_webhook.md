@@ -105,7 +105,8 @@ When New Relic sends a webhook payload to NudgeBee, the following processing occ
 |--------------------|-------------------|
 | `CRITICAL`, `HIGH` | High |
 | `MEDIUM` | Medium |
-| `LOW`, `INFO` | Low |
+| `LOW` | Low |
+| `INFO` | Info |
 
 ### Automatic Evidence Collection
 
@@ -127,7 +128,7 @@ Events are deduplicated using a fingerprint derived from the condition ID and is
 
 1. In New Relic, trigger a test alert (or use an existing alert condition that fires on test data).
 2. Confirm the workflow is configured to send to the NudgeBee webhook destination.
-3. In NudgeBee, navigate to **Events** and verify the alert appears with:
+3. In NudgeBee, navigate to **Troubleshoot** > **All Events** and verify the alert appears with:
    - Correct title and priority
    - Alert details evidence attached
    - Related logs and traces (if observability integration is configured)
@@ -138,7 +139,7 @@ Events are deduplicated using a fingerprint derived from the condition ID and is
 
 | Issue | Resolution |
 |-------|------------|
-| Webhook URL returns 401 | Verify the `token` query parameter in the URL is correct. Regenerate the integration if needed. |
+| Webhook URL returns HTTP `400` with `webhook validation failed` | Verify the `token` query parameter in the URL is correct. Regenerate the integration if needed. |
 | Events created but no logs/traces attached | Ensure a [New Relic observability integration](../Observability/newrelic.md) is configured for the same NudgeBee account. |
 | Events not appearing at all | Check that the New Relic Workflow is active and the filter matches your alert conditions. |
 | Duplicate events | Expected behavior — NudgeBee deduplicates by `conditionId-issueId`. State updates (e.g., ACTIVATED → CLOSED) update the existing event. |

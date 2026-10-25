@@ -24,7 +24,7 @@ Optimize CPU and memory requests/limits for a Kubernetes workload. Can apply cha
 | `cpu` | object | No | CPU configuration: `change_pct` (number, required — percentage to change), `max` (string, e.g., `"1"`), `min` (string, e.g., `"10m"`), `remove_limit` (boolean). |
 | `memory` | object | No | Memory configuration: `change_pct` (number, required — percentage to change), `max` (string, e.g., `"1Gi"`), `min` (string, e.g., `"100Mi"`), `remove_limit` (boolean). |
 | `in_place` | boolean | No | Resize pods in place without a restart when the cluster supports it (Kubernetes 1.35 or later), otherwise fall back to a rolling restart. Default `true`. Ignored when GitOps is enabled. |
-| `gitops_config` | object | No | GitOps config: `enabled` (boolean) — if true, creates a PR instead of applying directly. |
+| `gitops_config` | object | No | GitOps config: `enabled` (boolean) — if true, creates a pull request instead of applying directly; `integration_id` (GitHub integration that raises the pull request, required when `enabled` is true). |
 | `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
@@ -56,7 +56,7 @@ Scale the number of replicas for a Kubernetes workload up or down.
 | `change_to` | number | No | Target absolute replica count. Visible when `scaling_mode` is `change_to`. |
 | `min` | number | No | Minimum replica count (floor). |
 | `max` | number | No | Maximum replica count (ceiling). |
-| `gitops_config` | object | No | GitOps config: `enabled` (boolean) — if true, creates a PR. |
+| `gitops_config` | object | No | GitOps config: `enabled` (boolean) — if true, creates a pull request instead of applying directly; `integration_id` (GitHub integration that raises the pull request, required when `enabled` is true). |
 | `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
@@ -87,7 +87,7 @@ Resize a Kubernetes Persistent Volume Claim to match actual usage.
 | `change_by` | string | No | Percentage to increase storage (e.g., `10%`). Only positive values (increase). |
 | `change_to` | string | No | Target absolute storage size (e.g., `20Gi`). |
 | `max` | string | No | Maximum storage size allowed (e.g., `100Gi`). |
-| `gitops_config` | object | No | GitOps config: `enabled` (boolean). |
+| `gitops_config` | object | Yes | Create GitHub Issue config: `enabled` (boolean) — if true, opens a GitHub issue describing the resize instead of patching the cluster; `integration_id` (GitHub integration) and `repository_name` (repository for the issue, e.g. `org/repo`), both required when `enabled` is true. Set `enabled: false` to patch the PVC directly. |
 | `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
@@ -99,6 +99,8 @@ Resize a Kubernetes Persistent Volume Claim to match actual usage.
 | `new_storage` | string | New storage size. |
 | `patch` | object | The applied patch. |
 | `resolution_id` | string | Resolution tracking ID. |
+| `issue_url` | string | URL of the GitHub issue (when `gitops_config.enabled` is true). |
+| `issue_number` | number | Number of the GitHub issue (when `gitops_config.enabled` is true). |
 
 ---
 

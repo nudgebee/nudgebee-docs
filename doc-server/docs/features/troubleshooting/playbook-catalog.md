@@ -250,7 +250,7 @@ Look up a resource on AWS / GCP / Azure.
 | `instance_id` / `instance_ids[]` | string / string[] | No | — | For instance-scoped lookups. |
 | `account_id` | string | No | — | Cloud account override. |
 
-### `cloud_metrics`
+### `cloud_list_metrics`
 
 Query CloudWatch / Cloud Monitoring / Azure Monitor metrics.
 
@@ -646,7 +646,7 @@ Nearby Kubernetes events for the alert resource.
 
 | Field | Type | Required | Default | Description |
 |:---|:---|:---|:---|:---|
-| `runbook_name` | string | **Yes** | — | Source runbook (dropdown). |
+| `title` | string | No | `Resource Events` | Title of the evidence card. |
 | `max_pods` | int | No | `1` | Cap on pods inspected when `dependent_pod_mode` is set. |
 | `dependent_pod_mode` | bool | No | `false` | Fetch events for the resource's pods rather than the resource. |
 
@@ -707,14 +707,6 @@ HPA configuration / scaling-policy mismatch analysis.
 |:---|:---|:---|:---|:---|
 | `check_for_metrics_server` | bool | **Yes** | `true` | Verify metrics-server is installed and report otherwise. |
 
-### `nudgebee_playbook_trigger_enricher`
-
-Trigger another NudgeBee runbook on this event.
-
-| Field | Type | Required | Default | Description |
-|:---|:---|:---|:---|:---|
-| `runbook_id` | string | **Yes** | — | Runbook to invoke (dropdown). |
-
 ### `nubi_enricher`
 
 Trigger an LLM investigation with a custom prompt.
@@ -734,7 +726,7 @@ Every action above accepts the following control parameters in addition to its o
 |:---|:---|:---|
 | `if` | template / bool | Run the action only when the value is the string `"true"` (case-insensitive — `"True"` and `"TRUE"` also work) or boolean `true`. Anything else skips the action: `"false"`, `"False"`, the empty string, `"yes"`, `"1"`, plain text, etc. Use the [`gt` / `lt` / `gte` / `lte` filters](./templating.md#nudgebee-specific-filters) when you want a clean lowercase `"true"` / `"false"` you don't have to think about. |
 | `for_each` | template / array | Run the action once per item; inside the action, `{{ item }}` is the current iteration value. |
-| `for_each_limit` | int | Cap on iterations (default `10`). |
+| `for_each_limit` | int | Cap on iterations (default `10`, maximum `20`; higher values are lowered to `20`). |
 | `for_each_on_limit_exceeded` | string | What to do when the array is longer than `for_each_limit`. `"warn"` (default) logs a warning and truncates to the limit. `"error"` fails the action. |
 
 ### Example — data-driven evidence with `for_each`

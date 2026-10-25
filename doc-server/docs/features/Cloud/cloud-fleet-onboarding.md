@@ -18,19 +18,19 @@ Enterprise organizations typically operate tens or hundreds of cloud accounts ac
 
 ```mermaid
 graph TD
-    subgraph AWS Fleet [AWS Organizations]
-        AWSMgmt[Management / Payer Account<br/>CloudFormation StackSet] -->|Auto-Deploy IAM Role| AWSMembers[All Member Accounts (Auto-Discovered)]
+    subgraph AWSFleet ["AWS Organizations"]
+        AWSMgmt["Management account<br/>CloudFormation StackSet"] -->|Auto-Deploy IAM Role| AWSMembers["Member accounts (whole org or selected OUs)"]
     end
 
-    subgraph Azure Fleet [Azure subscriptions]
-        AzureSP[Microsoft Entra service principal] -->|Discover accessible subscriptions| AzureSubs[Selected subscriptions]
+    subgraph AzureFleet ["Azure subscriptions"]
+        AzureSP["Microsoft Entra service principal"] -->|Discover accessible subscriptions| AzureSubs["Selected subscriptions"]
     end
 
-    subgraph GCP Fleet [GCP projects]
-        GCPSA[GCP service account] -->|Discover accessible projects| GCPProjects[Selected projects]
+    subgraph GCPFleet ["GCP projects"]
+        GCPSA["GCP service account"] -->|Discover accessible projects| GCPProjects["Selected projects"]
     end
 
-    AWSFleet -->|Continuous Ingestion| NB[NudgeBee Cloud Collector]
+    AWSFleet -->|Continuous Ingestion| NB["NudgeBee Cloud Collector"]
     AzureFleet -->|Continuous Ingestion| NB
     GCPFleet -->|Continuous Ingestion| NB
 ```
@@ -40,16 +40,18 @@ graph TD
 ## 2. AWS Organizations Fleet Onboarding
 
 ### How It Works
-1. You deploy a primary CloudFormation stack in your AWS **Management (Payer) Account**.
-2. An AWS CloudFormation **StackSet** automatically provisions the NudgeBee Cross-Account IAM Role across all existing and newly created AWS member accounts.
-3. NudgeBee uses the organization setup to discover and onboard member accounts. Check the organization status in the Console after the StackSet deployment completes.
+1. You create a CloudFormation **StackSet** from your AWS **Management Account**, using service-managed permissions.
+2. The StackSet provisions the NudgeBee cross-account IAM role in the member accounts you target (your whole organization or selected OUs), including accounts added later.
+3. Member accounts register in NudgeBee automatically as the StackSet deploys to each one. StackSets do not deploy to the management account itself; to monitor it, add it separately with **Add AWS Account**.
 
 ### Step-by-Step Setup:
-1. In NudgeBee Console, go to **Cloud $\rightarrow$ Add Cloud Account $\rightarrow$ AWS Organization**.
-2. Enter your **Payer Account ID** and primary S3 bucket for the Cost and Usage Report (CUR).
-3. Click **Launch Stack in AWS Console**. This opens the CloudFormation wizard with pre-filled template parameters.
-4. Check the capability acknowledgement box: `I acknowledge that AWS CloudFormation might create IAM resources with custom names`.
-5. Click **Create Stack**.
+1. In NudgeBee, go to **Admin $\rightarrow$ Integrations $\rightarrow$ Kubernetes & Cloud $\rightarrow$ AWS** and click **AWS Organization**.
+2. **Set Organization Name**: enter an **Organization Display Name**, choose the **Environment** (Production or Non-production), and click **Next**. NudgeBee generates a verification token and a StackSet template URL.
+3. Copy the **Verification Token** (it is shown only once) and the template parameter values.
+4. Click **Launch StackSet in AWS** and create the StackSet in your Management Account with the template and parameters shown, targeting your organization or selected OUs.
+5. Watch **Organization Status** in NudgeBee; member accounts appear as the StackSet reaches each one.
+
+See [Onboarding an Entire AWS Organization](./AWS.md#onboarding-an-entire-aws-organization) for details.
 
 ---
 
@@ -59,7 +61,7 @@ graph TD
 NudgeBee lists the subscriptions that the supplied Microsoft Entra service principal can access. The scope at which you grant its roles determines which subscriptions appear.
 
 ### Step-by-Step Setup:
-1. Go to **Cloud $\rightarrow$ Add Cloud Account $\rightarrow$ Azure**.
+1. Go to **Admin $\rightarrow$ Integrations $\rightarrow$ Kubernetes & Cloud $\rightarrow$ Azure** and click **Add Azure Account**.
 2. Enter the tenant ID, client ID, and client secret for the service principal.
 3. Grant the service principal the required roles at each subscription, or at a parent scope whose permissions are inherited by those subscriptions. For example, at a management-group scope:
    ```bash
@@ -69,7 +71,7 @@ NudgeBee lists the subscriptions that the supplied Microsoft Entra service princ
      --role "Reader" \
      --scope "/providers/Microsoft.Management/managementGroups/<YOUR_ROOT_MG_ID>"
    ```
-4. Click **Discover Subscriptions**. NudgeBee lists all discovered subscriptions with check boxes to select which subscriptions to activate.
+4. Click **Next**, then **Discover Subscriptions**. NudgeBee lists all discovered subscriptions with check boxes to select which subscriptions to activate.
 
 ---
 
@@ -79,12 +81,18 @@ NudgeBee lists the subscriptions that the supplied Microsoft Entra service princ
 NudgeBee lists projects accessible to the supplied Google Cloud service-account key. Granting roles at an organization or folder can make those roles available to descendant projects, subject to your Google Cloud IAM policy.
 
 ### Step-by-Step Setup:
-1. Go to **Cloud $\rightarrow$ Add Cloud Account $\rightarrow$ GCP**.
+1. Go to **Admin $\rightarrow$ Integrations $\rightarrow$ Kubernetes & Cloud $\rightarrow$ GCP** and click **Add GCP Account**.
 2. Paste the service-account JSON key and use **Check Permissions**.
 3. Grant the required roles at the appropriate project or inherited parent scope:
-   - `roles/viewer` (Resource Discovery)
-   - `roles/billing.viewer` (Billing Data)
-   - `roles/bigquery.dataViewer` (on the BigQuery Billing export dataset)
+   - `roles/viewer`
+   - `roles/monitoring.viewer`
+   - `roles/logging.viewer`
+   - `roles/bigquery.dataViewer`
+   - `roles/bigquery.jobUser`
+   - `roles/recommender.viewer`
+   - `roles/serviceusage.serviceUsageConsumer`
+
+   See [GCP](./GCP.md) for what each role is used for.
 4. Click **Next**, then **Discover Projects** and select the projects to monitor. You can also enter project IDs manually.
 
 ---

@@ -119,6 +119,26 @@ When multiple structured filters are set, they are combined with logical **AND**
 The Event Trigger sidebar auto-saves your changes, but **only after the "at least one filter" rule passes**. Until then your edits are kept in the form but not persisted to the workflow.
 :::
 
+### Lifecycle phase
+
+An event trigger fires at one phase of the event's lifecycle, set by `params.on`. The builder form doesn't show this setting, so a trigger built in the form uses the default, `event.created`. To pick another phase, set `on` in the workflow definition (JSON or YAML, for example with **Create from Code**):
+
+```json
+"triggers": [
+  { "type": "event", "params": { "on": "investigation.completed", "filter": "{{ event.priority == \"HIGH\" }}" } }
+]
+```
+
+NudgeBee fires event triggers at these phases:
+
+| Phase | When it fires |
+|-------|---------------|
+| `event.created` (default) | When the event is created. AI analysis is not ready yet. |
+| `investigation.completed` | When the AI investigation of the event finishes. Use it when a step needs the root-cause analysis. |
+| `investigation.failed` | When the AI investigation of the event fails. |
+
+Saving also accepts `event.triaged`, `event.updated`, `investigation.enqueued`, `investigation.waiting`, `event.resolved` and `event.closed`, but NudgeBee doesn't publish events at those phases today, so a trigger set to one of them doesn't run.
+
 ### Switching to advanced mode
 
 Click **Switch to advanced filter expression** to replace the structured fields with a raw template expression over the full event payload. Use advanced mode when you need conditions the structured fields can't express - OR-logic, nested labels, non-equality comparisons, or string matching.

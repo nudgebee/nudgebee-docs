@@ -22,7 +22,7 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 :::info
 **Cloud SaaS users**: You only need to install the agent — the server is managed for you. Generate your agent auth key at [app.nudgebee.com](https://app.nudgebee.com) and skip straight to [Install the Agent](#2-install-the-agent).
 
-**Self-hosted users**: Make sure the [NudgeBee Server is installed](../../server/) first. You will need the Relay Server URL and Collector Server URL from your server setup — see [Self-Hosted Configuration](#4-for-self-hosted-nudgebee).
+**Self-hosted users**: Make sure the [NudgeBee Server is installed](../../server/) first. You will need the Relay Server URL and Collector Server URL from your server setup — see [Self-Hosted Configuration](#5-for-self-hosted-nudgebee).
 :::
 
 :::tip[Self-hosted: the cluster running your server is already covered]
@@ -54,7 +54,7 @@ This page is for every **other** cluster you want monitored. To swap the bundled
 |---|---|---|
 | **Kubernetes cluster** | v1.27 or newer | The cluster you want to monitor |
 | **Helm** | v3.x installed and configured | [Install Helm](https://helm.sh/) if you don't have it |
-| **Linux Kernel** | v4.16 or newer on all nodes | Required by the eBPF node agent. The install script turns the node agent off for some older kernels — check yours with `uname -r`. |
+| **Linux Kernel** | 5.8 or newer on all nodes, or a distribution kernel that backports BPF ring buffers (such as RHEL 8's 4.18) | Required by the eBPF node agent, which exits at startup without ring-buffer support. The install script only checks for 4.16, so it won't catch kernels between 4.16 and 5.8 — check yours with `uname -r`. |
 | **NudgeBee Auth Key** | Generated from the NudgeBee UI | **Admin → Integrations → Kubernetes Clusters → Add K8s Account** |
 | **Network access** | Outbound HTTPS (TCP 443) to the hosts in [Network requirements](#network-requirements) | Air-gapped clusters: see [Air-gapped and private registries](#air-gapped-and-private-registries) |
 | **Installer permissions** | Cluster-admin level: the chart creates ClusterRoles and ClusterRoleBindings (for the runner and the event watcher) and a privileged node-agent DaemonSet (host PID) | The namespace must allow privileged pods (Pod Security `privileged`) |
@@ -97,7 +97,7 @@ Inside the cluster the runner also needs to reach Prometheus, Alertmanager, Loki
 
 ### Quick install with the script (what the UI gives you)
 
-The **Finish Setup** step in the UI has a **Helm** tab (the default) and a **Shell Script** tab with a one-line `installation.sh` command. The script's default is a minimal install — no bundled Prometheus or traces. See the [Install Script Reference](./install-script.md) for every flag. The Helm steps below are a full install; the UI's **Helm** tab, like the script, is the minimal one.
+The **Finish Setup** step in the UI has a **Helm** tab (the default) and a **Shell Script** tab with a one-line `installation.sh` command. The UI's script command is a minimal install — it passes `-g true -x true -t true`, so no bundled Prometheus and no traces. Run without those flags, the script installs the OpenTelemetry collector and ClickHouse and offers to install a Prometheus stack if it finds none. See the [Install Script Reference](./install-script.md) for every flag. The Helm steps below are a full install; the UI's **Helm** tab, like its script command, is the minimal one.
 
 ### Step 1: Generate Your Auth Key
 
@@ -189,13 +189,14 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
 helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
 helm repo update
 
-# 2. Deploy NudgeBee Agent with minimal local footprint
+# 2. Deploy NudgeBee Agent with the node agent off (needed on KinD)
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
-  --set nodeAgent.resources.requests.cpu="50m" \
-  --set nodeAgent.resources.requests.memory="64Mi"
+  --set nodeAgent.enabled=false
 ```
+
+On KinD turn the node agent off (as above): KinD nodes can't run the eBPF node agent. On Minikube you can keep it by dropping `--set nodeAgent.enabled=false`. See [Local Setup](../local-setup.md).
 
 </TabItem>
 </Tabs>
@@ -290,7 +291,7 @@ Use this diagnostic reference to resolve common agent deployment and communicati
 | Error Symptom | Cause | Resolution |
 |---|---|---|
 | **`401 Unauthorized / Invalid API Key`** | Incorrect or revoked Auth Key | Verify the key under **Admin → Integrations → Kubernetes Clusters** and re-run `helm upgrade` with `--set runner.nudgebee.auth_secret_key="<KEY>"`. |
-| **`node-agent CrashLoopBackOff` (eBPF load failure)** | Kernel < 4.16 or non-standard distro (Bottlerocket, Talos, GKE COS) | Check kernel with `uname -r` and ensure `/sys/kernel/debug` is accessible. As a last resort, drop the DaemonSet with `--set nodeAgent.enabled=false` (loses eBPF network metrics and profiling). |
+| **`node-agent CrashLoopBackOff` (eBPF load failure)** | Kernel older than 5.8 without BPF ring-buffer support, or non-standard distro (Bottlerocket, Talos, GKE COS) | Check kernel with `uname -r` and ensure `/sys/kernel/debug` is accessible. As a last resort, drop the DaemonSet with `--set nodeAgent.enabled=false` (loses eBPF network metrics and profiling). |
 | **No alerts in NudgeBee, everything else working** | No Alertmanager receiver points at the agent | Add the receiver. See [Alert Forwarding](../connect/alertmanager.md). Nothing reports this on its own. |
 | **`WebSocket Dial Timeout / EOF`** | Outbound firewall or NetworkPolicy blocking TCP 443 | Verify egress to `wss://relay.nudgebee.com` (SaaS) or your relay Ingress. Ensure port 443 is open. |
 | **`x509: certificate signed by unknown authority`** | Collector or relay served by an internal CA the agent does not trust | Mount the CA into the runner and set `SSL_CERT_DIR`. See [Collector or relay behind a private CA](../operate/helm_values.md#collector-or-relay-behind-a-private-ca). |
@@ -310,7 +311,7 @@ kubectl logs daemonset/nudgebee-agent-node-agent -n nudgebee-agent
 ```
 
 **Resolution:**
-- Verify that your Kubernetes node kernel is version **4.16 or higher** (`uname -r`).
+- Verify that your Kubernetes node kernel is **5.8 or higher**, or a distribution kernel that backports BPF ring buffers such as RHEL 8 (`uname -r`). The node agent logs `the kernel does not support BPF ring buffers` and exits otherwise.
 - For container-optimized operating systems (e.g. AWS Bottlerocket or GKE COS), ensure debugfs and bpf filesystems are mounted.
 - If running on microVMs or kernels with restricted eBPF, disable the node agent entirely. The rest of the agent (inventory, events, metrics, alerts) keeps working; you lose eBPF network metrics and profiling:
   ```shell
@@ -379,14 +380,14 @@ Mount your CA into the runner and set `SSL_CERT_DIR`. The full recipe is in [Col
 
 ---
 
-## 4. For Self-Hosted NudgeBee
+## 5. For Self-Hosted NudgeBee
 
 If you are running a self-hosted NudgeBee instance, the agent needs to know where your server is. Instead of the `--set` flags in the SaaS installation, create a `values.yaml` file that points to your server's Relay and Collector URLs.
 
 :::info
 **Where do I find these URLs?** You configured them during [Server Installation](/docs/installation/server/).
 - **Without Ingress**: `ws://relay-server.nudgebee.svc:8080/register` and `http://k8s-collector.nudgebee.svc`
-- **With Ingress**: `wss://relay.yourcompany.com` and `https://collector.yourcompany.com`
+- **With Ingress**: `wss://relay.yourcompany.com/register` and `https://collector.yourcompany.com`
 :::
 
 ### Self-Hosted Values File
@@ -419,7 +420,7 @@ Then follow [Verify the Installation](#3-verify-the-installation) above to confi
 
 ---
 
-## 5. Advanced Configuration
+## 6. Advanced Configuration
 
 These options are for specific environments or requirements. You can skip this section for a standard installation.
 

@@ -6,7 +6,7 @@ sidebar_position: 2
 
 The node agent reads its configuration from environment variables, which you set through `nodeAgent.env` in your values file.
 
-Some of these have a dedicated chart value and are easier to set that way: `nodeAgent.scrapeInterval`, `nodeAgent.apiKey`, `nodeAgent.tracesEndpoint`, `nodeAgent.logsEndpoint`, `nodeAgent.metricsEndpoint`, `nodeAgent.profilesEndpoint`. The chart also passes `--cgroupfs-root /host/sys/fs/cgroup` as a command-line flag, which wins over `CGROUPFS_ROOT`, so leave that one alone.
+Some of these have a dedicated chart value and are easier to set that way: `nodeAgent.scrapeInterval`, `nodeAgent.apiKey`, `nodeAgent.logsEndpoint`, `nodeAgent.metricsEndpoint`, `nodeAgent.profilesEndpoint`. The chart also passes `--cgroupfs-root /host/sys/fs/cgroup` as a command-line flag, which wins over `CGROUPFS_ROOT`, so leave that one alone.
 
 ---
 
@@ -119,7 +119,7 @@ nodeAgent:
     - name: SANITIZE_HEADERS
       value: "true"
     - name: SENSITIVE_HEADERS
-      value: "Authorization,Proxy-Authorization,Cookie,X-Auth-Token"
+      value: "Authorization,Proxy-Authorization,Cookie,Set-Cookie,X-Auth-Token,X-CSRF-Token,X-Session-ID,X-JWT-Token,X-Api-Key,X-Api-Token,X-Access-Token,X-Secret-Token,X-Refresh-Token,X-User-Token,X-Firebase-Auth,X-Google-Auth,X-Authorization,X-Wsse,X-WebService-Token,Authentication,Proxy-Authentication,X-Authentication-Token,X-Device-ID,X-Device-Token,X-Device-Key"
     - name: PROVIDER
       value: "aws"
     - name: REGION
@@ -133,10 +133,14 @@ nodeAgent:
 To apply these settings, run:
 
 ```bash
-helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
-  --namespace nudgebee-agent --create-namespace \
+helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
+helm repo update
+helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
+  --namespace nudgebee-agent --reuse-values \
   -f values.yaml
 ```
+
+If `values.yaml` holds only these settings, keep `--reuse-values`: it preserves the auth key and the flags from your original install, which Helm otherwise resets. If you maintain a complete values file that includes `runner.nudgebee.auth_secret_key`, drop `--reuse-values` and pass that file instead. `nodeAgent.env` is a list, so your list replaces the chart's default one — which is why the example restates the chart's full `SENSITIVE_HEADERS` value. Drop that entry and captured traffic is no longer redacted with the chart's header list.
 
 ## Troubleshooting Node Agent Failures
 
@@ -177,7 +181,7 @@ oc adm policy add-scc-to-user privileged -z nudgebee-agent-runner-service-accoun
 #### 2. Linux Kernel & eBPF Tracer Compatibility
 
 The node agent attaches eBPF probes to the host Linux kernel to capture Layer 7 protocol events (HTTP, PostgreSQL, MySQL, Redis, Kafka).
-- **Kernel Version**: Requires Linux kernel `>= 4.18` (>= 5.4 recommended).
+- **Kernel Version**: Requires Linux kernel 5.8 or later, or a distribution kernel that backports BPF ring buffers (for example RHEL 8's 4.18). The install script only checks for 4.16, so it won't catch kernels between 4.16 and 5.8.
 - **BTF / Kernel Headers**: Modern eBPF CO-RE requires BTF support (`/sys/kernel/btf/vmlinux`) or kernel headers installed on the host.
 - **Node OS Nuances**: On Google Container-Optimized OS (COS) or AWS Bottlerocket, read-only root filesystems or custom debugfs mount paths can prevent eBPF attachment.
 
@@ -221,7 +225,7 @@ Run this query directly in the Prometheus configured at `globalConfig.prometheus
 | **No series** | Prometheus has not discovered the PodMonitor. Check `podMonitorSelector` and `podMonitorNamespaceSelector` on the Prometheus CR. |
 | **Series exist with `job="kubernetes-pods"` or `job="coroot-node-agent"`** | The pod is scraped under an alternate job name. See [Fixing Scrape Job Names](../connect/prometheus-troubleshooting.md#scenario-1-node-agent-is-scraped-under-a-different-job-name). |
 | **Series exist with value `0`** | Prometheus cannot reach the pod IP on port 80. Inspect NetworkPolicies or firewall rules blocking Prometheus scrape egress. |
-| **Fewer series than cluster nodes** | Pods may be missing on tainted nodes (e.g. GPU, Karpenter, or master/control-plane nodes). Add tolerations via `nodeAgent.tolerations`. |
+| **Fewer series than cluster nodes** | Some nodes have no running node-agent pod. The DaemonSet tolerates every taint, so look for pods that are `Pending` (not enough CPU or memory on the node) or crashing: `kubectl get pods -n nudgebee-agent -l app=nudgebee-node-agent -o wide`. |
 | **Duplicate series per pod with different labels** | Both a static scrape job and PodMonitor are active, scraping the agent twice with conflicting `instance` labels. Disable `nodeAgent.podmonitor.enabled: false`. |
 
 #### Matching Prometheus Operator Selectors

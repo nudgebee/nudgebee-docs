@@ -38,7 +38,7 @@ The post-report worker attempts resource discovery, recommendation synchronizati
 
 ## 2. Overall Agent Connection vs. Individual Feature Health
 
-In the Cloud Accounts dashboard, each account displays an **Overall Connection Status** along with status indicators for individual feature modules:
+On a cloud account's **Agent Health** page, the account shows an overall connection status, and a feature table (**Feature**, **Status**, **Last Sync**, **Next Sync**, **Error**) shows each feature module:
 
 | Feature Module | Sync Cadence | What "Connected" Means | Failure Impact |
 | :--- | :--- | :--- | :--- |
@@ -63,7 +63,7 @@ Read each feature's latest result and error. An overall connection indicator doe
 
 ## 4. When to Use "Sync Now"
 
-The **Sync Now** button in the Console triggers an immediate synchronization request for that cloud account:
+The **Sync Now** button on the account's **Agent Health** page triggers an immediate synchronization request for that cloud account:
 
 ### Appropriate Use Cases for "Sync Now":
 - **Immediately After Onboarding**: Run an initial discovery sweep right after adding a new AWS account, Azure subscription, or GCP project.

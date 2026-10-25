@@ -18,7 +18,7 @@ NudgeBee keeps its triage state separate from the monitoring source's status. A 
 | --- | --- | --- |
 | Snooze event | Sets NudgeBee status to `SNOOZED` with `snoozed_until` | Expired snoozes are processed back to `OPEN` |
 | Suppress event / matching events | Uses a suppression classification or rule; available scopes include this event, this fingerprint, and time-limited matching | Review or change the classification/rule |
-| Disable notification rule | Removes an inactive rule from notification matching; other rules or defaults can still deliver | Reactivate the rule |
+| Disable notification rule | An inactive (disabled) rule is skipped in notification matching; other rules or defaults can still deliver | Reactivate the rule |
 | Resolve event | Sets NudgeBee triage status to `RESOLVED` | Review the event again if the issue recurs |
 | Mute in chat client | Changes that user's Slack/Teams notification experience | Unmute in the chat client |
 

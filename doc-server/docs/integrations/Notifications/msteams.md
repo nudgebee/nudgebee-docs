@@ -117,7 +117,7 @@ Then follow [Set up Microsoft Teams](#set-up-microsoft-teams) above.
 ### 1. Nubi says it can't find your NudgeBee account
 * **Symptom**: Nubi replies that it couldn't find a NudgeBee account linked to your email.
 * **Root Cause**: The email address of your Teams account isn't a user in the NudgeBee workspace connected to your Microsoft tenant.
-* **Remediation**: Ask a NudgeBee admin to invite that email address under **Admin → User management**, and accept the invite.
+* **Remediation**: Ask a NudgeBee admin to invite that email address under **Admin → Access & Users**, and accept the invite.
 
 ---
 

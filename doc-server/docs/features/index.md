@@ -12,7 +12,7 @@ Start on **[Home](./home.md)** — one account's open issues, savings, security 
 
 - **[Troubleshooting](./troubleshooting/index.md)** — Resolve incidents faster with AI-powered root cause analysis. NuBi correlates events across metrics, logs, and traces to pinpoint the root cause — so your team spends minutes, not hours, on each incident.
 
-- **[Optimizations](./optimizations/index.md)** — Lower your cloud costs with actionable recommendations. The FinOps AI-Assistant continuously analyzes resource utilization and identifies right-sizing, scaling, and cleanup opportunities across all your clusters.
+- **[Optimizations](./optimizations/index.md)** — Lower your cloud costs with actionable recommendations. NuBi's FinOps Cost Advisor continuously analyzes resource utilization and identifies right-sizing, scaling, and cleanup opportunities across all your clusters.
 
 - **[AI & Pre-built Agents](./ai/index.md)** — Get intelligent analysis out of the box with 30+ pre-built Cloud-Ops agents. NuBi (the SRE AI Agent) and specialized agents for logs, metrics, traces, Kubernetes, databases, and code work together to automate investigation and decision-making.
 

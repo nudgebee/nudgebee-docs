@@ -32,11 +32,11 @@ NudgeBee  /api/webhooks/dynatrace
 
 ---
 
-## Step 1: Copy the Webhook URL from NudgeBee
+## Step 1: Create the Webhook in NudgeBee and Copy Its URL
 
-1. In NudgeBee, navigate to **Integrations** > **Webhooks**
-2. Select **Dynatrace**
-3. Copy the webhook endpoint URL — it will look like:
+1. In NudgeBee, navigate to **Admin** > **Integrations** > **Webhooks**
+2. Select **Dynatrace Webhook** and click **Add Dynatrace Webhook Account**. Enter a name, select the account, and click **Save**.
+3. Copy the webhook endpoint URL from the integration's **URL** column — it will look like:
    ```
    https://<your-nudgebee-domain>/api/webhooks/dynatrace?token=<generated-token>
    ```
@@ -141,8 +141,8 @@ If your Dynatrace environment does not have the Workflows app (e.g., older SaaS 
 1. In the Dynatrace Workflows app, open the workflow you created.
 2. Click **Run** to execute the workflow manually, or wait for a real Davis problem to trigger it.
 3. Check the **Execution log** in the workflow to verify the HTTP Request task completed with a `2xx` status code.
-4. In NudgeBee, navigate to **Incidents** — a test incident should appear within a few seconds.
-5. Open the incident and confirm:
+4. In NudgeBee, navigate to **Troubleshoot** > **All Events** — a test event should appear within a few seconds.
+5. Open the event and confirm:
    - Problem title and severity are populated
    - Impacted workload is linked (if entity mapping succeeded)
    - Log and trace evidence is attached (if the Observability integration is configured)
@@ -162,11 +162,13 @@ If your Dynatrace environment does not have the Workflows app (e.g., older SaaS 
 
 | Dynatrace Severity | NudgeBee Priority |
 |--------------------|-------------------|
-| `AVAILABILITY` | P1 — Critical |
-| `ERROR` | P1 — Critical |
-| `PERFORMANCE` | P2 — High |
-| `RESOURCE_CONTENTION` | P3 — Medium |
-| `CUSTOM_ALERT` | P3 — Medium |
+| `AVAILABILITY` | High |
+| `ERROR` | High |
+| `PERFORMANCE` | Medium |
+| `RESOURCE_CONTENTION` | Medium |
+| `CUSTOM_ALERT` | Low |
+
+Any other severity maps to Low.
 
 ---
 
@@ -197,7 +199,7 @@ When NudgeBee receives a problem, it automatically enriches the incident:
 
 1. Confirm the workflow test (Step 3) created an incident in NudgeBee.
 2. Wait for a real Dynatrace problem to fire, or trigger one manually (e.g., via a synthetic monitor or by running the workflow manually).
-3. Open the incident in NudgeBee and verify:
+3. Open the event in NudgeBee and verify:
    - **Status** reflects the Dynatrace problem state (firing / resolved)
    - **Priority** maps correctly to the problem severity
    - **Logs** and **Traces** tabs show correlated evidence

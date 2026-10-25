@@ -66,6 +66,7 @@ Open **Admin → Integrations → Kubernetes & Cloud → AWS → Add AWS Account
 ### Fields Common to All Methods
 
 * **Display Name** (required) — a friendly name to identify this account in NudgeBee (e.g. `aws-production`).
+* **Account Type** — **Production** or **Non-production**. Production accounts score alerts at full weight in triage. It also drives the **Production** / **Non-production** (Environment) filter on Optimize views.
 * **Access Mode** — choose **Standard** (read + write, allows NudgeBee to create CloudWatch alarms and apply recommendations) or **Read-Only** (monitoring only).
 * **Enable SSM Parameter Store access** (CloudFormation method) — lets NudgeBee read SSM parameter values. Only enable this if your parameters do not contain secrets.
 * **AWS Regions (optional)** (IAM Role ARN and Access Keys methods) — a comma-separated list of region codes, for example `ap-southeast-2, us-east-1`. Leave it blank and NudgeBee discovers the account's regions on its own. Fill it in only when the role or user is restricted to specific regions — see [Restricting the role to specific regions](#restricting-the-role-to-specific-regions).
@@ -144,10 +145,11 @@ cross-account role yourself. It takes two policies: a **trust policy** that lets
 NudgeBee assume the role, and a **permissions policy** that grants what NudgeBee
 reads.
 
-A manually created role supports the **Read-Only** access mode. The write
-permissions behind **Standard** mode and the EventBridge event pipeline are only
-deployed by the CloudFormation template — see
-[Standard access mode](#standard-access-mode-with-a-manual-role) below.
+The permissions policy below covers the **Read-Only** access mode. For
+**Standard** mode, add the write actions listed in
+[Standard access mode](#standard-access-mode-with-a-manual-role) below. The
+EventBridge event pipeline is not part of a manual role; add it with
+**Connect EventBridge** — see [Real-time events](#real-time-events-eventbridge).
 
 ### Step 1 — Trust policy
 

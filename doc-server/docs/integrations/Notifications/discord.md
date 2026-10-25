@@ -6,32 +6,32 @@ Send NudgeBee notifications to a Discord channel — Kubernetes events, optimiza
 
 ## How Discord Connects
 
-Unlike the webhook-based channels, Discord uses an **authorization flow**: you install the NudgeBee application into your Discord server and grant it permission to post, rather than pasting a URL into a form.
+Discord connects through **your own Discord bot**: you paste the bot's token into NudgeBee, then invite the bot to your server. Creating the bot needs a Discord application in the [Discord Developer Portal](https://discord.com/developers/applications); inviting it needs **Manage Server** permission on the target server.
 
-## Step 1: Authorize NudgeBee in Discord
+## Step 1: Install the Bot Token
 
-1. Navigate to **Admin** > **Integrations** > **Messaging & Alerting**.
-2. Select **Discord**, then click **Add to Discord**.
-3. Discord asks which server to add the application to, and which permissions to grant. You must have **Manage Server** permission on the target server to complete this.
-4. Approve the authorization. You are returned to NudgeBee and the integration appears as **Enabled**.
+1. In the Discord Developer Portal, create an application, add a bot to it, and copy the bot's token.
+2. In NudgeBee, navigate to **Admin** > **Integrations** > **Messaging & Alerting** and select **Discord**.
+3. Click **Connect Discord**, paste the token into **Discord Bot Token**, and click **Install**.
+4. If the bot isn't in any server yet, NudgeBee shows **Invite the Bot to Your Server**. Click **Open Discord Invite Page**, pick your server and authorize the bot. It asks only for **View Channels** and **Send Messages**. Click **Done**.
 
 :::note
-Authorization is per Discord server. Repeat this for each server that should receive notifications.
+To invite the bot to another server later, use the bot's invite link from the Discord Developer Portal. To replace the token, use **Update Token** in the integration's row menu.
 :::
 
 ![The Discord tile in the Messaging & Alerting tab of the integrations catalog](../../../static/img/integrations/discord-card.png)
 
-![The Discord integration panel, with the Add to Discord button that installs the NudgeBee app into a server](../../../static/img/integrations/discord.png)
+![The Discord integration panel](../../../static/img/integrations/discord.png)
 
 ## Step 2: Route Notifications to a Channel
 
-Once the application is authorized, choose what gets sent where using [Notification Rules](../../features/notifications.md) — for example routing production alerts to a dedicated incident channel while suppressing development namespaces.
+Once the bot is in your server, choose what gets sent where using [Notification Rules](../../features/notifications.md) — for example routing production alerts to a dedicated incident channel while suppressing development namespaces.
 
 ---
 
 ## Verify the Integration
 
-1. Confirm the NudgeBee application appears in your Discord server's member list.
+1. Confirm the bot appears in your Discord server's member list.
 2. Trigger a notification — the simplest is to run an automation with a [notification task](../../features/workflow-builder/notification-tasks.md) targeting Discord.
 3. Confirm the message arrives in the expected channel.
 
@@ -41,10 +41,12 @@ Once the application is authorized, choose what gets sent where using [Notificat
 
 | Symptom | Likely Cause | Fix |
 |---------|-------------|-----|
-| Authorization fails or the server is not listed | You lack **Manage Server** on that Discord server | Ask a server administrator to complete the authorization. |
-| Integration is enabled but no messages arrive | The application cannot post in the target channel | Check the channel's permission overrides — the NudgeBee application's role needs **View Channel** and **Send Messages**. |
+| **Install** fails | The bot token is wrong or was reset | Copy a fresh token from the Discord Developer Portal and try again. |
+| The server is not listed on the invite page | You lack **Manage Server** on that Discord server | Ask a server administrator to invite the bot. |
+| No channels to choose from | The bot is not in any server yet | Click **Open Discord Invite Page** and invite the bot. |
+| Integration is connected but no messages arrive | The bot cannot post in the target channel | Check the channel's permission overrides — the bot's role needs **View Channel** and **Send Messages**. |
 | Messages arrive in the wrong channel | Notification rules point elsewhere | Adjust the routing in [Notification Rules](../../features/notifications.md). |
-| Notifications stopped after a server change | The application was removed or its role was edited | Re-authorize from **Admin** > **Integrations** > **Messaging & Alerting**. |
+| Notifications stopped after a server change | The bot was removed or its role was edited | Invite the bot again, or use **Update Token** if the token was reset. |
 
 ---
 

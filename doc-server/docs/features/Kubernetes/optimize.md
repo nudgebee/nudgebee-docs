@@ -21,11 +21,11 @@ keywords: [right sizing, rightsizing, optimize, deploy fix, create pr, continuou
 | **Spot Recommendations** | Workloads that could run on spot nodes |
 | **Recommendation Resolution** | What happened to recommendations you acted on |
 
-The same recommendations for all clusters are under **Optimize → Cost** in the sidebar.
+Cost recommendations for all clusters are also under **Optimize → Cost** in the sidebar, and Best Practices under **Optimize → Configuration**.
 
 ## Right Sizing
 
-Columns **Name**, **Namespace**, **Kind**, **CPU Req/Recommended (Core)**, **Memory Req/Recommended (MB)**, **Updated at** and **Savings**, with totals for recommendations, cost and savings potential. Filter by **Namespace**, **Workload**, **Workload Type** or **Status** (default *Open*); **Download** as CSV or Excel.
+Columns **Name**, **Namespace**, **Kind**, **CPU Req/Recommended (Core)**, **Memory Req/Recommended (MB)**, **Updated at** and **Savings**, with totals for **Total Recommendations**, **Total Cost**, **Savings Potential** and **Expense Recommendations** (recommendations that add resources to underprovisioned workloads, which raises cost). Each row also has an icon button (tooltip *Ask* plus your assistant's name) that asks the assistant about that recommendation. Filter by **Namespace**, **Workload**, **Workload Type** or **Status** (default *Open*); **Download** as CSV or Excel.
 
 ### Apply a recommendation
 
@@ -41,7 +41,7 @@ Click **Optimize** on the row (needs write access; it says **Configured** once a
 | **Schedule Auto Optimize** | Apply them on a schedule |
 | **Deploy Fix** | Apply the change now. *Deploy Fix* patches the running pods directly, so on a GitOps-managed workload the change is reverted on the next sync — use **Create PR** instead. |
 
-Continuous and Schedule are alternatives: if one is already active for the workload, its button opens that autopilot. A change of more than 4× up or 75% down asks you to confirm, and recommendations rated Review or Risky need an extra safety acknowledgement.
+Continuous and Schedule are alternatives: if one is already active for the workload, its button opens that autopilot and the other button is disabled. A change of more than 4× up or 75% down asks you to confirm, and recommendations rated Review or Risky need an extra safety acknowledgement.
 
 ## Other sub-tabs
 

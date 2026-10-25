@@ -37,7 +37,7 @@ A step-by-step upgrade plan with owners and statuses. Needs the tenant feature *
 ## Certificate Issues and Helm Upgrade
 
 - **Certificate Issues** — TLS certificates that are expiring or expired: **Namespace**, **Certificate Name**, **Expires In**, **Updated At**, **Actions**.
-- **Helm Upgrade** — Helm releases with newer chart versions: **Chart Name**, **Release Name**, **Severity**, **Issues**, **Installed**, **Latest**, **Updated At**; **Download**.
+- **Helm Upgrade** — Helm releases with newer chart versions: **Chart Name**, **Release Name**, **Severity**, **Issues**, **Installed**, **Latest**, **Updated At**; **Download**, **Refresh**, and **Generate**, which runs the check again.
 
 Both can **Create Ticket**.
 

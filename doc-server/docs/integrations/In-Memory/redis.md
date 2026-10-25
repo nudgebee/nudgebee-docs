@@ -38,9 +38,11 @@ The agent connects from inside the cluster using credentials held in a Kubernete
 | `REDIS_USER` | ACL username. Use `default` on instances without ACLs. |
 | `REDIS_PASSWORD` | Password |
 
+Create the secret in the NudgeBee agent's namespace on the linked cluster (for example `nudgebee-agent`) and enter just the secret name.
+
 ```bash
 kubectl create secret generic nudgebee-redis \
-  --namespace cache \
+  --namespace nudgebee-agent \
   --from-literal=REDIS_HOST=redis-master.cache.svc.cluster.local \
   --from-literal=REDIS_USER=default \
   --from-literal=REDIS_PASSWORD='<YOUR_PASSWORD>'

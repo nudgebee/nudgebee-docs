@@ -78,6 +78,7 @@ Each panel pairs a **visualization** with a **data source**. The visualization d
 | Gauge | A number against a range |
 | Table | Rows — resources, events, query results |
 | Bar | Comparison across a small set of categories |
+| Histogram | How numeric values are distributed across ranges |
 | Text | Markdown notes, links, section headers |
 
 <!-- ![Panel editor showing visualization type, data source and query](./img/dashboard-panel-editor.png) -->
@@ -138,7 +139,7 @@ Because the traces API takes a single account, a traces panel resolves to exactl
 
 This is the one that reads NudgeBee itself. Instead of a query language you get a builder over the platform's own tables — pick a table, choose columns, filter, group and sort. It is the way to chart your inventory, your alert volume, your savings or your audit trail without writing SQL.
 
-Twenty tables are available. Several come in pairs: a **row** table with one row per occurrence, and a pre-aggregated **groups** table carrying the counts. Use the row table to read individual records and the groups table to count them — the row tables will not accept an arbitrary `GROUP BY`.
+Nineteen tables are available. Several come in pairs: a **row** table with one row per occurrence, and a pre-aggregated **groups** table carrying the counts. Use the row table to read individual records and the groups table to count them — the row tables will not accept an arbitrary `GROUP BY`.
 
 | Table | One row per |
 |---|---|

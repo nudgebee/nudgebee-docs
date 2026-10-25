@@ -24,7 +24,7 @@ Pick a VM and a window (**Last 1 Hour**, **6 Hours**, **24 Hours**) to see CPU a
 
 ## Events/Errors
 
-Event counts by severity, with **View all**. Without an Alertmanager webhook the card shows *Alertmanager is not connected* with **Connect Alertmanager**.
+Event counts by severity, with **View all**. Without an Alertmanager webhook the card shows *Alertmanager is not connected* with **Connect Alertmanager**. If the webhook integration is disabled, it shows *Alertmanager webhook is disabled* with **Manage**; alerts sent to it are dropped until you enable it.
 
 ## Security
 

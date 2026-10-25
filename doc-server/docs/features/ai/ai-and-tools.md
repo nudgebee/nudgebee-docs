@@ -26,7 +26,7 @@ Some tabs depend on your edition and settings:
 
 ## Who can open each tab
 
-Tenant admins (including read-only tenant admins) can open every tab. Other users can open a tab when their role grants read access to its module — **ai** for Agents, Tools & MCP, Budgets & Limits, Memory Policy and RCA Format; **integrations** for Providers; **egressfilter** for Security. A tab you can't open is shown disabled with a *missing permission* tooltip. Changing settings needs write access as described on each page.
+Tenant admins (including read-only tenant admins) can open every tab. Other users can open a tab when their role grants read access to one of its modules — **ai_agents** for Agents; **ai_tools** or **integrations** for Tools & MCP; **integrations** for Providers; **egressfilter** for Security; **ai_budget** or **ai_models** for Budgets & Limits; **ai_rca** for RCA Format; **Memory** and **Account Context** (where those tabs appear here) open for every built-in role, and a custom role needs **ai_memory** or **ai_guardrails** respectively. **Gateway** and **Memory Policy** open only for tenant admins; no role grant opens them. A tab you can't open is shown disabled; its tooltip names the missing permission, or says only a tenant admin can open it. Changing settings needs write access as described on each page.
 
 ## Tenant view and account view
 

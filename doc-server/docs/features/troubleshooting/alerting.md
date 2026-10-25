@@ -19,7 +19,7 @@ A few real examples:
 None of these require any custom code or workflow. Each is two or three clicks in the alert editor.
 
 :::tip Works for any alert source
-This works for alerts you create in NudgeBee (Prometheus rules) **and** for alerts forwarded from any of the integrations NudgeBee accepts via webhook: **Datadog**, **New Relic**, **Dynatrace**, **Splunk**, **SolarWinds**, **Grafana**, **GCP Cloud Monitoring**, **Azure Monitor**, **PagerDuty**, **Zenduty**, **ServiceNow**, or the generic webhook (used for AWS CloudWatch via SNS, or any other source). The flow is the same in every case.
+This works for alerts you create in NudgeBee (Prometheus rules) **and** for alerts forwarded from any of the integrations NudgeBee accepts via webhook: **Datadog**, **New Relic**, **Dynatrace**, **Splunk** (currently unavailable for new integrations), **SolarWinds**, **Grafana**, **GCP Cloud Monitoring**, **Azure Monitor**, **PagerDuty**, **Zenduty**, **ServiceNow**, or the generic webhook (used for AWS CloudWatch via SNS, or any other source). The flow is the same in every case.
 :::
 
 ---

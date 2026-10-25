@@ -13,7 +13,7 @@ provider: all
 Validate the workflow definition and test its behavior before making a version live.
 
 :::warning Dry Run can perform real actions
-Dry Run executes workflow tasks with a dry-run flag. Only tasks that explicitly handle that flag skip their side effects. HTTP requests, scripts, ticket creation, notifications, database queries, and cloud calls can still reach external systems. Use test accounts, resources, and destinations with appropriately restricted credentials.
+Dry Run executes workflow tasks with a dry-run flag. Only tasks that explicitly handle that flag skip their side effects. HTTP requests, scripts, notifications, database queries, and cloud calls can still reach external systems. Use test accounts, resources, and destinations with appropriately restricted credentials.
 :::
 
 ## Validation and execution are different checks
@@ -26,6 +26,17 @@ Dry Run executes workflow tasks with a dry-run flag. Only tasks that explicitly 
 | Run live version | Executes the published live version | Real execution |
 
 For example, the Kubernetes vertical-rightsize task returns its proposed patch in Dry Run and skips GitOps, ticket creation, and patch application. This behavior does not apply automatically to other task types.
+
+These tasks honor Dry Run and skip their side effects:
+
+| Task | In Dry Run |
+| --- | --- |
+| `k8s.vertical_rightsize`, `k8s.horizontal_rightsize`, `k8s.pv_rightsize` | Return the proposed change without applying it |
+| `k8s.profile` | Returns the profiling request without starting it |
+| `core.call-workflow` | Returns placeholder IDs without starting the child workflow |
+| `tickets.create`, `tickets.update`, `tickets.add_comment`, `tickets.assign`, `tickets.transition`, `tickets.acknowledge`, `tickets.escalate`, `tickets.resolve` | Validate parameters without calling the ticketing platform |
+
+Every other task runs for real in Dry Run.
 
 ## Prepare a test
 

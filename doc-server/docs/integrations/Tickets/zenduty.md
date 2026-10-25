@@ -81,9 +81,11 @@ ZenDuty is the most complete incident management integration, supporting the ful
 
 | NudgeBee Priority | ZenDuty Urgency |
 |--------------------|------------------|
-| High | High (2) |
-| Medium | Medium (1) |
+| High | High (1) |
+| Medium | High (1) |
 | Low | Low (0) |
+
+ZenDuty urgency has only two levels, so Medium (and any unrecognised priority) is sent as High.
 
 ---
 

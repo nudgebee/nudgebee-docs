@@ -27,7 +27,6 @@ Create any of these from **Admin** > **Integrations** > **Webhooks**.
 | [Azure Monitor Webhook](./azure_monitor_webhook.md) | Receive Azure Monitor alert notifications with resource and metric context. |
 | [Elasticsearch Webhook](./elasticsearch_webhook.md) | Receive alerts raised by Elasticsearch/Kibana rules and watchers. |
 | [OpenObserve Webhook](./openobserve_webhook.md) | Receive OpenObserve alert notifications into NudgeBee. |
-| [Splunk Webhook](./splunk_webhook.md) | Receive Splunk alert notifications into NudgeBee. |
 | [CubeAPM Webhook](./cubeapm_webhook.md) | Receive CubeAPM alert notifications, and close the event when the alert resolves. |
 | [SigNoz Webhook](./signoz_webhook.md) | Receive SigNoz alert notifications, attached to the workload the alert names. |
 
@@ -39,6 +38,12 @@ These webhook types exist in the product and are configured the same way. Dedica
 |-------------|-------------|
 | Prometheus Alertmanager Webhook | Receive alerts forwarded from Alertmanager. See [Alert forwarding](../../installation/agent/connect/alertmanager.md) for the Alertmanager-side configuration. |
 | Grafana Webhook | Receive Grafana alerting notifications. See [Connect Grafana](../../installation/agent/connect/grafana.md) for the Grafana-side setup. |
+| Event Webhook | Receive events from any system that can send an HTTP request. |
+| SolarWinds Platform (Orion) Webhook | Receive SolarWinds Platform (Orion) alert notifications into NudgeBee. |
+
+### Currently Unavailable
+
+The [Splunk Webhook](./splunk_webhook.md) card is greyed out on the Webhooks screen, so new Splunk webhooks can't be created.
 
 ---
 

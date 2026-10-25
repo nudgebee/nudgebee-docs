@@ -19,7 +19,7 @@ This guide explains how to integrate **Azure Monitor** with **NudgeBee** to coll
 
 ## Enable Azure Monitor APIs for Pod Monitor
 
-Azure managed prometheus scares metrics based on azure monitor APIs to enable that please update below flag in values file.
+Azure managed prometheus scrapes metrics based on azure monitor APIs to enable that please update below flag in values file.
 
 ```yaml
 nodeAgent:
@@ -148,4 +148,16 @@ opentelemetry-collector:
     exporters:
       azuremonitor:
         instrumentation_key: <app-instrumentation-key>
+    service:
+      pipelines:
+        traces:
+          # Helm replaces lists instead of merging them, so restate the chart's
+          # processors and ClickHouse exporter and add azuremonitor.
+          processors: [memory_limiter, filter/drop_namespaces, filter/drop_health_check, probabilistic_sampler, batch]
+          exporters: [clickhouse, azuremonitor]
+          receivers: [otlp]
 ```
+
+An exporter does nothing until a pipeline uses it, which is why the `traces` pipeline is restated here.
+
+NudgeBee does not read these traces through the agent. To see Application Insights traces in NudgeBee, add the [Azure App Insights integration](../../../../integrations/Observability/azure_app_insights.md), which reads them with the Application Insights App ID and your App Registration credentials.

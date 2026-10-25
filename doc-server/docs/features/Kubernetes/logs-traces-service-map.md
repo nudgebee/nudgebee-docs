@@ -41,7 +41,7 @@ Requests grouped by source, span and target, with **Total Request**, **Error Cou
 
 ## Service Map
 
-A live map of which services call which. Narrow it by **Source Type**, **Namespaces**, **Workloads** and **Duration**; **Latency Threshold** keeps only calls at or above that latency, and **Red Edges** narrows the map to services with failing calls. Click a node for **Node Details**.
+A live map of which services call which. Narrow it by **Source Type**, **Namespaces**, and **Workloads**; the **Duration** slider (0–60 s) is a latency threshold that keeps only calls at or above that latency, and **Red Edges** narrows the map to services with failing calls. Click a node for **Node Details**.
 
 *Service Map not supported* means your trace provider doesn't support the map view.
 

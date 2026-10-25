@@ -57,7 +57,28 @@ Keep this URL — you will configure it in ServiceNow in the next step.
    - **Name**: enter a descriptive name (e.g., `NudgeBee Incident Webhook`).
    - **Table**: select `Incident [incident]`.
    - **When to run**: select **after** insert and/or update, depending on when you want to notify NudgeBee.
-4. In the **Advanced** tab, add a script that calls the REST message created in Step 2 with the incident details as the JSON payload.
+4. Check **Advanced**, and in the **Advanced** tab add a script that calls the REST message created in Step 2 with the incident details as the JSON payload. For example:
+
+   ```javascript
+   (function executeRule(current, previous) {
+       var r = new sn_ws.RESTMessageV2('NudgeBee Webhook', 'POST');
+       r.setRequestBody(JSON.stringify({
+           sys_id: current.getValue('sys_id'),
+           number: current.getValue('number'),
+           short_description: current.getValue('short_description'),
+           description: current.getValue('description'),
+           incident_state: current.getDisplayValue('incident_state'),
+           priority: current.getDisplayValue('priority'),
+           urgency: current.getDisplayValue('urgency'),
+           impact: current.getDisplayValue('impact'),
+           correlation_id: current.getValue('correlation_id'),
+           cmdb_ci_display: current.getDisplayValue('cmdb_ci')
+       }));
+       r.executeAsync();
+   })(current, previous);
+   ```
+
+   Replace `NudgeBee Webhook` with the name of your REST message. The `number` field tells NudgeBee this is an incident payload; `short_description` becomes the event title. Both raw codes (`3`) and display values (`3 - Moderate`) are accepted.
 5. Click **Save**.
 
 > For more details on ServiceNow outbound integrations, see [ServiceNow's REST Message documentation](https://docs.servicenow.com/bundle/latest/page/integrate/outbound-rest/concept/c_OutboundRESTMessage.html).
@@ -74,26 +95,38 @@ When ServiceNow sends a webhook payload to NudgeBee, the following processing oc
 |------------------|-----------------|
 | `New`, `In Progress`, `On Hold` | **Firing** |
 | `Resolved` | **Resolved** |
-| `Closed` | **Resolved** |
+| `Closed`, `Canceled` | **Closed** |
 
 ### Priority Mapping
 
-| ServiceNow Urgency | NudgeBee Priority |
+Priority (1-5) is used when the payload has it:
+
+| ServiceNow Priority | NudgeBee Priority |
+|---------------------|-------------------|
+| 1 - Critical, 2 - High | High |
+| 3 - Moderate | Medium |
+| 4 - Low, 5 - Planning | Low |
+
+Without a priority, urgency is used, then impact:
+
+| ServiceNow Urgency / Impact | NudgeBee Priority |
 |---------------------|-------------------|
 | 1 - High | High |
 | 2 - Medium | Medium |
 | 3 - Low | Low |
 
+If none of these is set, the priority is Medium.
+
 ### Event Deduplication
 
-Events are deduplicated using a fingerprint derived from the incident `sys_id`. Repeated webhook calls for the same incident update the existing event instead of creating duplicates.
+Events are deduplicated using a fingerprint derived from the incident `correlation_id`, or its `sys_id` when there is no correlation ID. Repeated webhook calls for the same incident update the existing event instead of creating duplicates.
 
 ---
 
 ## Verify the Integration
 
 1. In ServiceNow, create or update a test incident that matches the business rule criteria.
-2. In NudgeBee, navigate to **Events** and verify the incident appears with:
+2. In NudgeBee, navigate to **Troubleshoot** > **All Events** and verify the incident appears with:
    - Correct title and priority
    - Incident details evidence attached
 
@@ -103,6 +136,6 @@ Events are deduplicated using a fingerprint derived from the incident `sys_id`. 
 
 | Issue | Resolution |
 |-------|------------|
-| Webhook URL returns 401 | Verify the `token` query parameter in the URL is correct. Regenerate the integration if needed. |
+| Webhook URL returns HTTP `400` with `webhook validation failed` | Verify the `token` query parameter in the URL is correct. Regenerate the integration if needed. |
 | Events not appearing at all | Check that the ServiceNow business rule is active and the REST message endpoint URL is correct. |
-| Duplicate events | Expected behavior — NudgeBee deduplicates by `sys_id`. State updates (e.g., In Progress → Resolved) update the existing event. |
+| Duplicate events | Expected behavior — NudgeBee deduplicates by `correlation_id`, or `sys_id` when it is empty. State updates (e.g., In Progress → Resolved) update the existing event. |

@@ -82,24 +82,20 @@ Events are deduplicated using the PagerDuty webhook event ID (`event.id`). If Pa
 
 ## Account Mapping (Advanced)
 
-If you use multiple NudgeBee accounts and want to route PagerDuty incidents to different accounts based on alert labels, configure the **Account Mapping** field as a JSON object:
+If you use multiple NudgeBee accounts and want to route PagerDuty incidents to different accounts based on alert labels, edit the saved integration and use the **Account Mapping (Optional)** section:
 
-```json
-{
-  "labelName": "env",
-  "production": "<nudgebee-account-id-1>",
-  "staging": "<nudgebee-account-id-2>"
-}
-```
+1. Click **+ Add rule**.
+2. Under **WHEN**, enter a **Label name** (for example `env`) and its **Label value(s)** (for example `production`). Separate several values with commas to match any of them. Conditions inside one rule must all match.
+3. Under **THEN use account**, pick the **Account**.
 
-In this example, incidents with the label `env=production` are routed to account 1, and `env=staging` to account 2. The `labelName` field defaults to `env` if not specified.
+Rules are checked top to bottom and the first match wins. If no rule matches, the incident goes to the account selected on the form.
 
 ---
 
 ## Verify the Integration
 
 1. In PagerDuty, trigger a real incident on a monitored service. **Send Test Event** will not work here — it sends `pagey.ping`, which NudgeBee skips.
-2. In NudgeBee, navigate to **Events** and verify the incident appears with:
+2. In NudgeBee, navigate to **Troubleshoot** > **All Events** and verify the incident appears with:
    - Correct title and priority
    - Incident details evidence attached
    - Service name and labels populated (if PagerDuty ticket integration is configured)
@@ -110,7 +106,7 @@ In this example, incidents with the label `env=production` are routed to account
 
 | Issue | Resolution |
 |-------|------------|
-| Webhook URL returns 401 | Verify the `token` query parameter in the URL is correct. Regenerate the integration if needed. |
+| Webhook URL returns HTTP `400` with `webhook validation failed` | Verify the `token` query parameter in the URL is correct. Regenerate the integration if needed. |
 | Events not appearing | Ensure the PagerDuty webhook subscription is active and includes `incident.triggered` in the event types. |
 | Enrichment labels missing | Ensure a [PagerDuty ticket integration](../Tickets/pagerduty.md) is configured for the same NudgeBee account — this is required for API-based enrichment. |
 | Acknowledged events not updating | Expected behavior — NudgeBee only processes `triggered` and `resolved` events. Acknowledgements do not update the NudgeBee event status. |

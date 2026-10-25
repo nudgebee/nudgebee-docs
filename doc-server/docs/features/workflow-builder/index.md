@@ -78,7 +78,7 @@ Workflows are version-controlled: save drafts freely, publish immutable named ve
 13. Click **Run current** to execute your workflow
 
 :::tip
-You can also let AI build your workflow. Click **Create Automation**, then choose **Generate with nubi**. Describe what you want in plain language, review the AI's plan, and approve it to generate the workflow automatically.
+You can also let AI build your workflow. Click **Create Automation**, then choose **Generate with NuBi**. Describe what you want in plain language, review the AI's plan, and approve it to generate the workflow automatically.
 :::
 
 ## Building Workflows
@@ -214,6 +214,7 @@ Template expressions allow you to dynamically pass data between workflow steps, 
 | `{{ Vars.name }}` | A variable set with **Set Variables** on an earlier task |
 | `{{ State.key }}` | Persistent state saved with **Set State** |
 | `{{ Matrix.key }}` | The current combination when a task runs as a matrix |
+| `{{ LoopItem.item }}` | The current item inside a **For Each** loop (`{{ LoopItem.<name> }}` when the loop sets a custom item name) |
 
 Date and time helpers (UTC): `{{ date_iso }}` (2026-01-31), `{{ date }}` (31012026), `{{ date_us }}` (01/31/2026), `{{ time }}` (1504), `{{ time_hms }}` (15:04:05), `{{ datetime }}` (31012026_1504), `{{ timestamp_iso }}` (RFC 3339), and `now()`.
 
@@ -228,7 +229,7 @@ Inside a trigger's **filter expression**, the event is `event` (for example `{{ 
 Below are 3 popular workflow patterns you can import or assemble in minutes:
 
 ### 1. Automated Node Drain on Spot Termination Notice
-**Trigger**: Event (`source == "aws_eventbridge"`, `detail-type == "EC2 Spot Instance Interruption Warning"`)
+**Trigger**: Event (Source `AWS_EventBridge` — the value is case-sensitive — and Event Type set to the type of the EC2 Spot Instance Interruption Warning event; copy it from a real event)
 - **Step 1 (`Kubectl`)**: Cordon the node: `kubectl cordon {{ Inputs.event.subject_name }}`
 - **Step 2 (`Kubectl`)**: Safely evict workloads: `kubectl drain {{ Inputs.event.subject_name }} --ignore-daemonsets --delete-emptydir-data --grace-period=120`
 - **Step 3 (`Send IM`)**: Send Slack message: `⚠️ Node {{ Inputs.event.subject_name }} drained ahead of spot termination.`
@@ -236,7 +237,7 @@ Below are 3 popular workflow patterns you can import or assemble in minutes:
 Check a real run's input first — which event field holds the node name depends on the event source.
 
 ### 2. Slack Alert Enrichment with Pod Logs & RCA
-**Trigger**: Event (`source == "prometheus"`, `severity == "critical"`)
+**Trigger**: Event (`source == "prometheus"`, `priority == "HIGH"`)
 - **Step 1 (`Query Logs`)**: Fetch the last 100 log lines from the affected workload: `{{ Inputs.event.subject_name }}`
 - **Step 2 (`AI Investigation`)**: Feed the logs to NuBi for diagnosis: `Investigate root cause for {{ Tasks['query_logs'].output.logs }}`
 - **Step 3 (`Send IM`)**: Post an interactive Slack card with the pod status, root cause summary, and one-click remediation button.

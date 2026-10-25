@@ -41,9 +41,11 @@ Navigate to **Admin** > **Integrations** > **Databases** and select **Clickhouse
 The two key-name overrides exist because ClickHouse Helm charts rarely agree on secret key naming. If the operator that installed ClickHouse created a secret with, say, `admin-password`, point **Secret Password Key** at it rather than copying the value into a new secret.
 :::
 
+Create the secret in the NudgeBee agent's namespace on the linked cluster (for example `nudgebee-agent`) and enter just the secret name.
+
 ```bash
 kubectl create secret generic nudgebee-clickhouse \
-  --namespace databases \
+  --namespace nudgebee-agent \
   --from-literal=CLICKHOUSE_HOST=clickhouse.databases.svc.cluster.local \
   --from-literal=CLICKHOUSE_DATABASE=default \
   --from-literal=CLICKHOUSE_USER=nudgebee \

@@ -76,7 +76,7 @@ First, create a Kubernetes secret containing your ArgoCD credentials. This secre
 kubectl create secret generic argocd-credentials \
   --from-literal=ARGOCD_SERVER=https://argocd.example.com \
   --from-literal=ARGOCD_AUTH_TOKEN=your-auth-token-here \
-  -n nudgebee
+  -n nudgebee-agent
 ```
 
 #### Using Username/Password
@@ -86,10 +86,10 @@ kubectl create secret generic argocd-credentials \
   --from-literal=ARGOCD_SERVER=https://argocd.example.com \
   --from-literal=ARGOCD_USERNAME=admin \
   --from-literal=ARGOCD_PASSWORD=your-password-here \
-  -n nudgebee
+  -n nudgebee-agent
 ```
 
-**Note:** Replace `nudgebee` with the namespace where NudgeBee is deployed.
+**Note:** Create the secret in the NudgeBee agent's namespace on the linked cluster (for example `nudgebee-agent`), and enter just the secret name in the **K8s Secret** field.
 
 ### Step 2: Configure Integration in NudgeBee UI
 
@@ -125,7 +125,7 @@ The walkthrough below shows the full flow — opening the **CI/CD** category, se
 
 4. **Verify Integration**
    - The integration should appear in the ArgoCD integrations list
-   - Status should show as "Active"
+   - Status should show as `enabled`
 
 ### Step 3: Link to Cloud Accounts
 

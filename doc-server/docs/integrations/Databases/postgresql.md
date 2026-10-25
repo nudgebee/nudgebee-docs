@@ -51,11 +51,13 @@ The agent connects from inside the cluster using credentials held in a Kubernete
 | `PGUSER` | Username |
 | `PGPASSWORD` | Password |
 
+Create the secret in the NudgeBee agent's namespace on the linked cluster (for example `nudgebee-agent`) and enter just the secret name.
+
 Create one with:
 
 ```bash
 kubectl create secret generic nudgebee-postgres \
-  --namespace databases \
+  --namespace nudgebee-agent \
   --from-literal=PGHOST=postgres.databases.svc.cluster.local \
   --from-literal=PGDATABASE=orders \
   --from-literal=PGUSER=nudgebee \

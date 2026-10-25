@@ -14,7 +14,7 @@ Tasks are defined in the `tasks` section of a workflow definition. Each task has
 - **`id`** — A unique identifier within the workflow (used to reference outputs).
 - **`type`** — The task type (e.g., `core.print`, `k8s.cli`).
 - **`params`** — Input parameters for the task.
-- **`next`** — The ID of the next task to execute (optional).
+- **`depends_on`** — IDs of the tasks that must finish before this one runs (optional). Steps are ordered by `depends_on`; there is no `next` field on a task (`next` is used only inside `core.switch` cases).
 
 ### Referencing Task Outputs
 

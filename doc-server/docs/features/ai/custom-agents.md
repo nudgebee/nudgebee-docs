@@ -34,7 +34,7 @@ The menu appears on rows you are allowed to manage (write access to the account;
 | **Override Agent Prompt** | Built-in agents | Create your own version of the agent's role, instructions and tools |
 | **Edit Agent** | Custom agents | Change the agent |
 | **Add tools** / **Update tools** | Built-in agents | Give the agent extra tools without changing its prompt |
-| **Who can use it** | Custom agents (tenant admins) | Share the agent with **This account**, **Selected accounts** or the whole **Organization** |
+| **Who can use it** | Custom agents (tenant admins) | Share the agent with **This account**, **Selected accounts** or the whole **Organisation** |
 | **Revert Agent** | Overridden built-in agents | Remove your override and go back to the built-in agent |
 | **Delete Agent** | Custom agents | Remove the agent |
 

@@ -23,7 +23,7 @@ What NudgeBee collects for each service is listed in **[Supported Cloud Services
 
 **Infra → Cloud** opens the cloud account selected in the header account picker, or the first active cloud account if none is selected. Switch accounts with the header picker.
 
-If no cloud account is connected yet, the page shows *Get started with Cloud monitoring*. Users who can manage integrations get a **Connect Cloud Account** button; others see *Need admin permission to connect a cloud account*.
+If no cloud account is connected yet, the page shows *Get started with Cloud monitoring*. Users with write access get a **Connect Cloud Account** button; others see *Need admin permission to connect a cloud account*.
 
 Self-hosted VM accounts have their own page under **Infra → VM** — see [Self-hosted VMs](../VM/index.md).
 

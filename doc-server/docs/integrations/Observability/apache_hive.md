@@ -3,6 +3,10 @@ sidebar_position: 10
 ---
 # Apache Hive
 
+:::note
+This integration is currently unavailable: its card is greyed out on the **Admin** > **Integrations** screen and new connections can't be added.
+:::
+
 Connect Apache Hive so NudgeBee can query logs stored in a Hive table. Hive is a **log-only** source.
 
 :::caution

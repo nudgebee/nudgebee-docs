@@ -19,7 +19,7 @@ The UI adds `-S` when your NudgeBee server has a signing key, `-d true` if you u
 The UI's default is a **minimal install**: no bundled Prometheus stack (`-g true`), and no OpenTelemetry collector or ClickHouse (`-t true`) — so **no traces** until you turn tracing on. Drop `-g` and `-t` to get them. OpenCost is off in the chart by default either way (`-x true` only keeps it off); turn it on with `-f` and `opencost.enabled: true`.
 
 :::caution Run it with `bash`, and have `bc` installed
-The script needs bash. `sh installation.sh` fails on systems where `sh` is not bash (for example Debian and Ubuntu). It also needs `bc` for its kernel check and exits if `bc` isn't installed.
+The script needs bash. `sh installation.sh` fails on systems where `sh` is not bash (for example Debian and Ubuntu). It uses `bc` for its kernel check; without `bc` the check passes every node, so the node agent is not turned off for old kernels.
 :::
 
 ## Flags
@@ -32,8 +32,8 @@ The script needs bash. `sh installation.sh` fails on systems where `sh` is not b
 | `-k <context>` | Runs `kubectl config use-context <context>` first. This **changes your current kubectl context** and leaves it changed. |
 | `-f <file>` | Extra Helm values file. |
 | `-p <url>` | Prometheus URL to use (`globalConfig.prometheus_url`, also used by OpenCost). Skips Prometheus discovery. |
-| `-m <url>` | Alertmanager URL (`globalConfig.alertmanager_url`). |
-| `-r <org id>` | Sends `X-Scope-OrgID: <org id>` to Prometheus, Alertmanager and OpenCost — for multi-tenant Mimir, Cortex or Thanos. |
+| `-m <url>` | Sets `globalConfig.alertmanager_url`. The chart does not pass this value to the agent, so it has no effect. |
+| `-r <org id>` | Sends `X-Scope-OrgID: <org id>` to Prometheus and OpenCost — for multi-tenant Mimir, Cortex or Thanos. (It also sets `globalConfig.alertmanager_headers`, which the chart does not use.) |
 | `-g true` | Don't install the bundled Prometheus stack, and skip Prometheus discovery and rule-selector label detection. |
 | `-x true` | Keep OpenCost off (it is off by default). |
 | `-t true` | Don't install the OpenTelemetry collector and ClickHouse (no traces). |
