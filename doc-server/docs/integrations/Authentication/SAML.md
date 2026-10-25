@@ -58,8 +58,7 @@ Before configuring SAML, ensure you have:
 | `SAML_ENTRY_POINT` | The SSO URL of your Identity Provider (IdP login endpoint). | `https://yourorg.okta.com/app/app-id/sso/saml` |
 | `SAML_ISSUER` | The Entity ID that **NudgeBee** presents when it asks your IdP to authenticate someone. It identifies NudgeBee, not the IdP, and it must match the identifier registered for the NudgeBee application at your IdP. | `https://app.yourdomain.com` |
 | `SAML_CERT` | The IdP's X.509 signing certificate in PEM format. Used to verify SAML assertion signatures. | See [Certificate Setup](#certificate-setup) |
-| `SAML_AUDIENCE` | The audience NudgeBee expects to find in the assertion. This is also the NudgeBee application's identifier at your IdP, so it is normally the same value as `SAML_ISSUER`. Falls back to `SAML_ISSUER` when unset. | `https://app.yourdomain.com` |
-| `NEXTAUTH_URL` | The base URL of your NudgeBee application. Used to construct the ACS callback URL. | `https://app.yourdomain.com` |
+| `NEXTAUTH_URL` | The base URL of your NudgeBee application. Used to construct the ACS callback URL unless `SAML_CALLBACK_BASE` is set. | `https://app.yourdomain.com` |
 | `NEXTAUTH_SECRET` | A secret key used to sign session tokens. Must be a strong random string — generate one with `openssl rand -base64 32`. | `<your-random-secret>` |
 
 :::warning[`SAML_ISSUER` identifies NudgeBee, not your IdP]
@@ -70,12 +69,31 @@ This is the single most common misconfiguration. `SAML_ISSUER` is sent **to** yo
 
 | Variable | Description | Default |
 |---|---|---|
+| `SAML_AUDIENCE` | The audience NudgeBee expects to find in the assertion. This is also the NudgeBee application's identifier at your IdP, so it is normally the same value as `SAML_ISSUER`. | `SAML_ISSUER` |
+| `SAML_CALLBACK_BASE` | Base URL used to build the ACS callback URL (`<base>/api/auth/saml/acs`). Set it when `NEXTAUTH_URL` is unset or differs from the URL registered at your IdP. | `NEXTAUTH_URL` |
 | `SAML_GROUP_MAPPING` | JSON object mapping IdP group names to NudgeBee roles. | `{}` (no mapping) |
 | `SAML_SYNC_ROLES_ON_LOGIN` | Sync user roles from SAML groups on every login. | `true` |
 | `SAML_REMOVE_OLD_ROLES` | Remove roles not present in the current SAML assertion during sync. | `true` |
 | `SAML_INCLUDE_UNMAPPED_GROUPS` | Pass through IdP groups that are not in the mapping as-is. | `false` |
 | `SAML_SP_PRIVATE_KEY` | PEM private key used to sign outgoing authentication requests. Setting it turns signing on — see [Signed Authentication Requests](#signed-authentication-requests). | Not set (requests are unsigned) |
 | `SAML_SP_CERT` | The certificate matching `SAML_SP_PRIVATE_KEY`, in PEM format. Published in SP metadata. | Not set |
+
+### Setting the Variables with Helm
+
+Put the `SAML_*` variables under `additional_env_vars` in your Helm values, not under `nudgebee_secret`. `nudgebee_secret` accepts only a fixed list of keys, and an unknown key such as `SAML_ENABLED` makes the Helm render fail. `NEXTAUTH_URL` and `NEXTAUTH_SECRET` stay under `nudgebee_secret`.
+
+```yaml
+additional_env_vars:
+  SAML_ENABLED: "true"
+  SAML_ENTRY_POINT: "https://yourorg.okta.com/app/app-id/sso/saml"
+  SAML_ISSUER: "https://app.yourdomain.com"
+  SAML_CERT: |
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+```
+
+If you use `nudgebee_secret.existingSecretName`, `additional_env_vars` isn't rendered; put the `SAML_*` keys in that existing Secret instead.
 
 ### Certificate Setup
 
@@ -277,7 +295,8 @@ SAML integration supports **automatic user provisioning** — users are created 
 ### On-Prem Deployments
 
 - The user is created under the tenant specified in your license.
-- Set `AUTH_DEFAULT_ROLE` to control the default role assigned to new users.
+- New users get the role set in `AUTH_DEFAULT_ROLE`.
+- When `SAML_GROUP_MAPPING` is set and no group matches, role sync falls back to the tenant's `auth_default_role`, then `AUTH_DEFAULT_ROLE`.
 
 ### SaaS Deployments
 
@@ -315,7 +334,7 @@ GET /api/auth/saml/health
   },
   "config": {
     "entryPoint": "https://yourorg.okta.com/app/.../sso/saml",
-    "issuer": "http://www.okta.com/exk1234567",
+    "issuer": "https://app.yourdomain.com",
     "callbackUrl": "https://app.yourdomain.com/api/auth/saml/acs"
   },
   "messages": []
@@ -334,13 +353,13 @@ GET /api/auth/saml/health
 | Issue | Possible Cause | Solution |
 |---|---|---|
 | SAML login button does not appear | `SAML_ENABLED` is not set to `true` | Set `SAML_ENABLED=true` and restart the application |
-| "SAML not configured" error | Missing required environment variables | Ensure `SAML_ENTRY_POINT`, `SAML_ISSUER`, `SAML_CERT`, and `SAML_AUDIENCE` are all set |
+| "SAML not configured" error | Missing required environment variables | Ensure `SAML_ENTRY_POINT`, `SAML_ISSUER`, `SAML_CERT`, and `NEXTAUTH_URL` (or `SAML_CALLBACK_BASE`) are all set |
 | Signature validation fails | Incorrect or expired IdP certificate | Download a fresh certificate from your IdP and update `SAML_CERT` |
 | User gets "not allowed" error | User account is suspended in NudgeBee | Check the user's status in NudgeBee and reactivate if needed |
 | Groups/roles not syncing | Group attribute not sent in assertion | Verify your IdP is configured to send group attributes (see [SAML Attribute Mapping](#saml-attribute-mapping)) |
 | Groups/roles not mapping correctly | Incorrect `SAML_GROUP_MAPPING` value | Ensure the JSON is valid and the IdP group names match exactly (case-sensitive) |
 | "Invalid session data" error | Session token expired (took >60 seconds) | Check network latency between IdP and NudgeBee; ensure clocks are synchronized |
-| User created but wrong role | Default role misconfigured | Check `AUTH_DEFAULT_ROLE` (On-Prem) or `auth_default_role` tenant attribute (SaaS) |
+| User created but wrong role | Default role misconfigured | On-Prem: check `AUTH_DEFAULT_ROLE`. SaaS: check the tenant's `auth_default_role` attribute |
 | Certificate expiry warning | IdP certificate is expiring soon | Download a new certificate from your IdP and update `SAML_CERT`; use `/api/auth/saml/health` to monitor |
 | IdP reports that a signed authentication request is required (AD FS `MSIS7085`) | The IdP requires signed requests and NudgeBee is not configured to sign them | Configure [Signed Authentication Requests](#signed-authentication-requests). To confirm the diagnosis first, note that signing in from the IdP portal still works while the SSO button does not |
 | SAML login button disappears right after setting `SAML_SP_PRIVATE_KEY` | The key is malformed, or is protected by a passphrase | Check `/api/auth/saml/health` — it names the variable. Re-export the key in PEM form without a passphrase |

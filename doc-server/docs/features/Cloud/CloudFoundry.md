@@ -24,7 +24,7 @@ Navigate to **Admin** > **Integrations** > **Kubernetes & Cloud**, select **Clou
 * **CF API URL \*** (Required)
     * The Cloud Foundry API endpoint, e.g. `https://api.sys.example.com`.
 * **Account Type**
-    * `Production` or `Non-production`. This drives how the foundation is treated in cost and optimization views.
+    * `Production` or `Non-production`. This drives triage scoring: production accounts score alerts at full weight, non-production ones are damped, and workloads in production accounts count as production in blast-radius safety checks. It also drives the **Production** / **Non-production** (Environment) filter on Optimize views.
 * **Authentication Method**
     * **Bearer Token** — for Korifi or a Kubernetes service account token.
     * **UAA OAuth2** — for PCF with UAA client credentials.

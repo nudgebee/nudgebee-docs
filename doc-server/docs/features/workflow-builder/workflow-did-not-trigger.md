@@ -24,7 +24,7 @@ Check **Listen to accounts**: when it is empty, the trigger only hears events fr
 
 For a Webhook trigger, the filter expression must render exactly `true` — `1` does not match.
 
-Check the selected lifecycle phase when available: `event.created`, `event.triaged`, and `investigation.completed` are distinct. A trigger listening for investigation completion does not match the creation phase.
+Check the trigger's lifecycle phase, `params.on` in the workflow JSON (the builder form doesn't show it). It defaults to `event.created`; `investigation.completed` and `investigation.failed` fire later, when the AI investigation ends. A trigger listening for investigation completion does not match the creation phase. A trigger set to any other phase doesn't run, because NudgeBee doesn't publish events at other phases today. See [Lifecycle phase](./triggers.md#lifecycle-phase).
 
 Review event classification and suppression to understand which lifecycle processing occurred. Do not assume that a notification suppression rule globally disables every workflow trigger.
 

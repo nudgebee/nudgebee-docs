@@ -124,7 +124,7 @@ side-by-side examples.
 | redis.image.registry | string | `"ghcr.io/nudgebee"` | Not covered by `global.image.registry`. |
 | services-server.env.NOVA_IMAGE / TRIVY_IMAGE / POPEYE_IMAGE / KUBE_BENCH_IMAGE | string | `ghcr.io/nudgebee/...` | Images for the security scanner jobs. Full references; mirror them for air-gapped installs. |
 | llm-server.env.LLM_SERVER_AGENT_CODEAGENT_IMAGE | string | `"registry.nudgebee.com/code-analysis-agent:latest"` | Image for the code-analysis workspace. Community: `ghcr.io/nudgebee/code-analysis-agent:latest`. |
-| nudgebee_secret.NEXT_PUBLIC_DEFAULT_IMAGE_REGISTRY | string | `"ghcr.io/nudgebee"` | Registry the UI's agent installer puts in generated install commands. |
+| nudgebee_secret.NEXT_PUBLIC_DEFAULT_IMAGE_REGISTRY | string | `"ghcr.io/nudgebee"` | Default for the *Image Registry* field in the UI's agent installer; a different value adds `-i` / `runner.image_registry` to the generated commands. The agent chart does not use that value, so agents still pull from `ghcr.io`; see [Air-gapped and private registries](../agent/installation/index.md#air-gapped-and-private-registries). |
 | nudgebee_secret.RELAY_WSSERVER_ENDPOINT / K8S_COLLECTOR_ENDPOINT | string | in-cluster addresses | Relay and collector URLs used in the UI's agent install commands. Set to your public hosts for agents in other clusters. |
 | relay-server.fullnameOverride | string | `"relay-server"` |  |
 | relay-server.image.repository | string | `"nudgebee-relay-server"` |  |
@@ -176,7 +176,7 @@ rabbitmq:
 | Temporal | `temporal.server.image.repository`, `temporal.admintools.image.repository`, `temporal.web.image.repository` |
 | Security scanners | `services-server.env.NOVA_IMAGE`, `TRIVY_IMAGE`, `POPEYE_IMAGE`, `KUBE_BENCH_IMAGE` |
 | Code-analysis workspace | `llm-server.env.LLM_SERVER_AGENT_CODEAGENT_IMAGE` |
-| Agent install commands shown in the UI | `nudgebee_secret.NEXT_PUBLIC_DEFAULT_IMAGE_REGISTRY` |
+| Agents installed from the UI's commands | Not set by `nudgebee_secret.NEXT_PUBLIC_DEFAULT_IMAGE_REGISTRY` (the agent chart ignores the registry it adds). Set the agent image values listed in [Air-gapped and private registries](../agent/installation/index.md#air-gapped-and-private-registries). |
 
 ## Related
 

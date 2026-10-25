@@ -40,8 +40,8 @@ To successfully integrate Datadog, you will need to provide the following inform
         * `us3.datadoghq.com` (US3 site)
         * `us5.datadoghq.com` (US5 site)
         * `ap1.datadoghq.com` (AP1 site)
-    * Select the one that matches your organization's Datadog account.
-    * **Note:** Do not use the bare marketing domain (e.g., `datadoghq.com`). Use the `app.*` prefixed domain shown above.
+    * Type the one that matches your organization's Datadog account. This is a free-text field.
+    * **Note:** A bare domain such as `datadoghq.com`, `datadoghq.eu` or `ddog-gov.com` is changed to its `app.*` form automatically, and any `https://` prefix or trailing slash is removed.
 
 ### Required Permissions
 
@@ -56,7 +56,7 @@ The integration reads the following data from Datadog:
 
 ---
 
-After filling in all the required fields, click the "Save" or "Connect" button (not fully visible) to complete the integration.
+After filling in all the required fields, click **Test Connection**. **Save** stays disabled until the test succeeds; then click **Save** to complete the integration.
 
 ---
 
@@ -81,7 +81,7 @@ After filling in all the required fields, click the "Save" or "Connect" button (
 * **Symptom**: Connection test hangs or fails with `Account not found`.
 * **Root Cause**: The Datadog site was set to `app.datadoghq.com` (US1), but your organization is hosted on EU (`app.datadoghq.eu`), US3 (`us3.datadoghq.com`), or US5 (`us5.datadoghq.com`).
 * **Remediation**:
-  Check your browser URL when logged into Datadog and select the matching site in the **Site** dropdown.
+  Check your browser URL when logged into Datadog and enter the matching site in the **Site** field.
 
 ---
 

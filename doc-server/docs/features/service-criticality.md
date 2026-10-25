@@ -34,7 +34,7 @@ The **Source** column tells you which of three paths set the tier, and that matt
 
 In precedence order:
 
-1. **An operator-declared label on the workload.** NudgeBee reads common tier conventions — `critical`, `tier-0`, `tier0`, `p0`, `gold` map to `critical`; `high`, `tier-1`, `p1`, `silver` to `high`; `medium`, `tier-2`, `p2`, `bronze` to `medium`; `low`, `tier-3`, `p3` to `low`. Anything it cannot classify confidently, including bare numbers, is ignored rather than guessed at.
+1. **An operator-declared label on the workload.** NudgeBee reads common tier conventions — `tier-0`, `tier0`, `p0`, `gold`, and any value that contains the word `critical`, map to `critical`; `high`, `tier-1`, `tier1`, `p1`, `silver` to `high`; `medium`, `tier-2`, `tier2`, `p2`, `bronze` to `medium`; `low`, `tier-3`, `tier3`, `p3` to `low`. Because any value containing `critical` counts, a value such as `non-critical` is also read as `critical` — avoid it unless that is what you mean. Anything else, including bare numbers, is ignored rather than guessed at.
 2. **Customer-facing position.** A workload behind an ingress or load balancer sits on the request path, and is derived as `high`.
 3. **Dependency fan-in.** A workload that ten or more services depend on is a shared hub — a datastore, queue or gateway — and is derived as `high`.
 
@@ -69,7 +69,7 @@ Auto-derived tiers stay advisory: they move the score, never the band. This is t
 
 ## Reviewing
 
-The table lists Namespace, Workload, Kind, Criticality, Source and **Why** — the rationale behind the tier, such as `ingress/LB-backed (customer-facing request path)` or `14 services depend on it (shared dependency)`. Use the row menu to **Set** a tier (needs write access); the row's source becomes **You** and stops being touched by the refresh. **Reset to derived** hands it back to the automatic tier. Filter by namespace and tier, or turn on **Only classified** to show only workloads with a tier.
+The table lists Namespace, Workload, Kind, Criticality, Source and **Why** — the rationale behind the tier, such as `ingress/LB-backed (customer-facing request path)` or `14 services depend on it (shared dependency)`. Use the row menu to **Set** a tier (needs write access); the row's source becomes **You** and stops being touched by the refresh. On a row you have set, **Reset to derived** hands it back to the automatic tier. Use **Search workload** to find a workload by name, filter by namespace and tier, or turn on **Only classified** to show only workloads with a tier.
 
 Start with the workloads NudgeBee derived as `high` and decide which are genuinely `critical`, then demote the demo and test namespaces to `low`. Those two passes do most of the work.
 

@@ -139,7 +139,7 @@ Integration knowledge bases re-sync automatically once a day (08:00 UTC by defau
 
 - **What becomes a skill:** every folder with a `SKILL.md` whose frontmatter (the `---` block at the top) has a `description`. The `name` should be 1–64 lowercase letters, digits and hyphens; without one the folder name is used. Skills with duplicate names, or over 1 MB per file / 10 MB in total, are skipped — the row's **N skipped** shows why.
 - **Columns:** **Repository**, **Status** (Pending, Syncing, Synced, Sync failed), **Last synced** with the commit, **Skills** (click to see them and switch each one's **Use in answers**) and **Used by**.
-- **Syncing:** repositories re-sync automatically (about every 30 minutes by default); **Sync now** pulls changes immediately. Edit a skill in the repository, not in NudgeBee — synced skills show a **Synced** badge and are read-only here.
+- **Syncing:** repositories re-sync automatically (about every 30 minutes by default when the tenant has the GitHub integration, otherwise at most once an hour); **Sync now** pulls changes immediately. Edit a skill in the repository, not in NudgeBee — synced skills show a **Synced** badge and are read-only here.
 - **Skill details** on a skill shows its path, commit, license, allowed tools, requirements and files.
 
 ## Re-sync a knowledge base

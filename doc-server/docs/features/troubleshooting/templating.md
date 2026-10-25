@@ -322,7 +322,7 @@ if: "{{ outputs['Pod details'].data.containers | selectattr('status.container_st
 
 ### Pass a JSON object as a parameter
 
-When an action expects an object (like `dimensions` on `cloud_metrics`), you can build it inline:
+When an action expects an object (like `dimensions` on `cloud_list_metrics`), you can build it inline:
 
 ```yaml
 dimensions:
@@ -371,7 +371,7 @@ command: "{% if outputs.cpu.value > 80 %}kubectl top pods -n {{ alert.labels.nam
 
 ### 5. Cap your loops
 
-`for_each:` makes it easy to fan out, but a runaway loop attaches a flood of evidence cards. Set `for_each_limit` to a sensible number (default is 10) and use `top(n)` if your input list might be huge.
+`for_each:` makes it easy to fan out, but a runaway loop attaches a flood of evidence cards. Set `for_each_limit` to a sensible number (default is 10, maximum is 20; higher values are lowered to 20) and use `top(n)` if your input list might be huge.
 
 ### 6. Keep secrets out of templates
 

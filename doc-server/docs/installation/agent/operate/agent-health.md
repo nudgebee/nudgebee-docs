@@ -42,7 +42,7 @@ graph LR
         Traces[ClickHouse / Chronosphere / Jaeger]
         NodeAgents[Node Agent DaemonSet]
 
-        Agent -->|1. GET healthy| Prom
+        Agent -->|"1. query vector(1)"| Prom
         Agent -->|2. GET healthy| AM
         Agent -->|3. Provider health endpoint| Logs
         Agent -->|4. HTTP ping :8123| Traces
@@ -104,7 +104,7 @@ Below is the complete reference of every field displayed on the Agent Health car
   1. **Apache Pinot**: Probes `GET <PinotURL>/health`
   2. **Elasticsearch / OpenSearch**: Probes `GET <ES_URL>/_cluster/health` (authenticated)
   3. **SigNoz**: Probes `GET <SigNozURL>/api/v1/health`
-  4. **Grafana Loki**: Probes `GET <LokiURL>/ready`
+  4. **Grafana Loki**: Probes `GET <LokiURL>/loki/api/v1/status/buildinfo`
 * **Healthy State**: `Connected` (Green), displaying the active provider name (e.g. `Loki`, `Elasticsearch`, `SigNoz`).
 * **Failure Causes**:
   * Incorrect log service URL.
@@ -165,7 +165,7 @@ Below is the complete reference of every field displayed on the Agent Health car
 | **Prometheus** | `Prometheus: Disconnected` | Query `<prometheus-url>/api/v1/query?query=vector(1)` with the configured authentication. | Verify `globalConfig.prometheus_url`, headers, and managed-provider auth. See [Prometheus Guide](../connect/prometheus-troubleshooting.md). |
 | **Alertmanager** | `Alertmanager: Disconnected` | `kubectl get svc -A \| grep alertmanager` | Check configured URL and verify webhook forwarding. See [Alertmanager Troubleshooting](../connect/alertmanager.md#verify). |
 | **Logs (Loki/ES/SigNoz)** | `Logs: Disconnected` | Probe active provider via curl: `/loki/api/v1/status/buildinfo` (Loki), `/_cluster/health` (ES), or `/api/v1/health` (SigNoz). | Verify `runner.loki.url`, `runner.es.enabled`, `runner.es.url`, or `runner.signoz.url` and credentials. See [Logging Troubleshooting](../connect/logging/index.md#troubleshooting). |
-| **Traces** | `Traces: Disconnected` | `kubectl run -n nudgebee-agent health-check --rm -i --restart=Never --image=curlimages/curl -- -fsS http://clickhouse:8123/ping` | Verify ClickHouse health and trace pipeline. See [Storage, ClickHouse & OTel Guide](./storage-and-pvcs.md#2-troubleshooting-clickhouse-restart--crash-loops). |
+| **Traces** | `Traces: Disconnected` | `kubectl run -n nudgebee-agent health-check --rm -i --restart=Never --image=curlimages/curl -- -fsS http://nudgebee-agent-clickhouse:8123/ping` (the Service is `<release>-clickhouse`) | Verify ClickHouse health and trace pipeline. See [Storage, ClickHouse & OTel Guide](./storage-and-pvcs.md#2-troubleshooting-clickhouse-restart--crash-loops). |
 | **OpenCost** | `OpenCost: Disconnected` | `kubectl get pods -n nudgebee-agent -l app.kubernetes.io/name=opencost` | Verify `opencost.enabled` and RBAC permissions. |
 | **Node Agent** | `Node Agent: 0` | `kubectl get ds -n nudgebee-agent` | Inspect scheduling, PSA privileges, and Prometheus scrape jobs. See [Node Agent Configuration](./node-agent-configs.md#troubleshooting-node-agent-failures) and [Prometheus Scrapes](../connect/prometheus-troubleshooting.md#step-9-why-is-node-agent-count-zero-or-disconnected-in-agent-health). |
 

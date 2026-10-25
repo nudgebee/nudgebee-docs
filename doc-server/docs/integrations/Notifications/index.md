@@ -31,7 +31,7 @@ NudgeBee currently supports the following notification channels:
     *   [MS Teams Setup for Cloud SaaS](./msteams.md#set-up-microsoft-teams)
     *   [MS Teams Setup for On-Prem](./msteams.md#set-up-microsoft-teams-in-on-prem-nudgebee)
 *   **[Google Chat](./google_chat.md)**: Get notifications in your Google Chat rooms.
-*   **[Discord](./discord.md)**: Send notifications to a Discord channel by authorizing the NudgeBee application in your Discord server.
+*   **[Discord](./discord.md)**: Send notifications to a Discord channel through your own Discord bot: paste its token, then invite it to your server.
 *   **[Webhook targets](./webhook_targets.md)**: Post one-way notifications to a Slack channel, a Microsoft Teams channel, or a Google Chat space through its incoming webhook. No app install or admin approval is needed.
     *   [Slack incoming webhook](./webhook_targets.md#slack)
     *   [Microsoft Teams Workflows webhook](./webhook_targets.md#microsoft-teams)

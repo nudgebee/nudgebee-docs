@@ -15,7 +15,7 @@ Editing requires `tenants:Write`. Without it the page is readable and the contro
 
 ## General
 
-Two sections, **Tenant Identity** (**Tenant Name**) and **Self-Onboarding**; each tab has its own **Save**. **Allowed Domains** is required when self-onboarding is on.
+Two sections, **Tenant Identity** (**Tenant Name**) and **Self-Onboarding**. General and each Label Mapping sub-tab show a **Save** button, and any of them saves pending edits from all of those tabs at once. Toggles on the Features tab apply as soon as you change them. **Allowed Domains** is required when self-onboarding is on.
 
 | Setting | What it controls |
 |---|---|

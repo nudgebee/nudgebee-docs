@@ -10,7 +10,7 @@ NudgeBee gives you two different automation surfaces, and they exist for two dif
 |---|---|---|
 | **Purpose** | Evidence collection on a specific alert/event so the LLM has the data it needs to investigate. | Post-processing of an event — triage, routing, ticket creation, remediation, anything that happens *after* the event has been formed. |
 | **Where it lives** | Attached to a single alert / event type in **Monitoring → Alert Manager**. | Standalone artifact in **Workflow Builder**, can be reused across many event types or run on a schedule / webhook / manually. |
-| **When it runs** | Automatically, the moment the matching event is ingested, before the event is rendered in Troubleshooting and before the LLM analyses it. | After the event exists. Usually fired by an **Event Trigger** in the workflow, by a schedule, by a webhook, or on demand. |
+| **When it runs** | Automatically, the moment the matching event is ingested, before the event is rendered in Troubleshooting and before the LLM analyses it. | After the event exists. Usually fired by an **Event Trigger** in the workflow, by a schedule, by a webhook, or on demand. By default an Event Trigger fires when the event is created (`event.created`), before AI analysis; to wait for the analysis, set the trigger's `params.on` to `investigation.completed` in the workflow definition (see [Lifecycle phase](../workflow-builder/triggers.md#lifecycle-phase)). |
 | **Output shape** | Evidence cards on the event — logs, metrics, YAML, query results, graphs. Feeds the LLM root-cause prompt. | Anything: created tickets, sent messages, scaled deployments, retried jobs, custom JSON. |
 | **Authoring model** | Pick a list of actions and parameter sets per alert. No flow control beyond `if` and `for_each`. | Visual graph: branching, loops, sub-workflows, manual approvals, retries, dry-runs. |
 | **Failure model** | Best-effort; one failed action does not stop other evidence from being collected. | Tasks have retries, timeouts, conditional execution, and the workflow has its own success/failure status. |
@@ -31,13 +31,13 @@ Event playbooks are not Kubernetes-specific. They run for **any event NudgeBee i
 
 ### A CloudWatch alarm fires for `RDSHighCPU`
 
-- **Event playbook** attached to the alarm runs `cloud_metrics` to capture CPU/IOPS/connections from CloudWatch, `cloud_resource` to grab the RDS instance configuration, and `proxy_db_query` to snapshot `pg_stat_activity` at the moment of the alert. Evidence cards: the metric graph, the instance config, the running queries.
+- **Event playbook** attached to the alarm runs `cloud_list_metrics` to capture CPU/IOPS/connections from CloudWatch, `cloud_resource` to grab the RDS instance configuration, and `proxy_db_query` to snapshot `pg_stat_activity` at the moment of the alert. Evidence cards: the metric graph, the instance config, the running queries.
 - **Workflow** triggers on the same event, classifies the offending query against a known-bad-pattern list, and either pages the on-call DBA or — after manual approval — runs an AWS CLI task to scale the instance class.
 
 ### A Datadog monitor fires for high checkout-API latency
 
 - **Event playbook** attached to the Datadog alert runs `datadog_monitors_search` to pull the monitor's recent state, `traces_dependency_map` to draw the service graph during the incident, and `proxy_http_request` to hit an internal `/healthz` on the upstream service.
-- **Workflow** consumes the LLM's analysis, opens a PagerDuty incident on the relevant service, and notifies the owning team's Slack channel with a link back to the Troubleshooting view.
+- **Workflow** whose Event Trigger has `on: investigation.completed` waits for the LLM's analysis, then opens a PagerDuty incident on the relevant service, and notifies the owning team's Slack channel with a link back to the Troubleshooting view.
 
 In every case both surfaces run for the same incident; neither replaces the other.
 
@@ -51,7 +51,7 @@ In every case both surfaces run for the same incident; neither replaces the othe
 
 **Use a Workflow when:**
 
-- The action should happen *after* the event has been classified or analysed.
+- The action should happen *after* the event has been created, classified, or analysed (set `params.on` on the Event Trigger).
 - You need branching, conditions, loops, manual approvals, or retries.
 - The same automation should run for many event types, or on a schedule, or via webhook.
 - You're producing a side effect (ticket, message, infra change) rather than gathering data.
@@ -65,7 +65,7 @@ Events flow into NudgeBee from:
 | Source | What's accepted |
 |---|---|
 | **Prometheus** in your K8s cluster | Any rule defined in the NudgeBee Alert Manager (or upstream Prometheus AlertManager). Native source — alerts are matched by `labels.nb_alert_name`, `labels.alertname`, or the event's `aggregation_key`, in that order. |
-| **APM / observability webhooks** | First-class handlers exist for **Datadog**, **New Relic**, **Dynatrace**, **Splunk**, **SolarWinds**, and **Grafana**. (Signoz and Chronosphere are query-able from playbook actions but NudgeBee does not have webhook handlers for their alerts — those would arrive via the generic webhook.) |
+| **APM / observability webhooks** | First-class handlers exist for **Datadog**, **New Relic**, **Dynatrace**, **Splunk** (currently unavailable for new integrations), **SolarWinds**, and **Grafana**. (Signoz and Chronosphere are query-able from playbook actions but NudgeBee does not have webhook handlers for their alerts — those would arrive via the generic webhook.) |
 | **Cloud-provider alarms** | First-class handlers for **GCP Cloud Monitoring** and **Azure Monitor**. AWS CloudWatch alarms typically arrive via the generic webhook (often through SNS). |
 | **Incident / ITSM** | First-class handlers for **PagerDuty**, **Zenduty**, and **ServiceNow**. |
 | **Generic / custom** | The generic webhook endpoint accepts any payload with the standard event fields. Use it for anything not covered above. |
@@ -75,8 +75,8 @@ When the event is ingested:
 
 1. NudgeBee resolves an **alert name** for the event (from `nb_alert_name`, `alertname`, or the `aggregation_key`).
 2. Event playbooks bound to that alert name are run. Their outputs are appended as evidence on the event.
-3. AI analysis runs on the now-enriched event and produces the root-cause summary.
-4. Any workflow with an **Event Trigger** matching the `aggregation_key` is dispatched. Workflows see the final, enriched event — including whatever the playbook collected.
+3. Any workflow with an **Event Trigger** matching the event is dispatched at the lifecycle phase it listens on. By default that is `event.created`, which fires after playbook enrichment and before AI analysis. The trigger payload does not include the playbook's evidence cards.
+4. AI analysis runs on the enriched event and produces the root-cause summary. Workflows whose Event Trigger has `on: investigation.completed` fire once this analysis finishes. See [Event Lifecycle](./event-lifecycle.md).
 
 ```mermaid
 flowchart TD
@@ -87,8 +87,9 @@ flowchart TD
     attaches evidence cards"]
     B --> C["**AI / NuBi RCA**
     reads evidence, writes root-cause analysis"]
-    C --> D["**Workflow trigger**
+    B -->|default: event.created| D["**Workflow trigger**
     triage · ticket · notify · remediate"]
+    C -->|investigation.completed| D
 ```
 
 ## Custom Data Collection
@@ -101,7 +102,7 @@ If the data you want for an investigation isn't covered by a built-in action, yo
 | `proxy_http_request` | Hit an internal HTTP endpoint (Grafana, Jenkins, custom health checks) reachable through the proxy agent. |
 | `proxy_ssh_command` / `ssh` | Run a shell command on a host. |
 | `cloud_cli` | Run an AWS / GCP / Azure CLI command on a configured cloud account — works for any AWS/GCP/Azure event regardless of source (CloudWatch, Datadog, custom). |
-| `cloud_metrics` / `cloud_logs` / `cloud_resource` | Pull metrics / logs / resource configuration directly from AWS / GCP / Azure. |
+| `cloud_list_metrics` / `cloud_logs` / `cloud_resource` | Pull metrics / logs / resource configuration directly from AWS / GCP / Azure. |
 | `kubectl_command_executor` | Run an arbitrary `kubectl` command in the alert's cluster. |
 | `pg_run_queries` | Run a list of SQL queries against a PostgreSQL DB whose credentials are in a Kubernetes secret. |
 | `pod_bash_enricher` / `pod_script_run_enricher` | Exec into the alerting pod (or run an ephemeral one) and capture command output. |

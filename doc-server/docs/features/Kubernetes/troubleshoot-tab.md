@@ -18,14 +18,14 @@ keywords: [troubleshoot, events, pod errors, oom killed, image pull backoff, hig
 | **Application Errors** | **Api Errors** (Url, Method, Status) or **Log Errors** (Sample, Namespace, Application), or **All**. Filter by namespace, workload, severity and status; **Create Ticket** files one, and clicking a row opens the investigation |
 | **All Events** | Every event, with full filters (below) |
 | **Anomaly** (Beta) | See [Anomaly](./anomaly.md) |
-| **Triage Rules** | Rules that set priority or suppress events — see [Alert Tuning](../troubleshooting/alert-tuning.md) |
+| **Triage Rules** | Rules that set priority or suppress events — see [Triage Rules](../troubleshooting/triage-rules.md) |
 | **Service Criticality** | Tier each workload — see [Service Criticality](../service-criticality.md) |
 
 ## Events table
 
-Columns **Triage Score**, **Source Severity**, **Application**, **Message**, **Alert Status** and **Action**; **Event Type** and **Triage Status** can be shown. Toolbar: **Grouped**, **Show Trend**, **Share**, **Refresh**. Filters include message, alert labels, namespace, workload, event type and name, service, severity, triage priority, status, source and triage status.
+Columns **Triage Score**, **Source Severity**, **Application**, **Message**, **Alert Status** and **Action**; **Event Type** and **Triage Status** can be shown. Toolbar: **Grouped**, **Show Trend**, **Download**, **Refresh**. Filters include message, alert labels, namespace, workload, event type and name, service, severity, triage priority, status, source and triage status.
 
-Investigations NuBi ran on its own are listed under **Troubleshoot → Investigations → Auto Investigated** in the sidebar — see [Automatic Event Analysis](../ai/event-analysis.md).
+Investigations NuBi ran on its own are listed under **Troubleshoot → Investigations** in the sidebar, on the **Auto Investigated** tab — see [Automatic Event Analysis](../ai/event-analysis.md).
 
 ## Related
 

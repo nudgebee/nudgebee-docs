@@ -36,16 +36,16 @@ NudgeBee reads telemetry from the platforms below. Connect any combination — f
 | Datadog | Metrics, logs, traces | [Datadog](./datadog.md) |
 | New Relic | Metrics, logs, traces | [New Relic](./newrelic.md) |
 | Dynatrace | Metrics, logs, traces | [Dynatrace](./dynatrace.md) |
-| SolarWinds Observability | Metrics, logs, traces | [SolarWinds](./solarwinds.md) |
+| SolarWinds Observability | Metrics, logs | [SolarWinds](./solarwinds.md) |
 | Azure Application Insights | Traces | [Azure App Insights](./azure_app_insights.md) |
 | Loggly | Logs | [Loggly](./loggly.md) |
 | Observe | Logs | [Observe](./observe.md) |
 | Splunk Enterprise / Splunk Cloud Platform | Metrics, logs, traces | [Splunk Enterprise](./splunk_enterprise.md) |
-| Splunk Observability Cloud | Metrics | Configure in **Admin** > **Integrations** > **Observability** |
+| Splunk Observability Cloud | Metrics | Currently unavailable (greyed out in **Admin** > **Integrations** > **Observability**) |
 | Apache Pinot | Logs | Configure in **Admin** > **Integrations** > **Observability** |
-| Apache Hive | Logs | [Apache Hive](./apache_hive.md) |
+| Apache Hive | Logs | Currently unavailable (greyed out); see [Apache Hive](./apache_hive.md) |
 | Chronosphere | Metrics | [Chronosphere](./chronosphere.md) |
-| Last9 | Metrics, logs | [Last9 logs](../../installation/agent/connect/logging/last9.md), [Last9 metrics](../../installation/agent/connect/metrics.md) |
+| Last9 | Metrics, logs | Currently unavailable (greyed out); see [Last9 logs](../../installation/agent/connect/logging/last9.md), [Last9 metrics](../../installation/agent/connect/metrics.md) |
 | Jaeger | Traces | [Jaeger](./jaeger.md) |
 | Grafana Tempo | Traces | Configure in **Admin** > **Integrations** > **Observability** |
 | OpenObserve | Metrics, logs, traces | [OpenObserve](./openobserve.md) |

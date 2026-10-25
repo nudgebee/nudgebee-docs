@@ -23,7 +23,7 @@ Create a new ticket or incident in your ticketing platform.
 | `description` | string | Yes | Ticket description/body. |
 | `ticket_type` | string | No | Issue type (e.g., `Task`, `Bug`, `Incident`, `Story`). Platform-specific. Default: `Task`. |
 | `severity` | string | No | Priority/severity level. Platform-specific (e.g., `High`, `Medium`, `Low`). |
-| `assignee` | string | No | Assignee identifier (Jira: account ID or email; GitHub: username). |
+| `assignee` | string | No | Assignee identifier (Jira: account ID or email; GitHub: username). Set it as `additional_fields.assignee` (the builder's platform fields); a top-level `assignee` is still read for older workflows. |
 | `reference_id` | string | No | External reference ID for tracking. Defaults to workflow ID. |
 | `additional_fields` | object | No | Platform-specific custom fields (e.g., Jira Sprint, Components, custom fields). Dynamic fields loaded from integration. |
 | `account_id` | account | No | Account override. |
@@ -53,7 +53,7 @@ Fetch the details of an existing ticket by its ID.
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `ticket_id` | string | Yes | Ticket ID to retrieve (e.g., `PROJ-123` for Jira, issue number for GitHub). |
-| `integration_id` | integration | No | Ticket integration. Required if the ticket was not created via NudgeBee. |
+| `integration_id` | integration | Yes | Ticket integration. |
 | `project_key` | string | No | Project key. Required for GitHub/GitLab (`owner/repo` format). |
 | `account_id` | account | No | Account override. |
 
@@ -90,6 +90,11 @@ Update ticket fields such as status, severity, assignee, description, or labels.
 | `status` | string | No | New status. Triggers workflow transition for Jira/ServiceNow. GitHub/GitLab: `open`/`closed`. |
 | `severity` | string | No | New priority/severity. |
 | `assignee` | string | No | New assignee. |
+| `impact` | string | No | ServiceNow only. New impact: `High`, `Medium` or `Low`. ServiceNow derives priority from impact and urgency; an empty value keeps the current one. |
+| `urgency` | string | No | ServiceNow only. New urgency: `High`, `Medium` or `Low`. An empty value keeps the current one. |
+| `resolution_code` | string | No | ServiceNow only. Resolution code (`close_code`). Many instances require it, with resolution notes, before the status can become Resolved or Closed. Accepted values are set per instance. |
+| `resolution_notes` | string | No | ServiceNow only. Resolution notes (`close_notes`). |
+| `work_notes` | string | No | ServiceNow only. Internal work note, not visible to the customer. |
 | `description` | string | No | New description (replaces existing). |
 | `labels` | array | No | Labels/tags to set (replaces existing). Not supported on ServiceNow. |
 | `account_id` | account | No | Account override. |
@@ -169,7 +174,7 @@ Post a comment on an existing ticket.
 | `integration_id` | integration | Yes | Ticket integration. |
 | `ticket_id` | string | Yes | Ticket ID to comment on. |
 | `comment` | string | Yes | Comment text. |
-| `project_key` | string | Yes | Project key (e.g., `PROJ` for Jira, `owner/repo` for GitHub). |
+| `project_key` | string | No | Project key (e.g., `PROJ` for Jira, `owner/repo` for GitHub). Needed for GitHub/GitLab. |
 | `account_id` | account | No | Account override. |
 
 ### Output

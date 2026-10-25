@@ -37,7 +37,7 @@ When NuBi needs approval for a step that changes something, or needs an answer f
 
 A pending question doesn't wait forever: a chat left waiting ends after 14 days by default, and conversations started by alerts, automations, Slack or Teams after 12 hours. After that the question can no longer be answered — ask again in a new message.
 
-Steps that ran without asking because an admin's [Tool Approvals](./tool-approvals.md) rule allowed them show an **Auto-approved** chip; hover it to see which rule allowed it. **Approvals & clarifications** on the answer lists every approval and question in that turn (rule-approved steps appear as **Approved by rule**), and the duration shows **Waited for approval** separately from the time NuBi spent answering.
+Steps that ran without asking because an admin's [Tool Approvals](./tool-approvals.md) rule allowed them show an **Auto-approved** chip; hover it to see which rule allowed it. In the answer's header, the **approvals** and **clarifications** chips (for example *2 approvals*) each open a drawer listing that turn's approvals or questions (rule-approved steps appear as **Approved by rule**), and the duration shows **Waited for approval** separately from the time NuBi spent answering.
 
 ### Does an approval request expire?
 
@@ -49,7 +49,7 @@ Yes. A chat left waiting for your answer ends after **14 days** by default. Conv
 - **Tool calls.** Each call shows its status (**Success**, **Error**, **Completed with errors**, **Skipped**, **Waiting**, **In-Progress**); open **Tool Details** for its input and output.
 - **Citations and sources.** Numbered references jump to the step they came from. **N sources** lists the documents and pages used.
 - **Answer confidence.** On investigations, when the tenant feature *Answer confidence on investigations* is on, a **high**, **medium** or **low confidence** chip explains the level and lists anything NuBi **could not verify**. Low means no specific root cause could be confirmed from the available data.
-- **Chips under the answer** open drawers for the turn's **Tasks**, **Additional Contexts**, **New Memories**, linked **Channel Conversation** and **Watches** (things NuBi keeps checking for you — see [Watches](./watches.md)). Redaction chips are explained in [Egress Filter](./egress-filter.md).
+- **Chips in the answer's header** open drawers for the turn's **Tasks**, **Additional Contexts**, **New Memories**, linked **Channel Conversation** and **Watches** (things NuBi keeps checking for you — see [Watches](./watches.md)). Redaction chips are explained in [Egress Filter](./egress-filter.md).
 - **Metrics.** The usage figure on each answer opens **Message Metrics**; the one in the header opens **Conversation Metrics** — tokens (including thinking tokens, billed at the output rate), cached tokens, cost, tool calls and timings. A model without a price shows **No price**; set one in [Budgets & Limits](./budgets-and-limits.md#model-pricing).
 - **Actions.** **Share**, **Copy**, **Download conversation JSON**, and **Open as dashboard** for dashboard answers.
 - **Feedback.** Thumbs up or down. Thumbs down asks **What went wrong?** with a reason and an optional comment. If the answer names a root cause, your vote is also remembered as agreeing or disagreeing with it — see [b-Cortex → Decisions](./b-cortex.md#decisions).

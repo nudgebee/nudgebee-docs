@@ -641,10 +641,9 @@ You can test the agent runner's `/api/alerts` endpoint independently of Alertman
    ```bash
    kubectl logs -n nudgebee-agent deploy/nudgebee-agent-runner -c runner --tail=50
    ```
-   Look for:
-   - `alertmanager: received alert`
-   - `forwarding finding to backend`
-   - Absence of `alertmanager: dropped alerts that failed to build`
+   A successful forward logs nothing. Check that neither of these appears:
+   - `event forward failed`
+   - `alertmanager: dropped alerts that failed to build`
 
 ---
 
@@ -659,10 +658,12 @@ kubectl -n <monitoring-namespace> exec sts/alertmanager-<name> -c alertmanager -
     --alertmanager.url=http://localhost:9093
 ```
 
-Within 1-2 minutes, verify that the alert surfaces in the NudgeBee Console under **Events** or **Incidents**. Expire the alert when finished:
+Within 1-2 minutes, verify that the alert surfaces in the NudgeBee Console under **Events** or **Incidents**. Resolve the alert when finished by sending it again with an end time of now (`amtool` has no expire command):
 
 ```bash
 kubectl -n <monitoring-namespace> exec sts/alertmanager-<name> -c alertmanager -- \
-  amtool alert expire alertname=NudgeBeeDeliveryTest --alertmanager.url=http://localhost:9093
+  amtool alert add NudgeBeeDeliveryTest severity=warning namespace=default \
+    --end="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --alertmanager.url=http://localhost:9093
 ```
 

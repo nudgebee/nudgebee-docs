@@ -51,8 +51,9 @@ Query metrics from connected monitoring platforms (Prometheus, CloudWatch, Chron
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `queries` | object | Yes | Metric queries as key-value pairs: `{"label": "promql_query"}`. |
-| `start_time` | timestamp | No | Query start time. Defaults to 1 hour before `end_time`. |
-| `end_time` | timestamp | No | Query end time. Defaults to now. |
+| `duration` | string | No | Relative lookback window ending now (e.g., `5m`, `1h`, `24h`). Default in the builder: `1h`. When set, it overrides `start_time` and `end_time`; clear it to query an absolute range. |
+| `start_time` | timestamp | No | Absolute query start time. Ignored when `duration` is set. Defaults to 1 hour before `end_time`. |
+| `end_time` | timestamp | No | Absolute query end time. Ignored when `duration` is set. Defaults to now. |
 | `metric_provider` | string | No | Provider. Options: `prometheus`, `aws_cloudwatch`, `chronosphere`, `datadog`, `newrelic`, `ES`. |
 | `metric_provider_source` | string | No | Provider source. Options: `agent`, `user`. |
 | `service_name` | string | No | Cloud service name. |

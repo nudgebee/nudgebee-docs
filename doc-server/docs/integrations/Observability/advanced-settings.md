@@ -36,7 +36,7 @@ Which cards appear depends on the provider:
 | Card | Shown for |
 |---|---|
 | Default Log Filters | Elasticsearch, Loki, SigNoz, Apache Pinot, OpenObserve, CubeAPM, Splunk Enterprise, Datadog, Dynatrace |
-| Default Trace Filters, Trace Label Mapping | OTel ClickHouse, Jaeger, Elasticsearch, OpenObserve, CubeAPM, Splunk Enterprise, Datadog, Dynatrace, Chronosphere, New Relic, SolarWinds, Azure Application Insights, Splunk Observability Cloud |
+| Default Trace Filters, Trace Label Mapping | OTel ClickHouse, Jaeger, Elasticsearch, OpenObserve, CubeAPM, Splunk Enterprise, Datadog, Dynatrace, Chronosphere, New Relic, SolarWinds, Azure Application Insights |
 | Log Label Mapping | Every integration NudgeBee reads logs from |
 
 Chronosphere's form also shows the Default Log Filters card, but NudgeBee does not read logs from Chronosphere, so a filter there has no effect.

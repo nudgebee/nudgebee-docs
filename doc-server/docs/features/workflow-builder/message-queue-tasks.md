@@ -18,7 +18,7 @@ Manage RabbitMQ queues, exchanges, and bindings using the `rabbitmqadmin` CLI.
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `integration_id` | integration | Yes | RabbitMQ integration ID. |
-| `command` | string | Yes | rabbitmqadmin command (e.g., `list queues`, `publish exchange=amq.default routing_key=test payload="hello"`). |
+| `command` | string | Yes | rabbitmqadmin command, starting with `rabbitmqadmin` (e.g., `rabbitmqadmin list queues`, `rabbitmqadmin publish exchange=amq.default routing_key=test payload="hello"`). NudgeBee adds the connection details after the word `rabbitmqadmin`. |
 | `account_id` | account | No | NudgeBee account ID. |
 
 ### Output

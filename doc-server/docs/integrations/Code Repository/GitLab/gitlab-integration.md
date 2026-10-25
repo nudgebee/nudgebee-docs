@@ -83,12 +83,11 @@ After saving, the GitLab account appears in the accounts table.
 | Column | Description |
 |--------|-------------|
 | **Name** | Configuration name you provided |
-| **Installed At** | Time since the integration was created |
-| **Status** | Connection status (Active / Inactive) |
+| **Last Connected At** | When NudgeBee last connected to the integration |
+| **Status** | `active` or `inactive` |
 | **Auth Type** | Authentication method (`Token`) |
 | **Created By** | User who created the integration |
 | **Account URL** | GitLab instance URL |
-| **Active** | Toggle to enable/disable the integration without deleting it |
 
 ---
 
@@ -151,7 +150,7 @@ NudgeBee can automatically apply Kubernetes resource optimizations by creating m
 [Updates Helm values file]
          |
          v
-[Creates branch: fix/chore-rightsizing-cpu-...]
+[Creates branch: nb/<recommendation-id>]
          |
          v
 [Opens Merge Request with change summary]
@@ -190,7 +189,7 @@ spec:
 | Annotation | Required | Default | Description |
 |------------|----------|---------|-------------|
 | `ci.nudgebee.com/git.repo` | Yes | — | HTTPS URL to your GitLab repository |
-| `ci.nudgebee.com/helm.values.filePath` | Yes | `values.yaml` | Path to Helm values file relative to repo root |
+| `ci.nudgebee.com/helm.values.filePath` | No | `values.yaml` | Path to Helm values file relative to repo root |
 | `ci.nudgebee.com/git.branch` | No | `main` | Branch to target for merge requests |
 | `ci.nudgebee.com/git.hash` | No | — | Git commit SHA of the deployed version |
 | `ci.nudgebee.com/helm.values.rootPath` | No | — | JSON path prefix for values (e.g., `app.resources`) |
@@ -205,7 +204,7 @@ The MR contains:
 - **Title**: Describes the workload and type of change (e.g., `chore: rightsizing CPU/Memory for auto-pilot-worker deployment`)
 - **Changes Table**: Per-container breakdown of each resource (CPU Request, CPU Limit, Memory Request, Memory Limit) with before/after values and direction of change
 - **Motivation**: Explains the reasoning — resource over-provisioning detected based on observed usage percentiles
-- **Branch**: Auto-created feature branch (e.g., `fix/chore-rightsizing-cpu-...`) targeting `main`
+- **Branch**: Auto-created branch named `nb/<recommendation-id>`, targeting `main`
 
 ### MR Status Tracking
 

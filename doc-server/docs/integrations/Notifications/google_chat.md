@@ -7,53 +7,47 @@ sidebar_position: 3
 A [webhook target](./webhook_targets.md) posts notifications through the space's incoming webhook. It needs no app install or admin approval, but it is one-way.
 :::
 
-## How to configure Google Chat in your NudgeBee Account
+## How Google Chat Connects
 
-- This loom below shows how to configure Google Chat in your account for notifications.
+Google Chat connects through the **NudgeBee Chat app (bot)**, with no user sign-in. You add the bot to a space, and a tenant admin binds that space in NudgeBee. Bound spaces are the destinations your [notification rules](../../features/notifications.md) can send to.
 
-<div style={{position: "relative", paddingBottom: "55.625%", height: 0}}><iframe src="https://www.loom.com/embed/c6e8f388d22f487c94f315549c328109?sid=0d1d619d-12cc-4d7e-a162-effc256e6b3c" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
+## Connect a Space
 
+1. In Google Chat, add the NudgeBee app to the space that should receive notifications.
+2. The bot posts a **Connect** card in the space. Click it to open NudgeBee at **Admin** > **Integrations** > **Messaging & Alerting** > **Google Chat**, where the space shows as **Pending**.
+3. Click **Connect**. You need permission to manage messaging platforms; otherwise ask a tenant admin.
+4. Optionally use **Set as default** in the space's row menu. The default space receives notifications that don't name a space.
 
+The panel header shows the bot's join permission. If it reads **Join permission: needs admin authorization**, a Google Workspace admin must allow the app: click **Authorize in Google Workspace**, approve the app, then click **Re-check**.
 
-## How to Configure Google Chat Integration in Your On-Prem NudgeBee
+To stop notifications to a space, use **Unbind** in its row menu.
 
-If you've already created an OAuth client for NudgeBee authentication, you're just a step away from enabling Google Chat integration.
-To complete the setup, you need to add a redirect URI to your existing OAuth client.
+## Configure Google Chat in On-Prem NudgeBee
 
-Steps to add redirect URI:
+On a self-hosted install you run your own Chat app:
 
-1. Log in to your Google Cloud Console.
-2. Navigate to *APIs & Services* → *Credentials*.
-3. Under OAuth 2.0 Client IDs, click on the client used for NudgeBee authentication.
-4. In section as *Authorised redirect URIs*  → click *Add URI*
-5. Enter the following URI and click *Save*
-
-    ``` https://your-base-url.com/api/integrations/callback/google```
-
-Replace your-base-url with the actual domain where NudgeBee is hosted.
-
-## Ensure the Following Secrets Are Configured in NudgeBee
-
-These should typically be set during installation, but double-check if you're configuring things manually:
+1. In Google Cloud Console, create a service account and download its JSON key, and enable the Google Chat API in that project.
+2. Configure the Chat app (**Google Chat API** > **Configuration**) with an **HTTP endpoint URL** of `https://your-base-url.com/api/webhooks/google-chat/events`, replacing `your-base-url.com` with the domain where NudgeBee is hosted. Set **Authentication Audience** to **Project Number**.
+3. Set these keys in the NudgeBee secrets (`nudgebee_secret` in the Helm values):
 
 ```
-GOOGLE_CLIENT_ID: The Client id for OAuth Client.
-GOOGLE_CLIENT_SECRET: The Secret id for OAuth Client.
-BASE_URL: Your nudgebee base url.
+GOOGLE_CHAT_SA_KEY: The service account's JSON key (raw JSON).
+GOOGLE_CHAT_PROJECT_NUMBER: The Google Cloud project number of the Chat app, used to verify incoming Chat events.
 ```
 
-Once this is set up, your NudgeBee instance will be ready to send messages to Google Chat.
+If these are missing, the panel shows **Google Chat is not configured on this deployment**.
 
 ---
 
 ## Troubleshooting Google Chat Integration
 
-### 1. `400 Bad Request / redirect_uri_mismatch`
-* **Symptom**: Authorizing Google Chat fails with Google OAuth error `redirect_uri_mismatch`.
-* **Root Cause**: The redirect URI in Google Cloud Console does not match `https://<your-base-url>/api/integrations/callback/google`.
+### 1. No Connect card, or clicking it does nothing
+* **Symptom**: The bot joins the space but never posts the **Connect** card, or NudgeBee ignores the space's events.
+* **Root Cause**: Chat events can't reach or be verified by NudgeBee.
 * **Remediation**:
-  1. In Google Cloud Console $\rightarrow$ APIs & Services $\rightarrow$ Credentials $\rightarrow$ OAuth 2.0 Client IDs, verify the exact Authorised Redirect URI.
-  2. Ensure your server's `BASE_URL` matches the external HTTPS ingress domain.
+  1. Check the Chat app's HTTP endpoint URL is `https://<your-base-url>/api/webhooks/google-chat/events` and reachable from the internet.
+  2. Check `GOOGLE_CHAT_PROJECT_NUMBER` matches the project the Chat app belongs to.
+  3. Check the Chat app's **Authentication Audience** is **Project Number**. NudgeBee verifies events with the project number as the audience; with any other setting every event is rejected with `401`.
 
 ---
 
@@ -68,4 +62,4 @@ Once this is set up, your NudgeBee instance will be ready to send messages to Go
        -d '{"text":"NudgeBee integration test"}' \
        "<YOUR_GOOGLE_CHAT_WEBHOOK_URL>"
      ```
-  3. Update the webhook URL in NudgeBee Notification Channels.
+  3. Update the webhook URL in the webhook targets section of the **Google Chat** panel under **Admin** > **Integrations** > **Messaging & Alerting**.

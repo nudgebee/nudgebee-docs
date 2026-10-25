@@ -17,7 +17,7 @@ keywords: [auto scaler, autoscaler, karpenter, cluster autoscaler, gke autoscali
 - **Summary** — node trends (and zones, for Karpenter).
 - **Logs** — pick the autoscaler's pod to read its logs.
 - **Events** — node claim events.
-- **Node Pool** and **Node Class** (Karpenter) — view and edit them: instance family, CPU, zone, capacity type, architecture, type and category, consolidation policy, expiry, node budget, labels and taints; for node classes the AMI family and block devices.
+- **Node Pool** and **Node Class** (Karpenter) — view and edit them, and with write access add a node pool with **Create New Node Pool**: instance family, CPU, zone, capacity type, architecture, type and category, consolidation policy, expiry, node budget, labels and taints; for node classes the AMI family and block devices.
 
 ## "Auto Scaler is NOT configured"
 

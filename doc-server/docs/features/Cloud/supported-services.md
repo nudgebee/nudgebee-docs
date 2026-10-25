@@ -127,10 +127,10 @@ Azure Monitor alerts are collected for every resource. Event Grid activity (crea
 | Bedrock | ✓ | On request | invocation logging, encryption | — | — |
 | X-Ray, CodeArtifact | ✓ | On request | Encryption, sampling rules, repository policy | — | — |
 
-CloudWatch alarm state changes are collected for every service. EC2, RDS, ECS, Lambda, load balancer, SQS and SNS events arrive through an EventBridge rule that onboarding creates only in **read-write** access mode; in read-only mode those events are not forwarded.
+CloudWatch alarm state changes are collected for every service. EC2, RDS, ECS, Lambda, load balancer, SQS and SNS events arrive through an EventBridge rule that onboarding creates only in **Standard** access mode; in **Read-Only** mode those events are not forwarded unless you [Connect EventBridge](./access-modes-and-real-time-events.md#aws--connect-eventbridge).
 
-:::note AWS fixes need read-write access
-AWS fixes and alarm creation need the account to be onboarded in **read-write** access mode (`NudgebeeAccessMode=readwrite` in the CloudFormation template). In read-only mode NudgeBee shows the same recommendations as guidance.
+:::note AWS fixes need Standard access
+AWS fixes and alarm creation need the account to be onboarded in **Standard** access mode (`NudgebeeAccessMode=readwrite` in the CloudFormation template). In read-only mode NudgeBee shows the same recommendations as guidance.
 :::
 
 ## GCP

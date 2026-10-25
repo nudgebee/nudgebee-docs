@@ -18,7 +18,7 @@ You need a connected event source, permission to create and run workflows, and a
 
 ## Configure the event trigger
 
-Create a workflow and add an **Event Trigger**. Configure at least one filter: event type, cluster, namespace, source, priority, or an advanced expression. Structured filters combine with AND; priorities are `HIGH`, `MEDIUM`, `LOW`, `INFO`, and `DEBUG`.
+Create a workflow and add an **Event Trigger**. Configure at least one filter: event type, namespace, source, priority, an advanced expression, or another account under **Listen to accounts**. Structured filters combine with AND; priorities are `HIGH`, `MEDIUM`, `LOW`, `INFO`, and `DEBUG`.
 
 For advanced matching, use a Jinja expression such as:
 
@@ -26,7 +26,7 @@ For advanced matching, use a Jinja expression such as:
 {{ event.priority == "HIGH" and event.source == "prometheus" }}
 ```
 
-Select the lifecycle phase appropriate to your operation when that option is available. Creation, triage, and investigation completion are distinct phases; an event-created trigger should not assume AI analysis is already present.
+The trigger fires when the event is created (`event.created`) unless the workflow definition sets another lifecycle phase in the trigger's `params.on`, such as `investigation.completed`. The builder form doesn't set this; set it in the workflow JSON. An event-created trigger should not assume AI analysis is already present. See [Lifecycle phase](./triggers.md#lifecycle-phase).
 
 See [Configuring Triggers](./triggers.md#event-trigger) for the form and filtering rules.
 

@@ -37,7 +37,7 @@ With the tenant feature **AI alert prioritisation** on ([Tenant Settings → Fea
 
 The result stays inside the priority range the AI set for that kind of alert. Notifications that only report a provider's lifecycle or state change are kept at P3.
 
-Until the AI has seen a new kind of alert, the event is scored with the formula below.
+The first event of a new kind of alert, before the AI's verdict is ready, gets a cautious stand-in verdict based on the source's priority. It stays within P3–P1, so it can't reach P0. If no AI verdict can be produced — the last attempt failed, or the tenant used up its daily attempts — the event is scored with the formula below instead.
 
 ### Without AI alert prioritisation
 
@@ -54,7 +54,7 @@ The score comes from the source's severity and the environment, then adjusted fo
 
 ## Grouped alerts
 
-When several alerts fire on the same resource within a few minutes, NudgeBee groups them under one leading alert, and the others score slightly lower so the inbox shows the incident once. See [Event Lifecycle](./event-lifecycle.md#grouped-alerts).
+When several alerts fire on the same resource within about 15 minutes of each other, NudgeBee groups them under one leading alert, and the others score slightly lower so the inbox shows the incident once. See [Event Lifecycle](./event-lifecycle.md#grouped-alerts).
 
 ## Override a priority
 

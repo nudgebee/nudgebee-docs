@@ -88,5 +88,5 @@ Run kubectl commands against your Kubernetes cluster.
 | Name | Type | Description |
 |:---|:---|:---|
 | `data` | string | Command output (stdout). |
-| `stderr` | string | Error output (stderr), if any. |
+| `stderr` | string | `k8s.cli` only: warning output (stderr) from a command that succeeded. `cloud.k8s.cli` fails the step on any stderr output instead. |
 

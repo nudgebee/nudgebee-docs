@@ -220,6 +220,8 @@ annotations:
   ci.nudgebee.com/helm.values.filePath: "values-prod.yaml"  # optional; defaults to values.yaml
 ```
 
+If a workload has no `ci.nudgebee.com/git.repo` annotation but carries an ArgoCD `argocd.argoproj.io/tracking-id` annotation, NudgeBee asks the [ArgoCD integration](../../CICD/argocd-integration.md) for the application's repository, target revision and values file instead.
+
 ### Recommended
 
 ```yaml
@@ -505,7 +507,7 @@ Ensure you have:
 
 **Possible Causes:**
 1. **GitHub Integration Not Configured**
-   - Check: NudgeBee UI → Integrations → GitHub → Status should be "Connected"
+   - Check: NudgeBee UI → Integrations → GitHub → Status should be `active`
 
 2. **Incorrect Repository URL**
    - Must use HTTPS format: `https://github.com/org/repo.git`
@@ -668,7 +670,7 @@ A: No. The GitHub integration connects to public github.com only; GitHub Enterpr
 2. **Generates Recommendation**: Analyzes patterns and creates optimization proposal
 3. **Clones Repository**: Uses credentials to clone your infrastructure repo
 4. **Updates Values**: Modifies resource requests/limits in your Helm values file
-5. **Creates Branch**: Creates a new branch with naming pattern `fix/rightsizing-{workload}-{timestamp}`
+5. **Creates Branch**: Creates a new branch with naming pattern `nb/<recommendation-id>`
 6. **Commits Changes**: Commits with detailed message including before/after values
 7. **Opens PR**: Creates pull request with:
    - Summary of changes

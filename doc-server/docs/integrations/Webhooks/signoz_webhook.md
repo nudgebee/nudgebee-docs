@@ -72,7 +72,7 @@ NudgeBee can only attach an event to a workload the notification names. In the S
 ## Step 3: Verify
 
 1. Use **Test** on the channel in SigNoz, or wait for a real alert to fire.
-2. In NudgeBee, open **Troubleshoot** > **Events**. The event should appear within a few seconds.
+2. In NudgeBee, open **Troubleshoot** > **All Events**. The event should appear within a few seconds.
 3. Open it and confirm the alert name, severity and workload carried across.
 
 ---

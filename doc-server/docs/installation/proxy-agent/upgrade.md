@@ -20,8 +20,8 @@ Forager prints its build version with `--version`:
 
 ```bash
 nudgebee-forager --version
-# Docker:  docker exec nudgebee-forager nudgebee-forager --version
-# Helm:    kubectl -n <namespace> exec deploy/nudgebee-forager -- nudgebee-forager --version
+# Docker:  docker exec nudgebee-forager /app/nudgebee-forager --version
+# Helm:    kubectl -n <namespace> exec deploy/nudgebee-forager -- /app/nudgebee-forager --version
 ```
 
 The agent also reports this version in its WebSocket greeting, so the NudgeBee UI (**Admin → Integrations → Servers → Proxy Agent**) shows the running version and last-connected time. That's the fastest cross-check.
@@ -75,7 +75,7 @@ curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install.
 **Pin a specific version** (useful for staged rollouts or rollback) — the script reads `NB_VERSION` from the environment:
 ```bash
 curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install.sh | \
-  NB_VERSION=<version> NB_RELAY_URL=... NB_ACCESS_KEY=... NB_ACCESS_SECRET=... bash
+  sudo NB_VERSION=<version> NB_RELAY_URL=... NB_ACCESS_KEY=... NB_ACCESS_SECRET=... bash
 ```
 
 Check the service is back up:
@@ -194,7 +194,7 @@ Or browse them at [github.com/nudgebee/forager/releases](https://github.com/nudg
 **Linux / Windows:** re-run the installer with `NB_VERSION=<older-tag>`:
 ```bash
 curl -fsSL https://github.com/nudgebee/forager/releases/download/<older-tag>/install.sh | \
-  NB_VERSION=<older-tag> NB_RELAY_URL=... NB_ACCESS_KEY=... NB_ACCESS_SECRET=... bash
+  sudo NB_VERSION=<older-tag> NB_RELAY_URL=... NB_ACCESS_KEY=... NB_ACCESS_SECRET=... bash
 ```
 
 **Docker:** pull the older tag and recreate the container with it:

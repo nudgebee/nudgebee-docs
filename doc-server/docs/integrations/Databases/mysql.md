@@ -49,9 +49,11 @@ Navigate to **Admin** > **Integrations** > **Databases** and select **Mysql**, t
 | `MYSQL_USER` | Username |
 | `MYSQL_PWD` | Password |
 
+Create the secret in the NudgeBee agent's namespace on the linked cluster (for example `nudgebee-agent`) and enter just the secret name.
+
 ```bash
 kubectl create secret generic nudgebee-mysql \
-  --namespace databases \
+  --namespace nudgebee-agent \
   --from-literal=MYSQL_HOST=mysql.databases.svc.cluster.local \
   --from-literal=MYSQL_DATABASE=orders \
   --from-literal=MYSQL_USER=nudgebee \

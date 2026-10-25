@@ -18,7 +18,7 @@ Capture a CPU or memory profile of a running pod to see where its time or memory
 | **Profile Type** | Auto-detect, Python, Node and Go: **CPU** or **Memory**. Java: **Java Flight Recorder**, **Thread Dump**, **Heap Histogram**, **Heap Dump** or **Flamegraph**. Other languages: **Flamegraph**. |
 | **Profile Duration (seconds, max 600)** | Default 15 |
 
-Click **Submit**. The **Pod Profile History** icon button opens the *Pod Profile* list of earlier profiles. For text results (thread dumps and heap dumps), the **Ask Nubi for analysis** button sends the result to NuBi to explain (named after your assistant).
+Click **Submit**. The **Pod Profile History** icon button opens the *Pod Profile* list of earlier profiles. For text results (thread dumps and heap dumps), an icon button (tooltip *Ask Nudgebee for analysis*) sends the result to NuBi to explain.
 
 ## If it doesn't work
 

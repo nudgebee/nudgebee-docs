@@ -38,7 +38,7 @@ Search with **Search integrations…** or pick **All** or a category tab. Each t
 
 ### Manage a connection
 
-Click a card to open that provider's connections. **Add &lt;Provider&gt; Account** creates one. The list shows **Name**, **Connection Info** (the **URL** for webhooks), **Account**, **Created By**, **Updated By** and **Status**; filter by **Status** or name. Each row's menu offers, depending on the provider:
+Click a card to open that provider's connections. **Add &lt;Provider&gt; Account** creates one. The list shows **Name**, **Connection Info** (the **URL** for webhooks), **Account**, **Created By**, **Updated By** and **Status**; filter by **Status** or name. Ticketing and code-repository providers (Jira, ServiceNow, PagerDuty, ZenDuty, Freshdesk, GitHub, GitLab) show **Name**, **Last Connected At**, **Status**, **Auth Type**, **Created By** and **Account URL** instead. Each row's menu offers, depending on the provider:
 
 | Action | Does |
 |---|---|
@@ -91,7 +91,7 @@ Managing integrations needs a tenant admin or a role with **integrations** write
 ### AI
 
 * **[NudgeBee AI / LLM — BYOM](./LLM/)** — Integrate LLM models to power [NuBi](../features/ai/) and the pre-built AI agents for troubleshooting, root cause analysis, and agentic automation. SaaS users get a managed LLM by default; self-hosted users bring their own model (BYOM). An **[LLM Gateway](./LLM/Gateway/index.md)** integration is also available for holding several provider credentials side by side, including self-hosted OpenAI-compatible endpoints. **Recommended**.
-* **[MCP (Model Context Protocol)](./MCP/)** — Connect external or on-prem MCP servers so their tools become available to NudgeBee AI tasks (`llm.mcp_call`, NuBi). Supports direct HTTP and Forager-proxied (HTTP or stdio) modes. **Optional**.
+* **[MCP (Model Context Protocol)](./MCP/)** — Connect external or on-prem MCP servers so their tools become available to NudgeBee AI tasks (`llm.mcp_call`, NuBi). Supports direct HTTP and Forager-proxied (HTTP or stdio) modes (the form offers HTTP; stdio only through Forager's local config file). **Optional**.
 
 ### Identity
 

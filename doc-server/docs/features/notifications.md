@@ -56,7 +56,7 @@ The **When no rule matches** row sets what happens to notifications no rule cove
 
 ## Delivery history
 
-**Admin → Notification Rules → Delivery history** — every notification NudgeBee tried to deliver in the last 14 days. Viewing it needs read access to events.
+**Admin → Notification Rules → Delivery history** — every notification NudgeBee tried to deliver in the last 7 days (deliveries are kept for 7 days). Viewing it needs read access to events.
 
 | Column | Meaning |
 |---|---|
@@ -67,7 +67,7 @@ The **When no rule matches** row sets what happens to notifications no rule cove
 | **Status** | **Sent**, **Failed** or **Not sent** |
 | **Message** | The delivery result |
 
-Filter by date (**Last 24 hours**, **7 days**, **14 days**), **Platform** (Slack, Microsoft Teams, Google Chat, Discord, Webhook, Email), **Destination**, **Status** and **Type** (Alert, Alert resolved, Hourly summary, Weekly digest, Approval). A panel at the top lists **failing destinations** — those whose latest delivery in the last 24 hours failed.
+Filter by date (**Last 24 hours**, **Last 7 days**), **Platform** (Slack, Microsoft Teams, Google Chat, Discord, Webhook, Email), **Destination**, **Status** and **Type** (Alert, Alert resolved, Hourly summary, Weekly digest, Approval). A panel at the top lists **failing destinations** — those whose latest delivery in the last 24 hours failed.
 
 Open a row for the details: attempts, destination, account, the send ID, and — for anything not delivered — **why it wasn't sent** and **how to fix** it, with a link to the alert.
 

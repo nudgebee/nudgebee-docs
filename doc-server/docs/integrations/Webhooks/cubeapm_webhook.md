@@ -98,7 +98,7 @@ Each entry in the payload's `alerts` array becomes one event. The payload's shar
 ## Step 3: Verify
 
 1. Trigger a test notification from CubeAPM, or wait for a real alert to fire.
-2. In NudgeBee, open **Troubleshoot** > **Events**. The event should appear within a few seconds.
+2. In NudgeBee, open **Troubleshoot** > **All Events**. The event should appear within a few seconds.
 3. Open it and confirm that the alert name and severity carried across, and that the affected workload is linked.
 4. If nothing appears, open the integration's row menu in **Admin** > **Integrations** > **Webhooks** > **CubeAPM Webhook** and choose **Activity Log**. It lists every delivery the webhook received, and marks the ones that failed or were skipped.
 

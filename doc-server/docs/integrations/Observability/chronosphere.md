@@ -85,7 +85,7 @@ The SaaS model is configured through this integration form. The agent model is c
 
 ## Verify the Integration
 
-1. Save the configuration. If the URL and token are valid, the integration is created without errors.
+1. Click **Test Connection**, then **Save**. **Save** stays disabled until the test succeeds.
 2. Navigate to any Kubernetes workload in NudgeBee.
 3. Open the **Metrics** or **Traces** tab.
 4. Confirm that data from Chronosphere appears in the query results.

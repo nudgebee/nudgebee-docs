@@ -41,11 +41,13 @@ Match types, from narrowest to broadest:
 | **Argument conditions** | The call's arguments meet the conditions you set |
 | **Entire tool** (broad) | Any call to the tool — use with care |
 
+In a chain (`&&`, `;`, `|`) every command must match the rule on its own, and a command substitution (`$(…)` or backticks) always asks — so an **Exact CLI command** rule for one command does not approve a pipeline that contains it.
+
 Click **Save rule**. Start with **Exact CLI command** for the commands your team approves every day, and widen only when you need to.
 
 ## What users see in chat
 
-A call that a rule allowed runs without the approval sheet and shows an **Auto-approved** chip; its tooltip names the rule. **Approvals & clarifications** on the answer lists it as *Approved by rule*. See [Using the Chat](./nubi-chat.md#approvals-and-questions-from-nubi).
+A call that a rule allowed runs without the approval sheet and shows an **Auto-approved** chip; its tooltip names the rule. The **approvals** chip in the answer's header opens a drawer that lists it as *Approved by rule*. See [Using the Chat](./nubi-chat.md#approvals-and-questions-from-nubi).
 
 ## Related
 

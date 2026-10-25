@@ -20,14 +20,16 @@ Want concrete examples? **[NuBi Use Cases](./use-cases/)** walks through real co
 
 ## Pre-built AI Assistants
 
-NudgeBee includes four purpose-built AI assistants, each focused on a specific domain:
+NuBi hands each question to the assistant for the account it is about. Each assistant knows that platform and calls the specialist agents below:
 
-| AI Assistant | What It Does |
+| AI Assistant | Used for |
 |---|---|
-| **SRE AI-Assistant** | Incident triage, root cause analysis, and remediation guidance for reliability engineering. |
-| **FinOps AI-Assistant** | Cost optimization analysis, right-sizing recommendations, and cloud spend insights. |
-| **CloudOps AI-Assistant** | Cloud infrastructure management, security posture analysis, and operational recommendations. |
-| **K8s AI-Assistant** | Kubernetes-specific debugging, upgrade guidance, and workload optimization. |
+| **Kubernetes Troubleshooter** | Kubernetes clusters — pods, workloads, nodes, events, and the services running on them. |
+| **AWS Troubleshooter** | AWS accounts. |
+| **Azure Troubleshooter** | Azure subscriptions. |
+| **GCP Troubleshooter** | Google Cloud projects. |
+| **VM Troubleshooter** | Virtual machines and VM fleets. |
+| **Datadog Troubleshooter** | Accounts monitored through Datadog. |
 
 ## Getting the Most from NuBi
 
@@ -53,16 +55,15 @@ NudgeBee includes four purpose-built AI assistants, each focused on a specific d
 
 Under the hood, NudgeBee's AI assistants use a modular set of specialized agents that you can also invoke directly through the [Workflow Builder](../workflow-builder/):
 
-- **Log Analysis Agent** — Analyzes application and infrastructure logs to identify errors, patterns, and anomalies.
-- **Kubectl Agent** — Executes and interprets Kubernetes commands for cluster inspection and management.
-- **Prometheus Agent** — Queries Prometheus metrics for performance analysis and anomaly detection.
-- **Redis Agent** — Inspects Redis instances for performance, memory, and connectivity issues.
-- **RabbitMQ Agent** — Monitors RabbitMQ queues, consumers, and message flow.
-- **Traces Agent** — Analyzes distributed traces to identify latency bottlenecks and service dependencies.
-- **Debugger Agent** — Deep-dives into application-level issues with context-aware debugging.
-- **Postgres Agent** — Inspects PostgreSQL databases for query performance, locks, and connection issues.
-- **Ticket Agent** — Searches historical tickets for similar past incidents and resolution patterns.
-- **Code Agent** — Analyzes code changes and correlates them with incidents for change-driven RCA.
+- **Log Root-Cause Analyzer** — Analyzes application and infrastructure logs to identify errors, patterns, and anomalies.
+- **Prometheus Metrics Expert** — Queries Prometheus metrics for performance analysis and anomaly detection.
+- **Trace Investigator** — Analyzes distributed traces to identify latency bottlenecks and service dependencies.
+- **PostgreSQL Diagnostics** — Inspects PostgreSQL databases for query performance, locks, and connection issues.
+- **Ticket Manager** — Searches historical tickets for similar past incidents and resolution patterns.
+- **Code Analyzer & Fixer** — Analyzes code changes and correlates them with incidents for change-driven RCA.
+- **FinOps Cost Advisor** — Answers cloud cost and spend questions, finds savings and optimization opportunities, tracks budgets, and covers all recommendations.
+
+The **Kubernetes Troubleshooter** (you can also call it **Debugger**) runs `kubectl`, Redis and RabbitMQ commands itself rather than through a separate agent.
 
 ### Watch a Walkthrough
 

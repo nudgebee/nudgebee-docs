@@ -48,10 +48,11 @@ graph TD
 ```
 
 1. **Check Active Provider & Helm Values**:
-   Verify which provider is actively evaluated by checking the runner logs:
+   Verify which provider is active by checking the runner logs:
    ```bash
-   kubectl logs -n nudgebee-agent deploy/nudgebee-agent-runner | grep -E 'loki enabled|elasticsearch enabled|signoz enabled'
+   kubectl logs -n nudgebee-agent deploy/nudgebee-agent-runner | grep 'logs provider'
    ```
+   `logs provider selected` names the provider NudgeBee uses; `logs provider: none configured` means none is set.
 2. **Test Network Reachability**:
    Run an in-cluster curl test from the `nudgebee-agent` namespace to confirm that CoreDNS resolves the logging service and that no `NetworkPolicy` blocks egress on the logging port (e.g. `3100` or `9200`).
 3. **Verify Header Syntax**:

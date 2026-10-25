@@ -76,7 +76,7 @@ Here is an end-to-end example of NuBi diagnosing an outage caused by a missing d
 > ```
 
 #### 3. Action
-Click **Apply Fix** in the UI to create the secret, or click **Create Jira Ticket** to assign it to the on-call team with the full investigation payload attached.
+Click **Run** next to the recommended command and confirm to create the secret, or use **Create Ticket** to assign it to the on-call team.
 
 ---
 

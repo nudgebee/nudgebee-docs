@@ -3,7 +3,7 @@ sidebar_position: 5
 ---
 # SolarWinds
 
-NudgeBee integrates with **SolarWinds Observability SaaS (SWO)** to query **logs**, **metrics**, and **APM traces** from your SolarWinds environment. This lets NudgeBee surface correlated telemetry during incident investigation without moving data out of your SolarWinds account.
+NudgeBee integrates with **SolarWinds Observability SaaS (SWO)** to query **logs** and **metrics**, plus APM response-time aggregates, from your SolarWinds environment. This lets NudgeBee surface correlated telemetry during incident investigation without moving data out of your SolarWinds account.
 
 ---
 
@@ -46,7 +46,7 @@ Navigate to **Integrations** > **Observability** tab and select **SolarWinds** t
 
 * **API Token \*** *(Required)*
     * The **API Access Token** generated in Step 1.
-    * NudgeBee validates the token on save by calling `/v1/metrics?pageSize=1`.
+    * **Test Connection** validates the token by calling `/v1/metrics?pageSize=1`. **Save** stays disabled until the test succeeds.
     * **401** = token is invalid or expired. **403** = wrong token type (Ingestion instead of API Access).
 
 * **Data Center \*** *(Required)*
@@ -67,8 +67,7 @@ Navigate to **Integrations** > **Observability** tab and select **SolarWinds** t
 * **Default Metrics Provider**
     * Toggle on to make SolarWinds the default metrics source.
 
-* **Default Traces Provider**
-    * Toggle on to make SolarWinds the default APM trace source.
+There is no default-traces toggle: SolarWinds exposes only per-operation trace aggregates, not individual spans, so the **Traces** tab can't list SolarWinds data.
 
 ---
 
@@ -163,11 +162,10 @@ SolarWinds Observability SaaS  ←──  NudgeBee queries via API
 
 ## Verify the Integration
 
-1. **Save the configuration.** A validation call to `/v1/metrics?pageSize=1` runs automatically. Resolve any 401/403 errors before proceeding.
+1. **Click Test Connection, then Save.** The test calls `/v1/metrics?pageSize=1`, and **Save** stays disabled until it succeeds. Resolve any 401/403 errors before proceeding.
 2. Navigate to any **Kubernetes workload** in NudgeBee.
 3. Open the **Logs** tab — confirm pod logs from SolarWinds appear.
 4. Open the **Metrics** tab — confirm CPU and memory metrics are populated.
-5. Open the **Traces** tab — confirm APM response time data appears (requires OTel-instrumented services).
 
 ---
 

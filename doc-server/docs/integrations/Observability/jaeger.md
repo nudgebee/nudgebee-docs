@@ -36,9 +36,9 @@ Navigate to **Admin** > **Integrations** > **Observability**, select **Jaeger**,
 
 ![The Jaeger configuration form, showing the Query API URL, optional bearer token and default-trace-provider flag](../../../static/img/integrations/obs-jaeger.png)
 
-## Step 2: Save
+## Step 2: Test and Save
 
-Click **Save**.
+Click **Test Connection**. **Save** stays disabled until the test succeeds; then click **Save**.
 
 ---
 

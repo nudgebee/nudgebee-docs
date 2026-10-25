@@ -108,13 +108,13 @@ A new target receives nothing until a rule sends to it. It is never used as an a
 
 To send notifications that **no rule covers** to a target, edit the **When no rule matches** row at the bottom of the rules list. Choose **Send to specific channels** for all notifications, or **Specific channels** for one type, and pick the target in the same pickers.
 
-To check where a notification would go before relying on it, click **Test a notification** on the rules page.
+To check where a notification would go before relying on it, click **Check where it goes** on the rules page.
 
 Some rules to keep in mind:
 
 - **One target per type per rule.** Each picker holds one target. To post the same notifications to two Slack channels, create a separate rule for each channel.
 - **Every matching rule delivers.** A target receives a notification if any matching rule names it. A **Don't send** rule is the exception: it wins over every other rule.
-- **Daily email rules send only email**, so they have no channel pickers. The other types can all send to a webhook target: Troubleshooting, SLO, Cloud spend, Optimization, Automation, and Weekly digest.
+- **Daily email rules send only email**, so they have no channel pickers. The other types can all send to a webhook target: Troubleshooting, SLO, Cloud spend, Optimization, Automation, Weekly digest, and AI Gateway budget alerts.
 
 ---
 
@@ -151,7 +151,7 @@ Each target's row menu in the **Webhook targets** section offers three actions:
 | `could not reach the … webhook` | NudgeBee could not connect to the URL: a mistyped host, or a DNS or network problem | Re-copy the URL from the chat tool |
 | `the … webhook returned 403` or `404` | The webhook was revoked or deleted, or the Teams workflow is turned off | Turn the Teams workflow back on, or create a new webhook, then **Edit** the target and paste the new URL |
 | `A webhook target with this name already exists.` | Another target of this type has the same name | Choose another name |
-| The target shows **Active**, but nothing arrives | No rule sends to it, and neither does the **When no rule matches** row | Add the target to a rule, as in [Step 3](#step-3-route-a-notification-rule-to-the-target). Use **Test a notification** to check. |
+| The target shows **Active**, but nothing arrives | No rule sends to it, and neither does the **When no rule matches** row | Add the target to a rule, as in [Step 3](#step-3-route-a-notification-rule-to-the-target). Use **Check where it goes** to check. |
 | Messages stopped arriving, and the target still shows **Active** | The webhook was revoked. NudgeBee does not retry failed deliveries, and does not disable a failing target. | Use **Test** on the target's row. If it fails, create a new webhook and edit the target. |
 
 ---

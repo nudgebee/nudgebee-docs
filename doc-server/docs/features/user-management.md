@@ -28,7 +28,7 @@ Filter by **Status** (Active by default) or by name. Expand a row to see the use
 | Status | Effect |
 |---|---|
 | **Active** | Can sign in |
-| **Inactive** | Cannot sign in; can be reactivated |
+| **Inactive** | Created or invited but hasn't signed in yet; signing in makes the user **Active** |
 | **Suspended** | Sign-in blocked and existing sessions revoked immediately |
 
 You can also add the user to groups and integration profiles. Edit a user from their row (you can't edit yourself). **How to add a user** starts a short guided tour. See [Security](./security.md) for sign-in methods.

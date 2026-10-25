@@ -30,6 +30,8 @@ Execute a custom script in Bash, Python, JavaScript, or PowerShell. Scripts can 
 | `target_id` | string | No | VM/Instance ID for remote execution. Required for `aws_ssm`, `azure_run_command`, `gcp_compute_ssh`. |
 | `region` | string | No | Cloud region for remote execution. Required for `aws_ssm`, `azure_run_command`, `gcp_compute_ssh`. |
 | `integration_id` | integration | No | SSH integration ID. Required for `ssh` executor type. |
+| `host` | string | No | Target host (hostname or IPv4) for the `ssh` executor type. Overrides the integration's host; required for agent SSH integrations without a fixed host. |
+| `port` | integer | No | Target SSH port for the `ssh` executor type. Defaults to the integration's port. |
 | `cwd` | string | No | Working directory for the script. |
 | `image` | string | No | Container image override (for `kubernetes` or `agent` executor types). |
 | `resources` | object | No | Resource limits for Kubernetes execution: `cpu_request`, `cpu_limit`, `memory_request`, `memory_limit`. |

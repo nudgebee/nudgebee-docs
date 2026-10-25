@@ -688,7 +688,7 @@ helm upgrade nudgebee $NUDGEBEE_CHART \
 
 ---
 
-## 6. Advanced Configuration
+## 7. Advanced Configuration
 
 These options are for teams that need to customize the installation for production requirements. You can skip this section for your initial setup and come back later.
 
@@ -776,7 +776,7 @@ See [Configuration Options](./secret_configs.md) for the supported keys.
 
 ---
 
-## 7. Troubleshooting Installation Failures {#troubleshooting-installation-failures}
+## 8. Troubleshooting Installation Failures {#troubleshooting-installation-failures}
 
 Use this diagnostic playbook if your Helm deployment encounters errors or pods fail to transition into a `Running` state.
 
@@ -884,7 +884,7 @@ services-server:
 
 ---
 
-## 8. Uninstall NudgeBee
+## 9. Uninstall NudgeBee
 
 To completely remove NudgeBee from your cluster:
 

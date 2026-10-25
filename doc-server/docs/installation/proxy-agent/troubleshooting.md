@@ -14,17 +14,18 @@ sidebar_position: 7
 
    **Linux:**
    ```bash
-   curl -I https://<RELAY_HOST>/status
+   curl -i https://<RELAY_HOST>/status
    ```
    **Windows:**
    ```powershell
-   Invoke-WebRequest -Uri https://<RELAY_HOST>/status -Method Head
+   Invoke-WebRequest -Uri https://<RELAY_HOST>/status -Method Get
    ```
    Replace `<RELAY_HOST>` with your relay URL (provided in the NudgeBee UI). You should get a `200` response.
 
-2. **Credentials** — Verify `NB_ACCESS_KEY` and `NB_ACCESS_SECRET` match what the NudgeBee UI shows. A wrong secret produces:
+2. **Credentials** — Verify `NB_ACCESS_KEY` and `NB_ACCESS_SECRET` match what the NudgeBee UI shows. A wrong secret makes the session end right after connecting, and the agent keeps reconnecting:
    ```
-   {"level":"ERROR","msg":"authentication failed, retrying..."}
+   {"level":"ERROR","msg":"websocket session ended","err":"..."}
+   {"level":"INFO","msg":"reconnecting to relay","delay":"..."}
    ```
 
 3. **Firewall / Proxy** — If behind a corporate proxy, WebSocket connections may be blocked. Check with your network team that `wss://` connections are allowed.
@@ -56,9 +57,13 @@ sidebar_position: 7
    Test-NetConnection -ComputerName <HOST> -Port <PORT>
    ```
 
-2. **Credentials** — Wrong username/password will show in agent logs:
+2. **Credentials** — Wrong username/password will show in agent logs. For integrations pushed from NudgeBee the line is `failed to configure proxy`:
    ```
-   {"level":"ERROR","msg":"database connection failed","err":"password authentication failed for user ..."}
+   {"level":"ERROR","msg":"failed to configure proxy","err":"connection test failed: ... password authentication failed for user ..."}
+   ```
+   For datasources in the local config file it is `failed to configure datasource`, with a `name` field naming the datasource:
+   ```
+   {"level":"ERROR","msg":"failed to configure datasource","name":"...","err":"connection test failed: ... password authentication failed for user ..."}
    ```
 
 3. **SSL/TLS** — If the database requires SSL, set `ssl_mode: require` in the config or enable SSL in the integration settings.

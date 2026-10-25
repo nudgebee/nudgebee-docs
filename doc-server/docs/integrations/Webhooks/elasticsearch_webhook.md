@@ -127,7 +127,7 @@ On older server releases the rule is shown by its Kibana rule ID, and a rule gro
 ## Step 3: Verify
 
 1. Trigger a test notification from Elasticsearch / Kibana, or wait for a real alert to fire.
-2. In NudgeBee, open **Troubleshoot** > **Events**. The event should appear within a few seconds.
+2. In NudgeBee, open **Troubleshoot** > **All Events**. The event should appear within a few seconds.
 3. Open it and confirm the alert name and severity carried across, and that the impacted workload is linked where the payload identifies one.
 
 ---
@@ -137,7 +137,7 @@ On older server releases the rule is shown by its Kibana rule ID, and a rule gro
 | Symptom | Likely Cause | Fix |
 |---------|-------------|-----|
 | No event appears | Elasticsearch / Kibana cannot reach the NudgeBee URL | Confirm the NudgeBee endpoint is reachable from Elasticsearch / Kibana's notification sender. Check egress rules on both sides. |
-| `401` or `403` from the endpoint | The `token` parameter is missing or wrong | Re-copy the full URL from the integration — the token is part of the query string, and is easy to drop when pasting. |
+| HTTP `400` with `webhook validation failed` | The `token` parameter is missing or wrong | Re-copy the full URL from the integration — the token is part of the query string, and is easy to drop when pasting. |
 | The rule shows as an ID instead of its name | The body carries no `rule.name` | Use the body from Step 2. |
 | Event appears with no workload linked | The rule is not grouped by a pod, container or service name, or the name exists in more than one namespace | Group the rule by one of those fields, or add a `namespace` or workload label as described in Step 2. |
 | Duplicate events for one alert | Two notification rules point at the same URL | Consolidate them in Elasticsearch / Kibana, or use separate integrations per environment. |

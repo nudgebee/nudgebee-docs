@@ -33,7 +33,7 @@ How NudgeBee reaches a database depends on where the database runs.
 
 ### K8s
 
-The NudgeBee agent connects from inside a cluster it is already installed in, reading the connection details from a **Kubernetes Secret** you name. Nothing about the database is stored in NudgeBee, and the database never needs to be reachable from outside the cluster.
+The NudgeBee agent connects from inside a cluster it is already installed in, reading the connection details from a **Kubernetes Secret** you name. Create the secret in the agent's namespace on that cluster (for example `nudgebee-agent`) and enter just the secret name. Nothing about the database is stored in NudgeBee, and the database never needs to be reachable from outside the cluster.
 
 Available for PostgreSQL, MySQL and ClickHouse. Each expects its own set of keys in the secret — see the provider page.
 
@@ -75,7 +75,7 @@ Databases running inside a connected cluster may be registered automatically by 
 
 ## Verify the Integration
 
-1. Click **Test Connection** on the configuration form before saving, where the provider offers it. A successful test proves network reachability and authentication — not that the user has every permission the health checks need.
+1. Click **Test Connection** on the configuration form. When the form shows this button, **Save** stays disabled until the test succeeds. A successful test proves network reachability and authentication — not that the user has every permission the health checks need.
 2. Save. The connection appears under **Admin** > **Integrations** > **Databases** with status **Enabled**.
 3. Ask NuBi to check the database by the name you gave it — for example *"check the health of orders-prod"*. A working connection returns connection counts, lock state and table statistics.
 4. To confirm workflow access, run a [`dbms.query`](../../features/workflow-builder/database-tasks.md) task with a trivial query such as `SELECT 1`.
