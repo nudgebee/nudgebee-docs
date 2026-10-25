@@ -37,6 +37,7 @@ NudgeBee reads telemetry from the platforms below. Connect any combination — f
 | New Relic | Metrics, logs, traces | [New Relic](./newrelic.md) |
 | Dynatrace | Metrics, logs, traces | [Dynatrace](./dynatrace.md) |
 | SolarWinds Observability | Metrics, logs, traces | [SolarWinds](./solarwinds.md) |
+| SolarWinds Platform (Orion), self-hosted | Metrics for servers and network devices | [SolarWinds Platform (Orion)](./orion.md) |
 | Azure Application Insights | Traces | [Azure App Insights](./azure_app_insights.md) |
 | Loggly | Logs | [Loggly](./loggly.md) |
 | Observe | Logs | [Observe](./observe.md) |
