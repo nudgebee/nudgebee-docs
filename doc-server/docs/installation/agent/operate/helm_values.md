@@ -185,6 +185,7 @@ These values only control the alert rules the chart ships. Getting alerts to the
 | `runner.es.sslVerify` | bool | `false` | Verify the ES TLS certificate (https URLs). |
 | `runner.signoz.url` | string | `""` | SigNoz endpoint. |
 | `runner.signoz.apiKey` / `user` / `password` | string | `""` | `apiKey` takes precedence over user/password. |
+| `logs.collection` | string | `"none"` | Where container logs are collected (`none` or `node-agent`). In `node-agent` mode, container stdout/stderr ships to ClickHouse through the bundled collector. |
 
 See [Logging Integration](../connect/logging/index.md).
 
@@ -200,6 +201,7 @@ See [Logging Integration](../connect/logging/index.md).
 | `clickhouse.auth.password` | string | `""` | Empty = the subchart generates one on first install, stored in the `<release>-clickhouse` Secret under `admin-password`. |
 | `runner.clickhouse_enabled` | bool | `true` | Runner reads traces from ClickHouse. |
 | `runner.clickhouse_secret` | string | `""` | Secret holding the ClickHouse password (key `admin-password`). Empty = the bundled `<release>-clickhouse` Secret. |
+| `runner.serviceMapSource` | string | `"prometheus"` | Where `service_map` reads eBPF edge and container metrics: `prometheus` (default), `shadow`, or `clickhouse`. |
 | `runner.jaeger.queryUrl` / `token` | string | `""` | In-cluster Jaeger query endpoint for `jaeger_query_*` actions. |
 | `runner.chronosphere.url` / `apiKey` | string | `""` | Chronosphere trace queries. |
 | `runner.chronosphere.tracesEnabled` | bool | `true` | Report Chronosphere as the traces provider when `url` is set. |
