@@ -54,7 +54,7 @@ gcloud iam service-accounts keys create nudgebee-sa-key.json \
 
 ##### 1. Enable Required GCP APIs
 
-NudgeBee needs certain GCP APIs enabled on your project to collect resource data, metrics, and recommendations. If an API is not enabled, NudgeBee will not be able to monitor the corresponding service.
+NudgeBee needs certain GCP APIs enabled on your project to collect resource data, metrics, and recommendations. If an API is not enabled, NudgeBee will not be able to monitor the corresponding service. The table below covers the main APIs; it is not the list of supported services. See [Supported Cloud Services](./supported-services.md) for every GCP service NudgeBee collects.
 
 Go to [**APIs & Services > Enable APIs and Services**](https://console.cloud.google.com/apis/library) and enable the following:
 

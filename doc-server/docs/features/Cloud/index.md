@@ -38,7 +38,7 @@ Self-hosted VM accounts have their own page under **Infra → VM** — see [Self
 | **Monitoring** | **Alert Manager**, **Cloud Logs**, **Cloud Metrics**, and **Traces** (GCP only) | [Monitoring](./monitoring.md) |
 | Service tabs | One tab per main service, each with **Summary**, **Optimize**, **Events** and **Instances** | [Services & Inventory](./services-and-inventory.md#service-tabs) |
 
-The service tabs depend on the provider:
+The service tabs depend on the provider. Only a few main services get their own tab; every other collected service appears under **Services**. See [Supported Cloud Services](./supported-services.md) for the full list.
 
 | Provider | Service tabs |
 |---|---|
