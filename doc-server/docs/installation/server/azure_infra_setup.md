@@ -88,7 +88,7 @@ The previous architecture used Azure Service Bus as an intermediary. Webhook del
 
 ### Resource Providers Filtered
 
-Real-time change events are filtered to the following Azure resource providers. This list only controls which changes reach NudgeBee as they happen. It is **not** the list of Azure services NudgeBee supports: every service on [Supported Cloud Services](../../features/Cloud/supported-services.md), including Cosmos DB and Azure Cache for Redis, is still collected by the regular resource sync and by **Sync Now**.
+Real-time change events are filtered to the following Azure resource providers. This list only controls which changes reach NudgeBee as they happen; it is not the list of supported services. Every service on [Supported Cloud Services](../../features/Cloud/supported-services.md) is collected by the regular resource sync and by **Sync Now**, whether or not it is listed here.
 
 - `Microsoft.Compute` (VMs, Disks, etc.)
 - `Microsoft.Sql` (SQL Databases)

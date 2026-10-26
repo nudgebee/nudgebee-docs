@@ -656,6 +656,9 @@ Accounts onboarded with the CloudFormation template in **Standard** mode get the
 open **Admin → Integrations → Kubernetes & Cloud → AWS**, choose **Connect EventBridge** in the account's
 row menu and deploy the EventBridge stack it offers. That stack creates only the
 EventBridge resources. Without it NudgeBee learns about changes on its daily sync.
+The services named above are only the ones with real-time events, not the list of supported
+services. Every service on [Supported Cloud Services](./supported-services.md) is collected by the
+daily sync and by **Sync Now**.
 See [Access Modes & Real-Time Events](./access-modes-and-real-time-events.md) for the
 **Real-Time Events** status values.
 

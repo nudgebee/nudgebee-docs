@@ -7,6 +7,8 @@ sidebar_label: Supported Cloud Services
 
 This page lists the AWS, Azure and GCP services NudgeBee collects, and what works for each. Ask NuBi *"is Cosmos DB supported?"* and it answers from this page.
 
+This is the complete list. Other lists in these docs, such as real-time event filters, required APIs, IAM permission statements and the per-service tabs, each cover one feature. A service missing from one of those lists is still supported if it is listed here.
+
 ## How to read the tables
 
 | Column | Meaning |
