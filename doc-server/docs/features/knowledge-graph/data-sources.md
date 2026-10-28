@@ -25,7 +25,7 @@ You do not set up the graph separately. Connect a cluster, an account or an inte
 | **Ownership** | Which user or team owns each workload, namespace, cluster and cloud resource | Owners set under **Admin → Access & Users → Ownership** |
 | **Identity** | One node per NudgeBee user, linked to the same person's GitHub, GitLab or PagerDuty account | Users matched to their integration accounts |
 | **Self-hosted VMs** | VMs from [self-hosted VM accounts](../VM/index.md), linked to the cloud instance they run on where known | A self-hosted VM account with discovery. A VM drops out after 7 days without a scan. |
-| **You** | Dependencies and resources no collector can see | Declared in Knowledge Graph **Settings** — see [Manual Declarations](./manual-declarations.md) |
+| **You** | Dependencies and resources no collector can see | Declared in Knowledge Graph **Settings → Manual Declarations**. See [Manual Declarations](./manual-declarations.md). |
 
 ## Flow sources
 
