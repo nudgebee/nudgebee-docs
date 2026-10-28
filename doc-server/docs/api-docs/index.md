@@ -62,29 +62,14 @@ Most list actions share a shape: `limit`, `offset`, `order_by` and a typed `wher
 
 ### Authentication
 
-Create an API token in **Admin → Access & Users → API Tokens**, then exchange it for a JWT. The API
-token is used as the `secret` in step one — it is **not** sent directly as a bearer token.
-
-```bash
-curl -X POST https://your-domain.com/api/auth/token \
-  -H "Content-Type: application/json" \
-  -d '{"email": "your-api-user@example.com", "secret": "your-api-token"}'
-```
-
-**Response:**
-```json
-{
-  "token": "eyJhbGciOiJSUzI1NiIs...",
-  "expiry": 3600
-}
-```
-
-Then send the JWT as a bearer token on every request:
+Create an API token from **API Tokens** in your user menu (click your avatar at the bottom of the
+left sidebar), then send the token itself as a bearer token on every request. There is no exchange
+step; send the token exactly as issued, including its `sk-nb-` prefix.
 
 ```bash
 curl -X POST https://your-domain.com/api/graphql \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Authorization: Bearer YOUR_API_TOKEN" \
   -d '{"query": "{ accounts_list(limit: 3) { rows { id account_name cloud_provider } } }"}'
 ```
 
@@ -110,13 +95,10 @@ query CloudAccounts {
 **Full curl example:**
 
 ```bash
-# Step 1: Exchange the API token for a JWT
-TOKEN=$(curl -s -X POST https://your-domain.com/api/auth/token \
-  -H "Content-Type: application/json" \
-  -d '{"email": "api-user@example.com", "secret": "your-api-token"}' \
-  | jq -r '.token')
+# Your API token, sent as-is
+TOKEN="sk-nb-..."
 
-# Step 2: Call an action
+# Call an action
 curl -X POST https://your-domain.com/api/graphql \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \

@@ -117,7 +117,7 @@ The NudgeBee server relies on core backend services. You can run them bundled in
 | **RabbitMQ** | **Required** | Message bus connecting internal backend workers. **The backend will not bootstrap its event and triage consumers without it.** | **Yes** (e.g. Amazon MQ or self-managed cluster) |
 | **Redis** | **Optional** | Caching layer for session state and fast query caching. **Falls back to in-memory cache if omitted** (fine for trials, Redis recommended for production). | **Yes** (e.g. AWS ElastiCache, Azure Redis) |
 | **Qdrant** | **Conditional** | Vector database for Semantic Knowledge Graph embeddings and RAG retrieval. Needed when AI troubleshooting is enabled. | **Yes** (Bundled subchart or external Qdrant) |
-| **Temporal** | **Conditional** | Durable execution engine for long-running runbooks, workflows, and automated remediations. | **Yes** (Bundled subchart or external Temporal cluster) |
+| **Temporal** | **Required** (on by default) | Durable execution engine for automations and Auto Optimize. `workflow-server` doesn't start without it. It stores its data in PostgreSQL (`temporal` and `temporal_visibility` databases). | **Yes** (Bundled subchart or external Temporal cluster) |
 
 :::important Hard Dependencies
 **PostgreSQL and RabbitMQ are mandatory hard dependencies** — the server will not start without them. By default, the Helm chart deploys bundled instances of both.
@@ -125,14 +125,33 @@ The NudgeBee server relies on core backend services. You can run them bundled in
 
 ### System & Sizing Requirements
 
-| Requirement | Minimum (Bundled Dependencies) | Minimum (External DBs) | Notes |
-|---|---|---|---|
-| **Kubernetes Cluster** | v1.27 or newer, minimum 2 nodes | v1.27 or newer, minimum 2 nodes | Sized for up to 400 monitored nodes |
-| **Compute & Memory** | **12 GB RAM, 4 CPU cores** | **8 GB RAM, 2 CPU cores** | Bundled footprint includes PG, RabbitMQ, Redis, Qdrant, Temporal |
-| **Persistent Storage** | 200 GB SSD storage | 100 GB SSD storage | Required for database and application state PVCs |
-| **Helm** | v3.x installed and configured | v3.x installed and configured | [Install Helm](https://helm.sh/) |
-| **Registry Access** | `ghcr.io/nudgebee` (Community) or `registry.nudgebee.com` (Enterprise) | Same | Air-gapped environments can mirror images internally |
-| **NudgeBee License Key** | Enterprise only | Enterprise only | Community edition does not require a key |
+| Requirement | Details |
+|---|---|
+| **Kubernetes Cluster** | v1.27 or newer |
+| **Compute & Memory** | Depends on the sizing tier — see [Sizing tiers](#sizing-tiers). A default install is the **Small** tier: plan for **4 CPU / 16 GiB** of schedulable capacity |
+| **Persistent Storage** | A default StorageClass (or set `global.storageClass`). Default volumes: PostgreSQL 50 Gi, Qdrant 50 Gi, plus RabbitMQ and Redis |
+| **Helm** | v3.x installed and configured ([Install Helm](https://helm.sh/)) |
+| **Registry Access** | `ghcr.io/nudgebee` (both editions) and, for Enterprise, also `registry.nudgebee.com` — see [Network Requirements](#network-requirements--decision-rationale) |
+| **NudgeBee License Key** | Enterprise only. Community edition does not require a key |
+
+### Sizing tiers {#sizing-tiers}
+
+The chart ships three sizing tiers. A plain install is **Small**. Size from what the pods **request** (what the scheduler needs to place them), including the bundled database:
+
+| Tier | For estates up to | Memory requested | CPU requested | Plan for |
+|---|---|---|---|---|
+| **Small** (default) | ~5 clusters / 250 nodes / 10,000 pods / 25 cloud accounts | 13.0 GiB | 2.5 cores | **4 CPU / 16 GiB** |
+| **Medium** | ~25 clusters / 900 nodes / 100,000 pods / 550 cloud accounts | 24.7 GiB | 6.1 cores | **8 CPU / 32 GiB** |
+| **Large** | ~80 clusters / 2,000 nodes / 300,000 pods / 500 cloud accounts | 46.5 GiB | 10.3 cores | **12 CPU / 56 GiB** |
+
+Medium and Large are values files inside the chart (`values-medium.yaml`, `values-large.yaml`). Pull the chart to get them, then pass the file to `helm upgrade`:
+
+```shell
+helm pull $NUDGEBEE_CHART --version <chart-version> --untar   # creates ./nudgebee/ with values-medium.yaml and values-large.yaml
+helm upgrade nudgebee $NUDGEBEE_CHART -f nudgebee/values-medium.yaml -f values.yaml --install --namespace nudgebee
+```
+
+Put your own `values.yaml` last so it wins. Beyond the Large tier, run a load test before committing to a size.
 
 ### Preflight Cluster Validation
 
@@ -157,7 +176,10 @@ kubectl get storageclass
 
 Your cluster needs the following network access. Understanding why each rule exists helps you configure firewalls with least privilege:
 
-- **Outbound to Container Registry** (`ghcr.io/nudgebee` or `registry.nudgebee.com` on port 443): **Required during install/upgrade** to pull container images. *What breaks if blocked:* Pods get stuck in `ImagePullBackOff`.
+- **Outbound to Container Registries** (port 443): **Required during install/upgrade** to pull container images. *What breaks if blocked:* Pods get stuck in `ImagePullBackOff`.
+  - **Community:** `ghcr.io/nudgebee`.
+  - **Enterprise:** `registry.nudgebee.com` for NudgeBee's own images **and** `ghcr.io/nudgebee` for the infrastructure images (PostgreSQL, Redis, RabbitMQ, Qdrant, Temporal, init images and the security-scanner images).
+  - **Air-gapped:** mirror all of them. `global.image.registry` only covers NudgeBee's own images; the others have their own values — see [Mirroring images](./helm_values.md#mirroring-images-air-gapped).
 - **Internal Cluster DNS Resolution**: **Required for internal service communication**. The server pods must be able to resolve `BASE_URL` and internal service endpoints. *What breaks if blocked:* Auth callback loops and service-to-service communication failures.
 - **Outbound to Integrations** (Slack, Jira, Teams, GitHub, OpenAI / Cloud APIs on port 443): **Required only for enabled integrations**. *What breaks if blocked:* Alert notifications, auto-PRs, or AI analysis queries will fail to dispatch.
 - **Inbound Access** (Port 80/443 via Ingress or port-forward): **Required for user web UI access, webhook triggers, and agent telemetry reception**.
@@ -313,7 +335,7 @@ The server creates the first admin user and their organization **during install*
 
 Other things worth knowing:
 
-- **Upgrades are never checked.** An existing deployment already has an admin, so `admin.email` is only validated on `helm install` of a new release.
+- **Only checked on a fresh install.** An existing deployment already has an admin, so `admin.email` is validated on `helm install` of a new release, not on upgrades.
 - **The address is validated.** A malformed address fails the install.
 - **Sign in with this address** plus the generated bootstrap password — see [Access the UI](#4-access-the-ui--authenticate).
 
@@ -352,7 +374,7 @@ This is the common case when **upgrading** an existing self-hosted deployment, w
 :::
 
 :::caution[GitOps (Argo CD, Flux): set `agent.accessKey` and `agent.accessSecret`]
-Offline rendering cannot read the existing credential back from the cluster, and the chart refuses to silently regenerate it — a fresh credential paired with the old hash in Postgres would leave the agent unable to authenticate. On an upgrade rendered offline the chart fails unless you supply both explicitly. Read them from the live cluster:
+Argo CD renders the chart offline, so it can't read the existing credential back from the cluster — and generated values would be created anew on every sync. Flux runs a real Helm install/upgrade, but setting the values explicitly is still the safe choice. The chart refuses to silently regenerate the credential — a fresh credential paired with the old hash in Postgres would leave the agent unable to authenticate. On an upgrade rendered offline the chart fails unless you supply both explicitly. Read them from the live cluster:
 
 ```shell
 kubectl get secret nudgebee-bootstrap -n nudgebee \
@@ -386,9 +408,11 @@ helm upgrade nudgebee $NUDGEBEE_CHART \
   --install \
   --namespace nudgebee \
   --create-namespace \
-  --wait \
+  --wait --timeout 20m \
   --kube-context "$KUBE_CONTEXT"
 ```
+
+Use a long `--timeout`: Helm's default is 5 minutes, and the database migration only runs after the release's pods are ready.
 
 To install a specific version, add `--version $CHART_VERSION` to the command. See the [Server Releases](../../releases/server/) page for available versions.
 
@@ -427,17 +451,21 @@ kubectl get pods -n nudgebee
 
 | Pod Name Pattern | Ready State | Status | Role |
 |---|---|---|---|
-| `app-*` | `1/1` | `Running` | Main UI and GraphQL/REST API |
+| `app-*` | `2/2` | `Running` | Main UI and GraphQL/REST API (with its nginx sidecar) |
 | `services-server-*` | `1/1` | `Running` | Core backend (also provisions the admin and the bundled agent's account) |
 | `k8s-collector-*` | `1/1` | `Running` | Telemetry receiver for agents |
 | `relay-server-*` | `1/1` | `Running` | WebSocket agent relay server |
-| `postgresql-0` | `1/1` | `Running` | Core database (if bundled) |
+| `postgresql-0` | `2/2` | `Running` | Core database (if bundled), with its metrics sidecar |
 | `rabbitmq-0` | `1/1` | `Running` | Event message bus (if bundled) |
-| `postgres-migration-job-*` | `0/1` | `Completed` | Pre-install database migration job |
+| `redis-master-0` | `1/1` | `Running` | Cache (if bundled) |
+| `nudgebee-qdrant-server-*` | `1/1` | `Running` | Vector database (if bundled) |
+| `temporal-*` | `1/1` | `Running` | Workflow engine (frontend, history, matching, worker) |
+| `workflow-server-*`, `llm-server-*`, `rag-server-*`, `ml-server-*`, `notifications-*`, `ticket-server-*`, `cloud-collector-server-*`, `cost-server-*`, `llm-gateway-*` | `1/1` | `Running` | Backend services |
+| `postgres-migration-job-*` | `0/1` | `Completed` | Database migration job (runs after install, and before each upgrade) |
 | `nudgebee-nudgebee-agent-runner-*` | `1/1` | `Running` | Bundled agent (only when `agent.enabled: true`, the default) |
 | `nudgebee-nudgebee-agent-forwarder-*` | `1/1` | `Running` | Bundled agent's event watcher |
 
-All active pods should show `1/1` `Running`, and migration jobs should show `Completed`. This typically takes 2–3 minutes after the Helm command finishes.
+All active pods should show all containers ready and `Running`, and jobs should show `Completed`. This typically takes 2–3 minutes after the Helm command finishes.
 
 :::note[Bundled agent pod names]
 The agent is a subchart of the server release, so its pods carry the release name twice (`nudgebee-nudgebee-agent-*`). There is no `node-agent` DaemonSet unless you enable it — see [the bundled agent](#bundled-agent).
@@ -495,10 +523,10 @@ Sign in with the address you set in `admin.email` (or the address carried by you
 If the login screen rejects the address, check that the install actually provisioned it:
 
 ```shell
-kubectl logs -n nudgebee deploy/services-server | grep -i 'first run'
+kubectl logs -n nudgebee deploy/services-server | grep -iE 'not entitled|does not match the licen'
 ```
 
-`no admin address configured, leaving provisioning to first login` means neither `admin.email` nor a license address reached the server — the deployment falls back to provisioning whoever signs in first.
+`not entitled to provision an admin` means the deployment has no valid license entitlement (for example the license failed to load). `admin.email does not match the licence` means the license's own address is used instead of `admin.email` — sign in with that one.
 :::
 
 :::caution Production Security
@@ -519,7 +547,7 @@ Once logged into the dashboard, complete your initial control plane verification
    ```
 
    `no tenant yet, deferring registration to first login` means the agent registers as soon as the first admin exists. A cluster-name error (too short, reserved, or invalid characters) is reported here too — fix `agent.clusterName` and re-run `helm upgrade`.
-3. **Connect an LLM Provider (BYOM)**: Navigate to **Settings → AI / LLM** and configure your API key ([OpenAI, AWS Bedrock, or Ollama](../../integrations/LLM/)) to enable NuBi AI investigations and automated RCA.
+3. **Connect an LLM Provider (BYOM)**: Navigate to **Admin → Integrations → LLM** and configure your API key ([OpenAI, AWS Bedrock, or Ollama](../../integrations/LLM/)) to enable NuBi AI investigations and automated RCA.
 4. **Next Step: Install the Agent on Your Other Clusters**: The cluster running the server is already covered. Every **additional** cluster you want monitored needs its own agent install:
 
 👉 **[Install the NudgeBee Agent on Your Cluster](../agent/installation/index.md)**
@@ -547,8 +575,22 @@ NudgeBee exposes three services that each need their own Ingress entry:
 
 :::info
 **Relay and Collector URLs for Agent Installation**: When you install agents with Ingress enabled, use:
-- **Relay Server URL**: `wss://relay.yourcompany.com`
+- **Relay Server URL**: `wss://relay.yourcompany.com/register`
 - **Collector Server URL**: `https://collector.yourcompany.com`
+:::
+
+:::caution[Tell the UI your public relay and collector URLs]
+The install command the UI generates for **other** clusters uses `RELAY_WSSERVER_ENDPOINT` and `K8S_COLLECTOR_ENDPOINT`. By default these are in-cluster addresses (`ws://relay-server.<namespace>.svc:8080/register` and `http://k8s-collector.<namespace>.svc:80`), which agents in other clusters can't reach. Set them to your public hosts:
+
+```yaml
+nudgebee_secret:
+  RELAY_WSSERVER_ENDPOINT: "wss://relay.yourcompany.com/register"
+  K8S_COLLECTOR_ENDPOINT: "https://collector.yourcompany.com"
+```
+:::
+
+:::note[Prerequisites for this sample]
+The sample uses NGINX Ingress and cert-manager. Install an ingress controller and cert-manager first, and create an Issuer named `cert-letsencrypt-issuer` (the collector and relay charts reference it by default) — or change the annotations to match your setup.
 :::
 
 ### Sample Ingress Values File (with SSL)
@@ -574,6 +616,10 @@ nudgebee_registry_secret:
 nudgebee_secret:
   BASE_URL: "<NudgeBee Server Https Url>"       # e.g., https://nudgebee.yourcompany.com
   NUDGEBEE_LICENSE: <your-license-key>
+  NUDGEBEE_ENCRYPTION_KEY: "<your-32-byte-hex-key>"
+  RELAY_WSSERVER_ENDPOINT: "wss://<NudgeBee relay Base Domain>/register"
+  K8S_COLLECTOR_ENDPOINT: "https://<NudgeBee collector Base Domain>"
+  # Bootstrap admin login. Turn it off once SSO is configured.
   NEXTAUTH_DUMMY_CREDS_ENABLED: true
 
 app:
@@ -602,9 +648,9 @@ k8s-collector:
           - path: /
             pathType: ImplementationSpecific
     tls:
-      - secretName: nudgebee-tls
+      - secretName: nudgebee-collector-tls
         hosts:
-        - "<NudgeBee Base Domain>"
+        - "<NudgeBee collector Base Domain>"
     annotations:
       cert-manager.io/issuer: cert-letsencrypt-issuer
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
@@ -615,12 +661,15 @@ relay-server:
     hosts:
       - host: "<NudgeBee relay Base Domain>"      # e.g., relay.yourcompany.com
         paths:
-          - path: /
-            pathType: ImplementationSpecific
+          # Only expose the routes agents use; other relay routes are internal.
+          - path: /register
+            pathType: Prefix
+          - path: /status
+            pathType: Prefix
     tls:
-      - secretName: nudgebee-tls
+      - secretName: nudgebee-relay-tls
         hosts:
-        - "<NudgeBee Base Domain>"
+        - "<NudgeBee relay Base Domain>"
     annotations:
       cert-manager.io/issuer: cert-letsencrypt-issuer
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
@@ -633,13 +682,13 @@ helm upgrade nudgebee $NUDGEBEE_CHART \
   -f values.yaml \
   --install \
   --namespace nudgebee \
-  --wait \
+  --wait --timeout 20m \
   --kube-context $KUBE_CONTEXT
 ```
 
 ---
 
-## 6. Advanced Configuration
+## 7. Advanced Configuration
 
 These options are for teams that need to customize the installation for production requirements. You can skip this section for your initial setup and come back later.
 
@@ -647,15 +696,19 @@ These options are for teams that need to customize the installation for producti
 
 If your organization manages Kubernetes secrets through an external tool (Vault, Sealed Secrets, etc.), you can reference pre-existing secrets instead of putting values directly in the Helm chart.
 
-* **`global.existingNudgebeeSecretName`** — Point to an existing Kubernetes secret that holds core NudgeBee settings (`NUDGEBEE_LICENSE`, `BASE_URL`, etc.). When set, the Helm chart uses this secret and you manage the key-value pairs directly.
+* **Your own NudgeBee secret** — every service and the migration job load their settings from one Kubernetes Secret (named `nudgebee` by default). To manage it yourself:
 
   ```yaml
   global:
-    existingNudgebeeSecretName: 'nudgebee-v2'
+    existingNudgebeeSecretName: 'nudgebee-v2'   # services and the migration job read this Secret
+  nudgebee_secret:
+    existingSecretName: 'nudgebee-v2'           # stops the chart rendering its own `nudgebee` Secret
+  ```
 
-  # Remove or comment out nudgebee_secret when using existingSecret:
-  # nudgebee_secret:
-  #    NUDGEBEE_LICENSE: YOUR_LICENSE_KEY_HERE
+  Set **both**. With only the first, the chart still renders its own Secret (and still requires `NUDGEBEE_ENCRYPTION_KEY`). Your Secret must contain **every** key the chart would otherwise write — not just the license and `BASE_URL`, but also `APP_DATABASE_URL`, `NUDGEBEE_ENCRYPTION_KEY`, the RabbitMQ and Redis settings, `NEXTAUTH_SECRET`, `ACTION_API_SERVER_TOKEN`, `WORKFLOW_SERVER_TOKEN` and the service URLs. The easiest way to get a complete list is to render the chart once and copy the generated Secret:
+
+  ```shell
+  helm template nudgebee $NUDGEBEE_CHART -f values.yaml --show-only templates/secrets-nudgebee.yaml
   ```
 
 * **`nudgebee_registry_secret.existingSecretName`** — Reference a pre-created secret for registry credentials.
@@ -671,15 +724,50 @@ While bundled subcharts are convenient for proofs-of-concept, **running external
 - **Backups & Point-in-Time Recovery**: Leverage cloud-native automated snapshots, retention policies, and disaster recovery without managing Kubernetes persistent volumes.
 - **Decoupled Lifecycle**: Upgrade and scale your datastores independently of NudgeBee Helm chart upgrades.
 
-To use an external PostgreSQL database, disable the bundled chart and supply your database connection string in `values.yaml`:
+To use an external PostgreSQL database, disable the bundled chart, supply your connection string, **and point Temporal at the same server** — Temporal keeps its own `temporal` and `temporal_visibility` databases there:
 
 ```yaml
 postgresql:
   enabled: false
 
 nudgebee_secret:
+  # Include the port explicitly.
   APP_DATABASE_URL: "postgresql://<USER>:<PASSWORD>@<DB_HOST>:5432/<DB_NAME>?sslmode=require"
+  TEMPORAL_DB_PASSWORD: "<PASSWORD>"      # used by Temporal (Secret `nudgebee-temporal`)
+
+temporal:
+  server:
+    config:
+      persistence:
+        datastores:
+          default:
+            sql:
+              connectAddr: "<DB_HOST>:5432"
+              user: "<USER>"
+          visibility:
+            sql:
+              connectAddr: "<DB_HOST>:5432"
+              user: "<USER>"
 ```
+
+If your server needs TLS, add the matching TLS settings to both Temporal datastores as well. Without the Temporal settings, Temporal keeps trying the bundled `postgresql:5432` and `workflow-server` doesn't start.
+
+For external **RabbitMQ** set `rabbitmq.enabled: false` and `RABBIT_MQ_HOST`, `RABBIT_MQ_PORT`, `RABBIT_MQ_USERNAME` and `RABBIT_MQ_PASSWORD` under `nudgebee_secret`. For external **Redis** set `redis.enabled: false`, `CACHE_PROVIDER: "redis"` and `REDIS_SERVER_HOST`, `REDIS_SERVER_PORT`, `REDIS_USER_NAME` and `REDIS_USER_PASSWORD`. Without `CACHE_PROVIDER`, the services use an in-memory cache and ignore the Redis settings.
+
+### Change the default passwords
+
+The bundled PostgreSQL, RabbitMQ, Redis and Temporal all default to the password `password`. Change them on a fresh install with `POSTGRES_PASSWORD`, `RABBIT_MQ_PASSWORD`, `REDIS_USER_PASSWORD` and `TEMPORAL_DB_PASSWORD` under `nudgebee_secret`. If you change the PostgreSQL password, update `APP_DATABASE_URL` and `TEMPORAL_DB_PASSWORD` to match.
+
+### Allowed `nudgebee_secret` keys
+
+The chart only accepts known keys under `nudgebee_secret` — a misspelled or unknown key fails the install with `[ERROR] Unknown key '…' found in nudgebee_secret`. To pass any other environment variable to the services, use `additional_env_vars`:
+
+```yaml
+additional_env_vars:
+  MY_SETTING: "value"
+```
+
+See [Configuration Options](./secret_configs.md) for the supported keys.
 
 ### Additional Configuration References
 
@@ -688,7 +776,7 @@ nudgebee_secret:
 
 ---
 
-## 7. Troubleshooting Installation Failures {#troubleshooting-installation-failures}
+## 8. Troubleshooting Installation Failures {#troubleshooting-installation-failures}
 
 Use this diagnostic playbook if your Helm deployment encounters errors or pods fail to transition into a `Running` state.
 
@@ -702,9 +790,12 @@ Use this diagnostic playbook if your Helm deployment encounters errors or pods f
 | **`admin.email is not a valid address`** | Typo in the address | Fix the address. It is validated because the organization is created from it at install time |
 | **`The bundled agent's credential could not be found and will not be regenerated`** | Upgrade rendered offline (Argo CD / Flux), where `lookup` cannot read the existing Secret | Set `agent.accessKey` and `agent.accessSecret` from the live `nudgebee-bootstrap` Secret, or `agent.enabled=false`. See [the bundled agent](#bundled-agent) |
 | **Same cluster appears twice after an upgrade** | `agent.enabled` defaults to `true`, and this cluster already had a standalone agent | Set `agent.enabled: false`, then delete the duplicate account under **Admin → Integrations → Kubernetes Clusters** |
-| **Migration Job Timeout / `0/1 Completed`** | Database not ready before migration ran, or stale schema lock | Check logs: `kubectl logs job/nudgebee-migration -n nudgebee`<br/>Fix: Re-run `helm upgrade --wait` |
-| **`error pinging postgres: lookup postgres`** | Incorrect DB hostname or bundled vs external mismatch | Check `nudgebee_secret.APP_DATABASE_URL`<br/>Bundled: `postgresql.nudgebee.svc.cluster.local:5432`<br/>External: Verify RDS / Cloud SQL endpoint |
-| **RabbitMQ connection refused / CrashLoop** | RabbitMQ broker not ready or bad AMQP credentials | Check: `kubectl logs deployment/nudgebee-rabbitmq -n nudgebee`<br/>Verify `RABBIT_MQ_HOST: "rabbitmq"` and port `5672` |
+| **Migration Job failed** | Database not ready, a held lock, or a migration error | Check logs: `kubectl logs job/postgres-migration-job -n nudgebee`<br/>Fix: see [Migration job](#1-migration-job-timeout-or-crashloop) |
+| **`[ERROR] Unknown key '…' found in nudgebee_secret`** | A key the chart doesn't accept | Fix the name, or move it to `additional_env_vars` — see [Allowed keys](#allowed-nudgebee_secret-keys) |
+| **`[ERROR] NUDGEBEE_ENCRYPTION_KEY is required`** | The key is empty or still `__REPLACE__` | Fresh install: `openssl rand -hex 32`. Upgrading from the old default: see [Upgrade](./upgrade.md#encryption-key) |
+| **`error pinging postgres: lookup postgres`** | Incorrect DB hostname or bundled vs external mismatch | Check `nudgebee_secret.APP_DATABASE_URL`<br/>Bundled: `postgresql:5432`<br/>External: Verify RDS / Cloud SQL endpoint |
+| **RabbitMQ connection refused / CrashLoop** | RabbitMQ broker not ready or bad AMQP credentials | Check: `kubectl logs statefulset/rabbitmq -n nudgebee`<br/>Verify `RABBIT_MQ_HOST: "rabbitmq"` and port `5672` |
+| **Enterprise features or the bootstrap login are missing** | The license failed to load (invalid, or already expired at startup). The server then runs without Enterprise entitlements: the bootstrap login and first-run admin creation stay off until a valid license is loaded | `kubectl logs -n nudgebee deploy/services-server \| grep -i license` — look for `license: load failed` |
 | **502 Bad Gateway / WebSocket Disconnects** | Ingress missing WebSocket upgrade or timeout annotations | Add `nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"` to Ingress manifest |
 | **Pod Exit Code 137 (`OOMKilled`)** | Node under memory pressure or insufficient pod limit | Check: `kubectl describe pod <name> -n nudgebee`<br/>Fix: Increase RAM request/limit in `values.yaml` |
 
@@ -713,22 +804,26 @@ Use this diagnostic playbook if your Helm deployment encounters errors or pods f
 ### Failure Scenarios & Step-by-Step Fixes
 
 #### 1. Migration Job Timeout or CrashLoop
-The most common reason for installation timeouts is the **post-installation schema migration job** failing to complete. This occurs when the database pod is still initializing when the migration begins.
+The schema migration runs as the Job `postgres-migration-job` — **after** a fresh install, and **before** every upgrade. It runs once (`backoffLimit: 0`): if it fails, an upgrade is aborted and the previous version keeps running.
 
 **Diagnose:**
 ```shell
-kubectl logs job/nudgebee-migration -n nudgebee
+kubectl logs job/postgres-migration-job -n nudgebee
 ```
 
 **Resolution:**
-Ensure PostgreSQL is in a `Running` state, then re-run the Helm upgrade with the `--wait` flag to allow dependencies to stabilize:
+- **Database not ready** (fresh install): ensure PostgreSQL is `Running`, then re-run the Helm upgrade below.
+- **Lock timeout**: a running service held a conflicting lock. Re-run when traffic is quiet.
+- **`checksum mismatch` or a dirty state**: a migration file or the tracking table doesn't match. Don't edit migration files; contact NudgeBee support.
+
+Re-run with a long timeout:
 ```shell
 helm upgrade nudgebee $NUDGEBEE_CHART \
   -f values.yaml \
   --install \
   --namespace nudgebee \
   --wait \
-  --timeout 10m
+  --timeout 20m
 ```
 
 #### 2. Database Connection or DNS Lookup Failure
@@ -739,7 +834,7 @@ error pinging postgres: dial tcp: lookup postgres: no such host
 
 **Resolution:**
 - **If using Bundled PostgreSQL (`postgresql.enabled: true`)**: Ensure `APP_DATABASE_URL` references the in-cluster Kubernetes DNS name:
-  `postgresql://nudgebee:<PASSWORD>@nudgebee-postgresql.nudgebee.svc.cluster.local:5432/nudgebee?sslmode=disable`
+  `postgresql://postgres:<PASSWORD>@postgresql:5432/postgres?sslmode=disable` (the chart default; the password is `password` unless you changed `POSTGRES_PASSWORD`)
 - **If using External PostgreSQL (`postgresql.enabled: false`)**: Ensure your Kubernetes cluster nodes have network routing and security group access to your cloud database endpoint (e.g. AWS RDS or GCP Cloud SQL) on port 5432.
 
 #### 3. RabbitMQ Broker Connection Failure
@@ -748,23 +843,22 @@ If backend services fail to initialize task consumers and event queues:
 **Diagnose:**
 ```shell
 kubectl get pods -n nudgebee -l app.kubernetes.io/name=rabbitmq
-kubectl logs deployment/nudgebee-services-server -n nudgebee | grep -i rabbit
+kubectl logs deployment/services-server -n nudgebee | grep -i rabbit
 ```
 
 **Resolution:**
-Verify that `RABBIT_MQ_HOST` matches your service name (default `rabbitmq` or `nudgebee-rabbitmq`) and that the `RABBIT_MQ_PASSWORD` matches the secret generated during install.
+Verify that `RABBIT_MQ_HOST` matches your service name (default `rabbitmq`) and that `RABBIT_MQ_USERNAME` (default `user`) and `RABBIT_MQ_PASSWORD` match the broker.
 
 #### 4. Ingress 502 Bad Gateway / WebSocket EOF
 If the NudgeBee web UI loads but live events, agent connections, or NuBi AI chat stream disconnect unexpectedly:
 
 **Resolution:**
-Ensure your Ingress controller is configured for long-lived WebSocket connections. For NGINX Ingress, apply these annotations:
+Ensure your Ingress allows long-lived WebSocket connections. ingress-nginx supports WebSockets without extra configuration; raise the read and send timeouts on the relay and app Ingresses:
 ```yaml
 metadata:
   annotations:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    nginx.ingress.kubernetes.io/websocket-services: "relay-server"
 ```
 
 #### 5. Control Plane OOMKilled (Exit Code 137)
@@ -776,9 +870,9 @@ kubectl get pods -n nudgebee -o jsonpath='{range .items[*]}{.metadata.name}{"\t"
 ```
 
 **Resolution:**
-If `OOMKilled` appears, adjust the container memory limits in your `values.yaml`:
+If `OOMKilled` appears, move to a larger [sizing tier](#sizing-tiers), or raise that service's limits in your `values.yaml` (the key is the service name, for example `services-server`):
 ```yaml
-services_server:
+services-server:
   resources:
     requests:
       cpu: "500m"
@@ -790,7 +884,7 @@ services_server:
 
 ---
 
-## 8. Uninstall NudgeBee
+## 9. Uninstall NudgeBee
 
 To completely remove NudgeBee from your cluster:
 
@@ -799,7 +893,14 @@ helm uninstall nudgebee --namespace nudgebee --kube-context $KUBE_CONTEXT
 ```
 
 :::caution
-This removes all NudgeBee components and data — **including the bundled agent**, which shares the same Helm release. Make sure to back up any data you need before uninstalling.
+This removes the NudgeBee components — **including the bundled agent**, which shares the same Helm release. It does **not** delete the data volumes of the bundled PostgreSQL, RabbitMQ, Redis and Qdrant: a reinstall into the same namespace picks up the old data and passwords. To remove everything, delete those volumes (or the namespace) afterwards:
+
+```shell
+kubectl get pvc -n nudgebee
+kubectl delete namespace nudgebee
+```
+
+Back up any data you need first.
 :::
 
 ---
@@ -811,3 +912,10 @@ Your NudgeBee server is running, and the cluster it runs on is already connected
 1. **[Install the NudgeBee Agent](../agent/installation/index.md)** on each **additional** Kubernetes cluster you want to monitor — this is how NudgeBee gets visibility into workloads outside the control-plane cluster.
 2. **[Configure Integrations](../../integrations/index.md)** — connect your observability tools, notification channels, and LLM provider to unlock the full platform.
 3. **[Explore the Getting Started Guide](../../features/index.md)** — see the recommended setup order and what to do after your first login.
+
+## Related
+
+- [Upgrade](./upgrade.md)
+- [Configuration Options](./secret_configs.md)
+- [Helm Values Reference](./helm_values.md)
+- [Agent Installation](../agent/installation/index.md)

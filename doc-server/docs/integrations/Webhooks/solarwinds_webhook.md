@@ -18,7 +18,7 @@ SolarWinds alert fires
 SolarWinds Webhook Notification (HTTP POST)
         │
         ▼
-NudgeBee  /webhook/solarwinds
+NudgeBee  /api/webhooks/solarwinds
         │
         ├── Parse alert type and extract entity/metric info
         ├── Match impacted entity to a Kubernetes workload
@@ -28,14 +28,16 @@ NudgeBee  /webhook/solarwinds
 
 ---
 
-## Step 1: Copy the Webhook URL from NudgeBee
+## Step 1: Create the Webhook in NudgeBee and Copy Its URL
 
-1. In NudgeBee, navigate to **Integrations** > **Webhooks**
-2. Select **SolarWinds**
-3. Copy the webhook endpoint URL — it will look like:
+1. In NudgeBee, navigate to **Admin** > **Integrations** > **Webhooks**
+2. Select **SolarWinds Webhook** and click **Add Solarwinds Webhook Account**. Enter a name, select the account, and click **Save**.
+3. Copy the webhook endpoint URL from the integration's **URL** column — it will look like:
    ```
-   https://<your-nudgebee-url>/webhook/solarwinds
+   https://<your-nudgebee-domain>/api/webhooks/solarwinds?token=<generated-token>
    ```
+
+   Copy the URL exactly as the integration shows it, including the `token` query parameter — the endpoint rejects a request without it. A URL that does not match this route is answered by the NudgeBee web app with a 404 and never reaches the alert pipeline.
 
 ---
 
@@ -158,8 +160,8 @@ Use this to notify NudgeBee when an alert resolves:
 ## Step 3: Test the Webhook
 
 1. In SolarWinds, use the **Test Notification** button in the webhook settings, or manually trigger one of your alert rules.
-2. In NudgeBee, navigate to **Incidents** — the incident should appear within a few seconds.
-3. Open the incident and confirm:
+2. In NudgeBee, navigate to **Troubleshoot** > **All Events** — the event should appear within a few seconds.
+3. Open the event and confirm:
    - Alert name and severity are populated
    - Impacted workload is linked (for entity-type alerts)
    - Log or metric evidence is attached (if the Observability integration is configured)
@@ -181,12 +183,14 @@ Use this to notify NudgeBee when an alert resolves:
 
 | SolarWinds Severity | NudgeBee Priority |
 |---------------------|-------------------|
-| `CRITICAL` | P1 — Critical |
-| `HIGH` | P1 — Critical |
-| `MEDIUM` | P2 — High |
-| `WARNING` | P2 — High |
-| `LOW` | P3 — Medium |
-| `INFO` | P4 — Info |
+| `CRITICAL` | High |
+| `HIGH` | High |
+| `MEDIUM` | Medium |
+| `WARNING` | Medium |
+| `LOW` | Low |
+| `INFO` | Info |
+
+Any other severity maps to Medium.
 
 ---
 
@@ -215,7 +219,7 @@ When NudgeBee receives an alert, it automatically enriches the incident:
 
 1. Confirm the test notification (Step 3) created an incident in NudgeBee.
 2. Wait for a real SolarWinds alert to fire, or manually trigger one.
-3. Open the incident in NudgeBee and verify:
+3. Open the event in NudgeBee and verify:
    - **Status** is `firing` and transitions to `resolved` when the alert clears
    - **Priority** maps correctly to the alert severity
    - **Workload** is linked for entity-type alerts

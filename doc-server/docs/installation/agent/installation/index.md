@@ -16,13 +16,13 @@ Install the NudgeBee Agent on each Kubernetes cluster you want to monitor. The a
 :::
 
 :::tip
-**Estimated time**: 5–10 minutes per cluster using the quick install script, or 10–15 minutes for manual Helm installation.
+**Estimated time**: 5–10 minutes per cluster using the [install script](./install-script.md) the UI gives you, or 10–15 minutes for manual Helm installation.
 :::
 
 :::info
 **Cloud SaaS users**: You only need to install the agent — the server is managed for you. Generate your agent auth key at [app.nudgebee.com](https://app.nudgebee.com) and skip straight to [Install the Agent](#2-install-the-agent).
 
-**Self-hosted users**: Make sure the [NudgeBee Server is installed](../../server/) first. You will need the Relay Server URL and Collector Server URL from your server setup — see [Self-Hosted Configuration](#4-for-self-hosted-nudgebee).
+**Self-hosted users**: Make sure the [NudgeBee Server is installed](../../server/) first. You will need the Relay Server URL and Collector Server URL from your server setup — see [Self-Hosted Configuration](#5-for-self-hosted-nudgebee).
 :::
 
 :::tip[Self-hosted: the cluster running your server is already covered]
@@ -54,28 +54,55 @@ This page is for every **other** cluster you want monitored. To swap the bundled
 |---|---|---|
 | **Kubernetes cluster** | v1.27 or newer | The cluster you want to monitor |
 | **Helm** | v3.x installed and configured | [Install Helm](https://helm.sh/) if you don't have it |
-| **Linux Kernel** | v4.2 or newer on all nodes | Required for eBPF-based network metrics collection |
+| **Linux Kernel** | 5.8 or newer on all nodes, or a distribution kernel that backports BPF ring buffers (such as RHEL 8's 4.18) | Required by the eBPF node agent, which exits at startup without ring-buffer support. The install script only checks for 4.16, so it won't catch kernels between 4.16 and 5.8 — check yours with `uname -r`. |
 | **NudgeBee Auth Key** | Generated from the NudgeBee UI | **Admin → Integrations → Kubernetes Clusters → Add K8s Account** |
-| **Registry access** | Outbound access to `nudgebee.github.io` (Helm repo) and `ghcr.io/nudgebee` (agent images) | Air-gapped clusters can mirror images internally |
+| **Network access** | Outbound HTTPS (TCP 443) to the hosts in [Network requirements](#network-requirements) | Air-gapped clusters: see [Air-gapped and private registries](#air-gapped-and-private-registries) |
+| **Installer permissions** | Cluster-admin level: the chart creates ClusterRoles and ClusterRoleBindings (for the runner and the event watcher) and a privileged node-agent DaemonSet (host PID) | The namespace must allow privileged pods (Pod Security `privileged`) |
+| **Storage** | A default StorageClass, for the ClickHouse trace store (50 Gi) and, if bundled, Prometheus (50 Gi) and Loki (10 Gi) | Or pick one with `-C` on the install script |
 | **Prometheus** | A running Prometheus instance in the cluster | If omitted, the installer can deploy a bundled instance |
 
 ### Resource Footprint
 
-The agent components are designed to be low overhead:
+Default requests per component:
 
-| Component | Sizing Breakdown | Notes |
-|---|---|---|
-| **Agent Core (without Prometheus)** | **~2 GB RAM, 1-2 CPU cores** | Includes Runner, Node Agent DaemonSet (eBPF), Event Watcher |
-| **Agent with Bundled Observability** | **~5 GB RAM, 2-3 CPU cores** | Includes Prometheus, Alertmanager, and Kube-State-Metrics |
+| Component | CPU request | Memory request (limit) | Storage | When |
+|---|---|---|---|---|
+| Runner | 250m | 1000 Mi (2000 Mi) | — | Always |
+| Event watcher (kubewatch) | 10m | 512 Mi | — | Always |
+| Node agent (DaemonSet, **per node**) | 100m | 500 Mi | — | Unless disabled (`-d`) |
+| OpenTelemetry collector | 250m | 512 Mi | — | Full install (not with `-t true`) |
+| ClickHouse | 100m | 2000 Mi | 50 Gi PVC | Full install (not with `-t true`) |
+| Bundled Prometheus / Loki | — | — | 50 Gi / 10 Gi | Only if the script installs them |
+
+### Network requirements
+
+All outbound, TCP 443:
+
+| Host | Used for |
+|---|---|
+| `relay.nudgebee.com` (`wss://relay.nudgebee.com/register`) | The live connection NuBi and the UI use to run commands in the cluster |
+| `collector.nudgebee.com` | Telemetry, inventory, alerts and configuration |
+| `ghcr.io` (images under `ghcr.io/nudgebee/`) | Agent images: runner, event watcher, node agent, OpenTelemetry collector, ClickHouse, OpenCost, profiler, and the scanner jobs |
+| `nudgebee.github.io` | The agent Helm chart repository |
+| `raw.githubusercontent.com` | The install script and the bundled Prometheus values file |
+| `prometheus-community.github.io`, `grafana.github.io` | Only when the install script installs Prometheus or Loki for you (plus the registries those charts pull from) |
+
+Self-hosted NudgeBee: replace the relay and collector hosts with your own. The agent never calls `api.nudgebee.com`.
+
+Inside the cluster the runner also needs to reach Prometheus, Alertmanager, Loki, ClickHouse and OpenCost on their own ports — allow these if you use egress NetworkPolicies.
 
 ---
 
 ## 2. Install the Agent
 
+### Quick install with the script (what the UI gives you)
+
+The **Finish Setup** step in the UI has a **Helm** tab (the default) and a **Shell Script** tab with a one-line `installation.sh` command. The UI's script command is a minimal install — it passes `-g true -x true -t true`, so no bundled Prometheus and no traces. Run without those flags, the script installs the OpenTelemetry collector and ClickHouse and offers to install a Prometheus stack if it finds none. See the [Install Script Reference](./install-script.md) for every flag. The Helm steps below are a full install; the UI's **Helm** tab, like its script command, is the minimal one.
+
 ### Step 1: Generate Your Auth Key
 
 1. Log in to [app.nudgebee.com](https://app.nudgebee.com) (or your self-hosted NudgeBee UI).
-2. Go to **Admin → Integrations**, open the **Kubernetes Clusters** card, and click **Add K8s Account**.
+2. Go to **Admin → Integrations**, open the **Kubernetes Clusters** card, and click **Add K8s Account** (the dialog is titled *Add Kubernetes Account*).
 3. Name the account after the cluster, mark it Production or Non-production, and click **Next**.
 4. The **Finish Setup** step gives you the install command with your **Auth Key** (`<YOUR_AUTH_KEY>`) in it. Copy the key.
 
@@ -91,8 +118,9 @@ Choose your Kubernetes environment:
 <TabItem value="eks" label="AWS EKS" default>
 
 ```bash
-# 1. Add NudgeBee Helm repository
+# 1. Add the NudgeBee and Prometheus Helm repositories
 helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 
 # 2. Install Prometheus (already have one? see the note below - do not just skip)
@@ -107,15 +135,17 @@ helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
-  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090"
+  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-p-prometheus.nudgebee-agent.svc:9090" \
+  --set nodeAgent.podmonitor.enabled=false
 ```
 
 </TabItem>
 <TabItem value="gke" label="GCP GKE">
 
 ```bash
-# 1. Add NudgeBee Helm repository
+# 1. Add the NudgeBee and Prometheus Helm repositories
 helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 
 # 2. Install Prometheus (already have one? see the note below - do not just skip)
@@ -130,7 +160,8 @@ helm upgrade --install nudgebee-prometheus prometheus-community/kube-prometheus-
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
-  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090"
+  --set globalConfig.prometheus_url="http://nudgebee-prometheus-kube-p-prometheus.nudgebee-agent.svc:9090" \
+  --set nodeAgent.podmonitor.enabled=false
 ```
 
 </TabItem>
@@ -158,13 +189,14 @@ helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
 helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
 helm repo update
 
-# 2. Deploy NudgeBee Agent with minimal local footprint
+# 2. Deploy NudgeBee Agent with the node agent off (needed on KinD)
 helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
   --namespace nudgebee-agent --create-namespace \
   --set runner.nudgebee.auth_secret_key="<YOUR_AUTH_KEY>" \
-  --set nodeAgent.resources.requests.cpu="50m" \
-  --set nodeAgent.resources.requests.memory="64Mi"
+  --set nodeAgent.enabled=false
 ```
+
+On KinD turn the node agent off (as above): KinD nodes can't run the eBPF node agent. On Minikube you can keep it by dropping `--set nodeAgent.enabled=false`. See [Local Setup](../local-setup.md).
 
 </TabItem>
 </Tabs>
@@ -219,12 +251,13 @@ kubectl get pods -n nudgebee-agent
 - `nudgebee-agent-runner-*`: `1/1 Running`
 - `nudgebee-agent-node-agent-*` (DaemonSet): `1/1 Running` on every worker node
 - `nudgebee-agent-forwarder-*` (event watcher): `1/1 Running`
+- On a full install also the OpenTelemetry collector and ClickHouse pods
 
 ### 2. Inspect Agent Connection Logs
 ```bash
 kubectl logs -n nudgebee-agent -l app=nudgebee-agent-runner --tail=50
 ```
-Look for log confirmation: `Connected to NudgeBee Relay successfully` and `Registration acknowledged`.
+Look for `relay connected` and `starting telemetry poster`. `relay session ended` means the live connection dropped.
 
 ### 3. Check the NudgeBee Dashboard
 1. Open [app.nudgebee.com](https://app.nudgebee.com) or your self-hosted dashboard.
@@ -258,9 +291,10 @@ Use this diagnostic reference to resolve common agent deployment and communicati
 | Error Symptom | Cause | Resolution |
 |---|---|---|
 | **`401 Unauthorized / Invalid API Key`** | Incorrect or revoked Auth Key | Verify the key under **Admin → Integrations → Kubernetes Clusters** and re-run `helm upgrade` with `--set runner.nudgebee.auth_secret_key="<KEY>"`. |
-| **`node-agent CrashLoopBackOff` (eBPF load failure)** | Kernel < 4.2 or non-standard distro (Bottlerocket, Talos, GKE COS) | Check kernel with `uname -r` and ensure `/sys/kernel/debug` is accessible. As a last resort, drop the DaemonSet with `--set nodeAgent.enabled=false` (loses eBPF network metrics and profiling). |
+| **`node-agent CrashLoopBackOff` (eBPF load failure)** | Kernel older than 5.8 without BPF ring-buffer support, or non-standard distro (Bottlerocket, Talos, GKE COS) | Check kernel with `uname -r` and ensure `/sys/kernel/debug` is accessible. As a last resort, drop the DaemonSet with `--set nodeAgent.enabled=false` (loses eBPF network metrics and profiling). |
 | **No alerts in NudgeBee, everything else working** | No Alertmanager receiver points at the agent | Add the receiver. See [Alert Forwarding](../connect/alertmanager.md). Nothing reports this on its own. |
 | **`WebSocket Dial Timeout / EOF`** | Outbound firewall or NetworkPolicy blocking TCP 443 | Verify egress to `wss://relay.nudgebee.com` (SaaS) or your relay Ingress. Ensure port 443 is open. |
+| **`x509: certificate signed by unknown authority`** | Collector or relay served by an internal CA the agent does not trust | Mount the CA into the runner and set `SSL_CERT_DIR`. See [Collector or relay behind a private CA](../operate/helm_values.md#collector-or-relay-behind-a-private-ca). |
 | **`Prometheus connection refused / empty metrics`** | Wrong Prometheus service URL or missing KSM | Point `globalConfig.prometheus_url` to valid service DNS (e.g. `http://<service>.<namespace>.svc:9090`). |
 | **`CRD / Webhook timeout error`** | Prometheus operator CRDs not yet established | Wait 30 seconds and re-run the `helm upgrade` command. |
 
@@ -277,7 +311,7 @@ kubectl logs daemonset/nudgebee-agent-node-agent -n nudgebee-agent
 ```
 
 **Resolution:**
-- Verify that your Kubernetes node kernel is version **4.2 or higher** (`uname -r`).
+- Verify that your Kubernetes node kernel is **5.8 or higher**, or a distribution kernel that backports BPF ring buffers such as RHEL 8 (`uname -r`). The node agent logs `the kernel does not support BPF ring buffers` and exits otherwise.
 - For container-optimized operating systems (e.g. AWS Bottlerocket or GKE COS), ensure debugfs and bpf filesystems are mounted.
 - If running on microVMs or kernels with restricted eBPF, disable the node agent entirely. The rest of the agent (inventory, events, metrics, alerts) keeps working; you lose eBPF network metrics and profiling:
   ```shell
@@ -293,7 +327,7 @@ If the cluster connects in the UI but workload CPU and memory graphs remain empt
 **Diagnose:**
 ```shell
 # Test Prometheus DNS resolution from inside the agent runner pod
-kubectl exec -it deployment/nudgebee-agent-runner -n nudgebee-agent -- wget -qO- http://nudgebee-prometheus-kube-prometheus-prometheus.nudgebee-agent.svc:9090/api/v1/query?query=up
+kubectl exec -it deployment/nudgebee-agent-runner -n nudgebee-agent -- wget -qO- http://nudgebee-prometheus-kube-p-prometheus.nudgebee-agent.svc:9090/api/v1/query?query=up
 ```
 
 **Resolution:**
@@ -303,7 +337,7 @@ Ensure `globalConfig.prometheus_url` points to the exact Prometheus service runn
 If your cluster enforces default-deny egress NetworkPolicies, the runner will fail with `WebSocket dial timeout`:
 
 **Resolution:**
-Apply a NetworkPolicy allowing outbound TCP traffic on port 443 from the `nudgebee-agent` namespace:
+Apply a NetworkPolicy allowing outbound TCP traffic on port 443 from the `nudgebee-agent` namespace. This example allows only 443 and DNS — also allow the in-cluster ports of your Prometheus (9090), Alertmanager, Loki (3100), ClickHouse (8123, 9000) and OpenCost; otherwise those components show as Disconnected:
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -327,17 +361,33 @@ spec:
           port: 53
 ```
 
+#### 4. Collector or Relay Behind a Private CA
+Common on self-hosted installs where the collector Ingress uses a certificate from an internal CA. The runner pod is Running and healthy, but the logs repeat:
+
+```
+tls: failed to verify certificate: x509: certificate signed by unknown authority
+```
+
+Nothing reaches the server while this happens, and no other component reports a problem.
+
+**Diagnose:**
+```shell
+kubectl logs deployment/nudgebee-agent-runner -n nudgebee-agent | grep x509
+```
+
+**Resolution:**
+Mount your CA into the runner and set `SSL_CERT_DIR`. The full recipe is in [Collector or relay behind a private CA](../operate/helm_values.md#collector-or-relay-behind-a-private-ca). Disabling certificate verification is not supported.
 
 ---
 
-## 4. For Self-Hosted NudgeBee
+## 5. For Self-Hosted NudgeBee
 
 If you are running a self-hosted NudgeBee instance, the agent needs to know where your server is. Instead of the `--set` flags in the SaaS installation, create a `values.yaml` file that points to your server's Relay and Collector URLs.
 
 :::info
 **Where do I find these URLs?** You configured them during [Server Installation](/docs/installation/server/).
-- **Without Ingress**: `ws://relay-server.nudgebee.svc:8080` and `http://k8s-collector.nudgebee.svc`
-- **With Ingress**: `wss://relay.yourcompany.com` and `https://collector.yourcompany.com`
+- **Without Ingress**: `ws://relay-server.nudgebee.svc:8080/register` and `http://k8s-collector.nudgebee.svc`
+- **With Ingress**: `wss://relay.yourcompany.com/register` and `https://collector.yourcompany.com`
 :::
 
 ### Self-Hosted Values File
@@ -370,7 +420,7 @@ Then follow [Verify the Installation](#3-verify-the-installation) above to confi
 
 ---
 
-## 5. Advanced Configuration
+## 6. Advanced Configuration
 
 These options are for specific environments or requirements. You can skip this section for a standard installation.
 
@@ -396,6 +446,22 @@ helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
 
 Setting both fails the install. [Permissions and access mode](../operate/helm_values.md#permissions-and-access-mode) lists exactly what each one changes.
 
+### Air-gapped and private registries
+
+Mirror the images to your registry and point the chart at it with these values (the UI's *Image Registry* field and the script's `-i` flag currently have no effect):
+
+| Image | Value |
+|---|---|
+| Runner | `runner.image.repository` |
+| Event watcher | `kubewatch.image.repository` |
+| Node agent | `nodeAgent.image.repository` |
+| OpenTelemetry collector | `opentelemetry-collector.image.repository` |
+| ClickHouse | `clickhouse.image.registry` |
+| OpenCost | `opencost.opencost.exporter.image.registry` |
+| Profiler | `runner.profilerImage` |
+
+Scanner job images (CIS and vulnerability scans) are chosen by the NudgeBee server, not the chart.
+
 ### Additional Configuration References
 
 - **[Alert Forwarding](../connect/alertmanager.md)** — Point your Alertmanager at the agent. Without it NudgeBee gets no alerts.
@@ -404,7 +470,9 @@ Setting both fails the install. [Permissions and access mode](../operate/helm_va
 - **[Kubernetes Provider Setup](./k8s-provider/)** — Provider-specific instructions for GKE, AKS, and other managed Kubernetes services.
 - **[Logging Integration](../connect/logging/)** — Connect log sources (ELK, Loki, etc.) to the agent.
 - **[Tracing Integration](../connect/tracing/)** — Connect tracing backends for distributed tracing.
+- **[Install Script Reference](./install-script.md)** — Every `installation.sh` flag and prompt.
 - **[Upgrade Guide](./upgrade.md)** — How to upgrade an existing agent to a newer version.
+- **[Uninstall the Agent](../operate/uninstall.md)** — Remove the agent and what Helm leaves behind.
 
 ---
 

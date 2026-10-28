@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Configuration Reference
 
-Forager is configured via a YAML config file. All fields can also be set via environment variables with the `NB_` prefix (env vars take precedence over the file).
+Forager is configured via a YAML config file. The top-level and cloud provider fields can also be set via environment variables with the `NB_` prefix (env vars take precedence over the file). Datasources can only be set in the file.
 
 ## Config File Location
 
@@ -74,31 +74,25 @@ datasources:
       password: <YOUR_PASSWORD>
 
   - name: orders-mongo
-    type: mongodb_proxy
+    type: mongodb
     host: 10.0.1.90
     port: 27017
     database: orders
-    auth_source: admin
-    replica_set: rs0
     tls_enabled: true
     credentials:
       username: nudgebee
       password: <YOUR_PASSWORD>
 
   - name: events-kafka
-    type: kafka_proxy
+    type: kafka
     brokers: 10.0.1.100:9092,10.0.1.101:9092
-    sasl_mechanism: SCRAM-SHA-512
     tls_enabled: true
-    credentials:
-      sasl_username: nudgebee
-      sasl_password: <YOUR_PASSWORD>
 
   - name: internal-prometheus
-    type: http_proxy
-    base_url: http://prometheus.internal:9090
-    auth_type: bearer
+    type: prometheus          # or http
+    url: http://prometheus.internal:9090
     credentials:
+      auth_type: bearer
       bearer_token: <YOUR_TOKEN>
 
   # SSH — fixed host
@@ -145,6 +139,7 @@ datasources:
 | `relay_url` | `NB_RELAY_URL` | Yes | NudgeBee Relay Server WebSocket URL |
 | `access_key` | `NB_ACCESS_KEY` | Yes | Agent access key |
 | `access_secret` | `NB_ACCESS_SECRET` | Yes | Agent access secret |
+| `signing_public_key` | `NB_SIGNING_PUBLIC_KEY` | Recommended | Public key used to verify commands signed by NudgeBee. Shown with the install command in the UI; Helm value `forager.signingPublicKey`. |
 | `data_dir` | `NB_DATA_DIR` | No | Local storage directory (default: `/var/lib/nudgebee` on Linux, `/data` in Docker) |
 | `health_check_interval_min` | `NB_HEALTH_CHECK_INTERVAL_MIN` | No | Health check interval in minutes (default: `10`) |
 
@@ -161,10 +156,12 @@ datasources:
 
 ## Datasource Fields
 
+The `type` names below are the config-file types. The integration types in the NudgeBee UI (for example `mongodb_proxy`, `kafka_proxy`, `http_proxy`) differ, and MongoDB replica sets and Kafka SASL are only available through integrations configured in the UI.
+
 | Field | Required | Description |
 |-------|----------|-------------|
 | `name` | Yes | Unique identifier |
-| `type` | Yes | Datasource type (see [supported types](./index.md#supported-datasources)) |
+| `type` | Yes | Datasource type. In this file use `postgresql`, `mysql`, `mssql`, `clickhouse`, `oracle`, `mongodb`, `redis`, `kafka`, `http`, `prometheus`, `ssh`, `discovery` or `mcp`. Any other type is skipped with an `unsupported local datasource type` warning in the log. |
 | `host` | Yes* | Hostname or IP address (*optional for SSH dynamic mode — see below) |
 | `port` | Yes | Port number |
 | `database` | No | Database name (SQL datasources) |
@@ -174,14 +171,9 @@ datasources:
 | `credential_ref` | When using cloud source | Secret name/ARN/resource path |
 | `credentials` | When `local` | Inline credential key-value pairs |
 | `allowed_hosts` | No | List of CIDR ranges or hostnames for SSH dynamic mode (omit `host` to enable) |
-| `known_hosts` | No | SSH only. Path to an OpenSSH `known_hosts` file used to verify the server host key (see [host key verification](#ssh-datasource-notes)) |
-| `host_key` | No | SSH only. A single SSH public key in standard format (e.g. `ssh-ed25519 AAAAC3Nza...`) used to verify the server host key |
 | `brokers` | Yes (Kafka) | Comma-separated list of broker addresses (`host:port`) |
-| `sasl_mechanism` | No | Kafka SASL mechanism. Default `none` |
-| `replica_set` | No | MongoDB replica set name |
-| `auth_source` | No | MongoDB authentication database. Default `admin` |
-| `base_url` | Yes (HTTP) | Base URL of the endpoint, e.g. `http://prometheus.internal:9090` |
-| `auth_type` | No | HTTP auth method: `none` (default), `basic`, `bearer`, `custom_header` |
+| `url` | Yes (HTTP, Prometheus) | Base URL of the endpoint, e.g. `http://prometheus.internal:9090` |
+| `credentials.auth_type` | No | HTTP auth method: `none` (default), `basic`, `bearer`, `custom_header`. Set it inside `credentials`. |
 | `tls_skip_verify` | No | HTTP only. Skip TLS certificate verification. Not recommended outside a lab |
 | `transport` | MCP only | `http` or `stdio` |
 | `url` | MCP HTTP | URL of the MCP server (Forager-reachable) |
@@ -192,16 +184,15 @@ datasources:
 
 ## Common Credential Keys
 
-These are the credential keys used by each datasource type:
+These are the credential keys used by each datasource type. Any key can instead be given as `<key>_file` (for example `private_key_file` or `password_file`) holding a path; Forager reads the file and uses its contents. Setting both `<key>` and `<key>_file` is an error.
 
 | Datasource | Keys |
 |------------|------|
 | `postgresql`, `mysql`, `mssql`, `clickhouse`, `oracle` | `username`, `password` |
 | `redis` | `password` (optional) |
-| `mongodb_proxy` | `username`, `password` |
-| `kafka_proxy` | `sasl_username`, `sasl_password` (when `sasl_mechanism` is not `none`) |
-| `http_proxy` | Depends on `auth_type`: `username`/`password` for basic, `bearer_token` for bearer, `custom_header_name`/`custom_header_value` for a custom header |
-| `rabbitmq` | `username`, `password` |
+| `mongodb` | `username`, `password` (authenticates against the `admin` database) |
+| `kafka` | None. SASL is not configurable in this file, so Forager connects without SASL. |
+| `http`, `prometheus` | Depends on `auth_type`: `username`/`password` for basic, `bearer_token` for bearer, `custom_header_name`/`custom_header_value` for a custom header |
 | `ssh` | `username`, `private_key` (PEM format); optionally `password` or `passphrase` |
 | `mcp` (HTTP) | `auth_type` (`bearer`/`basic`/`api_key`/`custom_header`/`oauth2`) plus the matching auth fields: `bearer_token`, `username`/`password`, `custom_header_name`/`custom_header_value`, or `oauth_token_url`/`oauth_client_id`/`oauth_client_secret`/`oauth_scope`/`oauth_audience`. See the [MCP integration guide](../../integrations/MCP/index.md) for the full matrix. |
 
@@ -224,7 +215,7 @@ These are the credential keys used by each datasource type:
   credential_ref: "projects/my-project/secrets/fleet-ssh-creds/versions/latest"
 ```
 
-**Authentication** — SSH supports key-based and password-based auth. For key-based auth, the `private_key` credential must contain the **actual key contents** in PEM format (not a file path). If the key has a passphrase, include it as `passphrase`.
+**Authentication** — SSH supports key-based and password-based auth. For key-based auth, the `private_key` credential must contain the **actual key contents** in PEM format. To keep the key in a file instead, set `private_key_file` to its path. If the key has a passphrase, include it as `passphrase`.
 
 ```yaml
 # Static mode with local private key
@@ -242,32 +233,6 @@ These are the credential keys used by each datasource type:
     passphrase: optional-if-key-is-encrypted
 ```
 
-**Host key verification** — By default Forager does not verify the server host key, which leaves the connection unprotected against man-in-the-middle attacks. Set one of the following on the datasource to enable verification:
-
-- `known_hosts` — path to an OpenSSH `known_hosts` file. Use this for fleets or when you maintain a shared host-key file.
-- `host_key` — a single SSH public key in standard format (e.g. `ssh-ed25519 AAAAC3Nza...`). Use this to pin one server's key inline.
-
-If both are set, `known_hosts` takes precedence. When neither is set, verification is skipped and Forager logs a warning at startup.
-
-```yaml
-# Static mode with host key pinned inline
-- name: web-server
-  type: ssh
-  host: 10.0.1.80
-  port: 22
-  host_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA..."
-  credential_source: aws_sm
-  credential_ref: "prod/ssh-web-server"
-
-# Dynamic mode verifying against a known_hosts file
-- name: ssh-fleet
-  type: ssh
-  port: 22
-  allowed_hosts:
-    - "10.0.1.0/24"
-  known_hosts: /etc/nudgebee/ssh_known_hosts
-  credential_source: gcp_sm
-  credential_ref: "projects/my-project/secrets/fleet-ssh-creds/versions/latest"
-```
+**Host key verification** — Forager does not verify the server host key for SSH datasources defined in this file, which leaves the connection unprotected against man-in-the-middle attacks, and logs a warning at startup. `known_hosts` and `host_key` are not read from this file. Restrict `allowed_hosts` to the hosts you need and keep the network path between Forager and the servers trusted.
 
 **Windows support** — Forager works with Windows OpenSSH Server. Windows uses PowerShell as the default shell, so commands should use `;` instead of `&&` to chain operations.

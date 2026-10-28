@@ -44,6 +44,7 @@ Update the environment variables in the RAG server to connect to the deployed mo
 
 ```bash
 EMBEDDINGS_PROVIDER=huggingface
+EMBEDDINGS_MODEL_NAME=<embedding model name>
 EMBEDDINGS_PROVIDER_API_KEY=<API key for Hugging Face>
 EMBEDDINGS_PROVIDER_API_ENDPOINT=<Hugging Face embeddings endpoint>
 ```
@@ -61,6 +62,15 @@ LLM_PROVIDER_API_KEY=<Hugging Face API token>
 LLM_PROVIDER_API_ENDPOINT=<Hugging Face model endpoint>
 ```
 
+## Add it in NudgeBee (UI)
+
+In **Admin → Integrations → LLM → Add LLM Provider**, choose **huggingface** and enter the **LLM Model Name**, **API Key** and **API Endpoint** (required). For a fine-tuned model, set **Adapter ID**, and **Require Adapter ID** if the endpoint must always receive it. See [Add an LLM Provider](../add-llm-provider.md).
+
 ## **Conclusion**
 
 You have successfully deployed the NudgeBee AI model on Hugging Face using the UI and configured both the RAG server and LLM server to use the deployed model.
+
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [LLM Integrations](../index.md)

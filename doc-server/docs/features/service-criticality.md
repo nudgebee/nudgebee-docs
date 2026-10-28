@@ -5,6 +5,8 @@ sidebar_label: Service Criticality
 
 # Service Criticality
 
+**Kubernetes cluster → Troubleshoot → Service Criticality**
+
 Criticality tells NudgeBee how much each workload matters, so incident triage surfaces failures on your important services first and downranks the noise from demo, test and internal tooling.
 
 NudgeBee infers a baseline automatically from topology and AI. You review and correct it here, and your edits are kept — the automatic refresh never overwrites them.
@@ -23,29 +25,28 @@ The **Source** column tells you which of three paths set the tier, and that matt
 
 | Source | Set by | Authority |
 |---|---|---|
-| `user` | An operator, on this screen | Authoritative and sticky. Never overwritten. |
-| `fact_signal` | Derived from observed topology | Advisory. |
-| `llm_inferred` | Inferred by AI | Advisory. |
+| **You** | An operator, on this screen | Authoritative and sticky. Never overwritten. |
+| **Auto · topology** | Derived from observed topology and labels | Advisory. |
+| **Auto · LLM** | Reviewed by AI | Advisory. |
+| **Default** | No tier set — treated as `medium` | — |
 
 ### What the automatic derivation looks at
 
 In precedence order:
 
-1. **An operator-declared label on the workload.** NudgeBee reads common tier conventions — `critical`, `tier-0`, `tier0`, `p0`, `gold` map to `critical`; `high`, `tier-1`, `p1`, `silver` to `high`; `medium`, `tier-2`, `p2`, `bronze` to `medium`; `low`, `tier-3`, `p3` to `low`. Anything it cannot classify confidently, including bare numbers, is ignored rather than guessed at.
+1. **An operator-declared label on the workload.** NudgeBee reads common tier conventions — `tier-0`, `tier0`, `p0`, `gold`, and any value that contains the word `critical`, map to `critical`; `high`, `tier-1`, `tier1`, `p1`, `silver` to `high`; `medium`, `tier-2`, `tier2`, `p2`, `bronze` to `medium`; `low`, `tier-3`, `tier3`, `p3` to `low`. Because any value containing `critical` counts, a value such as `non-critical` is also read as `critical` — avoid it unless that is what you mean. Anything else, including bare numbers, is ignored rather than guessed at.
 2. **Customer-facing position.** A workload behind an ingress or load balancer sits on the request path, and is derived as `high`.
 3. **Dependency fan-in.** A workload that ten or more services depend on is a shared hub — a datastore, queue or gateway — and is derived as `high`.
 
 A workload with none of those signals is left untiered rather than given a noise row.
 
-:::note Automatic derivation stops at `high`
-`critical` is reserved for an explicit human decision. Most ingress-backed workloads are internal APIs, not genuinely customer-critical, so NudgeBee surfaces them as `high` for you to promote rather than inflating the top tier on its own.
-:::
+Apart from an operator label, these rules never set `critical`. An AI review of the candidates then confirms them, and can **promote** a workload to `critical` or **demote** it to `low`. The derivation refreshes nightly; your own edits are never overwritten.
 
 ## What a tier actually changes
 
 Criticality is resolved **per event**, against the specific workload that alerted. Two workloads with the same name in different accounts get their own tiers.
 
-**Every tier adjusts the alert's score:**
+With **AI alert prioritisation** on ([Tenant Settings → Features](./tenant-settings.md#features)), **every tier adjusts the alert's score:**
 
 | Tier | Score adjustment |
 |---|---|
@@ -56,7 +57,7 @@ Criticality is resolved **per event**, against the specific workload that alerte
 
 Those magnitudes sit alongside the other scoring terms — enough to reorder a queue, not enough to overrule the alert's own semantics.
 
-**Only an operator's tier moves the priority band.** A tier you set yourself can overrule a band the AI verdict capped lower:
+Also only with AI alert prioritisation on, **only an operator's tier moves the priority band.** A tier you set yourself can overrule a band the AI verdict capped lower:
 
 | Your tier | Band effect |
 |---|---|
@@ -68,7 +69,7 @@ Auto-derived tiers stay advisory: they move the score, never the band. This is t
 
 ## Reviewing
 
-The table lists Namespace, Workload, Kind, Criticality, Source and **Why** — the rationale behind the tier, such as `ingress/LB-backed (customer-facing request path)` or `14 services depend on it (shared dependency)`. Change the tier inline; the row's source becomes `user` and stops being touched by the refresh.
+The table lists Namespace, Workload, Kind, Criticality, Source and **Why** — the rationale behind the tier, such as `ingress/LB-backed (customer-facing request path)` or `14 services depend on it (shared dependency)`. Use the row menu to **Set** a tier (needs write access); the row's source becomes **You** and stops being touched by the refresh. On a row you have set, **Reset to derived** hands it back to the automatic tier. Use **Search workload** to find a workload by name, filter by namespace and tier, or turn on **Only classified** to show only workloads with a tier.
 
 Start with the workloads NudgeBee derived as `high` and decide which are genuinely `critical`, then demote the demo and test namespaces to `low`. Those two passes do most of the work.
 

@@ -1,3 +1,5 @@
+# GCP
+
 ## Add GCP Account Integration
 
 To connect your GCP account, you must first enable the required APIs, create a **Service Account** in Google Cloud, and grant it the necessary permissions. NudgeBee then onboards your projects through a short three-step wizard.
@@ -52,7 +54,7 @@ gcloud iam service-accounts keys create nudgebee-sa-key.json \
 
 ##### 1. Enable Required GCP APIs
 
-NudgeBee needs certain GCP APIs enabled on your project to collect resource data, metrics, and recommendations. If an API is not enabled, NudgeBee will not be able to monitor the corresponding service.
+NudgeBee needs certain GCP APIs enabled on your project to collect resource data, metrics, and recommendations. If an API is not enabled, NudgeBee will not be able to monitor the corresponding service. The table below covers the main APIs; it is not the list of supported services. See [Supported Cloud Services](./supported-services.md) for every GCP service NudgeBee collects.
 
 Go to [**APIs & Services > Enable APIs and Services**](https://console.cloud.google.com/apis/library) and enable the following:
 
@@ -106,6 +108,7 @@ This is required for cost data. Enable it in the GCP Console:
 Enter a **Display Name** and paste the entire **Service Account Key (JSON)** you downloaded for the service account. Click **Check Permissions** to validate the key, then **Next**.
 
 * **Display Name** — a friendly name for this integration (e.g. `GCP Production Account`).
+* **Production** / **Non-production** — the account type. Production accounts score alerts at full weight in triage. It also drives the **Production** / **Non-production** (Environment) filter on Optimize views.
 * **Service Account Key (JSON)** — open the downloaded JSON key file and paste its entire contents. Treat this value like a password.
 
 ### Step 2 — Select Projects

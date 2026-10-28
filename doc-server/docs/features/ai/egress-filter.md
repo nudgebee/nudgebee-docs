@@ -5,7 +5,9 @@ sidebar_label: Egress Filter
 
 # Egress Filter
 
-**Admin → AI & Tools → Egress Filter**
+**AI & Tools → Security → Egress Filter** (Enterprise edition)
+
+The **Security** tab has two parts: **Egress Filter**, described here, and **[Tool Approvals (Beta)](./tool-approvals.md)**.
 
 Scans what NudgeBee sends to an LLM for secrets and personal data, and either records it, masks it, or refuses the call. This is the control you point at when someone asks what stops a leaked credential in a log line — or a patient name in a ticket body — from reaching a model provider.
 
@@ -14,7 +16,7 @@ Two independent detectors sit behind the same page:
 | Detector | Looks for | What it does on a match |
 |---|---|---|
 | **Secret filter** | Credentials — API keys, tokens, private keys, connection strings | Records, blocks, or masks, depending on the mode you choose. Masking is one-way. |
-| **PII / PHI scrubbing** | Emails, names, phone numbers, locations | Swaps each value for a reversible token before the model sees it, then puts the real value back in the answer. |
+| **PII / PHI scrubbing** | Emails and phone numbers; names and locations where the install supports named-entity recognition | Swaps each value for a reversible token before the model sees it, then puts the real value back in the answer. |
 
 They run in that order on every outbound call — the secret filter first (cheap, in-process), then the scrubber.
 
@@ -34,7 +36,7 @@ This page governs **NudgeBee's own agents**. Traffic your own applications send 
 
 ![Egress Filter settings: the secret filter toggle, action-on-detection mode, and excluded agents](./img/egress-filter-secrets.png)
 
-### Secret filter enabled
+### Secret Filter
 
 Turns scanning on or off for this tenant. When off, no outbound payload is scanned for credentials — the PII scrubber below is unaffected.
 
@@ -46,7 +48,9 @@ Turns scanning on or off for this tenant. When off, no outbound payload is scann
 | **Enforce** | Blocks the call. The conversation gets an error carrying an audit ID, never the matched value. |
 | **Redact** | Replaces the secret with a `[REDACTED:<rule>]` marker and forwards the rest. |
 
-If your tenant has not set a mode, it inherits the platform default, and the page tells you which one that is.
+If your tenant has not set a mode, it inherits the platform default, and the page tells you which one that is. Out of the box the filter is on, secret scanning is on, and the mode is **Detect**.
+
+**Tool output is a separate case.** While secret scanning is on, credential values in a tool's output (a pod's environment, a log line with a connection string) are replaced with a `[REDACTED:<rule>]` marker before the model sees the output, whichever mode you choose. The mode governs only the outbound request.
 
 Redaction is **one-way**. Unlike PII tokens, a redacted secret is never restored — putting a credential back into a model's answer would re-leak it.
 
@@ -66,7 +70,7 @@ The shipped rule set covers the credential formats whose presence in an outbound
 - Database URLs with an embedded password, and generic `password=` / `token=` style key-value pairs
 - US Social Security numbers and Luhn-valid card numbers
 
-One further detector, `high-entropy-blob`, flags any random-looking string of 32 characters or more. It is the broadest rule and the noisiest on operational text — image digests, JWT bodies and session IDs all trip it — so expect it to dominate your Detect-mode events.
+One further detector, `high-entropy-blob`, flags any random-looking string of 32 characters or more. It is off by default; turn it on with **Detect High-Entropy Secrets (Experimental)**. It is the broadest rule and the noisiest on operational text — image digests, JWT bodies and session IDs all trip it — so expect it to dominate your Detect-mode events.
 
 Rules are identified by a stable ID (`aws-access-key-id`, `gcp-api-key`, …) that appears in events, metrics, and the detail view below. The matched value itself is never used as a metric label.
 
@@ -100,14 +104,14 @@ A separate detector, off by default and enabled per tenant.
 
 Each detected value is replaced with a numbered token — `[PERSON_1]`, `[PHONE_2]` — before the payload leaves. The model reasons over the tokens; NudgeBee substitutes the real values back into the answer before you see it. The token-to-value map lives only for the duration of that request and is never written to disk, so the same person is `[PERSON_1]` consistently within one call and unrelated to `[PERSON_1]` in the next.
 
-Scrubbing runs in the `ml-k8s-server` component, so a self-hosted install needs it deployed for this to work.
+By default scrubbing runs inside NudgeBee and covers **EMAIL** and **PHONE** only. Names and locations (**PERSON**, **LOCATION**) need the HTTP scrubbing backend, which runs in the `ml-k8s-server` component, with named-entity recognition turned on. Until then the page shows that names and locations are not scrubbed by the current backend, and those options are unavailable.
 
 | Category | How it is detected |
 |---|---|
 | **EMAIL** | Pattern match — high precision. |
 | **PHONE** | Pattern match — E.164, US parenthesised, or hyphen-separated formats. |
-| **PERSON** | Named-entity recognition. |
-| **LOCATION** | Named-entity recognition, including geopolitical entities. |
+| **PERSON** | Named-entity recognition (HTTP backend only). |
+| **LOCATION** | Named-entity recognition, including geopolitical entities (HTTP backend only). |
 
 :::note What is never scrubbed, and what is never restored
 **IP addresses are deliberately left alone** — they are core investigation signal for incident work.
@@ -117,7 +121,7 @@ Scrubbing runs in the `ml-k8s-server` component, so a self-hosted install needs 
 
 ### Outage policy
 
-PII scrubbing depends on `ml-k8s-server`. This setting decides what happens when that service is unreachable:
+This setting decides what happens when the scrubber cannot run — for example when `ml-k8s-server` is unreachable on an install that uses the HTTP backend:
 
 | Mode | Behaviour when the scrubber is down |
 |---|---|

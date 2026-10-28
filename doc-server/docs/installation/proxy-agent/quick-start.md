@@ -26,7 +26,7 @@ Connect your first database to NudgeBee in 5 minutes using the Proxy Agent.
 
 ![Add Proxy Agent Account dialog](/img/proxy-agent/add_proxy_agent_dialog.gif)
 
-4. Copy the **Relay URL**, **Access Key**, and **Access Secret** shown after creation. You'll need these to start the agent.
+4. The **Proxy Agent Credentials** dialog shows the **Access Key** and **Access Secret** — save them now, the secret isn't shown again — and ready-made install commands for **Linux**, **macOS**, **Windows**, **Docker**, **Docker Compose** and **Helm**, with the relay URL (and the signing key, when one is configured) already in them. After you run one, the dialog shows *Waiting for the agent to connect from your machine* until the agent connects, or *This account already has a connected agent* if one is already connected.
 
 ## Step 2: Install the Agent
 
@@ -40,9 +40,10 @@ import TabItem from '@theme/TabItem';
 
 ```bash
 curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install.sh | \
-  NB_RELAY_URL=<RELAY_URL> \
+  sudo NB_RELAY_URL=<RELAY_URL> \
   NB_ACCESS_KEY=<ACCESS_KEY> \
   NB_ACCESS_SECRET=<ACCESS_SECRET> \
+  NB_SIGNING_PUBLIC_KEY=<SIGNING_PUBLIC_KEY> \
   bash
 ```
 

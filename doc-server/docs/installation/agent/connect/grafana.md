@@ -32,16 +32,18 @@ NudgeBee can integrate with Grafana to surface dashboards directly in the NudgeB
 3. **Apply configuration and upgrade the agent**
    - **Using shell script**:
      ```bash
-     sh installation.sh -a <NUDGEBEE_AUTH_KEY> -f values.yaml
+     bash installation.sh -a <NUDGEBEE_AUTH_KEY> -f values.yaml
      ```
+     Add the other flags you used for the original install (for example `-g true -x true -t true`); the script does not remember them.
    - **Using Helm**:
      ```bash
      helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
      helm repo update
-     helm upgrade --install nudgebee-agent nudgebee-agent/nudgebee-agent \
+     helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
        --namespace nudgebee-agent \
-       --create-namespace \
+       --reuse-values \
        -f values.yaml
      ```
+     If `values.yaml` holds only these settings, keep `--reuse-values`: it preserves the auth key and the flags from your original install, which Helm otherwise resets. If you maintain a complete values file that includes `runner.nudgebee.auth_secret_key`, drop `--reuse-values` and pass that file instead.
 
 > Replace `<GRAFANA_PASSWORD>` and `<NUDGEBEE_AUTH_KEY>` with your actual values, and adjust the Grafana namespace if it differs from `grafana`.

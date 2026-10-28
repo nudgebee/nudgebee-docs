@@ -3,7 +3,7 @@
 This document explains how to integrate various authentication systems with your NudgeBee application. NudgeBee utilizes a flexible authentication system that supports a wide array of identity providers, allowing you to choose the method that best suits your organization's needs.
 
 :::info[Which providers are in which edition?]
-**Community** ships with OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), magic-link email, and built-in credentials login — these all work out of the box on every install. **SAML 2.0** (with IdP-driven user provisioning and group-to-role mapping) is **Enterprise** and **Cloud** only. See [Editions](../../editions.md).
+**Community** ships with OAuth SSO (Google, Okta, OneLogin, Azure AD / B2C, Auth0), magic-link email, and built-in credentials login — these all work out of the box on every install — plus LDAP and Teleport on self-hosted installs. **SAML 2.0** (with IdP-driven user provisioning and group-to-role mapping) is **Enterprise** and **Cloud** only. See [Editions](../../editions.md).
 :::
 
 ## Authentication Providers
@@ -47,7 +47,7 @@ To set up Google authentication, you need to configure the following environment
 
 
 ### Notes
-- This integration doesn't allow onboarding, user first need to be created in NudgeBee, then only they can login.
+- Users must already exist in NudgeBee before they can sign in, unless their email domain is in the tenant's **Allowed Domains** (see [Self-Onboarding](../../features/tenant-settings.md#general)); those users are created on first sign-in.
 - This integration allows users to link multiple accounts with the same email address.
 - When redirecting users to the Google login page, the system will request consent for offline access.
 
@@ -71,7 +71,7 @@ To set up Okta authentication, you need to configure the following environment v
 
 
 ### Notes
-- This integration doesn't allow onboarding, user first need to be created in NudgeBee, then only they can login.
+- Users must already exist in NudgeBee before they can sign in, unless their email domain is in the tenant's **Allowed Domains** (see [Self-Onboarding](../../features/tenant-settings.md#general)); those users are created on first sign-in.
 -   This integration allows users to link multiple accounts with the same email address.
 - Issuer: Please provide the full URL as the issuer of the Okta organization.
 
@@ -95,7 +95,7 @@ To set up OneLogin authentication, you need to configure the following environme
 
 
 ### Notes
-- This integration doesn't allow onboarding, user first need to be created in NudgeBee, then only they can login.
+- Users must already exist in NudgeBee before they can sign in, unless their email domain is in the tenant's **Allowed Domains** (see [Self-Onboarding](../../features/tenant-settings.md#general)); those users are created on first sign-in.
 -   This integration allows users to link multiple accounts with the same email address.
 - Issuer: Please provide the full URL as the issuer of the OneLogin organization.
 
@@ -156,7 +156,7 @@ To set up Auth0 authentication, you need to configure the following environment 
 
 
 ### Notes
-- This integration doesn't allow onboarding, user first need to be created in NudgeBee, then only they can login.
+- Users must already exist in NudgeBee before they can sign in, unless their email domain is in the tenant's **Allowed Domains** (see [Self-Onboarding](../../features/tenant-settings.md#general)); those users are created on first sign-in.
 -   This integration allows users to link multiple accounts with the same email address.
 - Issuer: Please provide the full URL as the issuer of the Auth0 organization.
 
@@ -164,16 +164,19 @@ To set up Auth0 authentication, you need to configure the following environment 
 
 ### Description
 
-Integrate NudgeBee with Teleport as an identity provider. Ensure the NudgeBee `BASE_URL` to your Teleport domain URL.
+Integrate NudgeBee with Teleport as an identity provider. Set the NudgeBee `BASE_URL` to the URL users reach NudgeBee on through Teleport.
 
 ### Configuration
 
 To set up Teleport authentication, you need to configure the following environment variables:
 
 - `TELEPORT_ENABLED`: Set to `true` to enable this provider.
+- `TELEPORT_JWKS_URL` (required): The Teleport proxy's JWKS endpoint, for example `https://<teleport-proxy>/.well-known/jwks.json`. Without it the Teleport sign-in option isn't registered.
+- `TELEPORT_ISSUER` and `TELEPORT_AUDIENCE` (optional): When set, the token's issuer and audience must match.
+- `TELEPORT_SSO_ENABLED` (optional): Set to `true` to sign users in automatically when they reach NudgeBee through Teleport.
 - `TELEPORT_ATTRIBUTE_USERNAME`: Teleport JWT attribute name for username field, defaults to `sub`
 - `TELEPORT_ATTRIBUTE_NAME`: Teleport attribute/trait name for displayname field, defaults to `sub`
-- `TELEPORT_ATTRIBUTE_GROUPS`: Teleport attribute/trait name for nudgebee-groups field, defaults to empty. Note that these groups needs to be available on nudgebee
+- `TELEPORT_ATTRIBUTE_GROUPS`: Teleport attribute/trait name for nudgebee-groups field, defaults to `groups`. These groups need to exist in NudgeBee
 
 ### Notes
 - This integration allows users to link multiple accounts with the same email address.
@@ -247,12 +250,17 @@ To set up LDAP authentication, you need to configure the following environment v
 ### Notes
 
 - LDAP configuration requires knowledge of your LDAP server's schema.
-- LDAP support only for onPrem license type.
+- LDAP is available on any self-hosted install (Community included) once `NEXTAUTH_LDAP_URI` is set.
 - By default, the system will look for the user's email from the `mail` attribute, group from `memberOf`, user name from `name`, firstName from `gn`, and lastName from `sn`.
 - Group mappings will be used for assigning `hasura roles`.
 
 ## General Notes
 
 -   **Multiple Providers:** You can enable multiple authentication providers simultaneously, giving your users flexibility in how they choose to sign in.
-- **Environment Variables**: Ensure all required environment variables are correctly set using Helm chart secrets.
+- **Environment Variables**: Ensure all required environment variables are correctly set using Helm chart secrets (`nudgebee_secret`). The `SAML_*` variables are the exception: set them under `additional_env_vars` (see [SAML](./SAML.md#setting-the-variables-with-helm)). If you use `nudgebee_secret.existingSecretName`, `additional_env_vars` isn't rendered; put the `SAML_*` keys in that existing Secret instead.
 - If you have any issues or require more details, please contact our support.
+
+## Related
+
+- [SAML](./SAML.md)
+- [Access & Users](../../features/user-management.md)

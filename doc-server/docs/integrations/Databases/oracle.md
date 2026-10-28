@@ -46,9 +46,9 @@ Navigate to **Admin** > **Integrations** > **Databases** and select **Oracle**, 
 
 ## Step 2: Fill In the Connection
 
-* **Oracle host** — Hostname or IP of the listener, e.g. `db.example.com` or `10.0.1.5`.
+* **Oracle host** (required) — Hostname or IP of the listener, e.g. `db.example.com` or `10.0.1.5`.
 * **Oracle port** — Typically `1521`.
-* **Oracle service name** — The service name, e.g. `ORCL` or `XEPDB1`. Using a SID here is the most common cause of a failed connection.
+* **Oracle service name** (required) — The service name, e.g. `ORCL` or `XEPDB1`. Using a SID here is the most common cause of a failed connection.
 * **Credential Source**, **Database username \***, **Database password \***, **TLS Enabled**, **Read Only**, **Maximum open connections in the pool** — see [common fields](./index.md#fields-common-to-every-database).
 
 ![The Oracle configuration form, showing the service name field that must not be given a SID](../../../static/img/integrations/db-oracle.png)
@@ -96,3 +96,7 @@ See the [shared troubleshooting table](./index.md#troubleshooting) first. Oracle
 - [Proxy Agent installation](../../installation/proxy-agent/installation.md)
 - [Proxy Agent configuration reference](../../installation/proxy-agent/configuration.md)
 - [Database tasks in workflows](../../features/workflow-builder/database-tasks.md)
+
+## Related
+
+- [Database integrations](./index.md)

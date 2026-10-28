@@ -21,10 +21,10 @@ Actions taken on an event are scattered across the products they touch: a PR liv
 |---|---|
 | **Subject** | The workload, resource or investigation the resolution belongs to. |
 | **Source** | The event, or a link to the AI investigation that raised the resolution. |
-| **Severity** | Priority of the originating event. |
+| **Severity** | Priority of the originating event (empty for resolutions raised by an investigation). |
 | **Resolution** | The kind of action taken — links out where the action has a URL. |
-| **Resolution Details** | The specifics: the command that ran, the exit code, the change made. |
-| **Status** | `Success`, `Failed`, `InProgress` or `Configuring`. |
+| **Resolution Details** | The specifics: the command that ran (with its exit code when it wasn't 0), CPU and memory requests and limits as before → after, or the change made (Pod Restart, Raise PR, PVC Resize, Scale Replicas, Image Update). |
+| **Status** | **Done**, **Needs checking** (a verification check didn't confirm it), **Outcome unverified** (a command reported no exit code), **Outcome unknown**, **Failed**, **Declined** or **Running**. A message under the status explains failures and unknowns, and also appears on Done rows whose reference isn't a link. |
 | **Resolver** | Who or what acted. |
 | **Updated** | When the row last changed. |
 
@@ -53,7 +53,9 @@ Not every resolution starts from an event. An AI investigation can raise one dir
 
 ## Filters
 
-Account, Status, Type and Resolver, each a dropdown. The Type filter lists every kind the platform can record, so a resolution can never exist without being reachable through the filter.
+**Account**, **Status**, **Type** and **Resolver**, plus **Download** (CSV). The Status filter uses the underlying values — Success, Failed, InProgress, Configuring, Unknown, Declined — and the Type filter lists every kind the platform can record.
+
+There is no date range: the table holds the whole history, newest first.
 
 ## Related
 

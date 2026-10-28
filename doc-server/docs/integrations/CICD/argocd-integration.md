@@ -76,7 +76,7 @@ First, create a Kubernetes secret containing your ArgoCD credentials. This secre
 kubectl create secret generic argocd-credentials \
   --from-literal=ARGOCD_SERVER=https://argocd.example.com \
   --from-literal=ARGOCD_AUTH_TOKEN=your-auth-token-here \
-  -n nudgebee
+  -n nudgebee-agent
 ```
 
 #### Using Username/Password
@@ -86,10 +86,10 @@ kubectl create secret generic argocd-credentials \
   --from-literal=ARGOCD_SERVER=https://argocd.example.com \
   --from-literal=ARGOCD_USERNAME=admin \
   --from-literal=ARGOCD_PASSWORD=your-password-here \
-  -n nudgebee
+  -n nudgebee-agent
 ```
 
-**Note:** Replace `nudgebee` with the namespace where NudgeBee is deployed.
+**Note:** Create the secret in the NudgeBee agent's namespace on the linked cluster (for example `nudgebee-agent`), and enter just the secret name in the **K8s Secret** field.
 
 ### Step 2: Configure Integration in NudgeBee UI
 
@@ -98,7 +98,7 @@ The walkthrough below shows the full flow — opening the **CI/CD** category, se
 ![Walkthrough of adding an ArgoCD integration in NudgeBee: opening the CI/CD category, selecting ArgoCD, clicking Add ArgoCD Account, and filling in the integration name, account, K8s secret, and authentication options](./img/argocd-setup-flow.gif)
 
 1. **Navigate to Integrations**
-   - Go to **Settings** → **Integrations**
+   - Go to **Admin** → **Integrations**
    - Click on **CI/CD** category
    - Select **ArgoCD**
 
@@ -109,25 +109,23 @@ The walkthrough below shows the full flow — opening the **CI/CD** category, se
    | Field | Description | Required | Example |
    |-------|-------------|----------|---------|
    | **Name** | Friendly name for this integration | Yes | `Production ArgoCD` |
-   | **Server URL** | ArgoCD server URL | Yes | `https://argocd.example.com` |
-   | **K8s Secret** | Kubernetes secret name created in Step 1 | Yes | `argocd-credentials` |
-   | **Server Key in Secret** | Key name for server URL in secret | No (default: `ARGOCD_SERVER`) | `ARGOCD_SERVER` |
-   | **Auth Token Key in Secret** | Key name for auth token in secret | No (default: `ARGOCD_AUTH_TOKEN`) | `ARGOCD_AUTH_TOKEN` |
-   | **Username Key in Secret** | Key name for username (if using password auth) | No (default: `ARGOCD_USERNAME`) | `ARGOCD_USERNAME` |
-   | **Password Key in Secret** | Key name for password (if using password auth) | No (default: `ARGOCD_PASSWORD`) | `ARGOCD_PASSWORD` |
-   | **Auth Method** | Authentication method | No (default: `token`) | `token` or `password` |
+   | **K8s Secret** | Name of the Kubernetes secret created in Step 1 | Yes | `argocd-credentials` |
+   | **Select Accounts** | Cluster accounts this integration is linked to | Yes | Select from dropdown |
+   | **Authentication method** | `token` or `password` | No (default: `token`) | `token` |
+   | **Insecure** | Skip TLS certificate verification | No (default: `false`) | `false` |
+   | **gRPC-Web** | Use the gRPC-Web protocol. Needed when ArgoCD is reached through an HTTP/1.1 ingress or proxy (the usual case). Set `false` only for a direct gRPC endpoint | No (default: `true`) | `true` |
    | **Timeout** | Command timeout in seconds | No (default: 30) | `30` |
-   | **Insecure** | Skip TLS certificate verification | No (default: false) | `true` or `false` |
-   | **Accounts** | Select cloud accounts to link this integration | Yes | Select from dropdown |
 
-3. **Test Configuration**
-   - Click **"Save"** to test the connection
-   - NudgeBee will execute `argocd version --client` to validate connectivity
-   - If successful, you'll see a success message
+   The secret's key names are fixed: `ARGOCD_SERVER` (the server URL) plus either `ARGOCD_AUTH_TOKEN` (token auth) or `ARGOCD_USERNAME` and `ARGOCD_PASSWORD` (password auth).
+
+3. **Test Connection**
+   - Click **Test Connection**
+   - NudgeBee runs `argocd account get-user-info` against `ARGOCD_SERVER` (after `argocd login` when you use password auth) and expects the response to report you as logged in
+   - Click **Save** once the test succeeds
 
 4. **Verify Integration**
    - The integration should appear in the ArgoCD integrations list
-   - Status should show as "Active"
+   - Status should show as `enabled`
 
 ### Step 3: Link to Cloud Accounts
 
@@ -215,3 +213,7 @@ ArgoCD operations can be incorporated into automated workflows:
 - Rollback automation on health degradation
 - Sync applications on schedule
 - Multi-environment promotion workflows
+
+## Related
+
+- [Integrations](../index.md)

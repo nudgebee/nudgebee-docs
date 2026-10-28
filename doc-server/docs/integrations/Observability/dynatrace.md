@@ -57,7 +57,7 @@ Navigate to **Integrations** > **Observability** tab and select **Dynatrace** to
 
 * **API Token \*** *(Required)*
     * The Platform Bearer Token you generated in Step 1.
-    * NudgeBee validates connectivity on save by running `fetch logs | limit 1` against Grail.
+    * **Test Connection** validates connectivity by running `fetch logs | limit 1` against Grail. **Save** stays disabled until the test succeeds.
     * **401** = token is invalid or expired. **403** = token is missing one or more required scopes.
 
 * **Base URL \*** *(Required)*
@@ -165,7 +165,7 @@ Dynatrace Grail  ←──  NudgeBee queries via DQL
 
 ## Verify the Integration
 
-1. **Save the configuration.** A validation query (`fetch logs | limit 1`) runs automatically. If you see a 401 or 403 error, revisit your token scopes.
+1. **Click Test Connection, then Save.** The test runs a validation query (`fetch logs | limit 1`), and **Save** stays disabled until it succeeds. If you see a 401 or 403 error, revisit your token scopes.
 2. Navigate to any **Kubernetes workload** in NudgeBee.
 3. Open the **Logs** tab — confirm pod logs from Dynatrace appear.
 4. Open the **Traces** tab — confirm distributed traces appear.
@@ -175,7 +175,7 @@ Dynatrace Grail  ←──  NudgeBee queries via DQL
 
 ## Notes
 
-- **Token validation** on save: 401 = invalid token, 403 = missing required scope.
+- **Token validation** on **Test Connection**: 401 = invalid token, 403 = missing required scope.
 - **URL normalization**: `.live.dynatrace.com` is automatically converted to `.apps.dynatrace.com`.
 - **Query timeout**: DQL queries are async-polled for up to 120 seconds. Use filters to narrow time ranges and avoid timeouts.
 - **Trace IDs**: Grail stores trace IDs as a `uid` type. NudgeBee handles the `touid()` conversion automatically.
@@ -187,7 +187,7 @@ Dynatrace Grail  ←──  NudgeBee queries via DQL
 ## Troubleshooting Dynatrace Integration
 
 ### 1. `403 Forbidden: Missing Scope`
-* **Symptom**: Connection test returns `403 Forbidden` on save.
+* **Symptom**: Connection test returns `403 Forbidden`.
 * **Root Cause**: The API token lacks Grail permissions (`storage:logs:read`, `storage:spans:read`, or `storage:metrics:read`).
 * **Remediation**:
   1. In Dynatrace $\rightarrow$ **Access Tokens**, edit your token.

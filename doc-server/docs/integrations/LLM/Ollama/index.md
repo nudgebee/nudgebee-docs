@@ -77,17 +77,22 @@ EMBEDDINGS_PROVIDER_API_ENDPOINT=<Ollama embeddings endpoint URL>
 
 ## **Step 5: Configure NudgeBee LLM Server to Use Ollama**
 
-NudgeBee LLM server uses the OpenAI-compatible endpoint provided by Ollama and requires the following configuration:
+NudgeBee talks to Ollama through its OpenAI-compatible endpoint, using the **custom** provider. In the UI, choose **custom** in **Admin → Integrations → LLM → Add LLM Provider** and enter the base URL including `/v1` (for example `http://ollama.example.com:11434/v1`). With environment variables:
 
 ### **Environment Variables for LLM Server**
 
 ```bash
-LLM_PROVIDER=openai
+LLM_PROVIDER=custom
 LLM_MODEL_NAME=<Model name in Ollama>
 LLM_PROVIDER_API_KEY=<if Ollama is configured with security>
-LLM_PROVIDER_API_ENDPOINT=<Ollama model endpoint URL>
+LLM_PROVIDER_API_ENDPOINT=<Ollama base URL including /v1>
 ```
 
 ## **Conclusion**
 
 You have successfully deployed the NudgeBee AI model on an Ollama-supported GPU machine and configured both the NudgeBee RAG server and LLM server to use the deployed model for embedding generation and inference.
+
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [LLM Integrations](../index.md)

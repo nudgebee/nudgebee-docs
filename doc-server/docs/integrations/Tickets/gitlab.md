@@ -24,7 +24,7 @@ For the full integration guide including merge request automation and repository
 
 ## Add GitLab Account in NudgeBee
 
-1. Navigate to **Settings** > **Integrations** > **Repos** tab.
+1. Navigate to **Admin** → **Integrations** → **Repos** tab.
 2. Click the **Gitlab** tile, then click **Add GitLab Account**.
 3. Fill in:
    - **Name** — Unique name for this configuration
@@ -35,7 +35,7 @@ For the full integration guide including merge request automation and repository
 
 ![Add GitLab Account modal](../../../static/img/gitlab_account_modal.png)
 
-NudgeBee validates credentials on save by authenticating against the GitLab API. If validation fails, check that the username matches the PAT owner and the token has `api` scope.
+**Test Connection** authenticates against the GitLab API to check the credentials. The GitLab connection appears under both **Ticketing** and **Repos**. If validation fails, check that the username matches the PAT owner and the token has `api` scope.
 
 ---
 
@@ -60,3 +60,8 @@ NudgeBee tracks issues by reference ID. Duplicate events add a **comment** to th
 ## Self-Hosted GitLab
 
 Set the **GitLab URL** field to your instance URL (e.g., `https://gitlab.internal.company.com`). All operations use this base URL automatically.
+
+## Related
+
+- [GitLab integration (repositories)](../Code%20Repository/GitLab/gitlab-integration.md)
+- [Ticket integrations](./index.md)

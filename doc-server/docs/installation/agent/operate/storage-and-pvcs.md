@@ -53,12 +53,12 @@ clickhouse:
 
 ## 2. Troubleshooting ClickHouse Restart & Crash Loops
 
-If the ClickHouse pod (`nudgebee-agent-clickhouse-0`) is in `CrashLoopBackOff`, `Pending`, or restarting frequently, inspect the pod status:
+If the ClickHouse pod (`nudgebee-agent-clickhouse-shard0-0`) is in `CrashLoopBackOff`, `Pending`, or restarting frequently, inspect the pod status:
 
 ```bash
 kubectl get pods -n nudgebee-agent -l app.kubernetes.io/name=clickhouse
-kubectl describe pod -n nudgebee-agent nudgebee-agent-clickhouse-0
-kubectl logs -n nudgebee-agent nudgebee-agent-clickhouse-0 -c clickhouse --tail=100
+kubectl describe pod -n nudgebee-agent nudgebee-agent-clickhouse-shard0-0
+kubectl logs -n nudgebee-agent nudgebee-agent-clickhouse-shard0-0 -c clickhouse --tail=100
 ```
 
 ### Failure 1: OOMKilled (Exit Code 137)
@@ -82,7 +82,7 @@ kubectl logs -n nudgebee-agent nudgebee-agent-clickhouse-0 -c clickhouse --tail=
 - **Diagnosis**:
   ```bash
   kubectl get pvc -n nudgebee-agent
-  kubectl describe pvc -n nudgebee-agent data-nudgebee-agent-clickhouse-0
+  kubectl describe pvc -n nudgebee-agent data-nudgebee-agent-clickhouse-shard0-0
   kubectl get events -n nudgebee-agent --sort-by=.lastTimestamp | tail -30
   ```
 - **Common Causes**:
@@ -98,7 +98,7 @@ kubectl logs -n nudgebee-agent nudgebee-agent-clickhouse-0 -c clickhouse --tail=
 - **Remediation**:
   1. Check disk utilization:
      ```bash
-     kubectl exec -n nudgebee-agent nudgebee-agent-clickhouse-0 -c clickhouse -- df -h /bitnami/clickhouse
+     kubectl exec -n nudgebee-agent nudgebee-agent-clickhouse-shard0-0 -c clickhouse -- df -h /bitnami/clickhouse
      ```
   2. Verify that your StorageClass allows dynamic expansion:
      ```bash
@@ -133,12 +133,13 @@ kubectl logs -n nudgebee-agent nudgebee-agent-clickhouse-0 -c clickhouse --tail=
 
 ### Failure 5: Schema Upgrade Job Failures
 
-- **Symptom**: Helm upgrades fail with `Job failed: nudgebee-agent-clickhouse-schema-upgrade`.
+- **Symptom**: Helm upgrades fail with a failed `nudgebee-agent-ch-schema-upgrade` job (the name is `<release>-ch-schema-upgrade`).
 - **Diagnosis**:
   ```bash
-  kubectl logs -n nudgebee-agent job/nudgebee-agent-clickhouse-schema-upgrade
+  kubectl logs -n nudgebee-agent job/nudgebee-agent-ch-schema-upgrade
   ```
-- **Cause**: The post-upgrade schema migration job runs before ClickHouse is fully ready or fails authentication due to mismatched passwords. Ensure ClickHouse is running and healthy before re-running `helm upgrade`.
+  The job is deleted when it succeeds, so it is only there to inspect after a failure.
+- **Cause**: The schema migration job runs as a pre-upgrade hook, against the ClickHouse that is already running. It fails if ClickHouse isn't ready or the password doesn't match. Ensure ClickHouse is running and healthy before re-running `helm upgrade`.
 
 ---
 
@@ -155,26 +156,27 @@ kubectl logs -n nudgebee-agent -l app.kubernetes.io/name=opentelemetry-collector
 
 - **Symptom**: Collector pod repeatedly restarts with `OOMKilled (Exit Code 137)`.
 - **Cause**: **Helm replaces lists instead of merging them.** The collector subchart defines a `memory_limiter` processor. When you override pipeline configurations in `values.yaml` without listing `memory_limiter` as the **first processor**, the collector operates with no admission backpressure. Under traffic spikes, memory grows unbounded until kernel OOM kills the pod.
-- **Remediation**: Whenever customizing collector pipelines, ensure `memory_limiter` is the first processor in every pipeline:
+- **Remediation**: Whenever customizing collector pipelines, start from the chart's own pipelines and keep `memory_limiter` first in every one. These are the chart defaults:
   ```yaml
   opentelemetry-collector:
     config:
       service:
         pipelines:
           traces:
-            processors: [memory_limiter, batch]
+            processors: [memory_limiter, filter/drop_namespaces, filter/drop_health_check, probabilistic_sampler, batch]
             exporters: [clickhouse]
             receivers: [otlp]
           logs:
-            processors: [memory_limiter, batch]
-            exporters: [clickhouse]
+            # No batch processor here: the clickhouse/logs exporter batches from its own queue.
+            processors: [memory_limiter, filter/drop_log_namespaces]
+            exporters: [clickhouse/logs]
             receivers: [otlp]
           metrics:
             processors: [memory_limiter, batch]
             exporters: [clickhouse]
             receivers: [otlp]
   ```
-  *(Note: If you add custom processors such as namespace filters or sampling, define them under `opentelemetry-collector.config.processors` and place them between `memory_limiter` and `batch`.)*
+  *(Note: Override only the pipeline you are changing. Removing `probabilistic_sampler` stores every trace instead of 10%. Adding `batch` to the logs pipeline, or exporting logs with `clickhouse` instead of `clickhouse/logs`, can drop container logs while ClickHouse is down. Define custom processors under `opentelemetry-collector.config.processors` and place them after `memory_limiter`.)*
 
 ### Failure 2: Buffer Exhaustion During ClickHouse Restarts
 

@@ -59,15 +59,17 @@ below.
 
 ## Connecting a Single Account
 
-Open **Admin → Integrations → AWS → Add AWS Account**. The form offers three connection methods as tabs — **CloudFormation**, **IAM Role ARN**, and **Access Keys** — so you can pick whichever fits your AWS setup.
+Open **Admin → Integrations → Kubernetes & Cloud → AWS → Add AWS Account**. The form offers three connection methods as tabs — **CloudFormation**, **IAM Role ARN**, and **Access Keys** — so you can pick whichever fits your AWS setup.
 
 ![Switching between the three AWS connection methods — CloudFormation, IAM Role ARN, and Access Keys — in the Add AWS Account form](./img/aws-connection-methods.gif)
 
 ### Fields Common to All Methods
 
 * **Display Name** (required) — a friendly name to identify this account in NudgeBee (e.g. `aws-production`).
+* **Account Type** — **Production** or **Non-production**. Production accounts score alerts at full weight in triage. It also drives the **Production** / **Non-production** (Environment) filter on Optimize views.
 * **Access Mode** — choose **Standard** (read + write, allows NudgeBee to create CloudWatch alarms and apply recommendations) or **Read-Only** (monitoring only).
 * **Enable SSM Parameter Store access** (CloudFormation method) — lets NudgeBee read SSM parameter values. Only enable this if your parameters do not contain secrets.
+* **AWS Regions (optional)** (IAM Role ARN and Access Keys methods) — a comma-separated list of region codes, for example `ap-southeast-2, us-east-1`. Leave it blank and NudgeBee discovers the account's regions on its own. Fill it in only when the role or user is restricted to specific regions — see [Restricting the role to specific regions](#restricting-the-role-to-specific-regions).
 
 ---
 
@@ -97,7 +99,7 @@ The role's **trust policy** must let NudgeBee's principal call `sts:AssumeRole`,
 `cur:DescribeReportDefinitions` and `s3:GetBucketLocation` / `s3:ListBucket` / `s3:GetObject`
 on the CUR bucket if you want cost data.
 
-1. Enter a **Display Name** and choose an **Access Mode**.
+1. Enter a **Display Name** and choose an **Access Mode**. If the role is restricted to specific regions, also enter them in **AWS Regions**; otherwise leave that field blank.
 2. Paste the **IAM Role ARN** (e.g. `arn:aws:iam::123456789012:role/NudgebeeRole`).
 3. Optionally provide an **External ID** — required only if the role's trust policy specifies one.
 4. Click **Validate** — NudgeBee probes STS, Cost & Usage Report discovery, and CUR S3 access upfront — then click **Connect**.
@@ -112,10 +114,9 @@ which you can add later.
 
 Use this flow when you **cannot grant a cross-account role** (for example, segregated billing accounts or dev/test accounts). Create an IAM user with the same CUR + read-only permissions as the CloudFormation template, then provide its keys.
 
-1. Enter a **Display Name** and choose an **Access Mode**.
+1. Enter a **Display Name** and choose an **Access Mode**. If the user is restricted to specific regions, also enter them in **AWS Regions**; otherwise leave that field blank.
 2. Paste the **AWS Access Key ID** and **AWS Secret Access Key**.
-3. Set the **AWS Region** used to bootstrap the AWS SDK (CUR discovery always runs in `us-east-1`).
-4. Click **Validate**, then **Connect**. As with the Role ARN method, a missing
+3. Click **Validate**, then **Connect**. As with the Role ARN method, a missing
    CUR is a warning rather than a blocker.
 
 ---
@@ -144,10 +145,11 @@ cross-account role yourself. It takes two policies: a **trust policy** that lets
 NudgeBee assume the role, and a **permissions policy** that grants what NudgeBee
 reads.
 
-A manually created role supports the **Read-Only** access mode. The write
-permissions behind **Standard** mode and the EventBridge event pipeline are only
-deployed by the CloudFormation template — see
-[Standard access mode](#standard-access-mode-with-a-manual-role) below.
+The permissions policy below covers the **Read-Only** access mode. For
+**Standard** mode, add the write actions listed in
+[Standard access mode](#standard-access-mode-with-a-manual-role) below. The
+EventBridge event pipeline is not part of a manual role; add it with
+**Connect EventBridge** — see [Real-time events](#real-time-events-eventbridge).
 
 ### Step 1 — Trust policy
 
@@ -259,12 +261,13 @@ EKS clusters. Delete the individual `<service>:` actions for services you do not
 run; discovery of those then reports `AccessDenied` and is skipped, and the account
 connects normally.
 
-Two things that look like tightening but break the policy outright:
+Two things that look like simple tightening but are not:
 
-* **Do not add a region condition.** `aws:RequestedRegion` scoped to your workload
-  region denies the services that are global or us-east-1 only — `ce`, `cur`,
-  `pricing`, `organizations`, `savingsplans`, `iam`, `route53`, `cloudfront` and
-  `support`. CUR discovery always runs in `us-east-1`.
+* **A region condition needs a matching setting in NudgeBee.** `aws:RequestedRegion`
+  scoped to your workload region works only if you also give the account an
+  **AWS Regions** list. Unless the condition allows `us-east-1`, it also switches
+  off the global services. See
+  [Restricting the role to specific regions](#restricting-the-role-to-specific-regions).
 * **Do not replace `"Resource": "*"` with resource ARNs or tag conditions.** Most
   discovery APIs — `ec2:Describe*`, `cloudwatch:ListMetrics`,
   `elasticloadbalancing:Describe*`, `eks:ListClusters`, `logs:DescribeLogGroups` —
@@ -577,6 +580,52 @@ Two things that look like tightening but break the policy outright:
 
 </details>
 
+### Restricting the role to specific regions
+
+You can scope the role to your workload regions with an `aws:RequestedRegion`
+condition, as long as the account in NudgeBee carries a matching **AWS Regions**
+list.
+
+Without the list, NudgeBee starts in `us-east-1` and asks AWS which regions the
+account has enabled (`ec2:DescribeRegions`); resource discovery and CloudWatch
+alarm collection both depend on the answer. If the condition leaves out
+`us-east-1`, AWS denies that call. If it allows `us-east-1`, the call succeeds,
+NudgeBee reads every enabled region, and AWS denies the regions outside the
+condition. Either way the sync fails, so the account connects and then stays
+empty. With the list, NudgeBee skips the call and reads only the regions you name.
+
+Set the list in either place:
+
+* **When connecting** — fill in **AWS Regions (optional)** on the **IAM Role ARN**
+  or **Access Keys** tab before you click **Validate**. Use comma-separated region
+  codes, for example `ap-southeast-2, us-east-1`.
+* **On a connected account** — open **Admin → Integrations → Kubernetes & Cloud → AWS**, find the
+  account, and choose **Edit AWS Regions** from its **⋮** menu. The new list
+  applies on the next sync; you do not need to reconnect. If your self-hosted
+  version does not show this menu entry, upgrade to a newer release or contact
+  NudgeBee support.
+
+Once the list is set:
+
+* Only the listed regions are monitored. Resources NudgeBee had already found in
+  other regions are marked deleted.
+* NudgeBee makes its first call — including the **Validate** check when you
+  connect — from the first region in the list.
+* List only regions the role allows. One listed region that the role denies fails
+  the sync for every region.
+* Clearing the list returns the account to automatic region discovery.
+
+AWS treats requests to global services as `us-east-1` requests, so a condition
+that leaves out `us-east-1` also denies the global and us-east-1-only services,
+including `ce`, `cur`, `pricing`, `organizations`, `savingsplans`,
+`cost-optimization-hub`, `iam`, `route53`, `cloudfront` and `support`. CUR
+discovery always runs in `us-east-1`. You still get resources, metrics, alarms and
+logs for your regions, but no cost data, no recommendations from Cost Explorer,
+Cost Optimization Hub or Trusted Advisor, and no IAM, Route 53 or CloudFront
+resources. To keep those, either allow `us-east-1` in the condition as well, or
+keep their statements — including the CUR bucket statement — free of the region
+condition. The **AWS Regions** list is required in both cases.
+
 ### Standard access mode with a manual role
 
 **Standard** mode lets NudgeBee create CloudWatch alarms and apply
@@ -594,17 +643,27 @@ collector uses today:
 | ECS remediations | `ecs:UpdateService` |
 | Run Command on instances | `ssm:SendCommand`, `ssm:GetCommandInvocation`, `ssm:ListCommandInvocations`, `ssm:DescribeInstanceInformation` |
 
-The template also deploys EventBridge rules in every region that forward resource
-state-change events — EC2 state changes, RDS events, CloudWatch alarm state
-changes — to the SQS queue configured for your NudgeBee deployment. On a
-self-hosted install that queue lives in **your own AWS account** and is read by
-the collector running in your cluster; the events do not leave your account.
+### Real-time events (EventBridge)
 
-These rules ship with the template's **Standard** mode, so they are not available
-with a manual role, and today they cannot be enabled separately from the write
-actions above. Without them NudgeBee learns about changes on its daily sync
-rather than in near real time. Contact NudgeBee support if you want the event
-pipeline without the write permissions.
+EventBridge rules forward events to NudgeBee in near real time: EC2 instance state
+changes, RDS instance events, ECS service actions and task state changes,
+CloudWatch alarm state changes, and API calls (through CloudTrail) for EC2, RDS,
+ECS, Lambda, load balancers, SQS and SNS. On a self-hosted install they are sent to
+the SQS queue configured for your deployment, in **your own AWS account**, and read
+by the collector running in your cluster; the events do not leave your account.
+
+Accounts onboarded with the CloudFormation template in **Standard** mode get these rules automatically. For accounts that don't have them — Read-Only accounts or accounts connected with a manually created role —
+open **Admin → Integrations → Kubernetes & Cloud → AWS**, choose **Connect EventBridge** in the account's
+row menu and deploy the EventBridge stack it offers. That stack creates only the
+EventBridge resources. Without it NudgeBee learns about changes on its daily sync.
+The services named above are only the ones with real-time events, not the list of supported
+services. Every service on [Supported Cloud Services](./supported-services.md) is collected by the
+daily sync and by **Sync Now**.
+See [Access Modes & Real-Time Events](./access-modes-and-real-time-events.md) for the
+**Real-Time Events** status values.
+
+To change the access mode of an account connected with the CloudFormation template,
+use **Update Permissions** in the account's row menu.
 
 ---
 
@@ -634,7 +693,7 @@ Other causes worth checking:
 For an account already connected without cost data:
 
 1. Create the CUR in AWS if you have not already ([Creating a CUR](#creating-a-cur)).
-2. In NudgeBee, open **Admin → Integrations → AWS**, find the account, and choose
+2. In NudgeBee, open **Admin → Integrations → Kubernetes & Cloud → AWS**, find the account, and choose
    **Edit Billing Config** from its **⋮** menu.
 3. Enter the **CUR Report Name**. The **CUR S3 Bucket** is optional — supply it
    only if several reports share a name.
@@ -649,5 +708,26 @@ setup immediately.
 AWS delivers a newly created CUR within 24 hours, and NudgeBee ingests it on the
 next daily sync — so allow up to two days after creating the report. The account's
 spend status is shown on the **Agent Health** page.
+
+### The account connects but no resources or alarms appear
+
+The role or user is most likely restricted to specific regions while the account
+has no **AWS Regions** list. On a self-hosted install, the collector log shows AWS
+refusing the region lookup:
+
+```text
+... is not authorized to perform: ec2:DescribeRegions
+```
+
+If the role allows `us-east-1`, the log instead shows `AccessDenied` or
+`UnauthorizedOperation` errors for the regions outside the condition.
+
+Give the account the regions the role allows — see
+[Restricting the role to specific regions](#restricting-the-role-to-specific-regions).
+Resources and alarms appear after the next sync.
+
+If the role has no region restriction, the same error means its policy is missing
+`ec2:DescribeRegions`. Add the action back from the
+[permissions policy](#step-2--permissions-policy).
 
 <!-- assets verified -->

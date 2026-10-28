@@ -39,9 +39,21 @@ runner:
     # Semicolon-separated "Header: Value" pairs (surfaces as LOKI_EXTRA_HEADER)
     # Use semicolons (;) to separate multiple headers
     headers: "X-Scope-OrgID: tenant1; Authorization: Bearer <OPTIONAL_TOKEN>"
+```
 
-    # Optional URL for managing Loki recording/alerting rules via the runner
-    # rulesUrl: "http://loki-ruler.monitoring.svc:3100"
+To manage Loki recording and alerting rules through the runner, set the `LOKI_RULES_URL` environment variable; there is no chart value for it. `runner.additional_env_vars` is a list that replaces the chart default, so keep the default ClickHouse entries:
+
+```yaml
+runner:
+  additional_env_vars:
+    - name: CLICKHOUSE_PORT
+      value: "8123"
+    - name: CLICKHOUSE_USER
+      value: default
+    - name: CLICKHOUSE_DB
+      value: default
+    - name: LOKI_RULES_URL
+      value: "http://loki-ruler.monitoring.svc:3100"
 ```
 
 :::caution Use Semicolon Delimiters for Headers

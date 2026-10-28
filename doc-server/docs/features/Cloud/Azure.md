@@ -1,3 +1,5 @@
+# Azure
+
 ## Add Azure Account Integration
 
 To connect your Azure account, you must first create an **App Registration** in Azure, which generates a **Service Principal** (an identity for your application). You then grant this Service Principal **Reader** access to the subscriptions you want to monitor, and NudgeBee onboards them through a short three-step wizard.
@@ -48,6 +50,9 @@ Here is a guide to finding the values for each required field in step 1 of the w
 
 * **Display Name \*** (Required)
     * A friendly, custom name for this integration (e.g., "Azure Production Account"). This is for your reference.
+
+* **Production** / **Non-production**
+    * The account type. Production accounts score alerts at full weight in triage. It also drives the **Production** / **Non-production** (Environment) filter on Optimize views.
 
 * **Directory (tenant) ID \*** (Required)
     * **What it is:** The unique identifier for your Azure Active Directory (Microsoft Entra ID) instance.
@@ -255,6 +260,10 @@ az role assignment create \
 ```
 
 ---
+
+## Real-time events (Event Grid)
+
+By default NudgeBee picks up Azure changes on its regular sync. To receive Azure resource-change events in real time (resource writes, deletes and actions such as VM start/stop and SQL operations), open **Admin → Integrations → Kubernetes & Cloud → Azure** and choose **Connect Event Grid** in the subscription's row menu (**Manage Event Grid** once connected). See [Access Modes & Real-Time Events](./access-modes-and-real-time-events.md).
 
 ## Troubleshooting Azure Integration
 

@@ -124,17 +124,16 @@ When GCP Cloud Monitoring sends a webhook payload to NudgeBee, the following pro
 
 ### Priority Mapping
 
-Priority is derived from the `severity` user label on the GCP alert policy.
+Priority comes from the alert policy's built-in **Severity** setting.
 
-| Alert Policy User Label `severity` | NudgeBee Priority |
-|------------------------------------|-------------------|
-| `critical`, `high` | High |
-| `medium`, `warning` | Medium |
-| `low`, `info` | Low |
-| _(not set)_ | High |
+| Alert Policy Severity | NudgeBee Priority |
+|-----------------------|-------------------|
+| `Critical`, `Error` | High |
+| `Warning` | Medium |
+| _(not set)_ | Medium |
 
 :::tip
-To control alert priority in NudgeBee, add a `severity` user label to your GCP alert policies (e.g., `severity: medium`).
+To control alert priority in NudgeBee, set **Severity** on your GCP alert policies.
 :::
 
 ### Event Details
@@ -159,7 +158,7 @@ When NudgeBee syncs your GCP account, it verifies that the webhook notification 
 
 1. In GCP Console, go to **Monitoring** > **Alerting**.
 2. Trigger a test alert or wait for an existing alert policy to fire.
-3. In NudgeBee, navigate to **Events** and verify the alert appears with:
+3. In NudgeBee, navigate to **Troubleshoot** > **All Events** and verify the alert appears with:
    - Correct title and priority
    - Alert details (metric, threshold, resource)
    - Link to the GCP Console incident page
@@ -174,7 +173,7 @@ When NudgeBee syncs your GCP account, it verifies that the webhook notification 
 | Events not appearing after manual setup | Verify the webhook URL is correct, the notification channel is enabled in GCP, and it is attached to at least one alert policy. |
 | Events created but missing details | Ensure the alert policy has conditions configured with metrics and thresholds. Log-based alerts may have fewer details. |
 | Duplicate notification channels | NudgeBee checks for an existing channel named "NudgeBee Monitoring Alerts" before creating a new one. If you manually renamed or deleted it, auto-setup will create a new one. |
-| Webhook URL returns 401 | The `token` query parameter is invalid. Delete the integration in NudgeBee and re-enable real-time alerts to generate a new token. |
+| Webhook URL returns HTTP `400` with `webhook validation failed` | The `token` query parameter is invalid. Delete the integration in NudgeBee and re-enable real-time alerts to generate a new token. |
 
 ---
 

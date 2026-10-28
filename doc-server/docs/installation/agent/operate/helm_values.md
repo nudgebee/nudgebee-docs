@@ -14,6 +14,7 @@ The chart is open source at [`nudgebee/k8s-agent`](https://github.com/nudgebee/k
 |---|---|---|---|
 | https://charts.bitnami.com/bitnami | clickhouse | 3.1.* | `opentelemetry-collector.enabled` |
 | https://open-telemetry.github.io/opentelemetry-helm-charts | opentelemetry-collector | 0.165.0 | `opentelemetry-collector.enabled` |
+| https://opencost.github.io/opencost-helm-chart | opencost | 2.0.1 | `opencost.enabled` |
 
 For task-oriented guidance, see [Enable or Disable Agent Modules](./module-configuration.md) and [Agent Storage and PVCs](./storage-and-pvcs.md).
 
@@ -39,6 +40,54 @@ runner:
       name: my-existing-secret
       key: NUDGEBEE_AUTH_SECRET_KEY
 ```
+
+### Collector or relay behind a private CA
+
+If your collector and relay serve certificates issued by an internal CA, the runner rejects them and nothing reaches the server:
+
+```
+incremental post failed ... tls: failed to verify certificate: x509: certificate signed by unknown authority
+```
+
+The pod stays Running and healthy while this repeats, so the only symptom is a cluster that never reports data. Mount your CA and point the runner's trust store at it. One setting covers every outbound connection: the discovery POSTs, the relay WebSocket, task polling, and config refresh.
+
+```shell
+kubectl -n nudgebee-agent create configmap nudgebee-private-ca \
+  --from-file=ca.crt=/path/to/internal-ca.pem
+```
+
+```yaml
+runner:
+  extraVolumes:
+    - name: private-ca
+      configMap:
+        name: nudgebee-private-ca
+  extraVolumeMounts:
+    - name: private-ca
+      mountPath: /etc/nudgebee/ca
+      readOnly: true
+  additional_env_vars:
+    - name: SSL_CERT_DIR
+      value: /etc/ssl/certs:/etc/nudgebee/ca
+    # additional_env_vars replaces the chart's list instead of merging, so the
+    # three ClickHouse variables have to be repeated here.
+    - name: CLICKHOUSE_PORT
+      value: "8123"
+    - name: CLICKHOUSE_USER
+      value: default
+    - name: CLICKHOUSE_DB
+      value: default
+```
+
+Roll the runner (`kubectl rollout restart deployment/nudgebee-agent-runner -n nudgebee-agent`) and the `x509` errors stop.
+
+Notes:
+
+- Use `SSL_CERT_DIR`, and keep `/etc/ssl/certs` in the list. Go splits the value on `:` and reads every directory in it, so the system roots and your CA both load. `SSL_CERT_FILE` is the wrong knob: it takes a single path and **replaces** the default CA bundle rather than adding to it, which leaves the public roots dependent on whatever the base image happens to leave loose in `/etc/ssl/certs`.
+- Put the full chain in the PEM — the root plus any intermediates. A root-only file fails the same way if the server does not send its intermediates.
+- Use a Secret instead of a ConfigMap if your policy treats the CA as non-public; the volume block is the same with `secret.secretName`.
+- There is no option to skip certificate verification for the collector or relay. `runner.es.sslVerify` looks similar but only applies to Elasticsearch.
+- This covers the runner only. If the OpenTelemetry collector or the forwarder also ship to an internal endpoint over TLS, mount the CA into those pods through their own volume settings.
 
 ---
 
@@ -132,7 +181,7 @@ These values only control the alert rules the chart ships. Getting alerts to the
 | `runner.loki.username` / `password` | string | `""` | Optional HTTP basic auth. |
 | `runner.es.enabled` | bool | `false` | Elasticsearch is off unless you set both `enabled: true` and `url`, so a leftover `url` never quietly takes over from another logs provider. |
 | `runner.es.url` / `apiKey` | string | `""` | Elasticsearch endpoint and API key. |
-| `runner.es.headers` | string | `""` | Extra request headers, comma-separated `Key: Value` pairs. For OpenSearch-compatible services that authenticate on a custom header — Logz.io uses `X-API-TOKEN`. |
+| `runner.es.headers` | string | `""` | Extra request headers, semicolon-separated `Key: Value` pairs. For OpenSearch-compatible services that authenticate on a custom header — Logz.io uses `X-API-TOKEN`. |
 | `runner.es.sslVerify` | bool | `false` | Verify the ES TLS certificate (https URLs). |
 | `runner.signoz.url` | string | `""` | SigNoz endpoint. |
 | `runner.signoz.apiKey` / `user` / `password` | string | `""` | `apiKey` takes precedence over user/password. |
@@ -180,13 +229,15 @@ Off by default. Turn it on to feed cluster cost allocation into the Optimize sur
 
 If the runner is getting OOMKilled, this is the section you want. Its memory is dominated by the informer cache, so it scales with the number of objects in the cluster, not with traffic.
 
-The chart sets no `GOMEMLIMIT` or other Go heap tuning, so `runner.resources.limits.memory` is the only lever — raise it using the sizing guide below rather than looking for a GC knob.
+The chart sets the runner's `GOMEMLIMIT` to 80% of `runner.resources.limits.memory`, so raising the memory limit raises it too. Raise the limit using the sizing guide below. If the pod still OOMs at a sensible limit, lower `runner.goMemLimitRatio`.
 
 | Key | Type | Default | Description |
 |---|---|---|---|
 | `runner.resources.requests.cpu` | string | `250m` | |
 | `runner.resources.requests.memory` | string | `1000Mi` | |
 | `runner.resources.limits.memory` | string | `2000Mi` | Budget roughly 1Gi per 50k watched objects. Under 100 nodes the default is fine; around 500 nodes use `4000Mi`; around 1000 nodes use `6000Mi` or more. |
+| `runner.goMemLimitRatio` | number | `0.8` | Fraction of the memory limit given to the Go heap as `GOMEMLIMIT`. The rest covers non-heap memory. |
+| `runner.goMemLimit` | string | `""` | Explicit `GOMEMLIMIT` (for example `1600MiB`). Overrides the ratio when set. |
 | `runner.probes.enabled` | bool | `true` | Liveness and readiness probes against `/healthz` on port 5000. |
 | `runner.scaling.snapshotBatching` | bool | `true` | Sends the full inventory snapshot in batches rather than one payload. |
 | `runner.scaling.batchSize` | int | `1000` | Objects per snapshot batch. |
@@ -205,20 +256,22 @@ The chart sets no `GOMEMLIMIT` or other Go heap tuning, so `runner.resources.lim
 |---|---|---|---|
 | `nodeAgent.enabled` | bool | `true` | eBPF DaemonSet for network metrics, logs, and profiles. |
 | `nodeAgent.image.repository` | string | `ghcr.io/nudgebee/node-agent` | |
-| `nodeAgent.image.tag` | string | `0.1.5` | |
+| `nodeAgent.image.tag` | string | `0.1.11` | |
 | `nodeAgent.resources.requests` | object | `100m` / `500Mi` | |
 | `nodeAgent.resources.limits` | object | `1` / `1Gi` | |
 | `nodeAgent.podmonitor.enabled` | bool | `true` | Render a `PodMonitor` so Prometheus scrapes the node agent. |
 | `nodeAgent.podmonitor.azuremanaged` | bool | `false` | Emits the `azmonitoring.coreos.com` PodMonitor that Azure Monitor managed Prometheus reads instead. |
+| `nodeAgent.podmonitor.additionalLabels` | object | `{}` | Extra labels on the PodMonitor, for example to match your Prometheus CR's `podMonitorSelector`. |
+| `nodeAgent.podmonitor.namespaceSelector` | object | `{}` | Namespaces Prometheus looks in for the node agent's pods. Empty means the PodMonitor's own namespace. |
 | `nodeAgent.priorityClassName` | string | `""` | |
 | `nodeAgent.env` | list | see chart | Includes `SENSITIVE_HEADERS`, the header names the node agent strips from captured traffic. |
 
 Without the prometheus-operator there is no PodMonitor to create. Scrape the node agent with the job from [`kube-prometheus-stack-values.yaml`](https://github.com/nudgebee/k8s-agent/blob/main/kube-prometheus-stack-values.yaml) instead. More detail in [Node Agent Configuration](./node-agent-configs.md).
 
-:::caution The PodMonitor's labels are not configurable
-The chart stamps the PodMonitor with the standard chart labels and nothing else — `app.kubernetes.io/name`, `app.kubernetes.io/instance`, `app.kubernetes.io/version`, `app.kubernetes.io/managed-by`, `helm.sh/chart`, and `component: node-agent`. There is no value for adding your own, and no value for setting a `namespaceSelector` — the operator's default applies, so Prometheus only looks for the node agent's pods in the release namespace, where the chart creates the PodMonitor.
+:::caution Match your Prometheus CR's `podMonitorSelector`
+The chart stamps the PodMonitor with the standard chart labels — `app.kubernetes.io/name`, `app.kubernetes.io/instance`, `app.kubernetes.io/version`, `app.kubernetes.io/managed-by`, `helm.sh/chart`, and `component: node-agent` — plus anything in `prometheusStack.selectorLabels` and `nodeAgent.podmonitor.additionalLabels`.
 
-This matters because a `podMonitorSelector` on your Prometheus CR that requires a label the chart does not emit — `release: <your-prom-release>` is the usual one — makes the operator ignore the PodMonitor silently: no scrape target is created and network metrics stay empty with nothing reporting an error. **Fix it on the Prometheus side**, by widening that selector to match one of the labels above or by letting it select everything. You cannot fix it from this chart.
+If your Prometheus CR's `podMonitorSelector` requires a label the PodMonitor doesn't carry — `release: <your-prom-release>` is the usual one — the operator ignores the PodMonitor silently: no scrape target is created and network metrics stay empty with nothing reporting an error. Add the label with `prometheusStack.selectorLabels` (which also covers the chart's ServiceMonitor and PrometheusRule) or `nodeAgent.podmonitor.additionalLabels`, or widen the selector on the Prometheus side. When run without `-g true`, the install script copies the labels from your Prometheus CR's `ruleSelector` into `prometheusStack.selectorLabels`; check that they also satisfy `podMonitorSelector`. The UI's install command passes `-g true`, so it doesn't set them.
 :::
 
 ---
@@ -250,11 +303,10 @@ This matters because a `podMonitorSelector` on your Prometheus CR that requires 
 
 ### Installing where there is no Prometheus operator
 
-The install fails on unregistered CRDs unless you turn off both of these. The ClickHouse subchart also emits `monitoring.coreos.com` resources, and a parent chart can only flip a subchart's values, not add a condition to its templates, so it needs its own flag:
+Set `enablePrometheusStack=false`. The chart then renders its `ServiceMonitor`, `PodMonitor` and `PrometheusRule` objects (including the ClickHouse ones) only where the CRD is registered. The install script sets this for you when the operator's CRDs are missing.
 
 ```bash
---set enablePrometheusStack=false \
---set clickhouse.metrics.serviceMonitor.enabled=false
+--set enablePrometheusStack=false
 ```
 
 ---

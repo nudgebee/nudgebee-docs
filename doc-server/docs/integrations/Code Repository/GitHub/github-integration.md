@@ -53,19 +53,20 @@ annotations:
 ### Step 1: Configure GitHub Integration
 
 **In NudgeBee UI:**
-1. Navigate to **Integrations** → **GitHub**
-2. Click **Add Integration**
-3. Choose authentication method:
+1. Navigate to **Admin** → **Integrations** → **Repos** → **GitHub**
+2. Add a GitHub account and choose the authentication method:
 
-**Option A: Personal Access Token**
+**Option A: User Token**
 - Generate a token at: GitHub → Settings → Developer settings → Personal access tokens
 - Required scopes: `repo`, `workflow`
-- Copy token and paste into NudgeBee
+- Enter a **Name**, your GitHub **Username** (a valid GitHub login) and the **Token**
 
-**Option B: GitHub App (Recommended)**
-- Click "Install GitHub App"
-- Authorize access to your repositories
-- NudgeBee will automatically manage tokens
+**Option B: Application (Recommended)**
+- Click **Authenticate with Github App** and install the app on your organization
+- Supports organization repositories only — personal repositories aren't supported
+- NudgeBee manages the tokens for you
+
+**Test Connection** checks the credentials before you save.
 
 ### Step 2: Add Required Annotations
 
@@ -80,7 +81,7 @@ metadata:
     # Required: Infrastructure repository URL
     ci.nudgebee.com/git.repo: "https://github.com/your-org/k8s-manifests.git"
 
-    # Required: Path to your Helm values file
+    # Path to your Helm values file (defaults to values.yaml)
     ci.nudgebee.com/helm.values.filePath: "values-prod.yaml"
 
     # Optional: Target branch (defaults to "main")
@@ -216,8 +217,10 @@ Cost optimization via lower CPU request and reduced memory allocation based on
 ```yaml
 annotations:
   ci.nudgebee.com/git.repo: "https://github.com/org/repo.git"
-  ci.nudgebee.com/helm.values.filePath: "values-prod.yaml"
+  ci.nudgebee.com/helm.values.filePath: "values-prod.yaml"  # optional; defaults to values.yaml
 ```
+
+If a workload has no `ci.nudgebee.com/git.repo` annotation but carries an ArgoCD `argocd.argoproj.io/tracking-id` annotation, NudgeBee asks the [ArgoCD integration](../../CICD/argocd-integration.md) for the application's repository, target revision and values file instead.
 
 ### Recommended
 
@@ -253,10 +256,12 @@ annotations:
 | Annotation | Required | Default | Description |
 |------------|----------|---------|-------------|
 | `ci.nudgebee.com/git.repo` | **Yes** | - | HTTPS URL to infrastructure repository |
-| `ci.nudgebee.com/helm.values.filePath` | **Yes** | - | Path to Helm values file (relative to repo root) |
+| `ci.nudgebee.com/helm.values.filePath` | No | `values.yaml` | Path to Helm values file (relative to repo root) |
 | `ci.nudgebee.com/git.branch` | No | `main` | Target branch for PRs |
 | `ci.nudgebee.com/git.hash` | No | - | Git commit SHA of deployed version |
 | `ci.nudgebee.com/helm.values.rootPath` | No | - | JSON path prefix for all values (e.g., `app.resources`) |
+| `ci.nudgebee.com/helm.values.cpuRequestJsonPath`, `cpuLimitJsonPath`, `memoryRequestJsonPath`, `memoryLimitJsonPath`, `replicaJsonPath` | No | - | Exact JSON paths for each value when your chart doesn't follow the default layout |
+| `ci.nudgebee.com/inPlaceResize` | No | in-place for CPU and memory (Kubernetes 1.35 or later) | On Kubernetes 1.35 or later, adds a `resizePolicy` to the PR so the workload can be resized without a restart; on older clusters no resize policy is added. `false` turns it off; `restart-memory` restarts the container on memory changes |
 
 ### Source Code Annotations (`workloads.nudgebee.com/`)
 
@@ -502,7 +507,7 @@ Ensure you have:
 
 **Possible Causes:**
 1. **GitHub Integration Not Configured**
-   - Check: NudgeBee UI → Integrations → GitHub → Status should be "Connected"
+   - Check: NudgeBee UI → Integrations → GitHub → Status should be `active`
 
 2. **Incorrect Repository URL**
    - Must use HTTPS format: `https://github.com/org/repo.git`
@@ -655,7 +660,7 @@ A: NudgeBee follows your repository's PR template if one exists at `.github/pull
 
 **Q: Does NudgeBee support GitHub Enterprise?**
 
-A: Yes. Configure the Enterprise URL in NudgeBee UI → Integrations → GitHub → GitHub Enterprise URL.
+A: No. The GitHub integration connects to public github.com only; GitHub Enterprise Server URLs can't be configured.
 
 ---
 
@@ -665,7 +670,7 @@ A: Yes. Configure the Enterprise URL in NudgeBee UI → Integrations → GitHub 
 2. **Generates Recommendation**: Analyzes patterns and creates optimization proposal
 3. **Clones Repository**: Uses credentials to clone your infrastructure repo
 4. **Updates Values**: Modifies resource requests/limits in your Helm values file
-5. **Creates Branch**: Creates a new branch with naming pattern `fix/rightsizing-{workload}-{timestamp}`
+5. **Creates Branch**: Creates a new branch with naming pattern `nb/<recommendation-id>`
 6. **Commits Changes**: Commits with detailed message including before/after values
 7. **Opens PR**: Creates pull request with:
    - Summary of changes

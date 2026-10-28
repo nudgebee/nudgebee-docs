@@ -13,9 +13,14 @@ The Markdown template NudgeBee's AI fills in when it writes a root cause analysi
 
 ## How it works
 
+An RCA is written when you click **Generate RCA** on an event's analysis page (shown when no RCA exists yet and you have write access to the account). See [Automatic Event Analysis](./event-analysis.md).
+
+
 The template is a set of headings and instructions. NudgeBee passes it to the model along with the event's evidence, and the model writes the report against it — so headings you add get filled, and headings you remove stop appearing.
 
-The template is set **per account**, so different accounts can carry different formats. Save is disabled until you actually change something.
+The template is set **per account**, so different accounts can carry different formats — pick the account at the top right first (*Select an account*). Edit the Markdown in the editor and click **Save Changes**.
+
+**Start from template…** loads the built-in template or one you saved earlier into the editor; you are asked to confirm (**Load template**) because it replaces what is there.
 
 ## The default template
 

@@ -1,0 +1,116 @@
+---
+sidebar_position: 1.2
+sidebar_label: Improve NuBi's Answers
+---
+
+# Improve NuBi's Answers
+
+NuBi starts every investigation knowing only what it can read from your accounts. Five things let you teach it how *your* environment works — and make it follow your runbooks instead of improvising.
+
+| Construct | What it does | Use it for |
+|---|---|---|
+| **Account context** | A short text loaded into every conversation on the account | Facts NuBi should always know: naming, ownership, what not to touch |
+| **Knowledge base — Fact** | Reference material NuBi searches when relevant | Architecture notes, service descriptions, past incident write-ups |
+| **Knowledge base — SOP** | A procedure NuBi reads in full and follows step by step | Runbooks, triage checklists, escalation steps |
+| **Skills** | A packaged procedure, loaded on demand or with `/skill-name` | Repeatable tasks your team keeps in Git |
+| **Prioritize knowledge** | Reserves room for chosen knowledge in one agent's search results, optionally always loading it | Making a specific agent always use a specific runbook |
+
+## Which one should I use?
+
+| You want NuBi to… | Use | Loaded |
+|---|---|---|
+| Always know a few facts or rules about this account, in every agent | **Account context** | Every conversation, every agent |
+| Know background it can look up when relevant | A **Fact** knowledge base, or synced Confluence/ServiceNow pages | When a search finds it |
+| Follow a procedure when the situation calls for it | An **SOP** knowledge base, or a **skill** from GitHub | When a search finds it, or when you type `/skill-name` |
+| Follow a short procedure on **every** run of one agent | A skill you wrote (up to 4,000 characters), turned on under **Admin → AI & Tools → Agents → (agent row menu) → Prioritize knowledge → Always load** | Every run of that agent |
+
+Rules of thumb:
+
+- **Account context is for facts, not procedures.** It has no agent targeting and is sent on every message, so keep it short — naming, ownership, what never to touch.
+- **A skill is for how to do something.** Write it as an SOP. NuBi loads it only when it is relevant, so you can have many without slowing every request.
+- **Always load is for the exception:** one short runbook a specific agent must never skip. If every agent needs the text, put it in account context instead — Always load can't be set for *All agents*.
+- **Long reference material** (architecture docs, Confluence spaces) stays searchable; don't paste it into account context.
+
+All of these are managed in **[b-Cortex](./b-cortex.md)** (the **b-Cortex** button on the left rail), except *Prioritize knowledge*, which is set per agent under **Admin → AI & Tools → Agents**.
+
+## Account context
+
+**b-Cortex → Knowledge → Account Context → Add Account Context**
+
+Account-level knowledge used by the AI planner on every conversation for this account. Keep it short and factual — it is included every time, so long text costs on every run. Content is limited to about 10 KB, even though the upload accepts larger `.txt` files.
+
+Good account context:
+
+- "Production namespaces are `payments-*` and `orders-*`; `sandbox-*` is disposable."
+- "The `checkout` service is owned by the Payments team; page #payments-oncall."
+- "Never restart `ledger-db`; escalate to the DBA team instead."
+
+:::note Where account context lives
+Account context is always edited in **b-Cortex → Knowledge → Account Context**. When the tenant feature **Memory across conversations** is turned **off**, admins also see a copy of it under **Admin → AI & Tools → Account Context**; turning memory **on** removes that admin tab. The content is the same either way.
+:::
+
+## Facts and SOPs
+
+Every knowledge document is treated as one of two kinds:
+
+| Kind | How NuBi uses it |
+|---|---|
+| **SOP** | A procedure. Agents read it in full first and follow its applicable steps in order, checking prerequisites. |
+| **Fact** | Reference material. Agents read only the parts they need, as supporting information. |
+
+How a document gets its kind:
+
+1. **You marked it.** A mark on a document always wins. For an uploaded or typed knowledge base, choose **Fact** or **SOP** when you create it. For pages synced from Confluence or ServiceNow, open the knowledge base's **Docs** and set each page to **Fact**, **SOP** or **Default**.
+2. **Default** — NudgeBee classifies each synced page automatically. A page classified as a procedure is followed as an SOP; everything else is reference.
+
+If NuBi is reading a runbook as background instead of following it, mark the page **SOP**.
+
+## Skills
+
+A skill is a knowledge item NuBi can load in full when it needs it. Skills come from:
+
+- **knowledge bases you write yourself** — the **User** tab (typed or `.txt` text, Fact or SOP; not PDFs), and
+- a **GitHub repository**: in **b-Cortex → Knowledge → Knowledge Base → Repositories → Add repository** (tenant admins), every folder containing a `SKILL.md` becomes a skill. See [Add skills from GitHub](./b-cortex.md#add-skills-from-github).
+
+Knowledge synced from Confluence or ServiceNow (the **Integration** tab) is search-only: it is not a skill and can't be loaded by name or always loaded.
+
+In the NuBi chat, type `/` to pick a skill from the list (name and description), or type `/skill-name` yourself — up to three per message. The skill's text (up to 16,000 characters) goes in ahead of your question. Otherwise agents find relevant skills themselves. Mark a procedure **SOP** so it is followed step by step once loaded.
+
+## Prioritize knowledge for one agent
+
+**Admin → AI & Tools → Agents → (agent row menu) → Prioritize knowledge**
+
+Every agent can already use all of the account's knowledge bases. *Prioritized* knowledge bases get reserved space in that agent's search results, so they are not crowded out by other matches.
+
+Turn on **Always load** for a prioritized knowledge base to put its full text in the agent's prompt on every run. Always load is available for knowledge bases you wrote yourself (not PDFs or synced Confluence/ServiceNow pages) of up to 4,000 characters. Always-loaded text is used even when the knowledge retrieval mode is **Disabled**. For the metrics and traces agents, it reaches the agent that writes the query. Use it for the one runbook an agent must always follow — for example the **Event & Alert Investigator** for alert triage, or the **Azure Troubleshooter** for your Azure runbook. Always-loaded text is sent on every run, so keep it to what is essential.
+
+## Knowledge retrieval policy
+
+**b-Cortex → Knowledge → Knowledge Base →** `Knowledge retrieval: <mode>` (select an account first)
+
+| Option | Behavior |
+|---|---|
+| **Auto (default)** | Recommended for most requests. Searches automatically when knowledge may help and skips some simple requests; the model can also search when needed. |
+| **Always discover** | Searches on every non-empty request. Use it when requests regularly depend on internal documentation; it adds latency and retrieval cost, and does not guarantee every document is read. |
+| **Model-directed only** | The model decides when to search. Avoids automatic retrieval, but the model may miss useful documentation. |
+| **Disabled** | Turns off automatic discovery and the knowledge search and load tools for this account. Some custom agents require automatic discovery and cannot run in this mode. |
+
+Use **Test retrieval** on the same screen to see what NuBi would find for a sample question before you rely on it.
+
+## Memory across conversations
+
+With the tenant feature **Memory across conversations** turned on (**Admin → Tenant Settings → Features**), NuBi remembers preferences, decisions and patterns between conversations. You can review and correct what it remembered in b-Cortex's **Memory** and **Preferences** tabs, and admins control which layers are used in **[Memory Policy](./memory-policy.md)**.
+
+## Checklist: "NuBi isn't following our runbook"
+
+1. The runbook is in a knowledge base for this account (or shared to it), and its status is **Ready**.
+2. It is marked **SOP** — or, for a synced page, the classifier shows it as a procedure.
+3. **Test retrieval** with the question users actually ask returns the runbook.
+4. For a runbook one agent must always use, add it under **Prioritize knowledge** for that agent, and turn on **Always load** if it is a short knowledge base you wrote yourself.
+5. Facts the agent keeps getting wrong about your environment go in **Account context**.
+
+## Related
+
+- [b-Cortex: Memory and Knowledge](./b-cortex.md)
+- [Agents & Custom Agents](./custom-agents.md)
+- [Memory Policy](./memory-policy.md)

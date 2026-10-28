@@ -51,11 +51,13 @@ The agent connects from inside the cluster using credentials held in a Kubernete
 | `PGUSER` | Username |
 | `PGPASSWORD` | Password |
 
+Create the secret in the NudgeBee agent's namespace on the linked cluster (for example `nudgebee-agent`) and enter just the secret name.
+
 Create one with:
 
 ```bash
 kubectl create secret generic nudgebee-postgres \
-  --namespace databases \
+  --namespace nudgebee-agent \
   --from-literal=PGHOST=postgres.databases.svc.cluster.local \
   --from-literal=PGDATABASE=orders \
   --from-literal=PGUSER=nudgebee \
@@ -71,7 +73,7 @@ Forager connects to the database over the network. Use this for RDS, Cloud SQL, 
 * **PostgreSQL host \*** (Required) — Hostname or IP, e.g. `db.example.com` or `10.0.1.5`.
 * **PostgreSQL port** — Typically `5432`.
 * **Database name to connect to** — The database NudgeBee opens.
-* **SSL Mode** — `Disable` (default), `Require`, `Verify Ca` or `Verify Full`. Use `Require` or stronger for anything crossing a network boundary.
+* **SSL Mode** — `disable` (default), `require` or `verify-full`. Use `Require` or stronger for anything crossing a network boundary.
 * **Credential Source**, **Database username \***, **Database password \***, **Read Only**, **Maximum open connections in the pool** — see [common fields](./index.md#fields-common-to-every-database).
 
 ![The PostgreSQL form in Proxy Agent mode, showing host, port, database, SSL mode, credential source and the read-only and pool-size options](../../../static/img/integrations/db-postgres-proxy.png)
@@ -122,3 +124,7 @@ See the [shared troubleshooting table](./index.md#troubleshooting) first. Postgr
 - [Proxy Agent configuration reference](../../installation/proxy-agent/configuration.md)
 - [Credential sources](../../installation/proxy-agent/credential-sources.md)
 - [PostgreSQL: pg_stat_statements](https://www.postgresql.org/docs/current/pgstatstatements.html)
+
+## Related
+
+- [Database integrations](./index.md)

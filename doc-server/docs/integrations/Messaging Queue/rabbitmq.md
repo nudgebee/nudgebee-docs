@@ -46,9 +46,11 @@ The secret must contain all four keys:
 | `RABBITMQ_USER` | Username |
 | `RABBITMQ_PASSWORD` | Password |
 
+Create the secret in the NudgeBee agent's namespace on the linked cluster (for example `nudgebee-agent`) and enter just the secret name.
+
 ```bash
 kubectl create secret generic rabbit-secret \
-  --namespace messaging \
+  --namespace nudgebee-agent \
   --from-literal=RABBITMQ_HOST=rabbitmq.messaging.svc.cluster.local \
   --from-literal=RABBITMQ_PORT=15672 \
   --from-literal=RABBITMQ_USER=nudgebee \
@@ -69,14 +71,14 @@ Navigate to **Admin** > **Integrations** > **Messaging Queue** and select **Rabb
 
 ## Step 3: Test and Save
 
-Click **Test Connection**, then **Save**.
+Click **Test Connection**, then **Save**. The test runs `rabbitmqadmin show overview` against the management API.
 
 ---
 
 ## Verify the Integration
 
 1. Click **Test Connection** on the form — it should succeed before you save.
-2. In a workflow, run an [`mq.rabbitmqadmin.cli`](../../features/workflow-builder/message-queue-tasks.md) task with the command `list queues`. The response should list your queues with their message counts.
+2. In a workflow, run an [`mq.rabbitmqadmin.cli`](../../features/workflow-builder/message-queue-tasks.md) task with the command `rabbitmqadmin list queues`. The response should list your queues with their message counts.
 
 ---
 
@@ -98,3 +100,8 @@ Click **Test Connection**, then **Save**.
 - [Message queue tasks in workflows](../../features/workflow-builder/message-queue-tasks.md)
 - [RabbitMQ management plugin](https://www.rabbitmq.com/management.html)
 - [RabbitMQ access control](https://www.rabbitmq.com/access-control.html)
+
+## Related
+
+- [Message queue tasks](../../features/workflow-builder/message-queue-tasks.md)
+- [Integrations](../index.md)

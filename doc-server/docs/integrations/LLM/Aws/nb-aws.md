@@ -84,7 +84,7 @@ For SageMaker:
 ```sh
 EMBEDDINGS_PROVIDER=sagemaker
 EMBEDDINGS_PROVIDER_REGION=<AWS_SageMaker_Region>
-EMBEDDINGS_PROVIDER_API_ENDPOINT=<SageMaker_Endpoint_URL>
+EMBEDDINGS_PROVIDER_API_ENDPOINT=<SageMaker endpoint name>
 EMBEDDINGS_MODEL_NAME=<Custom_Bedrock_Model_ID>
 ```
 
@@ -104,7 +104,7 @@ For SageMaker:
 
 ```sh
 LLM_PROVIDER=sagemaker
-LLM_PROVIDER_API_ENDPOINT=<SageMaker_Endpoint_URL>
+LLM_PROVIDER_API_ENDPOINT=<SageMaker endpoint name>
 LLM_PROVIDER_REGION=<AWS_SageMaker_Region>
 ```
 
@@ -142,3 +142,7 @@ LLM_MODEL_NAME=<Custom_Bedrock_Model_ID>
 
 You have successfully deployed the NudgeBee AI model on **AWS SageMaker** and **AWS Bedrock (Custom Model)**, configuring both the **RAG server** and **LLM server** to interact with the selected platform.
 
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [LLM Integrations](../index.md)

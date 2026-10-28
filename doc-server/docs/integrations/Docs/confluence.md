@@ -40,19 +40,23 @@ Navigate to **Admin** > **Integrations** > **Docs** and select **Confluence**, t
 | Data Center / Server — username + password | Self-hosted, where PATs are unavailable. |
 
 * **Host \*** (Required) — The Confluence base URL, e.g. `https://yourcompany.atlassian.net`. For Data Center, include the context path if your instance uses one, e.g. `https://wiki.example.com/confluence`.
-* **Username \*** (Required) — Atlassian account email (Cloud) or Confluence username (Data Center).
+* **Username** — Atlassian account email (Cloud) or Confluence username (Data Center). Required for the email + API token and username + password methods; hidden for **Data Center / Server — personal access token**.
 * **Token \*** (Required) — The API token, personal access token, or password, matching the authentication method selected above.
 * **Namespace** — The space key to index, e.g. `SRE`. Leave empty to index every space the account can read.
 
 ### Advanced Settings
 
-* **Limit to pages** — Restrict indexing to specific pages instead of a whole space. Use this when a space is large but only a handful of pages are operationally relevant.
+* **Limit to pages** — Restrict indexing to specific pages (and their child pages) instead of a whole space. Use this when a space is large but only a handful of pages are operationally relevant.
 
 ![The Confluence configuration form with Advanced Settings expanded, showing the authentication options and the Limit to pages setting](../../../static/img/integrations/confluence.png)
 
 ## Step 3: Test and Save
 
-Click **Test Connection**, then **Save**.
+Click **Test Connection**, then **Save**. The test signs in, and also checks that the **Namespace** space exists and that the pages in **Limit to pages** can be found.
+
+:::note Network access
+NudgeBee connects to Confluence directly from its own servers, not through your cluster agent. A Confluence Data Center instance must be reachable from NudgeBee. If it uses HTTPS, its certificate must come from a public certificate authority.
+:::
 
 :::tip
 Start narrow. Index one space — or a handful of pages — that your team genuinely uses during incidents, and widen later. Indexing everything an account can read pulls in meeting notes and drafts, which makes retrieval noisier rather than better.
@@ -76,7 +80,7 @@ Start narrow. Index one space — or a handful of pages — that your team genui
 | `404` on the base URL | Missing context path | Data Center instances behind a path need it included, e.g. `https://wiki.example.com/confluence`. |
 | Connection succeeds, nothing is retrieved | The account cannot read the space, or the space key is wrong | Space keys are case-sensitive; confirm the account can open the space in a browser. |
 | Only some pages are found | **Limit to pages** is set | Clear it to index the whole space. |
-| Answers cite stale content | The page changed after indexing | Re-run the connection so the space is re-indexed. |
+| Answers cite stale content | The page changed after the last sync | Content is re-synced automatically once a day (08:00 UTC by default). Use **Retrigger** on its knowledge base in **b-Cortex → Knowledge → Knowledge Base** to sync now. |
 
 ---
 
@@ -85,3 +89,8 @@ Start narrow. Index one space — or a handful of pages — that your team genui
 - [Atlassian: Manage API tokens](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/)
 - [Confluence Data Center: Personal access tokens](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html)
 - [NudgeBee AI overview](../../features/ai/index.md)
+
+## Related
+
+- [b-Cortex knowledge](../../features/ai/b-cortex.md)
+- [Integrations](../index.md)

@@ -15,7 +15,7 @@ NudgeBee uses the same graph to work out what an alert affects, to rank which fa
 
 ## Why use it
 
-- **See real dependencies.** The calls services make to each other come from eBPF, distributed traces and APM data, not from a hand-drawn diagram.
+- **See real dependencies.** The calls services make to each other come from eBPF, distributed traces, APM data and flow logs, not from a hand-drawn diagram.
 - **Follow a problem across boundaries.** A pod, the node it runs on, the EC2 instance behind that node and the database it calls are all in one graph.
 - **Check impact before you change something.** Select a resource and expand outward to see what depends on it.
 - **Get better answers from the AI.** NuBi reads the graph to answer questions such as "what calls this service?" and to walk an incident back to its cause.
@@ -33,7 +33,7 @@ The first time you open it, a welcome card offers a short guided tour of how to 
 |:---|:---|:---|
 | Kubernetes resources | Clusters, namespaces, nodes, workloads, pods, services, ingresses, volumes, config maps | The NudgeBee agent in each cluster |
 | Cloud resources | EC2 instances, load balancers, RDS and Cloud SQL databases, S3 buckets, queues, VPCs, IAM roles | Your connected AWS, GCP and Azure accounts |
-| Service-to-service calls | `CALLS` | eBPF, distributed traces, Datadog APM, New Relic APM |
+| Service-to-service calls | `CALLS` | eBPF, distributed traces, Datadog APM, New Relic APM, Elastic APM, GCP Cloud Trace, AWS VPC Flow Logs, the VM service map |
 | Code and on-call | Repositories, teams, users, on-call services | GitHub, GitLab and PagerDuty integrations |
 | Ownership | Which team owns which workload or resource | **Admin → Access & Users → Ownership** (see [User Management](../user-management.md)) |
 
@@ -44,8 +44,8 @@ NudgeBee also links resources across sources, for example a Kubernetes node to t
 The graph rebuilds every hour. The **Last synced** time at the top of the Filters panel shows when the last rebuild finished.
 
 - Calls between services come from what each flow source observes at each rebuild. A call that has not been seen for 7 days drops out.
-- A resource you delete from a cluster or account disappears at the next rebuild after NudgeBee stops seeing it.
-- There is no button to rebuild on demand; changes appear at the next hourly rebuild.
+- Many single-resource changes, such as a cloud resource created or updated through real-time events or a deleted Kubernetes workload or node, show up within minutes; everything else at the next hourly rebuild.
+- There is no button to rebuild on demand.
 
 ## Who can see it
 
@@ -58,6 +58,7 @@ Only tenant admins see the **Settings** button. It controls which accounts and f
 - [Explore the Graph](./exploring.md) — filters, search, focus, traversal and the canvas controls
 - [Nodes and Relationships](./nodes-and-relationships.md) — reading a node, node and edge details, and the full type reference
 - [Where the Data Comes From](./data-sources.md) — every source, what it needs, rebuild timing, and the Coverage settings
+- [Manual Declarations](./manual-declarations.md) — add nodes and dependencies no collector can see
 - [How NudgeBee Uses the Graph](./how-nudgebee-uses-it.md) — AI answers, alert impact, blast radius and criticality
 - [Manual Declarations](./manual-declarations.md) — add dependencies and resources the collectors cannot see, one at a time or from a JSON document
 

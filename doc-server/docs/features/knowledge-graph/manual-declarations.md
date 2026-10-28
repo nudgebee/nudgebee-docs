@@ -2,8 +2,8 @@
 id: manual-declarations
 title: Manual Declarations
 sidebar_label: Manual Declarations
-sidebar_position: 6
-keywords: [knowledge graph, manual dependencies, manual nodes, declare, import, json]
+sidebar_position: 4.5
+keywords: [knowledge graph, manual dependencies, manual nodes, declare, import, json, knowledge graph manual declaration, declare dependency, declare node, network switch, merge node]
 intent: change
 provider: all
 ---
@@ -43,6 +43,8 @@ A declared node goes into the graph as soon as you save it, so dependencies can 
 
 **Outside any connected account.** Use this for an on-prem database, a SaaS API, or anything else no collector will ever read. Pick a node type (for example Database, Cache, MessageQueue or ExternalService) and a name. A namespace is optional and works as a grouping, such as a team or environment. These nodes never merge with a collected one.
 
+A node outside any account can also use a kind of your own, such as `NetworkSwitch`. A tenant admin introduces a new kind the first time it is used.
+
 Optional details depend on the resource type, for example a database's `engine`. Fields only the collector can know, such as timestamps, runtime state, allocated IPs and internal ids, cannot be declared.
 
 ### Node statuses
@@ -53,7 +55,7 @@ Optional details depend on the resource type, for example a database's `engine`.
 | **Adopted** | A collector now provides this node. It is the same node, so dependencies on it are unchanged. The details you typed were replaced by the collected data. | Nothing. You can delete the declaration; the node stays. |
 | **Possible duplicate** | A collected node with the same type and name exists under a different identity, for example because the VPC you gave was not the one the resource is in. | Choose **Merge into collected node** from the row's menu. Dependencies move to the collected node and the declaration is removed. |
 
-A node's identity fields cannot be edited after it is declared, because changing them would make it a different node. To change one, delete the node and declare it again.
+A node's identity fields cannot be edited after it is declared, because changing them would make it a different node. To change one, delete the node and declare it again. An **Adopted** node cannot be edited at all; the collector owns its details.
 
 ## Dependencies
 
@@ -65,6 +67,14 @@ A dependency names a source, a destination and how they relate:
 | `PUBLISHES_TO` | The source writes messages to a queue or topic. |
 | `SUBSCRIBES_TO` | The source reads messages from a queue or topic. |
 
+These three link any two nodes. When one end is a node declared outside any account, six more are available:
+
+| Relationship | Use it when |
+|:---|:---|
+| `RUNS_ON`, `HOSTED_ON`, `DEPENDS_ON`, `ROUTES_TO` | The source depends on the destination, for example a VM that runs on a host or traffic that routes through a load balancer. |
+| `CONNECTED_TO` | The two are linked with no direction, such as a cable between a server and a network switch. |
+| `BELONGS_TO` | The source is grouped under the destination. |
+
 NudgeBee finds each side in the graph by its type and name, narrowed by any namespace, cluster, ARN or account you give. The **Status** column shows how that went:
 
 | Status | Meaning |
@@ -75,6 +85,7 @@ NudgeBee finds each side in the graph by its type and name, narrowed by any name
 | **Source: too many** / **Dest: too many** | More than ten nodes matched. **Edit** the dependency and add a namespace, cluster, ARN or account to narrow it. |
 | **Pending** | Not resolved yet. |
 | **Node inactive** | A node it pointed at is no longer in the graph. |
+| **Invalid payload** | The declaration can't be read. **Edit** it. |
 
 **Re-resolve** on a row, or **Re-resolve all**, matches again. That is useful once a missing resource has been collected.
 
@@ -163,7 +174,7 @@ A document has two lists, `nodes` and `dependencies`. Either may be left out, bu
 |:---|:---|:---|:---|
 | `source` | string or object | Yes | A string is the `ref` of a node in this document. An object names a node already in the graph (fields below). |
 | `dest` | string or object | Yes | Same as `source`. |
-| `relationship_type` | string | No | `CALLS` (default), `PUBLISHES_TO` or `SUBSCRIBES_TO`. |
+| `relationship_type` | string | No | `CALLS` (default), `PUBLISHES_TO` or `SUBSCRIBES_TO`. With a node declared outside any account at one end, also `CONNECTED_TO`, `DEPENDS_ON`, `RUNS_ON`, `HOSTED_ON`, `ROUTES_TO` or `BELONGS_TO`. |
 | `notes` | string | No | Free text shown with the declaration. |
 
 A side written as an object takes these fields:
@@ -229,4 +240,6 @@ The **Settings** button is shown to tenant admins only, so an account admin work
 
 - [Semantic Knowledge Graph](./index.md)
 - [Where the Data Comes From](./data-sources.md) — what the collectors and flow sources already see
+- [Nodes and Relationships](./nodes-and-relationships.md)
+- [How NudgeBee Uses the Graph](./how-nudgebee-uses-it.md)
 - [API Docs](../../api-docs/index.md) — `kg_create_manual_declarations` and the other `kg_*_manual_*` actions

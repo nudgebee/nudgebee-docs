@@ -43,6 +43,9 @@ Navigate to **Integrations** > **Observability** tab and select **New Relic** to
         * `eu` — European Union datacenter (`api.eu.newrelic.com`)
     * If unsure, check your New Relic login URL: `one.newrelic.com` = US, `one.eu.newrelic.com` = EU.
 
+* **Kg Source**
+    * How NudgeBee builds the knowledge graph from New Relic. `nrql` (default) aggregates spans with NRQL. `nerdgraph` reads related entities through NerdGraph, which is richer for OpenTelemetry or eBPF tenants, and falls back to NRQL when it returns nothing.
+
 * **Default Log Provider**
     * Enable this to set New Relic as the default source for log queries across NudgeBee.
 
@@ -68,13 +71,13 @@ Once configured, NudgeBee queries your New Relic account using NRQL (New Relic Q
 
 NudgeBee supports the full range of NRQL operators for filtering: `=`, `!=`, `LIKE`, `IN`, `BETWEEN`, `>`, `<`, and more.
 
-**Credential validation**: on save, NudgeBee runs `SELECT count(*) FROM Transaction SINCE 1 minute ago` against your account to verify the API key, Account ID, and region are correct.
+**Credential validation**: when you click **Test Connection**, NudgeBee runs `SELECT count(*) FROM Transaction SINCE 1 minute ago` against your account to verify the API key, Account ID, and region are correct.
 
 ---
 
 ## Verify the Integration
 
-1. Save the configuration. If credentials are valid, the integration is created without errors.
+1. Click **Test Connection**, then **Save**. **Save** stays disabled until the test succeeds.
 2. Navigate to any Kubernetes workload in NudgeBee.
 3. Open the **Logs** or **Traces** tab.
 4. Confirm that data from New Relic appears in the query results.

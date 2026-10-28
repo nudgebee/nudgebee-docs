@@ -1,72 +1,78 @@
 ---
 sidebar_position: 5
+keywords: [optimize, optimization, cost savings, rightsizing, right sizing, recommendations, finops, auto optimize, savings calculation]
 ---
-# Optimizations
+# Optimize
 
-NudgeBee's **FinOps AI-Assistant** continuously analyzes your Kubernetes workloads to help you **lower cloud costs** and improve performance. It generates actionable recommendations including resource right-sizing (CPU and memory), scaling adjustments, security best practices, and infrastructure cleanup opportunities — purpose-built for Cloud Ops complexity, not generic cost analysis.
+**Optimize** in the sidebar (`/optimise`) brings together every cost, performance, configuration and security recommendation NudgeBee finds across your Kubernetes clusters, cloud accounts and self-hosted VMs — and the automation that applies them.
 
 :::info
-**Prerequisites**: At least one [Kubernetes cluster](../../installation/agent/installation/) must be connected. Optimization recommendations are generated automatically based on observed resource utilization over time.
+**Prerequisites**: at least one connected [Kubernetes cluster](../../installation/agent/installation/) or [cloud account](../Cloud/index.md). Recommendations appear after the first scan and refresh as usage data accumulates.
 :::
 
-:::tip
-To automatically apply optimization recommendations without manual approval, configure [Autopilot Auto-Optimize](./autopilot/auto_optimize/). To have NudgeBee raise pull requests with the recommended changes, connect a [GitHub](../../integrations/Code%20Repository/GitHub/github-integration.md) or [GitLab](../../integrations/Code%20Repository/GitLab/gitlab-integration.md) repository.
-:::
+## The Optimize tabs
 
----
+| Tab | What it shows |
+|---|---|
+| **[Summary](./summary.md)** | NuBi's briefing: potential savings, the findings to fix first, and cost by account |
+| **[Cost](./cost-and-configuration.md)** | Right sizing, infra upgrade and spot recommendations with their savings |
+| **[Configuration](./cost-and-configuration.md#configuration)** | Configuration checks, grouped by check |
+| **[Security](./security.md)** | Image Scan, CIS Scan, VM Vulnerabilities and Cloud Posture |
+| **[Resolutions](./resolutions.md)** | Every attempt to resolve a recommendation, and its outcome |
+| **[Auto Optimize](./autopilot/auto_optimize/index.md)** | Automations that apply right-sizing for you, and their approvals |
+| **[LLM Analyser](../ai/llm-analyser.md)** | NudgeBee's own AI spend (when the AI usage and cost tab is turned on) |
+| **[AI Gateway](../ai/ai-gateway.md)** | AI Gateway usage (when the gateway is enabled for your installation) |
 
-## Right-Sizing Calculation Methodology
+Each cluster and cloud account also has its own **Optimize** tab with the same recommendations for that account — see [Kubernetes → Optimize](../Kubernetes/optimize.md).
 
-NudgeBee uses deterministic statistical analysis over historical Prometheus metrics to calculate safe resource recommendations:
+## Who can see and change what
 
-| Recommendation Type | Observation Window | Sizing Metric | Strategy & Risk Profile |
-|---|---|---|---|
-| **CPU Limits** | Past 14 Days | Max P99 + 20% Headroom | **Low Risk** — Prevents CPU throttling during unexpected traffic spikes. |
-| **CPU Requests** | Past 14 Days | P95 Utilization | **Low Risk** — Maximizes bin-packing efficiency across worker nodes. |
-| **Memory Limits** | Past 7 Days | Peak Utilization + 15% Buffer | **Zero OOM Tolerance** — Prevents kernel OOM-killer termination of stateful pods. |
-| **Memory Requests** | Past 7 Days | Peak Utilization | **Low Risk** — Eliminates idle reserved memory overhead. |
-| **Unattached Volumes** | Past 30 Days | 0 Read/Write IOPS | **Zero Impact** — Flags unmounted, detached PVCs/EBS volumes for safe removal. |
+- Summary, Cost, Configuration, Security and Resolutions need read access to **recommendations**; Auto Optimize needs read access to **auto optimize**. Tenant and account roles include both.
+- Applying a fix, dismissing a recommendation and creating or changing an Auto Optimize rule need **write access** to the account.
 
-### Pricing Engine
+## How right-sizing recommendations are calculated
 
-Cost figures are calculated using:
-- **Server-Side Cost Engine**: The NudgeBee server computes allocations from each cluster's metrics, accounting for node instance types, storage classes, and shared namespaces. No cost component runs in your cluster.
-- **Cloud Provider Pricing APIs**: Real-time integration with AWS Pricing API, GCP Cloud Billing, and Azure Retail Rates.
-- **Custom Discount Rates**: Support for enterprise discount agreements (EDP/MCA) and reserved instance commitments.
+For a Kubernetes workload, NudgeBee looks at **14 days** of CPU and memory usage (it needs enough data points before recommending anything):
 
----
+| Setting | Recommendation |
+|---|---|
+| **CPU request** | The 99th percentile (P99) of observed CPU usage |
+| **CPU limit** | Not set |
+| **Memory request** | Peak observed usage plus 15% |
+| **Memory limit** | At least the request, and at least the container's highest recorded memory plus 15% (no higher than the current limit if the container never exceeded it or got OOM-killed) |
+| **After OOM kills** | Memory is set to at least 25% above the limit the container had when it was OOM-killed |
+| **Minimums** | 10m CPU and 100 MiB memory |
 
-## GitOps & Automated Pull Request Workflow
+When you apply a recommendation you can choose a different algorithm (**NB Algo**, **P99**, **P97** or **P95**) and add a CPU or memory buffer — see [Kubernetes → Optimize](../Kubernetes/optimize.md#apply-a-recommendation).
 
-Instead of applying manual `kubectl` patches, NudgeBee enables infrastructure-as-code teams to review and merge recommendations via GitOps pull requests:
+**Savings** are the reduction in requested CPU and memory, multiplied by the node's price per unit, the hours in a month and the number of replicas. They are shown in **USD per month**, even when an account is billed in another currency. A **negative** value means the recommendation *raises* cost — usually because a workload is under-provisioned; totals leave these out.
 
-```mermaid
-graph LR
-    O[FinOps Recommendation] --> G[NudgeBee Git Engine]
-    G --> B[Create Branch & Commit Diff]
-    B --> PR[Open Pull Request in GitHub / GitLab]
-    PR --> CI[CI / ArgoCD / Flux Deployment]
-```
+An **unused volume** is a persistent volume that isn't mounted by any running pod, as reported by the cluster agent.
 
-### How to Raise Automated PRs
+## Raise a pull request instead of patching
 
-1. Connect your repository under **Admin → Integrations → Code Repositories** ([GitHub](../../integrations/Code%20Repository/GitHub/github-integration.md) or [GitLab](../../integrations/Code%20Repository/GitLab/gitlab-integration.md)).
-2. Navigate to **Optimizations → Workload Right-Sizing**.
-3. Select the target deployment or StatefulSet.
-4. Click **Create Pull Request**.
-5. NudgeBee creates a new branch, updates the Helm `values.yaml` or Terraform manifest with the recommended CPU/memory requests and limits, and opens a Pull Request with a clear rationale table for your engineering team to review.
+To keep Git as the source of truth, open a recommendation and choose **Create PR** in *Resolve this issue*:
 
----
+1. Connect a [GitHub](../../integrations/Code%20Repository/GitHub/github-integration.md) or [GitLab](../../integrations/Code%20Repository/GitLab/gitlab-integration.md) integration.
+2. On **Optimize → Cost** (or a cluster's **Optimize → Right Sizing**), click **Optimize** on the workload's row.
+3. Click **Create PR** and choose the **Git Integration** and **In-place resize policy**. The repository is found from the workload's CI or Argo CD annotations — *No source configuration detected* means there are none.
+4. NudgeBee's code agent opens the pull request in the background; follow it under [Resolutions](./resolutions.md).
 
-## In This Section
+## In this section
 
-- **[Recommendations & AutoOptimize Lifecycle](./recommendations-lifecycle.md)** — Review recommendation evidence, configure supported automation, and verify or recover resource changes.
-- **[Autopilot Overview](./autopilot/autopilot.md)** — Policy-gated self-healing automation engine.
-- **[Auto-Optimize](./autopilot/auto_optimize/)** — Automated continuous rightsizing rules and execution schedules.
-- **[Auto-Runbooks Catalog](./autopilot/auto_runbook/)** — Ready-to-use runbooks for pod restarts, vertical/horizontal rightsizing, node shutdowns, and custom scripts.
-
----
+- [Summary](./summary.md)
+- [Cost & Configuration](./cost-and-configuration.md)
+- [Security](./security.md)
+- [Resolutions](./resolutions.md)
+- [Auto Optimize](./autopilot/auto_optimize/index.md)
+- [Recommendations lifecycle](./recommendations-lifecycle.md)
 
 ### Watch a Walkthrough
 
 <div style={{position: "relative", paddingBottom: "62.5%", height: 0}}><iframe src="https://www.loom.com/embed/cd617c360cc54fc98fad656bf91e63d0?sid=2b5ab1fb-b413-4c25-97cf-86fa86529e8a" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}></iframe></div>
+
+## Related
+
+- [Kubernetes → Optimize](../Kubernetes/optimize.md)
+- [Cloud accounts](../Cloud/index.md)
+- [Optimization-triggered automations](../workflow-builder/create-optimization-automation.md)

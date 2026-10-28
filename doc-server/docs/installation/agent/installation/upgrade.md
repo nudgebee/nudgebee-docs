@@ -4,14 +4,14 @@ sidebar_position: 3
 
 # Upgrade
 
-The Helm chart version and the agent application version are separate. Check both before changing a production cluster:
+The agent's version **is** its Helm chart version — the chart's `version` and `appVersion` are always the same, and that is what NudgeBee shows in Agent Health. (The image tag is a build date and commit, not the version.) Check what you run and what is available:
 
 ```bash
-helm list -n nudgebee-agent
-kubectl get deploy nudgebee-agent-runner -n nudgebee-agent \
-  -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
+helm list -n nudgebee-agent          # CHART column, e.g. nudgebee-agent-0.1.30
 helm search repo nudgebee-agent/nudgebee-agent --versions
 ```
+
+**Latest version:** the newest release on [GitHub Releases](https://github.com/nudgebee/k8s-agent/releases) tagged `nudgebee-agent-X.Y.Z` that isn't a pre-release (release candidates are `-rc-N` pre-releases). NudgeBee compares your version against it and shows **Update available.** in Agent Health when they differ.
 
 Pin the chart version in production so the same command is repeatable across clusters. Read the target chart's values before upgrading because newly introduced defaults are not applied when Helm reuses stored values.
 
@@ -52,16 +52,16 @@ Compare `target-default-values.yaml` with `current-values.yaml`. Pay particular 
 
 ### 3. Quick Upgrade (Shell Script)
 
-If you installed via the shell script, you can re-run it to upgrade to the latest version:
+If you installed with the script, you can re-run it to upgrade to the latest version:
 
 ```bash
-wget -O installation.sh \
-  https://raw.githubusercontent.com/nudgebee/k8s-agent/main/installation.sh
-chmod +x installation.sh
-./installation.sh -a <NUDGEBEE_AUTH_KEY>
+curl -fsSL https://raw.githubusercontent.com/nudgebee/k8s-agent/main/installation.sh -o installation.sh
+bash installation.sh -a <NUDGEBEE_AUTH_KEY> <the same flags you installed with>
 ```
 
-> The script will detect your existing installation and perform a `helm upgrade` under the hood.
+:::caution Pass the same flags again
+The script runs `helm upgrade --install` **without** `--reuse-values`. Re-running it with only `-a` resets the agent to the chart defaults: the bundled Prometheus stack setting (`enablePrometheusStack`) goes back on and the script looks for Prometheus again — asking to install one if it finds none — and the OpenTelemetry collector and ClickHouse come back if your original flags turned them off. Self-hosted `-w`/`-c` settings are dropped. If the script installed Prometheus the first time, the re-run finds that Prometheus and no longer sets `nodeAgent.podmonitor.enabled=false`, so the node agent gets scraped twice — pass `-f` with a values file containing `nodeAgent.podmonitor.enabled: false`. The command the UI shows under *Update the Agent* / *Re-new Token* has only `-a` — add your other flags, or use the Helm upgrade below.
+:::
 
 ---
 

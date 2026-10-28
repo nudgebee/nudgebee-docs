@@ -16,9 +16,9 @@ Click a trigger node on the canvas to open the **Trigger Configuration** sidebar
 |-------------|-------------|-------------------|
 | [Manual Trigger](#manual-trigger) | Start workflow on demand by clicking Run | Input parameters (JSON, optional) |
 | [Schedule](#schedule-trigger) | Run workflow on a recurring time-based schedule | Cron expression, overlap policy, catchup window |
-| [Webhook](#webhook-trigger) | Run workflow when an HTTP request hits a generated URL | Integration name, optional filter expression |
-| [Event Trigger](#event-trigger) | Run workflow when a matching platform event is detected | At least one of: event type, cluster, namespace, source, priority, or advanced expression |
-| [Optimization Trigger](#optimization-trigger) | Run workflow when a new optimization recommendation matches | Cluster, category, rule name (all optional) |
+| [Webhook](#webhook-trigger) | Run workflow when an HTTP request hits a generated URL | Webhook integration, optional filter expression |
+| [Event Trigger](#event-trigger) | Run workflow when a matching platform event is detected | At least one of: event type, namespace, source, priority, advanced expression, or another account in **Listen to accounts** |
+| [Optimization Trigger](#optimization-trigger) | Run workflow when a new optimization recommendation matches | At least one of: cluster, category, rule name |
 
 ## Manual Trigger
 
@@ -65,14 +65,16 @@ All scheduled times use the UTC timezone.
 
 Runs the workflow when an HTTP request is sent to a generated webhook URL.
 
-- **Integration Name** (required) - The `workflow_webhook` integration that authenticates and routes incoming requests. Must match `^[a-zA-Z0-9._-]+$` (letters, numbers, dots, hyphens, underscores). Maximum 200 characters.
-- **Filter Expression** (optional) - A template expression evaluated against the incoming request body. The workflow runs only if it renders to `true` or `1`. The request body is available as `webhook_payload`. Maximum 500 characters.
+- **Webhook Integration** (required) - Pick an existing automation webhook integration. It authenticates and routes incoming requests.
+- **Filter Expression** (optional) - A template expression evaluated against the incoming request body, available here as the parsed object `webhook_payload`. The workflow runs only if the expression renders to exactly `true` (any letter case) — `1` does **not** match. Maximum 500 characters.
 
 **Setup:**
 
-1. Enter an **Integration Name**.
-2. Once the integration is linked, the generated webhook URL is displayed - click the copy icon to copy it.
-3. Send HTTP requests to this URL to trigger the workflow.
+1. Pick the **Webhook Integration**.
+2. The webhook URL is displayed (it ends in `/api/webhooks/workflow?token=…`) - click the copy icon to copy it.
+3. Send HTTP requests to this URL to trigger the workflow. The `token` in the URL authenticates the request — no extra header is needed.
+
+**Reading the request in tasks:** in task parameters, the parsed JSON body is `Inputs.webhook_json` and the raw body is the string `Inputs.webhook_payload`. For example, `{{ Inputs.webhook_json.repository.name }}`.
 
 **Filter expression examples:**
 
@@ -95,15 +97,17 @@ Runs the workflow when a matching platform event is published - for example a re
 
 You configure an Event Trigger using **structured filters**. **At least one** filter must be set, otherwise saving fails with:
 
-> Set at least one filter (event type, cluster, namespace, source, priority, or advanced expression)
+> Set at least one filter (event type, namespace, source, priority, or advanced expression), or listen to another account
 
 Available structured filters (all optional individually, but at least one is required overall):
 
 - **Event Type / Aggregation Key** - The class of event to listen for, selected from the dropdown.
-- **Cluster** - Restrict to events from a specific Kubernetes cluster. The dropdown is grouped by cloud provider.
+- **Listen to accounts** - Events from these clusters and cloud accounts trigger this automation. Leave it empty to listen to the automation's own account only.
 - **Namespace** - Restrict to events from a specific Kubernetes namespace.
 - **Source** - Restrict to events from a specific source system (e.g. `prometheus`).
 - **Priority** - Restrict by severity level. One of: `HIGH`, `MEDIUM`, `LOW`, `INFO`, `DEBUG`.
+
+When you listen to more than one account, set each infrastructure step's account to `{{ Inputs.event.cloud_account_id }}` so the step runs against the account the event came from.
 
 When multiple structured filters are set, they are combined with logical **AND** when compiled to the saved Jinja `params.filter`. For example, setting Priority=`HIGH` and Source=`prometheus` produces:
 
@@ -114,6 +118,26 @@ When multiple structured filters are set, they are combined with logical **AND**
 :::note Auto-save
 The Event Trigger sidebar auto-saves your changes, but **only after the "at least one filter" rule passes**. Until then your edits are kept in the form but not persisted to the workflow.
 :::
+
+### Lifecycle phase
+
+An event trigger fires at one phase of the event's lifecycle, set by `params.on`. The builder form doesn't show this setting, so a trigger built in the form uses the default, `event.created`. To pick another phase, set `on` in the workflow definition (JSON or YAML, for example with **Create from Code**):
+
+```json
+"triggers": [
+  { "type": "event", "params": { "on": "investigation.completed", "filter": "{{ event.priority == \"HIGH\" }}" } }
+]
+```
+
+NudgeBee fires event triggers at these phases:
+
+| Phase | When it fires |
+|-------|---------------|
+| `event.created` (default) | When the event is created. AI analysis is not ready yet. |
+| `investigation.completed` | When the AI investigation of the event finishes. Use it when a step needs the root-cause analysis. |
+| `investigation.failed` | When the AI investigation of the event fails. |
+
+Saving also accepts `event.triaged`, `event.updated`, `investigation.enqueued`, `investigation.waiting`, `event.resolved` and `event.closed`, but NudgeBee doesn't publish events at those phases today, so a trigger set to one of them doesn't run.
 
 ### Switching to advanced mode
 
@@ -140,25 +164,13 @@ Workflows created before structured filters used a single `params.event_type` fi
 
 ## Optimization Trigger
 
-Runs the workflow when a new **optimization recommendation** is created and matches the configured filters. All fields are optional; an empty configuration triggers the workflow on every recommendation.
+Runs the workflow when a new **optimization recommendation** is created and matches the configured filters. Pick **at least one** of Cluster, Category or Rule Name — a trigger with none is rejected when you save.
 
 - **Cluster** (optional) - Filter by Kubernetes cluster. Dropdown grouped by cloud provider.
-- **Category** (optional) - Filter by recommendation category. One of:
-  - `PodRightSizing`
-  - `RightSizing`
-  - `K8sInstanceRecommendation`
-  - `K8sSpotRecommendation`
-  - `Configuration`
-  - `Security`
-  - `K8sMissingAttribute`
-- **Rule Name** (optional) - Filter by specific optimization rule. One of:
-  - `vertical_rightsize`
-  - `horizontal_rightsize`
-  - `pvc_rightsize`
-  - `continuous_rightsize`
-  - `replica_right_sizing`
-  - `Spot instance recommendation`
-  - `Abandoned resource`
+- **Category** (optional) - Filter by recommendation category: **Right Sizing**, **Infra Upgrade**, **Config** or **Spot Instance**.
+- **Rule Name** (optional) - Filter by optimization rule. The options load from your recommendation data, narrowed to the selected category.
+
+If you write the trigger in JSON, a filter expression also satisfies the at-least-one-filter rule.
 
 The recommendation payload is exposed in the workflow as `event` — use `{{ event.cluster }}`, `{{ event.category }}`, etc. in trigger expressions, and `{{ Inputs.event.cluster }}` inside downstream task params (see [Event Payload Schema](#event-payload-schema)).
 
@@ -170,6 +182,8 @@ The fields below describe platform event payloads; availability depends on the e
 
 | Field | Type | Notes |
 |-------|------|-------|
+| `id` | string | Event ID — needed by the AI Event Investigation task |
+| `cloud_account_id` | string | Account the event came from — use it as the step account when listening to several accounts |
 | `event_type` | string | Event class / aggregation key |
 | `source` | string | Source system (e.g. `prometheus`) |
 | `cluster` | string | Kubernetes cluster |
@@ -191,3 +205,10 @@ The fields below describe platform event payloads; availability depends on the e
   {{ Inputs.event.cluster }}
   {{ Inputs.event.subject_name }}
   ```
+
+## Related
+
+- [Workflow Builder](./index.md)
+- [Create an Automation When an Event Occurs](./create-event-automation.md)
+- [Why Didn't My Workflow Trigger?](./workflow-did-not-trigger.md)
+- [Automation Webhook](../../integrations/Webhooks/automation_webhook.md)

@@ -3,7 +3,7 @@ id: cloud-sync-troubleshooting
 title: "Cloud Synchronization & Missing Data Troubleshooting"
 sidebar_label: Cloud Sync & Missing Data
 sidebar_position: 9
-keywords: [cloud sync troubleshooting, missing billing data, aws assume role failed, cur missing, azure cost missing, gcp bigquery error, cloud throttling]
+keywords: [cloud sync troubleshooting, resource not showing, resource missing from inventory, cosmos db not showing, new resource not visible, missing billing data, aws assume role failed, cur missing, azure cost missing, gcp bigquery error, cloud throttling]
 intent: diagnose
 provider: cloud
 ---
@@ -79,7 +79,31 @@ Omit `--external-id` only if the configured role does not require one. The query
 
 ---
 
-## 4. NuBi Documentation Search
+## 4. Configuration Issues We See Most Often
+
+| Symptom | Usual cause | What to do |
+|---|---|---|
+| A new resource doesn't appear | Created after the last daily resource sync | Wait for the next sync or use **Sync Now** — see [section 5](#5-a-resource-is-missing-from-inventory) |
+| Resources missing for a whole subscription, project or account | The NudgeBee identity has no read role there | Azure: **Reader** on the subscription or management group. GCP: `roles/viewer` on the project or organization. AWS: the NudgeBee role can be assumed |
+| Spends show but resources don't | Billing and inventory use different permissions | Check the inventory role above; billing access alone is not enough |
+| Metrics empty for a service | The service has no default metric set | Ask NuBi for the specific metric — see [Supported Cloud Services](./supported-services.md) (**Metrics** column) |
+| A recommendation can't be applied | It is guidance-only for that service, or (AWS) the account is in read-only access mode | Apply it in the cloud console; the **Fixes** column lists what NudgeBee can apply |
+| AWS events don't arrive | EventBridge isn't connected for the account, or its stack isn't delivering. It forwards EC2, RDS, ECS, Lambda, load balancers, SQS and SNS events plus CloudWatch alarm state changes | Choose **Connect EventBridge** in the account's row menu (**Admin → Integrations → Kubernetes & Cloud → AWS**) and check its **Real-Time Events** status — see [Access Modes & Real-Time Events](./access-modes-and-real-time-events.md). For other services, use CloudWatch alarms |
+
+---
+
+## 5. A Resource Is Missing from Inventory
+
+1. **Is the service supported?** Check [Supported Cloud Services](./supported-services.md). Azure resources are listed by ARM resource type — for example Cosmos DB is `Microsoft.DocumentDB/databaseAccounts`, so search for `DocumentDB` rather than "Cosmos".
+2. **Has a resource sync run since it was created?** Resources sync daily. Resources run after the daily spends sync. Use **Sync Now** on the account's agent health page and check **Last Sync** for the **Resources** feature. See [Cloud Agent Synchronization](./cloud-agent-sync.md).
+3. **Can NudgeBee read it?** The resource must be in a subscription, project or account the NudgeBee identity can read, in a region where the account has resources.
+4. **Is it a service discovered from billing?** A few services (marked ¹ in [Supported Cloud Services](./supported-services.md)) are discovered once they appear in the account's billing data, so a brand-new resource can take until the next billing sync to show.
+
+If it is still missing after a successful resource sync, contact support with the account name, the resource ID and the time of the last sync.
+
+---
+
+## 6. NuBi Documentation Search
 
 Ask NuBi in chat for guided troubleshooting steps:
 - *"How do I fix missing AWS CUR billing data in NudgeBee?"*

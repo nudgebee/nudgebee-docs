@@ -114,15 +114,18 @@ When Datadog sends a webhook payload to NudgeBee, the following processing occur
 | `Triggered`, `Re-Triggered` | **Firing** |
 | `Warn` | **Firing** |
 | `Recovered` | **Resolved** |
-| `No Data` | **Firing** |
+| `No Data` | **Resolved** |
 
 ### Priority Mapping
 
 | Datadog Priority | NudgeBee Priority |
 |------------------|-------------------|
-| `P1`, `P2` | High |
-| `P3` | Medium |
-| `P4`, `P5` | Low |
+| `P1` | High |
+| `P2` | Medium |
+| `P3` | Low |
+| `P4` | Info |
+
+If the title doesn't follow Datadog's standard `[Status] ...` format, the alert is treated as `P3`. Incident severities map as `SEV-1`, `SEV-2` → High; `SEV-3` → Medium; `SEV-4` → Low; `SEV-5` → Info.
 
 ### Automatic Evidence Collection
 
@@ -144,7 +147,7 @@ Events are deduplicated using a fingerprint derived from the monitor ID and aggr
 
 1. In Datadog, trigger a test alert (or use **Test Notifications** from the monitor edit page).
 2. Confirm the monitor is configured with the `@webhook-nudgebee` notification.
-3. In NudgeBee, navigate to **Events** and verify the alert appears with:
+3. In NudgeBee, navigate to **Troubleshoot** > **All Events** and verify the alert appears with:
    - Correct title and priority
    - Alert details evidence attached
    - Related logs and traces (if observability integration is configured)
@@ -155,7 +158,7 @@ Events are deduplicated using a fingerprint derived from the monitor ID and aggr
 
 | Issue | Resolution |
 |-------|------------|
-| Webhook URL returns 401 | Verify the `token` query parameter in the URL is correct. Regenerate the integration if needed. |
+| Webhook URL returns HTTP `400` with `webhook validation failed` | Verify the `token` query parameter in the URL is correct. Regenerate the integration if needed. |
 | Events created but no logs/traces attached | Ensure a [Datadog observability integration](../Observability/datadog.md) is configured for the same NudgeBee account. |
 | Events not appearing at all | Check that the Datadog monitor includes `@webhook-<name>` in its notification settings and that the webhook integration is active. |
 | Duplicate events | Expected behavior — NudgeBee deduplicates by `monitorId-aggregKey`. State updates (e.g., Triggered → Recovered) update the existing event. |

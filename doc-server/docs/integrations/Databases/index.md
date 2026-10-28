@@ -33,7 +33,7 @@ How NudgeBee reaches a database depends on where the database runs.
 
 ### K8s
 
-The NudgeBee agent connects from inside a cluster it is already installed in, reading the connection details from a **Kubernetes Secret** you name. Nothing about the database is stored in NudgeBee, and the database never needs to be reachable from outside the cluster.
+The NudgeBee agent connects from inside a cluster it is already installed in, reading the connection details from a **Kubernetes Secret** you name. Create the secret in the agent's namespace on that cluster (for example `nudgebee-agent`) and enter just the secret name. Nothing about the database is stored in NudgeBee, and the database never needs to be reachable from outside the cluster.
 
 Available for PostgreSQL, MySQL and ClickHouse. Each expects its own set of keys in the secret — see the provider page.
 
@@ -56,6 +56,7 @@ These appear on every database configuration form. Provider pages document only 
 * **Integration name \*** (Required) — A descriptive name for this connection, e.g. `orders-prod`. This is how the database is identified everywhere else in NudgeBee.
 * **Select Account \*** (Required) — The NudgeBee account (cluster or cloud account) this connection belongs to.
 * **Credential Source** — Where the username and password come from. Options: `Cloud Push` (default — stored in NudgeBee and pushed to the agent at runtime), `AWS Sm`, `Gcp Sm`, `Azure Kv`, and `Local`. See [credential sources](../../installation/proxy-agent/credential-sources.md).
+* **Secret name or ARN in the secret manager** — Required when **Credential Source** is `AWS Sm`, `Gcp Sm` or `Azure Kv`; for example `arn:aws:secretsmanager:...:secret:my-db-creds`.
 * **Database username \*** and **Database password \*** (Required) — The account NudgeBee authenticates as. Grant it read access to the schemas and statistics views you want analysed, and nothing more.
 * **Read Only** — Restricts the connection to read-only queries. Leave this on unless a workflow specifically needs to write.
 * **Maximum open connections in the pool** — Caps concurrent connections NudgeBee opens. Set it low on busy production databases.
@@ -74,7 +75,7 @@ Databases running inside a connected cluster may be registered automatically by 
 
 ## Verify the Integration
 
-1. Click **Test Connection** on the configuration form before saving, where the provider offers it. A successful test proves network reachability and authentication — not that the user has every permission the health checks need.
+1. Click **Test Connection** on the configuration form. When the form shows this button, **Save** stays disabled until the test succeeds. A successful test proves network reachability and authentication — not that the user has every permission the health checks need.
 2. Save. The connection appears under **Admin** > **Integrations** > **Databases** with status **Enabled**.
 3. Ask NuBi to check the database by the name you gave it — for example *"check the health of orders-prod"*. A working connection returns connection counts, lock state and table statistics.
 4. To confirm workflow access, run a [`dbms.query`](../../features/workflow-builder/database-tasks.md) task with a trivial query such as `SELECT 1`.
@@ -91,3 +92,8 @@ Databases running inside a connected cluster may be registered automatically by 
 | Query text shows `insufficient privilege` | The NudgeBee user cannot read other users' statements | Grant the role the provider page describes for statistics access. |
 | Database appears twice | An agent-discovered entry and a manually created one both exist | Disable whichever you do not want to use. |
 | Writes are rejected in a workflow | **Read Only** is enabled | Disable **Read Only** on the connection, or use a separate connection for write tasks. |
+
+## Related
+
+- [PostgreSQL](./postgresql.md)
+- [Proxy Agent](../../installation/proxy-agent/index.md)

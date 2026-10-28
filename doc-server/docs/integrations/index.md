@@ -12,7 +12,47 @@ You do not need to set up all integrations at once. Start with the essentials (a
 Some integrations are **required** for NudgeBee to function (Kubernetes cluster and observability source). Others are **optional** and unlock additional capabilities. See the [capability map](../features/) for a full breakdown of what each integration enables.
 :::
 
-All integrations are configured from **Admin** > **Integrations**, where they are grouped into the categories below.
+All integrations are configured from **Admin** > **Integrations** — see [The Integrations page](#the-integrations-page) for how it works. The sections below describe what each kind of integration is for.
+
+## The Integrations page
+
+**Admin → Integrations** — *"Connect Nudgebee to your clouds, observability platforms, ticketing, repositories and messaging tools — and see what is already connected."*
+
+Search with **Search integrations…** or pick **All** or a category tab. Each tab splits providers into **Connected** and **Available**. A connected card shows **Active N** and **Inactive N** — how many connections of that type are enabled or disabled; a provider whose connections are all disabled is listed under Available. Greyed-out providers are not available yet.
+
+| Tab | Providers |
+|---|---|
+| **Kubernetes & Cloud** | Kubernetes clusters (EKS, AKS, GKE, OpenShift…), AWS, Azure, GCP, Cloud Foundry, Self-Hosted VMs |
+| **Messaging & Alerting** | Slack, Microsoft Teams, Google Chat, Discord, PagerDuty, ZenDuty |
+| **Ticketing** | Jira, ServiceNow, PagerDuty, ZenDuty, Freshdesk, GitHub, GitLab |
+| **Webhooks** | Inbound alerts from Prometheus Alertmanager, Datadog, Azure Monitor, Grafana, GCP Monitoring, New Relic, Dynatrace, SolarWinds, Orion, Elasticsearch, OpenObserve, CubeAPM, SigNoz, PagerDuty, ZenDuty, ServiceNow, plus the generic **Event Webhook** and **Automation Webhook** |
+| **Databases** | PostgreSQL, MySQL, ClickHouse, SQL Server, Oracle |
+| **Observability** | Prometheus, Loki, Elasticsearch, OpenTelemetry, Jaeger, Grafana Tempo, Datadog, Dynatrace, New Relic, SigNoz, OpenObserve, CubeAPM, Observe, Chronosphere, Azure App Insights, Loggly, Splunk Enterprise, SolarWinds, Orion (SolarWinds Platform), Apache Pinot. Last9, Hive and Splunk Observability are listed but greyed out |
+| **Repos** | GitHub, GitLab |
+| **Messaging Queue** | RabbitMQ |
+| **CI/CD** | ArgoCD, GitHub |
+| **In-Memory** | Redis |
+| **Docs** | Confluence |
+| **LLM** | LLM providers, MCP servers, AI Gateway |
+| **Servers** | SSH, Proxy Agent |
+
+### Manage a connection
+
+Click a card to open that provider's connections. **Add &lt;Provider&gt; Account** creates one. The list shows **Name**, **Connection Info** (the **URL** for webhooks), **Account**, **Created By**, **Updated By** and **Status**; filter by **Status** or name. Ticketing and code-repository providers (Jira, ServiceNow, PagerDuty, ZenDuty, Freshdesk, GitHub, GitLab) show **Name**, **Last Connected At**, **Status**, **Auth Type**, **Created By** and **Account URL** instead. Each row's menu offers, depending on the provider:
+
+| Action | Does |
+|---|---|
+| **Edit** | Change the configuration (also while disabled) |
+| **Enable** / **Disable** | Turn the connection on or off without deleting it |
+| **Test Connection** | Check that NudgeBee can reach it (enabled connections that support a test) |
+| **Activity Log** | Recent deliveries to an inbound webhook |
+| **Set as default** | Make an LLM configuration the tenant default |
+| **Regenerate Token** | Issue a new token for a Proxy Agent |
+| **Delete** | Remove the connection — not offered for some webhook types or for connections installed by an agent |
+
+Slack and Microsoft Teams also have **Channel-Account Mappings** (which channel receives which account's notifications) and **Webhook targets**; Slack also has **Watched Channels** when *Follow chat channels* is on.
+
+Managing integrations needs a tenant admin or a role with **integrations** write access (observability providers can also be granted one by one). Read-only users see connections but not **Add** or the row menu.
 
 ## Available Integrations
 
@@ -20,7 +60,7 @@ All integrations are configured from **Admin** > **Integrations**, where they ar
 
 * **[Kubernetes clusters](../features/Kubernetes/)** — EKS, AKS, GKE, OpenShift and self-managed clusters, connected through the [NudgeBee agent](../installation/agent/). **Required**.
 * **[AWS](../features/Cloud/AWS.md)**, **[Azure](../features/Cloud/Azure.md)**, **[GCP](../features/Cloud/GCP.md)** — Sync cloud accounts for cost, inventory and configuration context. See [Cloud fleet onboarding](../features/Cloud/cloud-fleet-onboarding.md). **Optional**.
-* **Self-Hosted VMs** and **[Cloud Foundry](../features/Cloud/CloudFoundry.md)** — Bring non-Kubernetes workloads under the same monitoring and optimization model. **Optional**.
+* **[Self-Hosted VMs](../features/VM/index.md)** and **[Cloud Foundry](../features/Cloud/CloudFoundry.md)** — Bring non-Kubernetes workloads under the same monitoring and optimization model. **Optional**.
 
 ### Observability
 
@@ -35,7 +75,7 @@ All integrations are configured from **Admin** > **Integrations**, where they ar
 
 * **[Tickets](./Tickets/)** — Ticketing and incident systems ([Jira](./Tickets/jira.md), [ServiceNow](./Tickets/servicenow.md), [PagerDuty](./Tickets/pagerduty.md), [Zenduty](./Tickets/zenduty.md), [GitHub Issues](./Tickets/github_issues.md), [GitLab Issues](./Tickets/gitlab.md), Freshdesk) to create, track, and auto-respond to incidents. **Optional**.
 * **[GitHub](./Code%20Repository/GitHub/github-integration.md)** — Code analysis and automated pull requests for optimization recommendations. **Optional**.
-* **[GitLab](./Code%20Repository/GitLab/gitlab-integration.md)** — Issue tracking and automated merge requests. Bitbucket is also available in the repositories category. **Optional**.
+* **[GitLab](./Code%20Repository/GitLab/gitlab-integration.md)** — Issue tracking and automated merge requests. Bitbucket is listed in the repositories category but not yet available. **Optional**.
 * **[CI/CD — ArgoCD](./CICD/argocd-integration.md)** — Deployment change correlation and rollback insights. **Optional**.
 
 ### Data Stores
@@ -51,7 +91,7 @@ All integrations are configured from **Admin** > **Integrations**, where they ar
 ### AI
 
 * **[NudgeBee AI / LLM — BYOM](./LLM/)** — Integrate LLM models to power [NuBi](../features/ai/) and the pre-built AI agents for troubleshooting, root cause analysis, and agentic automation. SaaS users get a managed LLM by default; self-hosted users bring their own model (BYOM). An **[LLM Gateway](./LLM/Gateway/index.md)** integration is also available for holding several provider credentials side by side, including self-hosted OpenAI-compatible endpoints. **Recommended**.
-* **[MCP (Model Context Protocol)](./MCP/)** — Connect external or on-prem MCP servers so their tools become available to NudgeBee AI tasks (`llm.mcp_call`, NuBi). Supports direct HTTP and Forager-proxied (HTTP or stdio) modes. **Optional**.
+* **[MCP (Model Context Protocol)](./MCP/)** — Connect external or on-prem MCP servers so their tools become available to NudgeBee AI tasks (`llm.mcp_call`, NuBi). Supports direct HTTP and Forager-proxied (HTTP or stdio) modes (the form offers HTTP; stdio only through Forager's local config file). **Optional**.
 
 ### Identity
 

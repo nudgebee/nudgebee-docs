@@ -18,7 +18,7 @@ Run GitHub CLI commands for managing issues, PRs, releases, and more.
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `integration_id` | integration | Yes | GitHub integration ID. |
-| `command` | string | Yes | GitHub CLI command (e.g., `issue create --title "Bug" --body "Details"`). |
+| `command` | string | Yes | GitHub CLI command, run as a shell script, so start it with `gh` (e.g., `gh issue create --title "Bug" --body "Details"`). |
 | `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
@@ -38,7 +38,7 @@ Run GitLab CLI (`glab`) commands for managing issues, merge requests, pipelines,
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `integration_id` | integration | Yes | GitLab integration ID. |
-| `command` | string | Yes | GitLab CLI command (e.g., `issue create --title "Bug" --description "Details"`). |
+| `command` | string | Yes | GitLab CLI command, run as a shell script, so start it with `glab` (e.g., `glab issue create --title "Bug" --description "Details"`). |
 | `account_id` | account | No | NudgeBee account ID. |
 
 ### Output

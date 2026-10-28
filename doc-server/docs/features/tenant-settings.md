@@ -15,15 +15,17 @@ Editing requires `tenants:Write`. Without it the page is readable and the contro
 
 ## General
 
+Two sections, **Tenant Identity** (**Tenant Name**) and **Self-Onboarding**. General and each Label Mapping sub-tab show a **Save** button, and any of them saves pending edits from all of those tabs at once. Toggles on the Features tab apply as soon as you change them. **Allowed Domains** is required when self-onboarding is on.
+
 | Setting | What it controls |
 |---|---|
 | **Tenant Name** | The display name for the tenant. |
 | **Allow self-onboarding via domain login** | Whether someone signing in with a matching email domain gets an account automatically, instead of needing an invite. |
 | **Allowed Domains** | The email domains self-onboarding accepts. Only meaningful when self-onboarding is on. |
-| **Default Auth Role** | The role a self-onboarded user receives. |
+| **Default Auth Role** | The role a self-onboarded user receives — **tenant_admin** or **tenant_admin_readonly**. |
 
 :::caution Self-onboarding is a membership decision
-Turning it on means anyone who can obtain an email address at an allowed domain can enter the tenant at the default role. Set the default role to a read-only one unless you have a reason not to.
+Turning it on means anyone who can obtain an email address at an allowed domain can enter the tenant at the default role. Self-onboarded users can only receive a tenant-wide role, so use **tenant_admin_readonly** unless you have a reason not to, and give narrower access afterwards with [groups and roles](./user-management.md).
 :::
 
 ## Label Mapping
@@ -56,14 +58,35 @@ Getting these wrong is the usual reason a webhook alert arrives with no subject,
 
 ## Features
 
-Per-tenant feature flags, grouped by category with a count per group and an **All** view. Toggling one here switches the feature on or off for the whole tenant.
+Per-tenant feature switches. Tabs group them by category (with a count) plus **All**; **Search feature flags…** finds one by name. Each row shows **Feature**, **When to turn it on**, **Why / notes** and the switch. When a feature is on, a link icon opens the screen it enables. A feature you have never changed shows its default. **Show flag ids** reveals the underlying ids, useful when comparing a tenant's setup with a support request.
 
-Some product surfaces are gated by a flag here rather than by a permission — the LLM Analyser tab is one — so a feature that seems missing for everyone is worth checking on this tab before anything else.
+Some product surfaces are gated by a feature here rather than by a permission — the AI usage and cost tab is one — so a feature that seems missing for everyone is worth checking here first.
 
-You can reveal the underlying flag ids, which is what you want when comparing a tenant's configuration against a support request or another environment.
+| Category | Feature | Default |
+|---|---|---|
+| AI investigation & events | **Automatic event analysis** — investigate events as they arrive | On |
+| | **Investigate events without service labels** — analyze events that carry no service label | Off |
+| | **Auto-raise fix PRs** — open draft pull requests for fixes NuBi finds; nothing merges automatically | Off |
+| | **Post event analysis to chat** — post each analysis to the incident's Slack channel | Off |
+| | **AI alert prioritisation** — set P0–P3 priority by classifying each alert | On for new tenants |
+| | **Alert remediation loop** — a fix plan in the alert's Slack thread, run step by step. See [Automatic Event Analysis](./ai/event-analysis.md) | Off |
+| AI assistant | **Memory across conversations** — enables b-Cortex memory | Off |
+| | **Assistant can run automations** | Off |
+| | **Follow chat channels** — NuBi watches chosen Slack channels | Off |
+| | **Answer confidence on investigations** — a confidence chip on investigation answers ([what it shows](./ai/nubi-chat.md#reading-an-answer)) | Off |
+| | **Worker Bees** | Off |
+| Cost & optimisation | **AI usage and cost tab** (LLM Analyser) | Off |
+| | **Daily AI cost digest** | Off |
+| | **Kubernetes upgrade planner** | Off |
+| | **Optimisation** | Included in your plan |
+| Monitoring & detection | **Anomaly detection** | Off |
+| | **Identify what a webhook alert is about** | Off |
+| Access & platform | **Custom roles** — enables Admin → Access & Users → Roles | Off |
+
+The **When to turn it on** column in the product explains each feature in more detail.
 
 ## Related
 
-- [User Management](./user-management.md)
+- [Access & Users](./user-management.md)
 - [Security](./security.md) — authentication and the role model behind Default Auth Role
 - [Missing Alerts & Pipeline Triage](./troubleshooting/alert-pipeline-troubleshooting.md) — when label mapping is the reason an alert looks wrong

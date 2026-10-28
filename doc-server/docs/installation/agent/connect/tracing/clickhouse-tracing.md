@@ -37,9 +37,26 @@ ClickHouse serves as the storage backend for the collected tracing data. It is a
 3. **OpenTelemetry Collector**: Collects tracing data from the Node Agent.
 4. **ClickHouse**: Tracing data is forwarded to ClickHouse by the OpenTelemetry collector for storage and analysis.
 
+## Turning it on
+
+Tracing is on in the chart by default, but the install commands the UI gives you turn it off (`-t true` in the script, `opentelemetry-collector.enabled=false` in the Helm command). To turn it on for an existing agent:
+
+```bash
+helm repo add nudgebee-agent https://nudgebee.github.io/k8s-agent/
+helm repo update
+helm upgrade nudgebee-agent nudgebee-agent/nudgebee-agent \
+  --namespace nudgebee-agent --reuse-values \
+  --set opentelemetry-collector.enabled=true \
+  --set clickhouse.enabled=true \
+  --set runner.clickhouse_enabled=true \
+  --set nodeAgent.enabled=true
+```
+
+With the install script, drop `-t true` and re-run it with your other flags.
+
 ## Turning it off
 
-Tracing is on by default. To stop collecting and storing traces:
+To stop collecting and storing traces:
 
 ```yaml
 runner:

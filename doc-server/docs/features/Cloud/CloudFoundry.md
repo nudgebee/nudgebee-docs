@@ -24,7 +24,7 @@ Navigate to **Admin** > **Integrations** > **Kubernetes & Cloud**, select **Clou
 * **CF API URL \*** (Required)
     * The Cloud Foundry API endpoint, e.g. `https://api.sys.example.com`.
 * **Account Type**
-    * `Production` or `Non-production`. This drives how the foundation is treated in cost and optimization views.
+    * `Production` or `Non-production`. This drives triage scoring: production accounts score alerts at full weight, non-production ones are damped, and workloads in production accounts count as production in blast-radius safety checks. It also drives the **Production** / **Non-production** (Environment) filter on Optimize views.
 * **Authentication Method**
     * **Bearer Token** — for Korifi or a Kubernetes service account token.
     * **UAA OAuth2** — for PCF with UAA client credentials.
@@ -48,7 +48,22 @@ Click **Save**.
 ## Verify the Integration
 
 1. After saving, the account appears under **Admin** > **Integrations** > **Kubernetes & Cloud** as **Enabled**.
-2. Open **Infra** and confirm the foundation's applications appear.
+2. Open **Infra → Cloud**, pick the account, and confirm the foundation's applications appear on the **Apps** tab.
+
+---
+
+## Screens
+
+A Cloud Foundry account opens on **Infra → Cloud** like other cloud accounts, with **Summary**, **Troubleshoot** (Events, Triage Rules, Alert Tuning) and four Cloud Foundry tabs. It has no **Services** tab; **Optimize** and **Monitoring** are shown but not available, and there are no cost cards. The Summary shows **App Health** (Running, Degraded, Stopped), **Top Resource Consumers**, **Spaces** and a metrics chart.
+
+| Tab | Columns | Expand for |
+|---|---|---|
+| **Apps** → **Applications** | App Name, Org / Space, Status, Instances, Memory, Disk, Buildpack, Created At | Details, Instances, Monitoring, Events |
+| **Organizations** | Name, Apps, Instances, Memory, Status, Created At | Details, Events |
+| **Spaces** | Name, Organization, Apps, Memory, Status, Created At | Details, Events |
+| **Routes** | URL / Host, Space, Protocol, Destinations, Status, Created At | Details, Events |
+
+**Apps**, **Organizations** and **Spaces** also have an **Events** sub-tab. Applications can be filtered by app name, **State**, **Tag Key** and **Tag Value**.
 
 ---
 

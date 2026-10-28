@@ -52,7 +52,7 @@ Either one nominates the workload for a higher tier. An AI review then sets the 
 
 ## Making the graph more useful
 
-- **Turn on flow sources.** eBPF, traces, Datadog APM and New Relic APM give the graph the calls between services. Without them it knows where things run, but much less about who talks to whom.
+- **Turn on flow sources.** eBPF, traces, Datadog APM, Elastic APM and New Relic APM give the graph the calls between services. Without them it knows where things run, but much less about who talks to whom.
 - **Set owners.** Owners set under **Admin → Access & Users → Ownership** appear in the graph as `OWNS` relationships.
 - **Declare what NudgeBee cannot see.** A call that no flow source observes, or a database outside your connected accounts, can be added in Knowledge Graph **Settings**. See [Manual Declarations](./manual-declarations.md).
 

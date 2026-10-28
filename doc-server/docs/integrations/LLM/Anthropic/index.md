@@ -29,6 +29,10 @@ If you reach Claude through AWS rather than directly, use [AWS Bedrock](../Aws/b
 3. Give it a descriptive name and copy it — the value is shown once.
 4. Store it securely; it is a bearer credential for your account's spend.
 
+## Add it in NudgeBee (UI)
+
+In **Admin → Integrations → LLM → Add LLM Provider**, choose **anthropic** and enter the **LLM Model Name**, **API Key** and **API Endpoint** (`https://api.anthropic.com`, or your proxy or gateway URL). See [Add an LLM Provider](../add-llm-provider.md).
+
 ## Integrating with LLM Server
 
 ```bash
@@ -69,12 +73,13 @@ Model ids are complete as written — do not append a date suffix.
 There is no `EMBEDDINGS_PROVIDER=anthropic`. RAG Server must use a different provider for embeddings, even when LLM Server is on Anthropic — a perfectly normal split.
 :::
 
-Supported embeddings providers are `bedrock` (the default), `openai`, `azure`, `googleai`, `huggingface`, `ollama` and `sagemaker`. Configure one of those:
+RAG Server uses an on-device embedding model by default, so you only need this to use a hosted one. Supported embeddings providers are `ondevice` (the default), `bedrock`, `openai`, `azure`, `googleai`, `vertexai`, `huggingface`, `ollama` and `sagemaker`:
 
 ```bash
 EMBEDDINGS_PROVIDER=openai
-EMBEDDINGS_MODEL_ID=<embedding model>
+EMBEDDINGS_MODEL_NAME=<embedding model>
 EMBEDDINGS_PROVIDER_API_KEY=<key for that provider>
+EMBEDDINGS_PROVIDER_API_VERSION=<version> # required for openai
 ```
 
 See [OpenAI](../OpenAI/index.md), [AWS Bedrock](../Aws/bedrock.md) or [Ollama](../Ollama/index.md) for the provider you choose.

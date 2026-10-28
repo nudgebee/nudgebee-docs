@@ -18,15 +18,17 @@ Query logs from connected observability platforms (Loki, CloudWatch, DataDog, Sp
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `query` | string | Yes | Log query (syntax depends on the provider). |
-| `start_time` | timestamp | No | Query start time. Defaults to 1 hour before `end_time`. |
-| `end_time` | timestamp | No | Query end time. Defaults to now. |
+| `duration` | string | No | Relative look-back window: `5m`, `15m`, `30m`, `1h`, `3h`, `6h`, `12h`, `24h`. Default `1h`. Overrides `start_time` / `end_time` when set — clear it to use absolute times. |
+| `start_time` | timestamp | No | Absolute start time (ignored if `duration` is set). |
+| `end_time` | timestamp | No | Absolute end time (ignored if `duration` is set). |
 | `limit` | number | No | Max records to return. Default: `1000`. |
-| `log_provider` | string | No | Log provider. Options: `loki`, `aws_cloudwatch`, `azure_app_insights`, `ES`, `signoz`, `datadog`, `observe`, `loggly`, `newrelic`. |
-| `log_provider_source` | string | No | Provider source. Options: `agent`, `user`. |
+| `log_provider` | string | No | Log provider override (for example `loki`, `aws_cloudwatch`, `ES`, `signoz`). Detected from the account when empty. |
+| `log_provider_source` | string | No | Provider source override: `agent` or `user`. Detected from the account when empty. |
 | `region` | string | No | Cloud region (e.g., `us-east-1`). Dynamic options based on account. |
 | `log_group` | string | No | Log group name. Dynamic options based on account and region. |
-| `service_name` | string | No | Cloud service name (e.g., `AWS/EC2`). |
-| `resource_id` | string | No | Specific resource ID. |
+| `log_analytics_workspace` | string | No | Azure Log Analytics workspace. |
+| `index` | string | No | Elasticsearch index pattern (e.g., `app-logs-*`). |
+| `query_type` | string | No | Elasticsearch query type. Default `dsl`. |
 | `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
@@ -49,8 +51,9 @@ Query metrics from connected monitoring platforms (Prometheus, CloudWatch, Chron
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `queries` | object | Yes | Metric queries as key-value pairs: `{"label": "promql_query"}`. |
-| `start_time` | timestamp | No | Query start time. Defaults to 1 hour before `end_time`. |
-| `end_time` | timestamp | No | Query end time. Defaults to now. |
+| `duration` | string | No | Relative lookback window ending now (e.g., `5m`, `1h`, `24h`). Default in the builder: `1h`. When set, it overrides `start_time` and `end_time`; clear it to query an absolute range. |
+| `start_time` | timestamp | No | Absolute query start time. Ignored when `duration` is set. Defaults to 1 hour before `end_time`. |
+| `end_time` | timestamp | No | Absolute query end time. Ignored when `duration` is set. Defaults to now. |
 | `metric_provider` | string | No | Provider. Options: `prometheus`, `aws_cloudwatch`, `chronosphere`, `datadog`, `newrelic`, `ES`. |
 | `metric_provider_source` | string | No | Provider source. Options: `agent`, `user`. |
 | `service_name` | string | No | Cloud service name. |
@@ -82,11 +85,18 @@ Query distributed traces from connected tracing platforms (SignOz, Jaeger, Tempo
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
 | `query_mode` | string | No | Query mode. Options: `simple` (field filters), `text` (raw query), `structured` (query builder). Default: `simple`. |
-| `service_name` | string | No | Filter by service name. Visible in `simple` mode. |
-| `status` | string | No | Filter by span status. Options: `""`, `error`, `ok`, `unset`. Visible in `simple` mode. |
-| `min_duration_ms` | number | No | Minimum span duration (ms). Visible in `simple` mode. |
-| `span_name` | string | No | Filter by span/operation name. Visible in `simple` mode. |
-| `query` | string | No | Raw text query. Visible in `text` mode. |
+| `workload_name` | string | No | Filter by workload name (Kubernetes deployment, or OTel `service.name`). |
+| `workload_namespace` | string | No | Filter by workload namespace. |
+| `status` | string | No | Filter by span status: `error` or `ok`. |
+| `min_duration_ms` | number | No | Minimum span duration (ms). Useful for finding slow traces. |
+| `span_name` | string | No | Filter by span/operation name (pattern match). |
+| `span_kind` | string | No | OTel span kind (`SERVER`, `CLIENT`, `INTERNAL`, `PRODUCER`, `CONSUMER`). |
+| `resource` | string | No | Filter by span resource, such as a SQL statement or HTTP URL (pattern match). |
+| `destination_workload_name`, `destination_workload_namespace` | string | No | Filter by the downstream workload the span calls. |
+| `http_status_code` | string | No | HTTP status code as a string (e.g., `"500"`). |
+| `trace_id` | string | No | Look up one trace by its ID. |
+| `trace_source` | string | No | `otel` (instrumented SDK) or `ebpf` (NudgeBee node agent). |
+| `query` | string | No | Trace query in the provider's own language, run as written. Visible in `text` mode. |
 | `query_request` | object | No | Structured query builder object. Visible in `structured` mode. |
 | `duration` | string | No | Relative lookback window. Options: `5m`, `15m`, `30m`, `1h`, `3h`, `6h`, `12h`, `24h`. Default: `1h`. |
 | `start_time` | timestamp | No | Absolute start time (ignored if `duration` is set). |
@@ -94,8 +104,8 @@ Query distributed traces from connected tracing platforms (SignOz, Jaeger, Tempo
 | `sort_by` | string | No | Sort order. Options: `timestamp_desc`, `timestamp_asc`, `duration_desc`, `duration_asc`. Default: `timestamp_desc`. |
 | `limit` | number | No | Max traces to return. Default: `100`. |
 | `offset` | number | No | Pagination offset. Default: `0`. |
-| `trace_provider` | string | No | Tracing provider. Options: `signoz`, `jaeger`, `tempo`, `datadog`, `newrelic`. |
-| `trace_provider_source` | string | No | Provider source. Options: `agent`, `user`. |
+| `trace_provider` | string | No | Tracing provider override (for example `signoz`, `jaeger`, `tempo`, `datadog`, `newrelic`). Detected from the account when empty. |
+| `trace_provider_source` | string | No | Provider source override: `agent` or `user`. Detected from the account when empty. |
 | `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
@@ -117,13 +127,13 @@ List available log groups, optionally filtered by namespace or workload.
 
 | Name | Type | Required | Description |
 |:---|:---|:---|:---|
-| `start_time` | timestamp | No | Start time. Defaults to 1 hour before `end_time`. |
-| `end_time` | timestamp | No | End time. Defaults to now. |
-| `namespace` | string | No | Filter by namespace prefix. |
-| `workload` | string | No | Filter by workload name. |
-| `metric_provider` | string | No | Provider. Options: `prometheus`, `aws_cloudwatch`, `chronosphere`, `datadog`, `newrelic`, `ES`. |
-| `metric_provider_source` | string | No | Provider source. Options: `agent`, `user`. |
-| `service_name` | string | No | Cloud service name. |
+| `duration` | string | No | Relative look-back window (`5m` to `24h`). Default `1h`. Overrides `start_time` / `end_time` when set. |
+| `start_time` | timestamp | No | Absolute start time (ignored if `duration` is set). |
+| `end_time` | timestamp | No | Absolute end time (ignored if `duration` is set). |
+| `namespace` | string | No | Kubernetes namespace filter. Applied by Loki, SigNoz and Elasticsearch providers. |
+| `workload` | string | No | Workload name filter; matches pods starting with this name. |
+| `log_provider`, `log_provider_source` | string | No | Log provider and source overrides. Detected from the account when empty. |
+| `region`, `log_analytics_workspace`, `index`, `query_type` | string | No | Provider-specific options, as for Query Logs. |
 | `account_id` | account | No | NudgeBee account ID. |
 
 ### Output
@@ -131,3 +141,8 @@ List available log groups, optionally filtered by namespace or workload.
 | Name | Type | Description |
 |:---|:---|:---|
 | `groups` | array | List of log groups. |
+
+## Related
+
+- [Workflow Builder](./index.md)
+- [AI Tasks](./ai-tasks.md)

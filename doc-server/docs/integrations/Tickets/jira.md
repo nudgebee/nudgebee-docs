@@ -16,6 +16,23 @@ Note:
 - For security reasons it isn't possible to view the token after closing the creation dialog; if necessary, create a new token.
 - You should store the token securely, just as for any password.
 
+## Connect Jira in NudgeBee
+
+1. Go to **Admin → Integrations → Ticketing → Jira** and click **Add Jira Account**.
+2. Fill in the form:
+
+   | Field | What to enter |
+   |---|---|
+   | **Name** | A name for this connection |
+   | **Account URL** | Your Jira URL, for example `https://your-domain.atlassian.net`. For Jira Data Center on a context path, include it — for example `https://jira.example.com/jira` |
+   | **Authentication method** | **Username + API Token** (Jira Cloud, or Data Center with a password) or **Data Center PAT** |
+   | **User Name** | The account's email address (Cloud) or username (Data Center). Hidden for **Data Center PAT** |
+   | **Token** | The API token (Cloud), the password (Data Center), or the personal access token (**Data Center PAT**) |
+
+3. Click **Test Connection** — NudgeBee lists one project to confirm the credentials work — then save.
+
+NudgeBee calls Jira directly from its servers, so a Jira Data Center instance must be reachable from NudgeBee.
+
 ---
 
 ## Troubleshooting Jira Integration
@@ -24,11 +41,11 @@ Note:
 * **Symptom**: Clicking **Test Connection** returns `Authentication failed: Invalid credentials`.
 * **Root Causes**:
   * **Email vs Username**: In Jira Cloud (Atlassian Cloud), you **must** use the account email address as the username, combined with an API token (not your Atlassian password).
-  * **Jira Server / Data Center**: If using Jira Data Center, ensure you provide a Personal Access Token (PAT) or valid service account credentials.
+  * **Jira Server / Data Center**: Choose **Data Center PAT** and paste a personal access token, or use **Username + API Token** with the username and password.
 * **Remediation**:
   1. Generate a new API token at `https://id.atlassian.com/manage/api-tokens`.
   2. Verify that the email matches the exact account that generated the token.
-  3. Ensure the Jira Base URL is `https://<your-domain>.atlassian.net` (without trailing `/secure` or `/jira`).
+  3. For Jira Cloud, use `https://<your-domain>.atlassian.net` (no trailing `/secure`). For Data Center, include the context path if Jira is served under one (for example `/jira`).
 
 ---
 
@@ -41,7 +58,7 @@ Note:
      curl -u user@example.com:<API_TOKEN> \
        "https://your-domain.atlassian.net/rest/api/3/issue/createmeta?projectKeys=PROD&expand=projects.issuetypes.fields"
      ```
-  2. Navigate to **Settings $\rightarrow$ Integrations $\rightarrow$ Tickets $\rightarrow$ Jira**.
+  2. Navigate to **Admin → Integrations → Ticketing → Jira**.
   3. Inspect the ticket creation form or workflow ticket task and supply the fields required by the selected project and issue type. Use the available field metadata; do not assume every field accepts workflow template expressions.
 
 ---
@@ -64,3 +81,8 @@ The ticket server synchronizes Jira ticket details by fetching the linked issues
 3. Ask an administrator to inspect ticket-server synchronization errors and the sync job if the record remains stale.
 
 A synchronized ticket status is separate from the linked event's NudgeBee triage status. Do not assume closing a Jira issue automatically resolves that event.
+
+## Related
+
+- [Ticket integrations](./index.md)
+- [Ticket integration troubleshooting](./ticket-integrations-troubleshooting.md)

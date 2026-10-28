@@ -14,6 +14,20 @@ The **Agent Health** view in the NudgeBee Console provides real-time visibility 
 
 ---
 
+### Status values
+
+The page has three tabs: **Agent**, **Observability** and **Proxy Agent**. Components show **Connected** or **Disconnected**; OpenCost can show **Managed server-side**, and Prometheus, Logs and Traces can show **Served by integration** when an integration rather than the agent provides them. The Observability tab shows **Not configured** for a source that isn't set up. Banners: *The Agent is not connected* and *The … services are disconnected.* (naming the disconnected components)
+
+### Self-hosted VM accounts
+
+For a [self-hosted VM account](../../../features/VM/index.md), Agent Health shows only the **Proxy Agent** tab. With no proxy agent yet it shows *Get started with Proxy Agent monitoring* and **Connect VM Agent** (without write access: *Need admin permission to connect a VM agent*). Once an agent exists, it shows:
+
+- **Metrics**, **Logs** and **Alerts** cards. Metrics and Logs show **Connected**, **No data**, **Not connected**, **Unreachable** or **Check failed**; Alerts shows **Receiving alerts**, **No alerts yet**, **Disabled** or **Not connected**. Each says what to connect when it isn't.
+- **Proxy Agents** — **Agent**, **Connection** (Connected / Disconnected), **Configuration**, **Version** and **Last Connected**, with **Manage** to open **Admin → Integrations → Servers**. *No proxy agent installed* appears when health data exists but no proxy agent integration is listed.
+- The agent's datasources — including its discovery datasource — with their status, last check and any error.
+
+Proxy agent versions are shown, but there is no "update available" notice for them yet.
+
 ## 1. Agent Health Dashboard Overview
 
 On each periodic telemetry tick, the agent runner executes local lightweight probes against all configured datasources and reports their state to the NudgeBee backend.
@@ -28,7 +42,7 @@ graph LR
         Traces[ClickHouse / Chronosphere / Jaeger]
         NodeAgents[Node Agent DaemonSet]
 
-        Agent -->|1. GET healthy| Prom
+        Agent -->|"1. query vector(1)"| Prom
         Agent -->|2. GET healthy| AM
         Agent -->|3. Provider health endpoint| Logs
         Agent -->|4. HTTP ping :8123| Traces
@@ -50,7 +64,7 @@ Below is the complete reference of every field displayed on the Agent Health car
 * **Probe Mechanism**: Continuous WebSocket keepalive ping.
 * **Failure Causes**:
   * Outbound firewall blocks TCP port `443` to the Relay server.
-  * `RELAY_SERVER_SECRET_KEY` mismatch between agent and server.
+  * A wrong or revoked agent key (`runner.nudgebee.auth_secret_key`) — the relay authenticates the agent with it.
   * Intermediate reverse proxy drops long-lived WebSocket connections (missing `Upgrade: websocket` headers).
 
 ---
@@ -90,7 +104,7 @@ Below is the complete reference of every field displayed on the Agent Health car
   1. **Apache Pinot**: Probes `GET <PinotURL>/health`
   2. **Elasticsearch / OpenSearch**: Probes `GET <ES_URL>/_cluster/health` (authenticated)
   3. **SigNoz**: Probes `GET <SigNozURL>/api/v1/health`
-  4. **Grafana Loki**: Probes `GET <LokiURL>/ready`
+  4. **Grafana Loki**: Probes `GET <LokiURL>/loki/api/v1/status/buildinfo`
 * **Healthy State**: `Connected` (Green), displaying the active provider name (e.g. `Loki`, `Elasticsearch`, `SigNoz`).
 * **Failure Causes**:
   * Incorrect log service URL.
@@ -103,7 +117,7 @@ Below is the complete reference of every field displayed on the Agent Health car
 * **Supported Backends**:
   * **ClickHouse / OTel Collector**: Probes HTTP `/ping` on port `8123` (or `CLICKHOUSE_PORT`).
   * **Chronosphere Traces / Jaeger**: Reported as enabled when their configuration and query URL are present; this status is not an end-to-end query probe.
-* **Healthy State**: `Connected` (Green) or `Disabled` (Gray if tracing is not configured).
+* **Healthy State**: `Connected` (Green). The Observability tab shows `Not configured` when tracing isn't set up.
 * **Failure Causes**: ClickHouse service down, credentials invalid, or `TRACES_ENABLED` set to `false`.
 
 ---
@@ -138,7 +152,7 @@ Below is the complete reference of every field displayed on the Agent Health car
 ---
 
 ### 10. Agent Version & Latest Version
-* **Purpose**: Displays the currently running agent container image tag compared against the latest stable release published by NudgeBee.
+* **Purpose**: Shows the agent version (the Helm chart version the agent reports) against the latest stable release. When they differ you see **Update available.** See [Upgrade](../installation/upgrade.md).
 * **Upgrade Recommended**: The Console asks you to update whenever the running version differs from the latest version returned by the server.
 
 ---
@@ -151,7 +165,7 @@ Below is the complete reference of every field displayed on the Agent Health car
 | **Prometheus** | `Prometheus: Disconnected` | Query `<prometheus-url>/api/v1/query?query=vector(1)` with the configured authentication. | Verify `globalConfig.prometheus_url`, headers, and managed-provider auth. See [Prometheus Guide](../connect/prometheus-troubleshooting.md). |
 | **Alertmanager** | `Alertmanager: Disconnected` | `kubectl get svc -A \| grep alertmanager` | Check configured URL and verify webhook forwarding. See [Alertmanager Troubleshooting](../connect/alertmanager.md#verify). |
 | **Logs (Loki/ES/SigNoz)** | `Logs: Disconnected` | Probe active provider via curl: `/loki/api/v1/status/buildinfo` (Loki), `/_cluster/health` (ES), or `/api/v1/health` (SigNoz). | Verify `runner.loki.url`, `runner.es.enabled`, `runner.es.url`, or `runner.signoz.url` and credentials. See [Logging Troubleshooting](../connect/logging/index.md#troubleshooting). |
-| **Traces** | `Traces: Disconnected` | `kubectl run -n nudgebee-agent health-check --rm -i --restart=Never --image=curlimages/curl -- -fsS http://clickhouse:8123/ping` | Verify ClickHouse health and trace pipeline. See [Storage, ClickHouse & OTel Guide](./storage-and-pvcs.md#2-troubleshooting-clickhouse-restart--crash-loops). |
+| **Traces** | `Traces: Disconnected` | `kubectl run -n nudgebee-agent health-check --rm -i --restart=Never --image=curlimages/curl -- -fsS http://nudgebee-agent-clickhouse:8123/ping` (the Service is `<release>-clickhouse`) | Verify ClickHouse health and trace pipeline. See [Storage, ClickHouse & OTel Guide](./storage-and-pvcs.md#2-troubleshooting-clickhouse-restart--crash-loops). |
 | **OpenCost** | `OpenCost: Disconnected` | `kubectl get pods -n nudgebee-agent -l app.kubernetes.io/name=opencost` | Verify `opencost.enabled` and RBAC permissions. |
 | **Node Agent** | `Node Agent: 0` | `kubectl get ds -n nudgebee-agent` | Inspect scheduling, PSA privileges, and Prometheus scrape jobs. See [Node Agent Configuration](./node-agent-configs.md#troubleshooting-node-agent-failures) and [Prometheus Scrapes](../connect/prometheus-troubleshooting.md#step-9-why-is-node-agent-count-zero-or-disconnected-in-agent-health). |
 

@@ -79,7 +79,7 @@ Once configured, NudgeBee queries your Loggly account for log data using the Log
 
 ## Verify the Integration
 
-1. Save the configuration. If the subdomain and API token are valid, the integration is created without errors.
+1. Click **Test Connection**, then **Save**. **Save** stays disabled until the test succeeds.
 2. In NudgeBee, open **Clusters** and select any cluster to open the **Cluster Details** page.
 3. In the top tab bar, click **Monitoring** > **Logs** > **Query Log**.
 4. Confirm that log data from Loggly appears in the query results. You can also verify from a specific workload's **Logs** tab.
@@ -90,7 +90,7 @@ Once configured, NudgeBee queries your Loggly account for log data using the Log
 
 - Loggly is a **log-only** integration. It does not provide metrics or traces.
 - Log queries use the Loggly Search API at `https://<subdomain>.loggly.com/apiv2/search`.
-- Both the subdomain and API token are validated on save to ensure the connection is working.
+- **Test Connection** validates both the subdomain and API token; **Save** stays disabled until it succeeds.
 
 ---
 

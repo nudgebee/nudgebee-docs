@@ -20,21 +20,34 @@ Want concrete examples? **[NuBi Use Cases](./use-cases/)** walks through real co
 
 ## Pre-built AI Assistants
 
-NudgeBee includes four purpose-built AI assistants, each focused on a specific domain:
+NuBi hands each question to the assistant for the account it is about. Each assistant knows that platform and calls the specialist agents below:
 
-| AI Assistant | What It Does |
+| AI Assistant | Used for |
 |---|---|
-| **SRE AI-Assistant** | Incident triage, root cause analysis, and remediation guidance for reliability engineering. |
-| **FinOps AI-Assistant** | Cost optimization analysis, right-sizing recommendations, and cloud spend insights. |
-| **CloudOps AI-Assistant** | Cloud infrastructure management, security posture analysis, and operational recommendations. |
-| **K8s AI-Assistant** | Kubernetes-specific debugging, upgrade guidance, and workload optimization. |
+| **Kubernetes Troubleshooter** | Kubernetes clusters — pods, workloads, nodes, events, and the services running on them. |
+| **AWS Troubleshooter** | AWS accounts. |
+| **Azure Troubleshooter** | Azure subscriptions. |
+| **GCP Troubleshooter** | Google Cloud projects. |
+| **VM Troubleshooter** | Virtual machines and VM fleets. |
+| **Datadog Troubleshooter** | Accounts monitored through Datadog. |
+
+## Getting the Most from NuBi
+
+- **[What NuBi Can Do](./nubi.md)** — investigations, product questions with `@nubi`, and where you can talk to NuBi.
+- **[Using the Chat](./nubi-chat.md)** — the chat screen: attachments, agents and skills, queued messages, approvals, reading an answer, your conversations.
+- **[Improve NuBi's Answers](./improve-accuracy.md)** — account context, Facts vs SOPs, skills and per-agent knowledge.
+- **[b-Cortex](./b-cortex.md)** — memory, knowledge bases, re-syncing integrations and marking documents.
+- **[Agents & Custom Agents](./custom-agents.md)** — create agents, override a built-in prompt, or add tools.
+- **[AI & Tools](./ai-and-tools.md)** — every admin tab for configuring the AI, and who can use each.
 
 ## Configuring and Governing AI
 
 - **[AI Gateway](./ai-gateway.md)** — One endpoint in front of every LLM provider, with routing, tier aliases, quotas and per-user cost attribution.
 - **[LLM Analyser](./llm-analyser.md)** — Where NudgeBee's own AI spend goes, by conversation, model, agent, tool and user.
 - **[Egress Filter](./egress-filter.md)** — Scan what leaves for secrets, PII and PHI, and detect, redact, block, or swap personal data for reversible tokens.
-- **[Tools & MCP](./tools-and-mcp.md)** — What the agents are able to do, and which MCP servers are connected.
+- **[Tools & MCP](./tools-and-mcp.md)** — What the agents are able to do, MCP servers and their approvals, and automations offered to NuBi.
+- **[Tool Approvals](./tool-approvals.md)** — Rules that let specific, known-safe commands run without asking.
+- **[Budgets & Limits](./budgets-and-limits.md)** — Spend and conversation limits per tenant and account, and model pricing.
 - **[Memory Policy](./memory-policy.md)** — The tenant-wide opt-out for each layer of AI memory.
 - **[RCA Format](./rca-format.md)** — The Markdown template the AI fills in when it writes a root cause analysis.
 
@@ -42,16 +55,15 @@ NudgeBee includes four purpose-built AI assistants, each focused on a specific d
 
 Under the hood, NudgeBee's AI assistants use a modular set of specialized agents that you can also invoke directly through the [Workflow Builder](../workflow-builder/):
 
-- **Log Analysis Agent** — Analyzes application and infrastructure logs to identify errors, patterns, and anomalies.
-- **Kubectl Agent** — Executes and interprets Kubernetes commands for cluster inspection and management.
-- **Prometheus Agent** — Queries Prometheus metrics for performance analysis and anomaly detection.
-- **Redis Agent** — Inspects Redis instances for performance, memory, and connectivity issues.
-- **RabbitMQ Agent** — Monitors RabbitMQ queues, consumers, and message flow.
-- **Traces Agent** — Analyzes distributed traces to identify latency bottlenecks and service dependencies.
-- **Debugger Agent** — Deep-dives into application-level issues with context-aware debugging.
-- **Postgres Agent** — Inspects PostgreSQL databases for query performance, locks, and connection issues.
-- **Ticket Agent** — Searches historical tickets for similar past incidents and resolution patterns.
-- **Code Agent** — Analyzes code changes and correlates them with incidents for change-driven RCA.
+- **Log Root-Cause Analyzer** — Analyzes application and infrastructure logs to identify errors, patterns, and anomalies.
+- **Prometheus Metrics Expert** — Queries Prometheus metrics for performance analysis and anomaly detection.
+- **Trace Investigator** — Analyzes distributed traces to identify latency bottlenecks and service dependencies.
+- **PostgreSQL Diagnostics** — Inspects PostgreSQL databases for query performance, locks, and connection issues.
+- **Ticket Manager** — Searches historical tickets for similar past incidents and resolution patterns.
+- **Code Analyzer & Fixer** — Analyzes code changes and correlates them with incidents for change-driven RCA.
+- **FinOps Cost Advisor** — Answers cloud cost and spend questions, finds savings and optimization opportunities, tracks budgets, and covers all recommendations.
+
+The **Kubernetes Troubleshooter** (you can also call it **Debugger**) runs `kubectl`, Redis and RabbitMQ commands itself rather than through a separate agent.
 
 ### Watch a Walkthrough
 

@@ -51,7 +51,7 @@ sidebar_position: 100
 
 - **Raise PRs from NudgeBee**: Create automated pull requests with rightsized resource limits directly to your Git repository.
 - **GitOps Reconciliation (Flux / Argo CD)**: Annotate manifests or configure automated PR merges to ensure GitOps state remains the single source of truth.
-- **NudgeBee Autopilot Reconciliation**: Apply `nudgebee.io/ignore: "true"` annotations to exclude specific workloads from automated rightsizing.
+- **Auto Optimize scope**: Auto Optimize only changes the namespaces and applications you select in each rule, and **Raise Git Pull Request** sends changes through your repository instead of patching. See [Auto Optimize](./features/optimizations/autopilot/auto_optimize/index.md).
 
 ### Can NudgeBee work on K3s/Kind/Minikube?
 Yes, please refer to the [Server Installation Guide](/docs/installation/server/) and [Agent Installation Guide](/docs/installation/agent/installation/) for local evaluation instructions.
@@ -86,7 +86,7 @@ Currently, NudgeBee stores most telemetry data inside your cluster or dedicated 
 
 #### Servers store the following data:
 - **Aggregated Metrics**: Daily rollups for long-term capacity planning and FinOps cost trend analysis.
-- **Events & Incidents**: Troubleshooting events with default configurable retention of 60 days.
+- **Events & Incidents**: Troubleshooting events, kept 90 days for high-priority events and 30 days for the rest by default (configurable). Events with an AI analysis or feedback are kept beyond that.
 - **Workload Metadata**: Historical records of deleted pods and workloads to support post-incident analysis.
 
 ### Does NudgeBee support Predictive Analysis?
@@ -105,13 +105,13 @@ NudgeBee provides prebuilt connectors for Datadog, Prometheus, Chronosphere, Sig
 Yes, for greenfield environments, NudgeBee can bundle Prometheus for metrics collection, ClickHouse with OpenTelemetry for distributed traces, and Loki for log aggregation.
 
 ### How does NudgeBee integrate with existing knowledge base systems?
-NudgeBee natively integrates with Atlassian Confluence, ServiceNow, Notion, Google Docs, and SharePoint. These sources are indexed into the Semantic Knowledge Graph to ground NuBi's root cause investigations in your team's existing runbooks.
+NudgeBee syncs knowledge bases from Atlassian Confluence and ServiceNow, and re-syncs them daily. Other sources, such as Google Drive, are not synced today; upload their content to the knowledge base as files instead. NuBi searches these knowledge bases to ground its root cause investigations in your team's existing runbooks. See [b-Cortex](./features/ai/b-cortex.md).
 
 ### Does NudgeBee learn from resolved incidents automatically?
-Yes, NudgeBee automatically learns from resolved incidents. Resolution notes and verified postmortems flow directly into the knowledge base to continually improve future triage accuracy.
+Partly. NuBi remembers facts, query patterns and past investigations from its conversations in **Collective** memory, shared across the tenant and used in later answers, subject to your [Memory Policy](./features/ai/memory-policy.md). Resolution notes and postmortems are not added to the knowledge base automatically; upload them as documents if you want NuBi to search them. See [b-Cortex](./features/ai/b-cortex.md).
 
 ### How does NudgeBee handle event deduplication and aggregation?
-NudgeBee generates unique fingerprints for each incoming alert. These fingerprints form the foundation for intelligent aggregation and deduplication, consolidating cascading alert storms into single, actionable incidents.
+Each incoming alert gets a fingerprint that identifies the alert it came from. Repeat firings of the same alert within a run are marked as duplicates; a new run starts when the first event's triage status is Resolved or after a 24-hour gap. Alerts on the same resource or on connected services that keep arriving within about 15 minutes of each other are grouped under one leading alert, so the Triage Inbox shows each issue once. See [Event Lifecycle & Triage](./features/troubleshooting/event-lifecycle.md).
 
 ### What is NudgeBee's Knowledge Graph and how does it correlate events?
 NudgeBee uses a live Semantic Knowledge Graph to establish topological links between workloads, pods, nodes, cloud services, metrics, traces, git commits, and tickets. When an incident occurs, the system correlates dependent entities across the timeline to identify the precise triggering change.

@@ -8,17 +8,18 @@ NudgeBee is designed with security at its core. [NudgeBee Cloud](https://app.nud
 This page covers NudgeBee's **Enterprise Guardrails** — authentication, authorization, approval workflows, and audit trails — that keep your operations secure and compliant.
 
 :::info
-NudgeBee does not store passwords. All authentication is handled through SSO providers or magic email links, keeping your login process secure and simple.
+NudgeBee does not store user passwords. Sign-in is handled through SSO providers or magic email links and, on self-hosted installs, LDAP or Teleport.
 :::
 
 ## Authentication
 - **OAuth SSO** with Google, Okta, OneLogin, Azure AD (and B2C), and Auth0 is available in **all editions** (Community, Enterprise, Cloud). See [Authentication Integration](../integrations/Authentication/index.md) for setup.
 - **SAML 2.0 SSO** (with IdP-driven user provisioning and group-to-role mapping) is available in the **Enterprise** and **Cloud** editions.
 - Users without SSO can use **magic email links** — enter your email and receive a one-time login link. No password required.
+- Self-hosted installs can also sign users in through **LDAP** or **Teleport**. See [Authentication Integration](../integrations/Authentication/index.md).
 - Credentials for external integrations are stored encrypted (AES-GCM) at rest using the `NUDGEBEE_ENCRYPTION_KEY` set at install time.
 
 ## Authorization & Access Control
-- NudgeBee provides role-based access control (RBAC) across tenants and accounts with built-in roles: **Tenant Admin** (`tenant_admin`), **Tenant Admin Read-Only** (`tenant_admin_readonly`), **Account Admin** (`account_admin`), and **Account Admin Read-Only** (`account_admin_readonly`), alongside customizable permissions for user groups.
+- NudgeBee provides role-based access control (RBAC) across tenants and accounts with built-in roles: **Tenant Admin** (`tenant_admin`), **Tenant Admin Read-Only** (`tenant_admin_readonly`), **Account Admin** (`account_admin`), **Account Admin Read-Only** (`account_admin_readonly`), **K8s Namespace Admin** (`k8s_namespace_admin`), and **K8s Namespace Admin Read-Only** (`k8s_namespace_admin_readonly`), alongside customizable permissions for user groups.
 - User access can be scoped to specific accounts or granted tenant-wide, with full audit logging for administrative changes.
 
 ## Kubernetes Agent RBAC & Least-Privilege Permissions

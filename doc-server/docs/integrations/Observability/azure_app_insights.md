@@ -7,10 +7,9 @@ sidebar_position: 6
 
 Before configuring the integration, ensure you have the following from your Azure portal:
 
-- An **Azure App Registration** with access to your Application Insights resource
-- Your **Application Insights App ID**
+- An **Azure App Registration** with access to your Log Analytics workspace
 - Your **App Registration Client ID**, **Client Secret**, and **Tenant ID**
-- (For logs) Your **Log Analytics Workspace ID**
+- Your **Log Analytics Workspace ID** (logs, traces and metrics are read from it)
 
 ---
 
@@ -29,9 +28,9 @@ Navigate to **Integrations** > **Observability** tab and select **Azure Applicat
     * A descriptive name for this integration (e.g., `Production Azure App Insights`).
     * Used to identify this configuration when multiple Azure integrations exist.
 
-* **App Insights App ID \*** (Required)
-    * Your Azure Application Insights **Application ID**.
-    * To find it: open the Azure portal > navigate to your **Application Insights** resource > **Configure** > **API Access**. The Application ID is displayed at the top.
+* **App Insights App ID** (Legacy, optional)
+    * Leave empty to read traces and metrics from the Log Analytics workspace. It is kept only for integrations that were saved with an Application Insights **Application ID**.
+    * To find one: open the Azure portal > navigate to your **Application Insights** resource > **Configure** > **API Access**. The Application ID is displayed at the top.
 
 * **App Client ID \*** (Required)
     * The **Client (Application) ID** of your Azure App Registration.
@@ -55,7 +54,7 @@ Navigate to **Integrations** > **Observability** tab and select **Azure Applicat
     * Default: `ContainerLogV2`. Other common values: `ContainerLog`, `AppTraces`.
 
 * **Log Workbook ID**
-    * Your **Log Analytics Workspace ID** (required if using NudgeBee as a log provider).
+    * Your **Log Analytics Workspace ID**. Logs, traces and metrics are all read from this workspace.
     * To find it: open the Azure portal > **Log Analytics workspaces** > select your workspace > **Overview**. The Workspace ID is displayed.
 
 * **Default Log Provider**
@@ -74,12 +73,12 @@ Once configured, NudgeBee queries your Azure resources using **Kusto Query Langu
 
 | Signal | Azure API | Table | Example |
 |--------|-----------|-------|---------|
-| Traces | Application Insights API | `dependencies` | `dependencies \| where operation_Id == "abc123" \| take 100` |
+| Traces | Log Analytics API (Application Insights API only when the legacy App ID is set) | `dependencies` | `dependencies \| where operation_Id == "abc123" \| take 100` |
 | Logs | Log Analytics API | `ContainerLogV2` | `ContainerLogV2 \| where TimeGenerated > ago(1h) \| take 100` |
 
 NudgeBee authenticates using **OAuth 2.0 client credentials** flow via your App Registration. Tokens are cached and refreshed automatically.
 
-**Credential validation**: on save, NudgeBee runs a test query (`<table> | take 1`) against both the Application Insights API and Log Analytics API (if enabled) to verify your credentials and table names are correct.
+**Credential validation**: when you click **Test Connection**, NudgeBee runs a test query (`<table> | take 1`) against the Log Analytics workspace (and the Application Insights API when the legacy App ID is set) to verify your credentials and table names are correct.
 
 ---
 
@@ -96,7 +95,7 @@ Your App Registration must have the following permissions:
 
 ## Verify the Integration
 
-1. Save the configuration. If credentials are valid, the integration is created without errors.
+1. Click **Test Connection**, then **Save**. **Save** stays disabled until the test succeeds.
 2. Navigate to any Kubernetes workload in NudgeBee.
 3. Open the **Logs** or **Traces** tab.
 4. Confirm that data from Azure Application Insights appears in the query results.

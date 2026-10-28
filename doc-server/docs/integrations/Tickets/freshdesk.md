@@ -68,3 +68,7 @@ Click **Test Connection**, then **Save**.
 - [Tickets overview](./index.md)
 - [Troubleshoot ticketing integrations](./ticket-integrations-troubleshooting.md)
 - [Ticket tasks in workflows](../../features/workflow-builder/ticket-tasks.md)
+
+## Related
+
+- [Ticket integrations](./index.md)

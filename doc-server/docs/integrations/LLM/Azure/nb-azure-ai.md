@@ -54,7 +54,8 @@ Update the environment variables in the RAG server to connect to the deployed mo
 EMBEDDINGS_PROVIDER=azure
 EMBEDDINGS_MODEL_NAME=<Model name in Azure AI Foundry>
 EMBEDDINGS_PROVIDER_API_VERSION=<API version for Azure embeddings>
-EMBEDDINGS_PROVIDER_API_ENDPOINT=<Azure embeddings endpoint URL>
+EMBEDDINGS_PROVIDER_API_ENDPOINT=https://<resource>.openai.azure.com
+EMBEDDINGS_PROVIDER_API_STYLE=v1 # default; use classic together with EMBEDDINGS_PROVIDER_API_VERSION
 EMBEDDINGS_PROVIDER_API_KEY=<Credential for accessing Azure embeddings>
 ```
 
@@ -69,9 +70,14 @@ To enable the LLM server to interact with the Azure AI Foundry-hosted model, upd
 LLM_PROVIDER=azure
 LLM_MODEL_NAME=<Model name in Azure AI Foundry>
 LLM_PROVIDER_API_KEY=<Azure authentication token>
-LLM_PROVIDER_API_VERSION=<API version>
+LLM_PROVIDER_API_STYLE=v1 # or "classic", which also needs LLM_PROVIDER_API_VERSION
 LLM_PROVIDER_API_ENDPOINT=<Base URL for Azure AI Foundry>
 ```
 
 
 
+
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [LLM Integrations](../index.md)

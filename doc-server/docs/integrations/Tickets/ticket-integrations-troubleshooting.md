@@ -10,7 +10,7 @@ provider: all
 
 # Troubleshoot Ticketing Integrations & Ticket Creation Failures
 
-NudgeBee integrates with **Jira**, **ServiceNow**, **GitHub Issues**, **GitLab**, and **PagerDuty** to automate incident creation and ticket tracking. This guide diagnoses common ticket creation failures, custom field mapping errors, and sync issues.
+NudgeBee integrates with **Jira**, **ServiceNow**, **GitHub Issues**, **GitLab**, **PagerDuty**, **ZenDuty** and **Freshdesk** to automate incident creation and ticket tracking. This guide diagnoses common ticket creation failures, custom field mapping errors, and sync issues.
 
 ---
 
@@ -23,7 +23,7 @@ flowchart TD
     ErrorType -->|Field is required / Missing value| F1[1. Mandatory Custom Field Missing]
     ErrorType -->|401 / 403 Unauthorized| F2[2. Token Expired or Insufficient Project Permissions]
     ErrorType -->|Reporter / Assignee Invalid| F3[3. User Not Assignable in Target Project]
-    ErrorType -->|Ticket Created but Status Out of Sync| F4[4. Status Mapping Webhook Inactive]
+    ErrorType -->|Ticket Created but Status Out of Sync| F4[4. Status Not Yet Synced - hourly check]
 ```
 
 ---
@@ -36,7 +36,7 @@ flowchart TD
 * **Symptom**: Ticket creation fails with `Jira API Error 400: Field '<field_name>' is required`.
 * **Cause**: Your Jira project has required fields (e.g. *Component/s*, *Root Cause Category*, *Environment*, *Team*) that were not filled in NudgeBee's default ticket template.
 * **Remediation**:
-  1. In NudgeBee Console, go to **Settings $\rightarrow$ Integrations $\rightarrow$ Tickets $\rightarrow$ Jira**.
+  1. In NudgeBee Console, go to **Admin → Integrations → Ticketing → Jira**.
   2. Inspect the ticket creation form or workflow ticket task for the selected project and issue type.
   3. Supply the required fields using the available field metadata. If a needed field is unavailable, collect the project, issue type, field ID, and error for support.
   4. Save changes and retry ticket creation.
@@ -61,9 +61,9 @@ flowchart TD
 
 ### Failure 4: Jira Ticket Status Is Stale
 
-The Jira sync fetches issue details and updates NudgeBee ticket records. Check the linked issue ID, configured credentials, access to that issue, and ticket-server sync errors. See [Jira troubleshooting](./jira.md#4-jira-ticket-status-is-stale).
+NudgeBee checks each open ticket in its tool **every hour** (there is no webhook), so a change can take up to an hour to show. Tickets already in a final state (resolved, closed, done, complete/completed, rejected, cancelled/canceled, declined) are no longer checked. The Jira sync fetches issue details and updates NudgeBee ticket records. Check the linked issue ID, configured credentials, access to that issue, and ticket-server sync errors. See [Jira troubleshooting](./jira.md#4-jira-ticket-status-is-stale).
 
-Ticket status and event triage status are separate. This flow does not require a Jira status-sync webhook and does not guarantee that closing a ticket resolves a linked event.
+Ticket status and event triage status are separate. This flow does not require a Jira status-sync webhook and does not resolve a linked event. A ticket raised for a recommendation does change it: see [What closing a ticket does](../../features/tickets.md#what-closing-a-ticket-does).
 
 
 ---
@@ -73,3 +73,7 @@ Ticket status and event triage status are separate. This flow does not require a
 Ask NuBi in chat for guided ticketing integration assistance:
 - *"How do I fix Jira API Error 400 when mandatory custom fields are missing?"*
 - *"What ServiceNow permissions are required for incident creation?"*
+
+## Related
+
+- [Ticket integrations](./index.md)

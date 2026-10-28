@@ -20,13 +20,15 @@ Add the **Core → Approval** task before an action that needs human review. Con
 | --- | --- |
 | Message | Explain the proposed action, target, and impact |
 | Approval type | `in_app`, `instant_message`, or `email` |
-| IM provider and channel | For instant messages, select Slack and its destination channel ID |
+| IM provider and channel | For instant messages, select Slack or Microsoft Teams and the destination channel ID (Teams also needs the team) |
 | Email recipients | Required when using email |
 | Approval options | Defaults to `approve` and `reject` |
 
 The default `in_app` mode waits for a response from the execution view without sending a notification. Configure the workflow's branching to handle the returned decision before running a mutating task. See [Core Tasks](./core-tasks.md).
 
-The approval task does not provide per-task allowed-role/group selectors or automatic escalation to a secondary channel. Access to execution actions depends on the user's configured permissions.
+The wait for a response counts against the step's timeout. There is no separate approval timeout: the step uses its **Task Timeout**, else the **Automation Timeout** (5 minutes by default), else 10 minutes. If nobody responds in time, the step fails. The Automation Timeout also limits the whole run, so when approvers need more time, raise both the Approval step's **Task Timeout** and the workflow's **Automation Timeout**.
+
+The approval task does not provide per-task allowed-role/group selectors or automatic escalation to a secondary channel. Access to execution actions depends on the user's configured permissions — see [Whose permissions a run uses](./index.md#whose-permissions-a-run-uses).
 
 ## Retry or replay an execution
 
@@ -54,3 +56,9 @@ Cancellation does not undo completed actions or guarantee that an external comma
 Inspect the execution's version, inputs, task outputs, errors, and status. Workflow operations also emit audit events, including cancellation. Available attribution depends on how the workflow was invoked; do not assume every run contains a client IP, token name, AI conversation ID, or recommendation savings value.
 
 For recovery, record the original and retry execution IDs, the version used, the affected resources, and any manual corrective actions.
+
+## Related
+
+- [Core Tasks](./core-tasks.md)
+- [Workflow Builder](./index.md)
+- [Workflow Versioning](./workflow-versioning.md)

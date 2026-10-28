@@ -25,3 +25,7 @@ To integrate with Google Cloud services, you'll need:
 4. Project ID and credentials configuration
 
 Select the specific Google Cloud service from the options above to begin the integration process.
+## Related
+
+- [Add an LLM Provider](../add-llm-provider.md)
+- [LLM Integrations](../index.md)

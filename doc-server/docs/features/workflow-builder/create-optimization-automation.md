@@ -20,7 +20,7 @@ Start with a notification workflow so you can verify recommendation matching bef
 
 ## Configure the trigger
 
-Create a workflow and add an **Optimization Trigger**. Select a Cluster, Category, and Rule Name as needed. An empty configuration matches every recommendation; use a narrow filter for your first workflow. See the [Optimization Trigger reference](./triggers.md#optimization-trigger) for supported values.
+Create a workflow and add an **Optimization Trigger**. Select at least one of Cluster, Category or Rule Name — a trigger with none can't be saved (in JSON, a filter expression also counts). Use a narrow filter for your first workflow. See the [Optimization Trigger reference](./triggers.md#optimization-trigger) for supported values.
 
 The structured trigger does not expose minimum-savings or environment-tag fields. If you need additional logic, evaluate the available payload fields in the workflow before performing an action.
 
@@ -52,4 +52,4 @@ The payload also contains `event_type`, `cloud_account_id`, `tenant_id`, `severi
 
 Choose a task appropriate to the recommendation and explicitly supply its required account, resource, and action parameters. Insert an [Approval](./workflow-operations-approvals.md) task where review is needed, and verify decision handling before the change task.
 
-Use [Auto Optimize](../optimizations/autopilot/auto_optimize/index.md) for supported scheduled optimization configurations. Before direct changes, record the previous resource settings and the recovery procedure. Workflow history does not provide a universal one-click infrastructure rollback.
+Use [Auto Optimize](../optimizations/autopilot/auto_optimize/index.md) to apply right-sizing continuously or on a schedule, with optional [approval](../optimizations/autopilot/auto_optimize/approvals.md) (continuous rules run without approval). Before direct changes, record the previous resource settings and the recovery procedure. Workflow history does not provide a universal one-click infrastructure rollback.
