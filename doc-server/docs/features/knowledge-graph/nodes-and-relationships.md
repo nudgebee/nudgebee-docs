@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 sidebar_label: Nodes and Relationships
-keywords: [knowledge graph, node types, relationship types, edges, node details]
+keywords: [knowledge graph, node types, relationship types, edges, node details, node roles]
 ---
 
 # Nodes and Relationships
@@ -14,7 +14,7 @@ Each node card shows:
 
 - **Icon** — the vendor or language logo, for example PostgreSQL, Redis, Kafka, Go or Java, when NudgeBee can tell; otherwise an icon for the type.
 - **Name** — the resource's name.
-- **Type line** — the node's type, for example *Workload* or *ComputeInstance*, sometimes with a role such as *Database*, *Cache* or *Queue*, and its location, such as a region.
+- **Type line** — the node's type, for example *Workload* or *ComputeInstance*, sometimes with a role such as *Database*, *Cache* or *Session store* — what the resource acts as, not just what kind of resource it is. See [Node Roles](#node-roles).
 - **Account line** — the account it belongs to, and its namespace for a Kubernetes resource. A resource you declared by hand outside any connected account reads *Not in a connected account*.
 
 The border is **blue** for workloads and **green** for everything else.
@@ -30,6 +30,7 @@ Click the ⓘ on a node to open **Node Details**.
 | Shows | What it is |
 |:---|:---|
 | **Unique Key** | The identifier NudgeBee uses for the resource across rebuilds, with a copy button. |
+| **Role** | What the resource acts as, if anything, and whether it was detected or set by a user. **Set role** (or **Edit role**, once one is set) opens the picker. See [Node Roles](#node-roles). |
 | **Last Seen** | When the graph last saw the resource. |
 | **Path to this node** | When you have clicked through nodes, the route from the first one to this one, with each relationship. |
 | **Labels** | The resource's properties: its labels, tags and collected details such as region, engine or replica count. |
@@ -40,6 +41,27 @@ Kubernetes resources have more tabs:
 |:---|:---|
 | Namespace, Node, Pod | Utilization Trends, Related Events |
 | Workload, Job, CronJob | Utilization Trends, Related Events, Traces (last 24 hours), Logs (last 60 minutes), App Dashboard, Log Group |
+
+## Node Roles
+
+A node's **type** says what kind of resource it is, such as *Workload* or *ComputeInstance*. Its **role** says what it acts as: a database, a cache, a message queue, and more. A managed resource whose type already means one — an RDS instance, an ElastiCache cluster — is that role without anyone saying so. A workload, a VM or a node you declared by hand is not, until a role is set on it: a Kubernetes job that rebuilds nightly reports looks like any other workload until someone marks it as what it does.
+
+![Node Details showing the Role row: Cache, engine redis, Detected, with a Set role button](../img/knowledge-graph-node-role.png)
+*A detected role on redis-master, with a button to override it*
+
+A role can come from two places:
+
+- **Detected.** NudgeBee recognizes some well-known datastores — Postgres, MySQL, MongoDB, Redis, Kafka, Elasticsearch and others — from a Kubernetes workload's image or Helm chart, and sets the role itself.
+- **Set by a user.** Click **Set role** (or **Edit role**, once one is set) in a node's details, pick a role, and optionally name the **engine** it runs (`postgres`, `redis`, `kafka`, …), which sets the resource's icon. A role you set always wins over a detected one; removing it brings the detected role back.
+
+![The role picker: a dropdown under "This node acts as", with the detected role shown above it and an Engine field below](../img/knowledge-graph-set-role-dialog.png)
+*Overriding a detected role*
+
+The built-in roles are **Database, Cache, Message queue, Search, Object storage, Load balancer, Proxy, API gateway, Scheduler, Monitoring** and **Auth**. If none fits, type your own, for example `session-store` or `etl-worker` — it is then suggested to the rest of the tenant the next time someone opens the picker.
+
+Setting a role needs write access to the resource's account; for a node declared outside any connected account, tenant-wide access. When a resource has a matching cloud instance NudgeBee treats as the same machine, setting a role on either applies to both.
+
+A role is one of the facts NudgeBee's AI agents use to answer questions such as "find all our caches." See [How NudgeBee Uses the Graph](./how-nudgebee-uses-it.md#nubis-answers-about-dependencies) and the **Attribute filter** in [Explore the Graph](./exploring.md#filters).
 
 ## Edge details
 

@@ -32,6 +32,7 @@ Things worth knowing:
 - **Selecting a node clears Account, Node Type, Label and Attribute.** The node becomes the center of the graph and everything else is reached from it by Level.
 - **Once nodes are selected, the Node list narrows to their neighbors,** so you can keep picking the next hop.
 - **Several label or attribute conditions must all match** (they are combined with AND). The only comparison is equals.
+- **Filtering by role finds only what is tagged with it.** Set the Attribute filter to `role = cache` (or a role you typed yourself) to see resources that have that role, detected or set. A resource whose *type* already means that role, such as an RDS instance, is included only if it also carries the role as a property — ask NuBi to cover both at once. See [Node Roles](./nodes-and-relationships.md#node-roles).
 - **Filters are not saved.** They reset when you reload the page, and there is no link that carries them.
 
 ## Search and focus
