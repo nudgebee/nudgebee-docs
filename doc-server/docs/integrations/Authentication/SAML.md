@@ -77,6 +77,8 @@ This is the single most common misconfiguration. `SAML_ISSUER` is sent **to** yo
 | `SAML_INCLUDE_UNMAPPED_GROUPS` | Pass through IdP groups that are not in the mapping as-is. | `false` |
 | `SAML_SP_PRIVATE_KEY` | PEM private key used to sign outgoing authentication requests. Setting it turns signing on — see [Signed Authentication Requests](#signed-authentication-requests). | Not set (requests are unsigned) |
 | `SAML_SP_CERT` | The certificate matching `SAML_SP_PRIVATE_KEY`, in PEM format. Published in SP metadata. | Not set |
+| `SAML_FORCE_AUTHN` | Set to `true` to make your IdP ask for credentials on every sign-in, even when the user still has an IdP session — see [Asking for Credentials on Every Sign-In](#asking-for-credentials-on-every-sign-in). | Not set (the IdP may reuse its session) |
+| `SAML_LOGOUT_URL` | Your IdP's Single Logout endpoint. Setting it makes logging out of NudgeBee end the IdP session too — see [Single Logout](#single-logout). | Not set (logout ends only the NudgeBee session) |
 
 ### Setting the Variables with Helm
 
@@ -191,6 +193,102 @@ Replace the certificate in this order so that sign-in keeps working throughout:
 
 An expiring signing certificate is reported by the [health endpoint](#health-check) 30 days ahead.
 
+### Asking for Credentials on Every Sign-In
+
+By default your IdP decides whether to ask for credentials. If the user still has a session at the IdP — they signed in to another application earlier, or NudgeBee signed them out after a period of inactivity — the IdP signs them straight back in without a prompt. That is standard single sign-on, and it is what most organizations want.
+
+To make the IdP ask every time, set:
+
+```env
+SAML_FORCE_AUTHN="true"
+```
+
+NudgeBee then marks every authentication request with `ForceAuthn="true"`, and the IdP authenticates the user again even with a live session.
+
+- **AD FS** honours this flag without further configuration.
+- **Okta** honours it when the application's **Honor Force Authentication** setting is **Yes** (the default).
+- It applies only to sign-ins started from the NudgeBee sign-in page. Starting from your IdP's own portal (for example the AD FS "sign in to one of the following sites" page) sends no request from NudgeBee, so there is nothing to mark.
+
+The setting works whether or not [request signing](#signed-authentication-requests) is configured. Confirm it is active with the [health endpoint](#health-check): `config.forceAuthn` is `true`.
+
+### Single Logout
+
+By default, logging out of NudgeBee ends only the NudgeBee session. The user stays signed in at the IdP, so the next click on the SSO button signs them straight back in. Single Logout fixes that: NudgeBee sends your IdP a logout request, the IdP ends its own session, and the user lands back on the NudgeBee sign-in page.
+
+:::warning[It also signs the user out of other applications]
+Ending the IdP session signs the user out of every application that relies on that session, not only NudgeBee. Tell your users before you turn it on.
+:::
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant NudgeBee as NudgeBee (SP)
+    participant IdP as Identity Provider
+
+    User->>NudgeBee: Click "Logout"
+    NudgeBee->>NudgeBee: End the NudgeBee session
+    NudgeBee->>IdP: Signed LogoutRequest (redirect)
+    IdP->>IdP: End the IdP session
+    IdP->>NudgeBee: LogoutResponse (to /api/auth/saml/slo)
+    NudgeBee->>User: Sign-in page
+```
+
+The NudgeBee session always ends first, so a user is logged out of NudgeBee even if the IdP step fails.
+
+#### Step 1 — Configure request signing
+
+Identity providers accept only **signed** logout requests. Set up [Signed Authentication Requests](#signed-authentication-requests) first: `SAML_SP_PRIVATE_KEY`, `SAML_SP_CERT`, and the certificate uploaded to your IdP. Without a signing key, the [health endpoint](#health-check) reports a warning.
+
+#### Step 2 — Register NudgeBee's logout endpoint at your IdP
+
+NudgeBee's Single Logout endpoint is:
+
+```
+{NEXTAUTH_URL}/api/auth/saml/slo
+```
+
+Use `SAML_CALLBACK_BASE` in place of `NEXTAUTH_URL` if you set it. Once `SAML_LOGOUT_URL` is set, the [SP metadata](#endpoints) also lists this endpoint, so re-importing the metadata URL configures it for you.
+
+For **AD FS**, in **AD FS Management**:
+
+1. Open **Relying Party Trusts** and select the NudgeBee trust.
+2. Open **Properties → Endpoints → Add SAML…**.
+3. Set **Endpoint type** to **SAML Logout**, **Binding** to **POST** (NudgeBee also accepts **Redirect**), and **Trusted URL** to the endpoint above.
+4. Confirm the signing certificate from Step 1 is on the **Signature** tab.
+
+For **Okta**, edit the SAML application's settings:
+
+1. Under **Show Advanced Settings**, upload the signing certificate as the **Signature Certificate**.
+2. Tick **Enable Single Logout**, set **Single Logout URL** to the endpoint above, and set **SP Issuer** to your `SAML_ISSUER` value.
+
+#### Step 3 — Set `SAML_LOGOUT_URL`
+
+Set it to your IdP's Single Logout endpoint:
+
+| IdP | Where to find it | Typical value |
+|---|---|---|
+| AD FS | The `SingleLogoutService` entry in the AD FS federation metadata | `https://adfs.yourdomain.com/adfs/ls/` |
+| Okta | The application's **View SAML setup instructions** page, or the `SingleLogoutService` entry in its metadata | `https://yourorg.okta.com/app/<app-name>/<app-id>/slo/saml` |
+
+```env
+SAML_LOGOUT_URL="https://adfs.yourdomain.com/adfs/ls/"
+```
+
+Restart the application, then confirm Single Logout is active:
+
+```bash
+curl -s https://app.yourdomain.com/api/auth/saml/health | grep -o '"singleLogout":{[^}]*}'
+```
+
+Users who signed in before you set the variable are logged out of NudgeBee only, until they next sign in.
+
+#### When the IdP starts the logout
+
+When a user signs out at the IdP, or of another application behind it, the IdP may send NudgeBee a logout request of its own. NudgeBee ends that user's NudgeBee sessions on every device and answers the IdP. It accepts such a request only if all three hold:
+- it is signed with the IdP certificate in `SAML_CERT`;
+- it is addressed to NudgeBee's logout endpoint;
+- it was issued within the last five minutes.
+
 ## NudgeBee Service Provider Details
 
 When creating a SAML application in your IdP, you will need to provide the following NudgeBee SP details:
@@ -203,7 +301,7 @@ When creating a SAML application in your IdP, you will need to provide the follo
 | **Sign-on URL** | `{NEXTAUTH_URL}/api/auth/saml/login` |
 | **SP Metadata URL** | `{NEXTAUTH_URL}/api/auth/saml/metadata` |
 
-If your IdP can import a Service Provider from a URL, point it at the metadata URL instead of entering the fields by hand. The metadata carries the ACS URL, the entity id, the NameID format, and the request-signing certificate when one is configured.
+If your IdP can import a Service Provider from a URL, point it at the metadata URL instead of entering the fields by hand. The metadata carries the ACS URL, the entity id, the NameID format, the request-signing certificate when one is configured, and the Single Logout endpoint when `SAML_LOGOUT_URL` is set.
 
 ### Endpoints
 
@@ -213,6 +311,8 @@ If your IdP can import a Service Provider from a URL, point it at the metadata U
 | `/api/auth/saml/acs` | POST | Assertion Consumer Service — receives the SAML response from the IdP |
 | `/api/auth/saml/metadata` | GET | Service Provider metadata for import into your IdP |
 | `/api/auth/saml/health` | GET | Returns SAML configuration status and certificate health |
+| `/api/auth/saml/logout` | POST, GET | Starts [Single Logout](#single-logout) from the NudgeBee Logout button. Does nothing unless `SAML_LOGOUT_URL` is set |
+| `/api/auth/saml/slo` | GET, POST | Single Logout endpoint: receives the IdP's logout response, and logout requests the IdP starts |
 
 ## SAML Attribute Mapping
 
@@ -332,10 +432,16 @@ GET /api/auth/saml/health
       "daysUntilExpiry": 3650
     }
   },
+  "singleLogout": {
+    "enabled": true,
+    "logoutUrl": "https://yourorg.okta.com/app/.../slo/saml",
+    "logoutCallbackUrl": "https://app.yourdomain.com/api/auth/saml/slo"
+  },
   "config": {
     "entryPoint": "https://yourorg.okta.com/app/.../sso/saml",
     "issuer": "https://app.yourdomain.com",
-    "callbackUrl": "https://app.yourdomain.com/api/auth/saml/acs"
+    "callbackUrl": "https://app.yourdomain.com/api/auth/saml/acs",
+    "forceAuthn": true
   },
   "messages": []
 }
@@ -343,9 +449,11 @@ GET /api/auth/saml/health
 
 `requestSigning.enabled` is `false` on deployments that have not configured [signed authentication requests](#signed-authentication-requests), and the `certificate` block is then absent. A signing certificate that cannot be read is reported as `requestSigning.error`.
 
+`singleLogout.enabled` and `config.forceAuthn` are `false` unless `SAML_LOGOUT_URL` and `SAML_FORCE_AUTHN` are set. Single Logout configured without a signing key raises the status to `warning`, because most IdPs refuse an unsigned logout request.
+
 **Status values:**
 - `healthy` — Certificate is valid with more than 30 days remaining.
-- `warning` — Certificate expires within 30 days. Renew soon.
+- `warning` — Certificate expires within 30 days, or Single Logout is configured without a signing key.
 - `error` — Certificate has expired, or a configured signing key cannot be read. SAML login will fail.
 
 ## Troubleshooting
@@ -365,6 +473,10 @@ GET /api/auth/saml/health
 | SAML login button disappears right after setting `SAML_SP_PRIVATE_KEY` | The key is malformed, or is protected by a passphrase | Check `/api/auth/saml/health` — it names the variable. Re-export the key in PEM form without a passphrase |
 | Signature validation fails only after enabling request signing | The IdP does not hold the matching certificate, or holds an older one | Upload `nudgebee-saml-sp.crt` to the IdP and confirm the hash algorithm is SHA-256 |
 | Metadata URL returns `SAML_SP_CERT is required` | A signing key is set without its certificate | Set `SAML_SP_CERT` to the certificate matching `SAML_SP_PRIVATE_KEY` |
+| After logging out, clicking SSO signs the user straight back in | The IdP session is still active; NudgeBee only ended its own session | Configure [Single Logout](#single-logout) so logout also ends the IdP session |
+| Users are signed in without a password after an idle timeout | The IdP reuses its session, which is standard SSO | Set `SAML_FORCE_AUTHN=true` — see [Asking for Credentials on Every Sign-In](#asking-for-credentials-on-every-sign-in) |
+| `SAML_FORCE_AUTHN` is set but the IdP still does not prompt | Sign-in was started from the IdP's portal, or the IdP ignores the flag (Okta: **Honor Force Authentication** is **No**) | Start from the NudgeBee sign-in page; on Okta set **Honor Force Authentication** to **Yes** |
+| Logout ends on an IdP error page | The logout request is unsigned, the IdP does not hold the signing certificate, or NudgeBee's logout endpoint is not registered | Check `/api/auth/saml/health`, upload `SAML_SP_CERT` to the IdP, and register `{NEXTAUTH_URL}/api/auth/saml/slo` as its SAML Logout endpoint |
 | Health reports the certificate does not match the key | The key was regenerated and the old certificate was left in place | Re-export the certificate from the current key, upload it to the IdP, then update `SAML_SP_CERT` |
 | IdP reports an unknown or unsupported application (AD FS `MSIS7007`) | `SAML_ISSUER` does not match the identifier registered for NudgeBee at the IdP | Set `SAML_ISSUER` to that identifier — see the warning under [Required Environment Variables](#required-environment-variables) |
 | Sign-in fails on an audience mismatch | `SAML_AUDIENCE` is unset, so it fell back to `SAML_ISSUER`, or the two hold different values | Set both to the NudgeBee application's identifier at your IdP |
@@ -374,6 +486,7 @@ GET /api/auth/saml/health
 - SAML authentication supports automatic user provisioning — users do not need to be pre-created in NudgeBee.
 - Multiple authentication providers can be enabled alongside SAML (e.g., Google OAuth + SAML).
 - The SAML integration uses SP-initiated SSO. The login flow starts from the NudgeBee sign-in page.
+- `SAML_FORCE_AUTHN` and `SAML_LOGOUT_URL` are independent and both opt-in; with neither set, sign-in and logout behave as before.
 - If you have any issues or require more details, please contact our support.
 
 ## Related
