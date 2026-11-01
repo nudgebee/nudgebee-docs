@@ -731,7 +731,7 @@ postgresql:
   enabled: false
 
 nudgebee_secret:
-  # Include the port explicitly.
+  # Include the port explicitly. PostgreSQL must listen on 5432 (startup checks ignore a custom port).
   APP_DATABASE_URL: "postgresql://<USER>:<PASSWORD>@<DB_HOST>:5432/<DB_NAME>?sslmode=require"
   TEMPORAL_DB_PASSWORD: "<PASSWORD>"      # used by Temporal (Secret `nudgebee-temporal`)
 
