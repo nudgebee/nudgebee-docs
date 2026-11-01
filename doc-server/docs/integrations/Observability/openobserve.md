@@ -99,7 +99,7 @@ Stream names may contain only letters, digits, and underscores. Neither Test Con
 Test Connection checks the URL, the organization, and the credentials. It can
 also show a note when a configured log or trace stream is missing and the
 organization has other streams of that type. That note does not fail the
-connection test: metrics or the other signal may still work. No note is emitted
+connection test: metrics or other signals may still work. No note is emitted
 when the organization has no streams of that type, so a passing test does not
 prove that a log or trace stream contains data.
 
