@@ -146,7 +146,7 @@ AWS fixes and alarm creation need the account to be onboarded in **Standard** ac
 | GKE | ✓ | Default | autoscaling, workload identity, network policy, missing alerts | Resize; create missing alerts | Dedicated |
 | Cloud Run | ✓ | Default | always-on, public ingress, memory, missing alerts | Create missing alerts | Dedicated |
 | Cloud Functions | ✓ | Default | inactive, memory, public access, missing alerts | Create missing alerts | Dedicated |
-| BigQuery | ✓ | Default | expiration, partitioning, clustering, CMEK | Create missing alerts | — |
+| BigQuery | ✓ | Default | expiration, partitioning, clustering, CMEK | Labels; table and dataset default expiration | — |
 | Pub/Sub | ✓ | On request | dead-letter topics, retention, missing alerts | Create missing alerts | — |
 | Cloud Load Balancing | ✓ | — | unused forwarding rules, health checks, missing alerts | Create missing alerts | Dedicated |
 | Networking (VPC, subnets) | ✓ | — | — | — | — |
