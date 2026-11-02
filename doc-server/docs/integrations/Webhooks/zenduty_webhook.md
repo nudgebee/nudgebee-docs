@@ -66,6 +66,7 @@ Then attach it to the alert rules whose notifications you want in NudgeBee. Send
 | HTTP `400` with `webhook validation failed` | The `token` parameter is missing or wrong | Re-copy the full URL from the integration — the token is part of the query string, and is easy to drop when pasting. |
 | Event appears with no workload linked | The payload carries no identifier NudgeBee can match | Include the resource, host or service name in the alert payload so it can be matched to a workload. |
 | Duplicate events for one alert | Two notification rules point at the same URL | Consolidate them in ZenDuty, or use separate integrations per environment. |
+| EU-region account: events arrive without the linked workload | When a ZenDuty ticketing integration exists, NudgeBee looks up each alert's labels through the ZenDuty API. That lookup always calls `www.zenduty.com`, so it can't reach EU-region accounts (`imr.eu.xurrent.com`) | Include the resource, host or service name in the alert payload so the event can be matched without the lookup. |
 | Alerts never resolve in NudgeBee | Only firing notifications are being sent | Configure ZenDuty to send resolution notifications to the same destination. |
 
 ---
