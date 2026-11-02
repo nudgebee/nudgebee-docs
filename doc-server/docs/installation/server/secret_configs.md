@@ -130,7 +130,7 @@ These providers are read from `ONELOGIN_*` and `AZURE_AD_B2C_*` environment vari
 
 These secrets and environment variables are used for connecting to postgres database.
 
-- **`APP_DATABASE_URL`**: URL of the PostgreSQL database. Default (bundled PostgreSQL): `postgresql://postgres:password@postgresql:5432/postgres?sslmode=disable`. Always include the port. With an external database, also point Temporal at it — see [Externalizing Dependencies](./index.md#externalizing-dependencies-bring-your-own-databases).
+- **`APP_DATABASE_URL`**: URL of the PostgreSQL database. Default (bundled PostgreSQL): `postgresql://postgres:password@postgresql:5432/postgres?sslmode=disable`. Always include the port, and use port `5432`: the services check the database is up before they start, and that check does not use a custom port, so a database on another port (for example PgBouncer on `6432`) makes the install wait forever. With an external database, also point Temporal at it — see [Externalizing Dependencies](./index.md#externalizing-dependencies-bring-your-own-databases).
 
 ## Messaging Queue
 configs to connect with RabbitMQ
