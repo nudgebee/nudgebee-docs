@@ -12,52 +12,48 @@ A [webhook target](./webhook_targets.md) posts notifications through the channel
 
 ## Set up Microsoft Teams
 
-Setup has three steps. You add Nubi once per team, and connect your Microsoft tenant once per workspace.
+You connect Microsoft Teams **one team at a time**. Each team belongs to exactly one NudgeBee workspace, and a workspace can connect several teams. Several NudgeBee workspaces can share one Microsoft 365 tenant, each with its own teams; a workspace never sees another workspace's teams, alerts or data.
 
-### Step 1. Add Nubi to your teams
+### Step 1. Add Nubi to the team
 
 1. In Teams, open **Apps**, search for **Nubi**, and click **Add**.
 2. Choose **Add to a team** and pick the team and channel. Nubi posts a welcome card there.
-3. Repeat for each team that should get notifications.
 
 If your organization manages which apps people can add, a Teams admin allows Nubi once in the **Teams admin center → Teams apps → Manage apps**.
 
-### Step 2. Connect your Microsoft tenant
+### Step 2. Connect the team to your workspace
 
-This links your Microsoft 365 tenant to your NudgeBee workspace. A Microsoft tenant can be connected to one NudgeBee workspace at a time. There are two ways to do it.
+Connecting needs no Microsoft sign-in. Open the link Nubi posts in the team:
 
-#### From Nubi's welcome card (no Microsoft sign-in)
+- **The person who added Nubi** clicks **Connect Microsoft Teams** on the welcome card.
+- **Anyone else**, or once the welcome card's button has expired: a NudgeBee admin @mentions **Nubi** in the team. Nubi replies with a **Connect this team** button for that person.
 
-Use this when your organization doesn't let people approve apps that ask them to sign in with Microsoft.
+Then:
 
-1. On the welcome card Nubi posted in Step 1, click **Connect Microsoft Teams**.
-2. If NudgeBee asks you to sign in, sign in and then click the button on the card again.
-3. NudgeBee shows the team and your workspace. Click **Connect**.
+1. If NudgeBee asks you to sign in, sign in and open the link again.
+2. NudgeBee shows the team and your current workspace. Click **Connect Microsoft Teams**. Nubi posts *This team is now connected to &lt;workspace&gt;, connected by &lt;person&gt;.* in the team.
 
-The button only works for someone who meets **both** of these conditions:
-- They **added Nubi to the team**, and are signed in to NudgeBee with the same email address they use to sign in to Microsoft.
-- They are **a NudgeBee admin**, or have a role that can manage messaging integrations.
+A link works for 7 days and only for the person it was posted for. That person must be signed in to NudgeBee with the same email address as their Microsoft sign-in name (UPN); an alias or a different SSO email doesn't count, and be a NudgeBee admin or have a role that can manage messaging integrations. Some people get a welcome card without a button: guests, personal Microsoft accounts, and accounts on a public email domain or an `onmicrosoft.com` address. Another admin can @mention Nubi instead.
 
-It works for 7 days. After that, or for anyone else, connect from NudgeBee instead (below).
-
-Some people who add Nubi get a welcome card that points to **Admin → Integrations** instead of a Connect button: guests, personal Microsoft accounts, and accounts on a public email domain or an `onmicrosoft.com` address.
-
-#### From NudgeBee, with Microsoft sign-in
-
-1. In NudgeBee, go to **Admin → Integrations → Microsoft Teams** and click **Connect**.
-2. Sign in with your Microsoft work account. NudgeBee asks only to sign you in and read your basic profile (`openid`, `profile`, `User.Read`). It gets no access to your directory, chats or channels.
+Repeat Steps 1 and 2 for each team that should get notifications.
 
 ### Step 3. Choose where notifications go
 
-1. In NudgeBee, go to **Admin → Integrations → Microsoft Teams → Channel-Account Mappings**.
-2. Map each channel to the cloud accounts whose alerts it should get. Only teams that have Nubi are listed. A team's default channel is listed as **General (default channel)**.
+1. In NudgeBee, go to **Admin → Integrations → Microsoft Teams**. The page lists the teams connected to this workspace.
+2. Under **Channel-Account Mappings**, map channels to the cloud accounts whose alerts they should get. The **Channel** list shows every channel of your connected teams, grouped by team; a chosen channel reads **Team › Channel**. A team's default channel is listed as **General (default channel)**.
 3. Click **Test Notification** to check delivery.
 
-Use [Notification Rules](../../features/notifications.md) to fine-tune which alerts go where.
+Use [Notification Rules](../../features/notifications.md) to fine-tune which alerts go where; their Teams destination uses the same grouped channel list.
 
 :::info
-**Expected outcome**: The Teams integration shows as connected in NudgeBee, the team appears in the channel picker, and the test notification arrives as a card from Nubi.
+**Expected outcome**: The team appears under connected teams in NudgeBee, its channels appear in the channel list, and the test notification arrives as a card from Nubi.
 :::
+
+### Remove, move or disconnect a team
+
+- **Remove Nubi from a team** in Teams to disconnect that team. To connect it again, add Nubi back and open the new link; an old link no longer works.
+- **Move a team to another workspace**: remove Nubi from the team, add it back, and open the new link while signed in to the other workspace. Nubi announces the new workspace in the team, and the previous workspace's audit log records that the team is now connected to another workspace. The previous workspace's channel mappings for that team are removed, and its notifications to the team stop.
+- **Disconnect** in **Admin → Integrations → Microsoft Teams** disconnects every team connected to this workspace and removes their channel-account mappings. Notification rules that send to those teams stop delivering until the teams are connected again.
 
 ## Using Nubi in Teams
 
@@ -77,7 +73,7 @@ Use [Notification Rules](../../features/notifications.md) to fine-tune which ale
 - **Rate answers** with **👍 Helpful** / **👎 Not helpful**. Very long analyses are cut, with a link to the full one in NudgeBee.
 - **Cards expire.** Buttons on a card more than 7 days old no longer work; open the alert in NudgeBee instead.
 
-Nubi recognizes you by the email address of your Teams account, which must belong to a user in your NudgeBee workspace.
+Nubi recognizes you by the email address of your Teams account, which must belong to a user in the NudgeBee workspace the team is connected to. In a direct message, Nubi offers accounts from every workspace you belong to that has a team connected in your Microsoft tenant.
 
 ### What Nubi can access
 
@@ -97,16 +93,10 @@ If you are new to Azure app registrations, see Microsoft's guide: [Register an a
 
 1. Go to the [Azure Portal](https://portal.azure.com) and open **Microsoft Entra ID → App registrations → New registration**.
 2. Give the app a name (for example `NudgeBee`).
-3. Under **Supported account types**, choose **Accounts in any organizational directory (multi-tenant)**.
-4. Under **Redirect URI**, select **Web** and enter:
-
-```
-https://www.your-nudgebee-server.com/api/integrations/ms-teams/callback
-```
-
-5. Click **Register**, and note the **Application (client) ID** and the **Directory (tenant) ID**.
-6. Under **API permissions**, keep only the delegated Microsoft Graph permissions `openid`, `profile` and `User.Read`.
-7. Under **Certificates & secrets → Client secrets**, create a secret and copy its **Value**. It is shown only once.
+3. Under **Supported account types**, choose **Accounts in any organizational directory (multi-tenant)**. No redirect URI is needed.
+4. Click **Register**, and note the **Application (client) ID** and the **Directory (tenant) ID**.
+5. Under **API permissions**, no Microsoft Graph permissions are needed; you can remove the default `User.Read`.
+6. Under **Certificates & secrets → Client secrets**, create a secret and copy its **Value**. It is shown only once.
 
 ### Step 2. Create an Azure Bot
 
@@ -128,10 +118,10 @@ Add the following to your NudgeBee server [secrets](../../installation/server/se
 MS_TEAMS_CLIENT_ID: The Application (client) ID from Step 1.
 MS_TEAMS_CLIENT_SECRET: The client secret value from Step 1.
 MS_TEAMS_BOT_TENANT_ID: The Directory (tenant) ID from Step 1, the bot's home tenant.
-MS_TEAMS_ACTION_SIGNING_KEY: A random string that signs the data on card buttons, for example the output of `openssl rand -hex 32`.
+MS_TEAMS_ACTION_SIGNING_KEY: Required. A random string that signs the data on card buttons and Connect links, for example the output of `openssl rand -hex 32`.
 ```
 
-Without `MS_TEAMS_ACTION_SIGNING_KEY`, cards are sent without buttons, and the welcome card has no **Connect Microsoft Teams** button, so connect from **Admin → Integrations** instead. Restart the NudgeBee server pods after updating the secrets.
+`MS_TEAMS_ACTION_SIGNING_KEY` is required: without it, cards are sent without buttons and Nubi can't post Connect links, so no team can be connected. Restart the NudgeBee server pods after updating the secrets.
 
 ### Step 4. Create the Teams app package
 
@@ -139,45 +129,48 @@ Create a Teams app for your bot in the [Teams Developer Portal](https://dev.team
 
 Then follow [Set up Microsoft Teams](#set-up-microsoft-teams) above.
 
+## Upgrading from an earlier version
+
+Connections now belong to teams instead of whole Microsoft tenants. Upgrading removes existing Microsoft Teams connections, so after the upgrade:
+
+1. In each team, a NudgeBee admin @mentions **Nubi** and opens the **Connect this team** link it posts.
+2. In **Admin → Integrations → Microsoft Teams**, pick the default channel again.
+
+Channel-account mappings and notification rules are kept, and work again once the same workspace connects the same team. Microsoft sign-in is no longer used to connect Teams.
+
 ## Troubleshooting MS Teams Integration
 
 ### 1. Nubi says it can't find your NudgeBee account
 * **Symptom**: Nubi replies that it couldn't find a NudgeBee account linked to your email.
-* **Root Cause**: The email address of your Teams account isn't a user in the NudgeBee workspace connected to your Microsoft tenant.
+* **Root Cause**: The email address of your Teams account isn't a user in the NudgeBee workspace the team is connected to.
 * **Remediation**: Ask a NudgeBee admin to invite that email address under **Admin → Access & Users**, and accept the invite.
 
 ---
 
-### 2. Connect fails with "This Microsoft tenant is already connected to another workspace"
-* **Root Cause**: A Microsoft tenant can be connected to only one NudgeBee workspace.
-* **Remediation**: Disconnect Microsoft Teams in the other workspace first, then connect again. From the welcome card, the same case shows *This Microsoft tenant is connected to another NudgeBee workspace. Contact support to move it.*
+### 2. "This team is connected to another NudgeBee workspace"
+* **Root Cause**: Each team belongs to one workspace, and this team is connected to a different one.
+* **Remediation**: To move it, remove Nubi from the team, add it back, and open the new link while signed in to the workspace you want. See [Remove, move or disconnect a team](#remove-move-or-disconnect-a-team).
 
 ---
 
-### 3. A team or channel is missing from the channel picker
-* **Root Cause**: Nubi hasn't been added to that team, or the channel is private or shared.
-* **Remediation**: Add Nubi to the team (Step 1), then reload the page. Use a standard channel.
+### 3. A team or channel is missing from the channel list
+* **Root Cause**: The team isn't connected to this workspace, or the channel is private or shared.
+* **Remediation**: Connect the team (Steps 1 and 2), then reload the page. Use a standard channel.
 
 ---
 
-### 4. The welcome card's Connect button doesn't connect
-* **Symptom**: After clicking **Connect Microsoft Teams** on Nubi's welcome card, NudgeBee shows one of these:
-  * *This link is for the person who added Nubi to this team.* You're signed in to NudgeBee with a different email from the person who added Nubi. Sign in with their account, or [connect from NudgeBee](#from-nudgebee-with-microsoft-sign-in).
-  * *Only a NudgeBee admin can connect Microsoft Teams.* Ask a NudgeBee admin to connect, or to give you a role that can manage messaging integrations.
-  * *This link has expired.* The button works for 7 days. [Connect from NudgeBee](#from-nudgebee-with-microsoft-sign-in) instead.
-  * *Your workspace changed in another tab.* Click the button on the card again.
-* **No button on the card**: the person who added Nubi is a guest, uses a personal Microsoft account, or uses a public email domain or an `onmicrosoft.com` address. On-prem, the server may also be missing `MS_TEAMS_ACTION_SIGNING_KEY`. [Connect from NudgeBee](#from-nudgebee-with-microsoft-sign-in) instead.
+### 4. The Connect link doesn't connect
+* **Symptom**: After opening a Connect link, NudgeBee shows one of these:
+  * *This link is for the person it was posted for.* Sign in to NudgeBee with that person's account, or @mention Nubi in the team for a link of your own.
+  * *Only a NudgeBee admin can connect Microsoft Teams.* Ask a NudgeBee admin to connect, or request a role that can manage messaging integrations.
+  * *This link has expired.* @mention Nubi in the team for a new one.
+  * *This workspace's Microsoft Teams teams are in another Microsoft tenant.* A workspace's teams must all be in one Microsoft tenant. Disconnect Microsoft Teams in this workspace first, or connect the team to another workspace.
+  * *Your workspace changed in another tab.* Open the link from Teams again.
+* **No button on the welcome card**: the person who added Nubi is a guest, uses a personal Microsoft account, or uses a public email domain or an `onmicrosoft.com` address. A NudgeBee admin can @mention Nubi in the team instead. On-prem, also check that `MS_TEAMS_ACTION_SIGNING_KEY` is set.
 
 ---
 
-### 5. Sign-In Fails with `Redirect URI Mismatch` (AADSTS50011), on-prem
-* **Symptom**: Connecting returns `AADSTS50011: The reply URL specified in the request does not match the reply URLs configured for the application`.
-* **Root Cause**: The redirect URI in Microsoft Entra ID doesn't match the public HTTPS base URL of your NudgeBee server.
-* **Remediation**: In Entra ID **App registrations → Authentication → Web Redirect URIs**, make sure the URI is exactly `https://<your-nudgebee-server>/api/integrations/ms-teams/callback`, with no trailing slash and the same protocol.
-
----
-
-### 6. Notifications Stopped Working / Expired Client Secret, on-prem
+### 5. Notifications Stopped Working / Expired Client Secret, on-prem
 * **Symptom**: Notifications were working but now fail, and the logs show `401 Unauthorized` from Microsoft.
 * **Root Cause**: The app registration's client secret expired.
 * **Remediation**:
