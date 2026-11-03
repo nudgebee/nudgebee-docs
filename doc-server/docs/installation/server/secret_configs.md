@@ -176,8 +176,7 @@ Required for integrating with MS Teams. See the [MS Teams on-prem setup guide](.
 - **`MS_TEAMS_CLIENT_ID`**: The Application (client) ID of your Microsoft Entra ID app registration.
 - **`MS_TEAMS_CLIENT_SECRET`**: The client secret of your Microsoft Entra ID app registration.
 - **`MS_TEAMS_BOT_TENANT_ID`**: The Directory (tenant) ID where your Azure Bot and app registration live (the bot's home tenant).
-- **`MS_TEAMS_ACTION_SIGNING_KEY`**: A random string that signs the data on Teams card buttons, for example the output of `openssl rand -hex 32`. Without it, cards are sent without buttons.
-- **`MS_TEAMS_AUTHORITY`**: (Optional) The Microsoft login authority URL, default `https://login.microsoftonline.com/common`. Needed for single-tenant app registrations (`https://login.microsoftonline.com/<your-tenant-id>`). This key isn't accepted under `nudgebee_secret` — set it under `additional_env_vars`.
+- **`MS_TEAMS_ACTION_SIGNING_KEY`**: Required. A random string that signs the data on Teams card buttons and Connect links, for example the output of `openssl rand -hex 32`. Without it, cards are sent without buttons and no team can be connected.
 
 ### GChat App
 
