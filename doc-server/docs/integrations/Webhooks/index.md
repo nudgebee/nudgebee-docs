@@ -30,16 +30,9 @@ Create any of these from **Admin** > **Integrations** > **Webhooks**.
 | [CubeAPM Webhook](./cubeapm_webhook.md) | Receive CubeAPM alert notifications, and close the event when the alert resolves. |
 | [SigNoz Webhook](./signoz_webhook.md) | Receive SigNoz alert notifications, attached to the workload the alert names. |
 | [Prometheus Alertmanager Webhook](./prometheus_alertmanager_webhook.md) | Receive alerts from an Alertmanager outside the agent's cluster, attached to the workload the alert names. |
-
-### Also Available
-
-These webhook types exist in the product and are configured the same way. Dedicated setup guides are not published yet — the configuration form documents each field inline.
-
-| Integration | Description |
-|-------------|-------------|
-| Grafana Webhook | Receive Grafana alerting notifications. See [Connect Grafana](../../installation/agent/connect/grafana.md) for the Grafana-side setup. |
-| Event Webhook | Receive events from any system that can send an HTTP request. |
-| SolarWinds Platform (Orion) Webhook | Receive SolarWinds Platform (Orion) alert notifications into NudgeBee. |
+| [Grafana Webhook](./grafana_webhook.md) | Receive Grafana Alerting notifications, attached to the workload the alert names. |
+| [Event Webhook](./event_webhook.md) | Send alerts from any tool that can POST JSON, using NudgeBee's documented format. |
+| [SolarWinds Platform (Orion) Webhook](./orion_webhook.md) | Receive alerts from self-hosted SolarWinds Platform (Orion). |
 
 ### Currently Unavailable
 
