@@ -5,6 +5,8 @@ sidebar_position: 7
 
 The SolarWinds webhook integration forwards **SolarWinds Observability alerts** directly into NudgeBee. When an alert fires or clears in SolarWinds, NudgeBee automatically receives it, enriches it with correlated logs and metrics, and creates a trackable incident.
 
+> **Using self-hosted SolarWinds (SolarWinds Platform, Orion Platform, or SolarWinds Observability Self-Hosted)?** See [SolarWinds Platform (Orion) Webhook](./orion_webhook.md) instead. This page covers SolarWinds Observability SaaS.
+
 > **Prerequisite:** For full telemetry enrichment (auto-attached logs and traces), configure the [SolarWinds Observability integration](../Observability/solarwinds.md) first.
 
 ---
