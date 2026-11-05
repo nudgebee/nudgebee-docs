@@ -13,7 +13,7 @@ NudgeBee integrates with PagerDuty for incident management. Events and alerts ca
 
 Before configuring the integration, ensure you have:
 
-- A **PagerDuty** account
+- A **PagerDuty** account on the US service. Accounts on the EU service (`api.eu.pagerduty.com`) are not supported yet
 - A PagerDuty **API key** (v2 REST API key)
 - At least one **service** configured in PagerDuty
 
