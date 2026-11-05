@@ -37,7 +37,7 @@ RUN npm run build --legacy-peer-deps
 
 ## Deploy ######################################################################
 # Use a stable nginx image
-FROM nginx:mainline-alpine3.18 as deploy
+FROM nginx:1.31.8-alpine3.24 as deploy
 RUN apk upgrade --no-cache
 WORKDIR /home/node/app
 # Copy what we've installed/built from production
