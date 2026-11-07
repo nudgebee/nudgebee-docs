@@ -66,6 +66,7 @@ Observability sources supply telemetry; alerts reach NudgeBee separately, throug
 - [Prometheus Alertmanager](../../installation/agent/connect/alertmanager.md) — forward alerts from kube-prometheus-stack, operator-managed, plain or external Alertmanagers
 - [Datadog](../Webhooks/datadog_webhook.md), [Dynatrace](../Webhooks/dynatrace_webhook.md), [New Relic](../Webhooks/newrelic_webhook.md), [SolarWinds](../Webhooks/solarwinds_webhook.md), [GCP Cloud Monitoring](../Webhooks/gcp_monitoring_webhook.md), [ServiceNow](../Webhooks/servicenow_webhook.md) and [PagerDuty](../Webhooks/pagerduty_webhook.md) webhooks
 - [CubeAPM](../Webhooks/cubeapm_webhook.md) webhook
+- [OpenObserve](../Webhooks/openobserve_webhook.md) webhook
 - Azure Monitor, Grafana, Elasticsearch and Zenduty webhooks — see the [webhooks overview](../Webhooks/)
 
 ---
