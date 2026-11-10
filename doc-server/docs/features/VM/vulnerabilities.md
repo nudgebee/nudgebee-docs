@@ -12,6 +12,8 @@ Each finding is an installed package version that matches a known vulnerability 
 
 ## Views
 
+![The Vulnerabilities tab listing findings with severity, CVE, package, installed and fixed-in versions, CVSS and last seen](./img/vm-vulnerabilities.png)
+
 **Group vulnerabilities by** **All** (one row per finding), **Vulnerability**, **Package** or **VM**. Grouped rows show how many findings they hold; expand one for its **Findings**.
 
 | Column | Meaning |
@@ -23,6 +25,8 @@ Each finding is an installed package version that matches a known vulnerability 
 | **CVSS** | Score |
 | **Last Seen** | When the last scan saw it |
 | **Status** | **Open** or **Dismissed** |
+
+![Vulnerabilities grouped by package, with the VM and number of findings for each](./img/vm-vulnerabilities-by-package.png)
 
 Filter by **Severity**, **Status** (**Open** or **Dismissed / snoozed**), **VM** and **Package**. Links from Summary or Virtual Machines open this tab already filtered (a vulnerability filter shows as a removable chip).
 

@@ -14,7 +14,10 @@ What you get:
 
 - **Package inventory** — the OS and installed packages of each VM.
 - **Vulnerability detection** — installed packages matched against known CVEs.
-- **Metrics, events, traces and a service map** — when you connect the matching data sources (see [Observability](./observability.md)).
+- **Investigation with NuBi** — once `ssh_access` is enabled, NuBi runs read-only commands on the VMs over SSH to answer questions; changes need your approval (see [Investigate with NuBi](./investigate-with-nubi.md)).
+- **Metrics, events, traces, logs and a service map** — when you connect the matching data sources (see [Observability](./observability.md)).
+
+![Infra → VM Summary tab for a self-hosted account: VM, proxy agent, package and vulnerability counts, utilization and health for one VM, recent events, and the security overview](./img/vm-summary.png)
 
 ## Before you start
 
@@ -34,7 +37,7 @@ Pick the account in the header account selector (group **Self-hosted VMs**). The
 | **Virtual Machines** | Every VM, its packages, open vulnerabilities and scan status — see [Virtual Machines](./virtual-machines.md) |
 | **Vulnerabilities** | Package vulnerabilities across the account — see [Vulnerabilities](./vulnerabilities.md) |
 | **Packages** | Installed packages across the account — see [Packages](./packages.md) |
-| **Service Map**, **Traces**, **Events**, **Metrics** | Observability data from the sources you connect — see [Observability](./observability.md) |
+| **Service Map**, **Traces**, **Events**, **Metrics**, **Logs** | Observability data from the sources you connect — see [Observability](./observability.md) |
 
 The proxy agents for the account are shown in **Agent Health → Proxy Agent**, not on this page.
 
@@ -52,12 +55,13 @@ Home also shows a **VM Fleet** card for the selected self-hosted account, with *
 - Package scanning supports **Linux deb and rpm** packages only.
 - VMs are found by a network sweep. Directory (LDAP / Active Directory) discovery isn't used yet.
 - **Apply Patch** shows *Coming Soon*.
-- A discovered VM can't yet be linked to an existing cloud resource from the UI, so it appears named by its IP address.
+- A discovered VM can't yet be linked to an existing cloud resource from the UI, so it appears named by its IP address, or by its cloud instance ID when the agent can read one.
 - Proxy agents don't show an "update available" notice.
 
 ## Related
 
 - [Set up self-hosted VMs](./setup.md)
 - [How scanning works](./how-scanning-works.md)
+- [Investigate with NuBi](./investigate-with-nubi.md)
 - [Troubleshooting](./troubleshooting.md)
 - [Proxy Agent](../../installation/proxy-agent/index.md)
