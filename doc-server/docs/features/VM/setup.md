@@ -53,7 +53,11 @@ VMs appear after the first scan. Scans run automatically once a day; to start on
 
 To let NuBi check VMs live over SSH, set `ssh_access: true` on the discovery datasource — see [Investigate with NuBi](./investigate-with-nubi.md#before-you-start).
 
-## 6. Optional: connect observability
+## 6. Optional: scan into a different account
+
+VMs found by the discovery datasource appear under the account the proxy agent belongs to, which is what a self-hosted account needs. Only if the agent scans the network of another account do you need to link the datasource to it. That is an API-only setting; see [Which account the VMs appear under](../../installation/proxy-agent/discovery.md#which-account-the-vms-appear-under).
+
+## 7. Optional: connect observability
 
 For the **Metrics**, **Service Map**, **Traces**, **Events** and **Logs** tabs, connect the data sources described in [Observability](./observability.md).
 

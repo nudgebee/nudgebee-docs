@@ -86,11 +86,21 @@ kubectl create configmap forager-packs \
   --from-file=linux-inventory-v2.yaml=./linux-inventory-v2.yaml
 ```
 
+## Which account the VMs appear under
+
+By default the VMs found by a discovery datasource appear under the account the proxy agent belongs to. For a [self-hosted VM account](../../features/VM/index.md) this is what you want, and you don't need to do anything.
+
+If the agent scans the network of a *different* account (for example, the VMs of a cloud account reached through an agent registered under another account), link the datasource to that account. There is no screen for this yet; it is set through the `integrations_upsert_discovery_target` API action with the datasource's integration ID and the target account ID.
+
+- A datasource has one target account. Setting a new one replaces the previous link.
+- When the target changes, the vulnerability findings and packages that earlier scans recorded under the previous account are retired, unless another datasource still targets that account.
+- With no target set, scans keep using the agent's own account.
+
 ## Before you enable it
 
 - A sweep makes TCP connections to ports 22, 3389 and 5985 across `allowed_hosts`, and with SSH credentials set also logs in to responding hosts to read their cloud identity. Allowlist the agent's IP in your IDS first: an unannounced sweep looks like an attack, and `sshd` logs *Did not receive identification string* for each probe, which some fail2ban setups act on.
 - The agent needs no extra privileges for sweeping.
-- Directory (LDAP / Active Directory) discovery isn't used yet; VMs are found by the sweep only.
+- Directory (LDAP / Active Directory) discovery isn't used yet; VMs are found by the sweep only. The proxy agent can read an LDAP configuration, but NudgeBee never uses it, so configuring it has no effect and raises no error.
 
 ## Related
 
