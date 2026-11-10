@@ -17,7 +17,7 @@ keywords: [vm list, scan vm, decommission vm, recommission, reach through, vm sc
 | **Name** | The VM — named by its cloud instance ID when the agent can read one, otherwise by its IP address |
 | **Host / Resource ID** | Private IP, host or resource ID |
 | **Operating System** | From the package inventory |
-| **Status** | **Active**, or a grey **Inactive** once decommissioned; red when stopped, terminated or deallocated |
+| **Status** | **Active**, or a gray **Inactive** once decommissioned; red when stopped, terminated or deallocated |
 | **Metrics** | CPU and memory mini gauges — click for the VM's metrics dialog |
 | **Packages** | Package count, or **Not scanned** |
 | **Open Vulnerabilities** | Open Critical, High and Medium findings |

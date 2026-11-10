@@ -8,7 +8,7 @@ keywords: [vm troubleshooter, nubi vm, ssh vm commands, vm investigation, ssh_ac
 
 With a self-hosted account selected, NuBi answers through the **VM Troubleshooter**. It lists the account's VMs from the inventory and, once `ssh_access` is enabled, runs short shell commands on them over SSH through your proxy agent. It checks the VMs as they are now; it doesn't read history from your metrics or log store.
 
-![NuBi on a self-hosted account: asked which VMs have the least free disk space, it runs df on each Linux VM and summarises the result, including two VMs it could not reach](./img/vm-nubi-disk-check.png)
+![NuBi on a self-hosted account: asked which VMs have the least free disk space, it runs df on each Linux VM and summarizes the result, including two VMs it could not reach](./img/vm-nubi-disk-check.png)
 
 ## Before you start
 
