@@ -10,6 +10,8 @@ keywords: [vm packages, package inventory, deb, rpm, installed packages]
 
 Every package found on the account's VMs by the last scan.
 
+![The Packages tab listing installed packages with version, architecture, type, source package, operating system and VMs](./img/vm-packages.png)
+
 | Column | Meaning |
 |---|---|
 | **Package** / **Version** / **Architecture** | The installed package |

@@ -20,7 +20,7 @@ A scan has three steps. Nothing is installed on the VMs.
 Timing:
 
 - A per-VM **Scan** fails after about 90 seconds if the inventory doesn't complete.
-- A scan left in the started state is marked failed after about 20–25 minutes.
+- A scan that hasn't finished within 15 minutes is marked failed within the next 5 minutes.
 - The page stops refreshing scan progress after about 16 minutes — reload to see the final state.
 
 ## Which content pack version

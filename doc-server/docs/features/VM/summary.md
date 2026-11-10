@@ -10,6 +10,8 @@ keywords: [vm summary, vm fleet, scan coverage, open vulnerabilities, packages t
 
 ## Counts
 
+![The Summary tab: counts, Utilization & Health for one VM, and Events/Errors](./img/vm-summary.png)
+
 | Tile | Meaning | Opens |
 |---|---|---|
 | **Virtual Machines** | VMs in the account | Virtual Machines |
@@ -27,6 +29,8 @@ Pick a VM and a window (**Last 1 Hour**, **6 Hours**, **24 Hours**) to see CPU a
 Event counts by severity, with **View all**. Without an Alertmanager webhook the card shows *Alertmanager is not connected* with **Connect Alertmanager**. If the webhook integration is disabled, it shows *Alertmanager webhook is disabled* with **Manage**; alerts sent to it are dropped until you enable it.
 
 ## Security
+
+![The Security section of the Summary tab: vulnerabilities by severity, scan coverage, operating systems, and the most vulnerable VMs, packages and CVEs](./img/vm-summary-security.png)
 
 | Card | Shows |
 |---|---|
