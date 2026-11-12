@@ -45,9 +45,11 @@ Kibana has no fixed alert format: a webhook action sends exactly the body you gi
 In Kibana, open **Stack Management** > **Connectors** and create a **Webhook** connector:
 
 - **Method**: `POST`
-- **URL**: the NudgeBee webhook URL from Step 1, token included
-- **Authentication**: none — the token in the URL authenticates the request
-- **Header**: `Content-Type: application/json`
+- **URL**: the NudgeBee webhook URL without the token: `https://<your-nudgebee-domain>/api/webhooks/elasticsearch`
+- **Authentication**: none
+- **HTTP headers**: `Content-Type: application/json`, and `Authorization` with value `Bearer <token>` (the token from Step 1). Where Kibana offers it, make the `Authorization` header type **Secret** so the token is stored encrypted.
+
+Kibana can write the webhook URL into its own logs when a delivery fails, but not its headers, so a token in a header stays out of those logs. The URL with `?token=` from Step 1 also works, and existing setups that use it keep delivering.
 
 ### Add the actions to each rule
 

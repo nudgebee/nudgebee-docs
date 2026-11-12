@@ -41,8 +41,10 @@ Keep this URL — you will paste it into New Relic in the next step.
 3. Configure the workflow filter to select which issues trigger the webhook.
 4. Under **Notify**, click **Webhook** as the notification channel.
 5. Create a new **Webhook destination**:
-   - **Endpoint URL**: paste the NudgeBee webhook URL from Step 1.
-   - **Custom Headers**: none required (authentication is handled via the `token` query parameter).
+   - **Endpoint URL**: the NudgeBee webhook URL without the token: `https://<your-nudgebee-domain>/api/webhooks/newrelic`.
+   - **Use authorization**: on, with **Bearer Token**, and the token from Step 1 as the token.
+
+   New Relic can write the webhook URL into its own logs when a delivery fails, but not its headers, so a token in a header stays out of those logs. The URL with `?token=` from Step 1 also works, and existing setups that use it keep delivering. With it, leave authorization off.
 
 6. Set the **payload template** to the following JSON:
 

@@ -26,7 +26,7 @@ Copy the URL exactly as the integration shows it. The path segment is `grafana` 
 
 5. **Copy the webhook URL** — you will configure it in Grafana in the next step. The token in it is a credential; treat it like a password.
 
-You can append your own query parameters to the URL (for example `&env=prod`). Every event delivered through it is tagged with them in NudgeBee. `token` and `authorization` are reserved and stripped.
+You can append your own query parameters to the URL (for example `&env=prod`, or `?env=prod` on a URL without `?token=`). Every event delivered through it is tagged with them in NudgeBee. `token` and `authorization` are reserved and stripped.
 
 ---
 
@@ -44,7 +44,7 @@ You can append your own query parameters to the URL (for example `&env=prod`). E
 6. Click **Save contact point**.
 7. Route alerts to it: in **Alerting** > **Notification policies**, set the contact point on the default policy, or add a child policy that matches the alerts you want NudgeBee to receive.
 
-To keep the token out of the URL, set **Authorization Header** > **Scheme** to `Bearer` and **Credentials** to the token, and drop `?token=` from the URL. Both work.
+**Recommended — keep the token out of the URL:** use the URL without `?token=` (`https://<your-nudgebee-domain>/api/webhooks/grafana`), and under **Optional Webhook settings** set the **Authorization Header** **Scheme** to `Bearer` and **Credentials** to the token. Grafana can write the webhook URL into its own logs when a delivery fails, but not its headers, so a token in a header stays out of those logs. The URL with `?token=` from Step 1 also works, and existing setups that use it keep delivering. Reopening the integration in NudgeBee shows both the URL and the token to copy.
 
 ---
 

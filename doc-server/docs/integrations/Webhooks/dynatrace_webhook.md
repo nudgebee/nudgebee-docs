@@ -66,8 +66,8 @@ NudgeBee  /api/webhooks/dynatrace
 7. Select the **HTTP Request** action.
 8. Configure the task:
    - **Method**: `POST`
-   - **URL**: paste the NudgeBee webhook URL from Step 1
-   - **Headers**: add `Content-Type` with value `application/json`
+   - **URL**: the NudgeBee webhook URL without the token: `https://<your-nudgebee-domain>/api/webhooks/dynatrace`
+   - **Headers**: add `Content-Type` with value `application/json`, and `Authorization` with value `Bearer <token>` (the token from Step 1). Dynatrace can write the webhook URL into its own logs when a delivery fails, but not its headers, so a token in a header stays out of those logs. The URL with `?token=` from Step 1 also works, and existing setups that use it keep delivering.
    - **Payload**: paste the following:
 
 ```

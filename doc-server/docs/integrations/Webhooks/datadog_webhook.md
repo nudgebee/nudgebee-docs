@@ -41,8 +41,10 @@ Keep this URL — you will paste it into Datadog in the next step.
 2. Click on the **Webhooks** integration tile and then click **New**.
 3. Configure the webhook:
    - **Name**: enter a descriptive name (e.g., `nudgebee`).
-   - **URL**: paste the NudgeBee webhook URL from Step 1.
-   - **Custom Headers**: none required (authentication is handled via the `token` query parameter).
+   - **URL**: the NudgeBee webhook URL without the token: `https://<your-nudgebee-domain>/api/webhooks/datadog`.
+   - **Custom Headers**: `{"Authorization": "Bearer <token>"}`. NudgeBee shows this JSON, token filled in, under the webhook URL.
+
+   Datadog can write the webhook URL into its own logs when a delivery fails, but not its headers, so a token in a header stays out of those logs. The URL with `?token=` from Step 1 also works, and existing setups that use it keep delivering. With it, leave **Custom Headers** empty.
 
 4. Set the **Payload** to the following JSON:
 
