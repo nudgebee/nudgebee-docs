@@ -16,7 +16,7 @@ Use this webhook when Alertmanager runs **outside** the cluster the NudgeBee age
 3. Click **Add Prometheus Alertmanager Webhook Account** and fill in the configuration:
    - **Integration Config Name** — a descriptive name (e.g., `Alertmanager Production`).
    - **Account** — select the NudgeBee account to receive events.
-4. Click **Save**. NudgeBee generates a unique webhook URL in the format:
+4. Click **Save**. NudgeBee shows the webhook URL and a ready-to-paste Alertmanager config. The URL has this format:
 
 ```
 https://<your-nudgebee-domain>/api/webhooks/prometheus-alertmanager?token=<generated-token>
@@ -24,45 +24,36 @@ https://<your-nudgebee-domain>/api/webhooks/prometheus-alertmanager?token=<gener
 
 Copy the URL exactly as the integration shows it. The path segment is `prometheus-alertmanager` — lowercase, with a hyphen, no `_webhook` suffix. `prometheus_alertmanager_webhook` is the integration type NudgeBee stores internally, not a URL you can post to; a URL that does not match the route above is answered by the NudgeBee web app with a 404 and never reaches the alert pipeline.
 
-5. **Copy the webhook URL** — you will configure it in Alertmanager in the next step. The token in it is a credential; treat it like a password.
+5. **Copy the Alertmanager config** — you will add it to Alertmanager in the next step. The token in it is a credential; treat it like a password. To see the URL and config again later, open the integration from the **Webhooks** tab.
 
 ### Optional: tag events with query parameters
 
 You can append your own query parameters to the URL. Every event delivered through it is tagged with them in NudgeBee. This is worth doing when more than one Alertmanager posts to the same webhook, since an Alertmanager payload carries no deployment context of its own:
 
 ```
-...?token=<token>&env=prod&cluster=us-east-1
+.../api/webhooks/prometheus-alertmanager?env=prod&cluster=us-east-1
 ```
 
-`token` and `authorization` are reserved and stripped. If the alert already carries a label with the same name, the alert's label wins.
+Start with `?` when the URL has no query string (as in the recommended config below), and with `&` when it already has one (`...?token=<token>&env=prod`). `token` and `authorization` are reserved and stripped. If the alert already carries a label with the same name, the alert's label wins.
 
 ---
 
 ## Step 2: Configure Alertmanager
 
-Add a receiver that posts to the NudgeBee URL, and route alerts to it:
+Add a receiver that posts to NudgeBee **and** a route that sends alerts to it. A receiver that no route points at receives nothing.
+
+The recommended config sends the token in the `Authorization` header. Alertmanager writes the full webhook URL into its log every time a delivery fails, but never the `http_config.authorization` credentials, so the token stays out of your logs:
 
 ```yaml
 route:
-  receiver: nudgebee
-  # or add a child route under your existing tree:
-  # routes:
-  #   - receiver: nudgebee
-  #     continue: true
+  # Your existing root route stays as it is: keep its receiver, group_by and
+  # other settings, and add this as the FIRST entry under its routes.
+  routes:
+    - receiver: nudgebee
+      continue: true
 
 receivers:
-  - name: nudgebee
-    webhook_configs:
-      - url: 'https://<your-nudgebee-domain>/api/webhooks/prometheus-alertmanager?token=<token>'
-        send_resolved: true
-```
-
-`send_resolved: true` is required for NudgeBee to close events when the alert clears. Without it, events stay **Firing**.
-
-To keep the token out of the URL, send it as a header instead. Both work:
-
-```yaml
-receivers:
+  # ...your existing receivers...
   - name: nudgebee
     webhook_configs:
       - url: 'https://<your-nudgebee-domain>/api/webhooks/prometheus-alertmanager'
@@ -73,10 +64,26 @@ receivers:
             credentials: '<token>'
 ```
 
-Reload Alertmanager (`POST /-/reload` or restart it) after editing the config. For kube-prometheus-stack, the Prometheus Operator, and VMAlertmanager, see [Alert forwarding](../../installation/agent/connect/alertmanager.md) for where this config lives.
+- **`routes` with no matchers** sends every alert to NudgeBee. Add `matchers` (for example `- severity=~"critical|warning"`) to send only some.
+- **`continue: true`** lets Alertmanager keep matching the routes after this one, so your existing receivers still get every alert. Put this route first: a route above it without `continue: true` stops matching before it is reached.
+- **Do not replace the root `route`** with `receiver: nudgebee` unless NudgeBee is your only receiver. The root route is the default for every alert, and replacing it stops delivery to your other receivers.
+- **`send_resolved: true`** is required for NudgeBee to close events when the alert clears. Without it, events stay **Firing**.
+- Alertmanager versions too old to support `http_config.authorization` take `bearer_token: '<token>'` directly under `http_config` instead.
+
+If the sender cannot set headers, the token can go in the URL instead. Existing receivers set up this way keep working, but the token then appears in Alertmanager's log whenever a delivery fails:
+
+```yaml
+receivers:
+  - name: nudgebee
+    webhook_configs:
+      - url: 'https://<your-nudgebee-domain>/api/webhooks/prometheus-alertmanager?token=<token>'
+        send_resolved: true
+```
+
+Reload Alertmanager (`POST /-/reload` or restart it) after editing the config. Run `amtool check-config alertmanager.yml` first to catch YAML mistakes. For kube-prometheus-stack, the Prometheus Operator, and VMAlertmanager, see [Alert forwarding](../../installation/agent/connect/alertmanager.md) for where this config lives.
 
 :::tip
-If one Alertmanager serves several clusters, add a route per cluster matching on the external label your Prometheus sets (for example `cluster`), and give each route a receiver with a different `&cluster=` query parameter so NudgeBee can tell the events apart.
+If one Alertmanager serves several clusters, add a route per cluster matching on the external label your Prometheus sets (for example `cluster`), and give each route its own receiver whose URL ends in a different `?cluster=<name>` so NudgeBee can tell the events apart.
 :::
 
 ---
@@ -192,8 +199,8 @@ amtool alert add NudgeBeeWebhookTest severity=warning namespace=default \
 |-------|------------|
 | Webhook URL returns HTTP `400` with `webhook validation failed` | Verify the token — in the `token` query parameter or the `Authorization: Bearer` header — is correct. Regenerate the integration if needed. |
 | Webhook URL returns a 404 HTML page | The path is wrong, so the request is reaching the NudgeBee web app instead of the alert pipeline. The correct path is `/api/webhooks/prometheus-alertmanager`. Check that the URL uses `https`, is lowercase, uses a hyphen (not an underscore), and has no `_webhook` suffix. Copy the URL directly from the integration. |
-| Events not appearing | Check the Alertmanager logs for `notify` errors on the `nudgebee` receiver, and confirm with `amtool config routes test` that your alert's labels route to it. Check that Alertmanager can reach your NudgeBee domain over HTTPS. |
+| Events not appearing | Check that a route points at the `nudgebee` receiver — a receiver alone gets no alerts — and confirm with `amtool config routes test` that your alert's labels route to it. Check the Alertmanager logs for `notify` errors on the `nudgebee` receiver. Check that Alertmanager can reach your NudgeBee domain over HTTPS. |
 | Events never resolve | Set `send_resolved: true` on the `webhook_configs` entry. |
 | Every event has **Low** priority | The alerts carry no `severity` label, or use a value not in the priority table. Add `severity` to your alerting rules. |
 | Events not attached to a workload | The alert has none of the labels listed under [Resource Detection](#resource-detection). Add a `namespace` and a controller label (e.g. `deployment`) to the rule. A label in `commonLabels` or `groupLabels` alone is not enough. |
-| Events from several clusters look the same | Add a `cluster` label to your Prometheus external labels, or append `&cluster=<name>` to the webhook URL per route. |
+| Events from several clusters look the same | Add a `cluster` label to your Prometheus external labels, or add `cluster=<name>` to the webhook URL's query string per route. |
