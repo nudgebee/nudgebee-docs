@@ -42,7 +42,10 @@ Create a OpenObserve alert destination in OpenObserve and set its destination to
 
 - **Method**: `POST`
 - **Content-Type**: `application/json`
-- **URL**: the NudgeBee webhook URL, token included
+- **URL**: the NudgeBee webhook URL without the token: `https://<your-nudgebee-domain>/api/webhooks/openobserve`
+- **Headers**: key `Authorization`, value `Bearer <token>` (the token from Step 1)
+
+OpenObserve can write the webhook URL into its own logs when a delivery fails, but not its headers, so a token in a header stays out of those logs. The URL with `?token=` from Step 1 also works, and existing setups that use it keep delivering.
 
 Then attach it to the alert rules whose notifications you want in NudgeBee. Send a test notification if OpenObserve offers one.
 

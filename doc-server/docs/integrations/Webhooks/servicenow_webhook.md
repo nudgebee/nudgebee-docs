@@ -40,11 +40,13 @@ Keep this URL — you will configure it in ServiceNow in the next step.
 2. Click **New** to create a new REST message.
 3. Configure the REST message:
    - **Name**: enter a descriptive name (e.g., `NudgeBee Webhook`).
-   - **Endpoint**: paste the NudgeBee webhook URL from Step 1.
+   - **Endpoint**: the NudgeBee webhook URL without the token: `https://<your-nudgebee-domain>/api/webhooks/servicenow`.
 4. Under **HTTP Methods**, create a new **POST** method:
    - **Name**: `POST`
-   - **Endpoint**: paste the same NudgeBee webhook URL.
-   - **HTTP Headers**: add `Content-Type: application/json`.
+   - **Endpoint**: the same URL.
+   - **HTTP Headers**: add `Content-Type: application/json`, and `Authorization` with value `Bearer <token>` (the token from Step 1).
+
+   ServiceNow can write the webhook URL into its own logs when a delivery fails, but not its headers, so a token in a header stays out of those logs. The URL with `?token=` from Step 1 also works, and existing setups that use it keep delivering.
 5. Click **Save**.
 
 ---
