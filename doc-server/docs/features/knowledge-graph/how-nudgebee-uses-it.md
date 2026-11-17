@@ -17,6 +17,9 @@ When you ask NuBi a dependency question, it hands the question to the **Dependen
 - Which load balancer routes to this service?
 - What is in this VPC?
 - Find the database named `orders`.
+- Find all our caches, or everything acting as a message queue.
+
+The last kind searches by [role](./nodes-and-relationships.md#node-roles) — what a resource acts as — so it covers both a managed resource whose type already means that role (an RDS instance) and a workload or VM someone has tagged, in one answer.
 
 The agent only reports relationships the graph has actually recorded, and asks you to choose when a name matches more than one resource.
 

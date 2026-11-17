@@ -36,6 +36,7 @@ The first time you open it, a welcome card offers a short guided tour of how to 
 | Service-to-service calls | `CALLS` | eBPF, distributed traces, Datadog APM, New Relic APM, Elastic APM, GCP Cloud Trace, AWS VPC Flow Logs, the VM service map |
 | Code and on-call | Repositories, teams, users, on-call services | GitHub, GitLab and PagerDuty integrations |
 | Ownership | Which team owns which workload or resource | **Admin → Access & Users → Ownership** (see [User Management](../user-management.md)) |
+| Node roles | What a resource acts as — a database, a cache, a message queue and more | Detected on some Kubernetes workloads, or set by hand. See [Node Roles](./nodes-and-relationships.md#node-roles). |
 
 NudgeBee also links resources across sources, for example a Kubernetes node to the EC2 instance it runs on, or a Kubernetes service account to the IAM role it assumes. See [Where the Data Comes From](./data-sources.md).
 
