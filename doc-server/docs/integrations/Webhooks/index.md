@@ -33,6 +33,7 @@ Create any of these from **Admin** > **Integrations** > **Webhooks**.
 | [Grafana Webhook](./grafana_webhook.md) | Receive Grafana Alerting notifications, attached to the workload the alert names. |
 | [Event Webhook](./event_webhook.md) | Send alerts from any tool that can POST JSON, using NudgeBee's documented format. |
 | [SolarWinds Platform (Orion) Webhook](./orion_webhook.md) | Receive alerts from self-hosted SolarWinds Platform (Orion). |
+| [ScienceLogic SL1 Webhook](./sciencelogic_webhook.md) | Receive ScienceLogic SL1 events from a Run Book action, routed to each customer's account by SL1 organization. |
 
 ### Currently Unavailable
 
