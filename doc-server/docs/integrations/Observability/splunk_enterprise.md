@@ -180,8 +180,24 @@ Metrics need **Splunk Metric Index**, and it must be a `datatype=metric` index. 
 
 What uses Splunk metrics:
 
+- **Utilization & Health.** When Splunk Enterprise is the account's metrics provider, which **Default Metrics Provider** sets, the cluster and workload utilization views read the metric index:
+  - On the cluster's **Summary** tab, the **Utilization & Health** card shows CPU and memory **Total**, **Usage**, **Request**, **Limit**, **P50 Usage**, **P90 Usage**, and **Max Usage**. **Trend** charts usage, total, request, and limit over the selected time range.
+  - On a workload's **Utilization Trends** tab, the CPU and memory charts show its usage, requested, and limit.
 - **nubi.** For accounts whose metrics provider is Splunk Enterprise, nubi uses a dedicated Splunk metrics agent. The agent writes `mstats` SPL, not PromQL. nubi can list the metrics a workload emits and read their values. With no metric index configured, nubi answers that Splunk metrics are not configured, not that there is no data.
 - **Event evidence.** On workload alerts, NudgeBee finds a CPU metric in the index, such as `k8s.pod.cpu.usage` or `container.cpu.usage`, and charts it for the affected pods.
+
+**Utilization metric names.** NudgeBee reads the metrics index's catalog and, for each value, uses the first of these names it finds. A value whose names are all missing shows `-`.
+
+| Value | Splunk metric names checked, in order |
+|-------|---------------------------------------|
+| Cluster CPU total | `k8s.node.allocatable_cpu`, `k8s.node.allocatable.cpu`, `kube.node.allocatable_cpu` |
+| Cluster CPU usage | `k8s.node.cpu.usage`, `k8s.node.cpu.utilization`, `k8s.node.cpu_usage` |
+| Cluster memory total | `k8s.node.allocatable_memory`, `k8s.node.allocatable.memory`, `kube.node.allocatable_memory` |
+| Cluster memory usage | `k8s.node.memory.usage`, `k8s.node.memory.working_set`, `k8s.node.memory_usage` |
+| Workload CPU usage | `k8s.pod.cpu.usage`, `k8s.pod.cpu.utilization`, `container.cpu.usage`, `k8s.container.cpu.usage` |
+| Workload memory usage | `k8s.pod.memory.usage`, `k8s.pod.memory.working_set`, `container.memory.usage`, `k8s.container.memory.usage` |
+| CPU request / limit | `k8s.container.cpu_request` / `k8s.container.cpu_limit`, or the dotted forms `k8s.container.cpu.request` / `k8s.container.cpu.limit` |
+| Memory request / limit | `k8s.container.memory_request` / `k8s.container.memory_limit`, or the dotted forms `k8s.container.memory.request` / `k8s.container.memory.limit` |
 
 A hand-written metrics query must follow three rules:
 
@@ -207,7 +223,7 @@ Traces need **Splunk Trace Index**, which must hold spans written by the OpenTel
 
 What the Traces page supports with Splunk Enterprise:
 
-- The trace list, trace grouping, and the span waterfall are supported.
+- The trace list, trace grouping, and the trace heatmap are supported. The heatmap is a trace's **Service & Operation** tab: a **Trace Chart** of its spans by service and operation, drawn as a waterfall.
 - **The service map is not available.** A Splunk span names the service it called, but not that service's namespace. A map drawn from names alone would merge same-named services in different namespaces.
 - For the same reason, you cannot filter by the destination workload's namespace.
 
@@ -219,6 +235,7 @@ What the Traces page supports with Splunk Enterprise:
 2. Open a **Kubernetes workload** in NudgeBee and go to the **Logs** tab. Confirm that its logs from Splunk appear.
 3. If you set a trace index, open the **Traces** tab and confirm that spans appear.
 4. If you set a metric index, ask nubi, for example: *"Which metrics does the checkout deployment in the prod namespace emit?"*
+5. If Splunk Enterprise is the **Default Metrics Provider**, open the cluster's **Summary** tab and confirm that **Utilization & Health** shows CPU and memory figures.
 
 ---
 
@@ -244,7 +261,7 @@ What the Traces page supports with Splunk Enterprise:
 - **No cluster filter.** NudgeBee does not add a cluster filter to the searches it generates. If one Splunk holds data from several clusters, workloads with the same namespace and name in different clusters are mixed together.
 - **One provider, three signals.** Logs, metrics, and traces each have their own index setting. You can connect only logs, and add metrics and traces later.
 - **Read-only.** NudgeBee never writes to Splunk. It blocks write and send commands in any query it runs, but the Splunk role is the real control.
-- **Telemetry only.** This integration reads logs, metrics, and traces. It does not turn Splunk alerts into NudgeBee events.
+- **Telemetry only.** This integration reads logs, metrics, and traces. It does not turn Splunk alerts into NudgeBee events. The separate [Splunk Webhook](../Webhooks/splunk_webhook.md) integration does that: Splunk posts each alert to NudgeBee, and it becomes an event. Its tile in **Admin** > **Integrations** > **Webhooks** is grayed out, so you cannot add a Splunk Webhook connection.
 
 ---
 
