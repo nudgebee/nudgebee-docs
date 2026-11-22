@@ -137,13 +137,9 @@ between providers. Alert webhook delivery is separate from querying telemetry.
 
 ### Logs
 
-:::caution Use the Builder in Query Log
-To search logs yourself, open the Kubernetes cluster's page and choose **Monitoring** > **Query Log**. It opens in **Code** mode, with an SQL example as the placeholder, but for OpenObserve the SQL you type in the Code tab is **ignored**:
-- NudgeBee returns the newest logs in the stream, filtered only by any [Default Log Filters](./advanced-settings.md#default-log-filters).
-- The query line under the editor still repeats your SQL, so it looks as if the SQL ran.
+To search logs, open the Kubernetes cluster's page and choose **Monitoring** > **Query Log**. In NudgeBee 1.15.0, **Code** mode sends the SQL you enter to OpenObserve. The selected time range and row limit still apply. Default Log Filters apply in **Builder** mode, so include any filters you need in the SQL when using **Code** mode.
 
-Switch to **Builder** and add at least one filter.
-:::
+On earlier versions that ignore OpenObserve Code-mode SQL, switch to **Builder** and add at least one filter.
 
 A workload's own **Logs** tab needs no query. It loads that workload's logs automatically, by filtering on its namespace and app.
 
@@ -250,7 +246,7 @@ What the Traces page supports with OpenObserve:
 | Test succeeds with a missing-stream note | The configured stream is absent, but another stream of that type exists | Choose one of the stream names in the note and test again; verify a real query afterward |
 | No logs at all, but the test passes | **Openobserve Log Stream** names a stream that does not exist | Set it to the stream your collector writes logs to |
 | A workload's **Logs** tab is empty, but its logs are in OpenObserve | Your pipeline uses different field names, such as Fluent Bit's `kubernetes_namespace_name`, or the workload is not a Deployment | Map `namespace` and `app` in **Advanced Settings** > **Log Label Mapping** |
-| SQL typed in the Query Log **Code** tab has no effect | Code-mode SQL is ignored for OpenObserve | Use the **Builder** |
+| SQL typed in the Query Log **Code** tab has no effect | Your NudgeBee version may predate OpenObserve Code-mode support | Use **Builder**, or upgrade to NudgeBee 1.15.0 |
 | Builder says *Please select at least one label filter* | The Builder needs at least one filter | Add a filter, for example on `k8s_namespace_name` |
 | A `LIKE` or `ILIKE` filter finds nothing | The pattern has no `%` wildcards, so it must match the whole value | Write `%value%` |
 | A Log Label Mapping has no effect | Its target column has one of NudgeBee's own field names, such as `level` or `service` | Map to a column with any other name. See the list under [Logs](#logs). |
