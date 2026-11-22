@@ -29,6 +29,16 @@ Before configuring the integration, ensure you have:
 Use the address of the OpenObserve server itself, for example `https://openobserve.example.com` or `http://openobserve.observability.svc:5080`. A URL with a path, such as one copied from the browser (`https://openobserve.example.com/web/logs`), is rejected. An OpenObserve served under a path prefix cannot be connected.
 :::
 
+### Service-account credentials
+
+For automated queries, use a service account where the OpenObserve edition
+supports it. Enter its email as the username and its token as the password;
+NudgeBee sends HTTP Basic authentication. Enterprise service accounts need
+explicit role assignments, while open-source service accounts have full access
+by default. OpenObserve Cloud does not support service accounts. An ingestion
+token authorizes ingestion only and cannot authenticate these query APIs.
+See [OpenObserve's service-account guide](https://openobserve.ai/docs/user-guide/account-administration/identity-and-access-management/service-accounts/).
+
 ---
 
 ## Step 1: Configure the Integration in NudgeBee
@@ -86,7 +96,12 @@ Stream names may contain only letters, digits, and underscores. Neither Test Con
 2. *(Optional)* Expand **Advanced Settings** to set **Default Log Filters**, **Default Trace Filters**, **Log Label Mapping**, and **Trace Label Mapping**. See [Advanced Settings](./advanced-settings.md) for what each one does. These cards unlock after a successful test.
 3. Click **Save**. It stays disabled until a test succeeds.
 
-Test Connection checks the URL, the organization, and the credentials. It does **not** check that the log or trace stream exists. A misspelled log stream saves without error and then shows no logs.
+Test Connection checks the URL, the organization, and the credentials. It can
+also show a note when a configured log or trace stream is missing and the
+organization has other streams of that type. That note does not fail the
+connection test: metrics or other signals may still work. No note is emitted
+when the organization has no streams of that type, so a passing test does not
+prove that a log or trace stream contains data.
 
 If the test fails, the message tells you what to fix:
 
@@ -108,15 +123,23 @@ If the test fails, the message tells you what to fix:
 | Metrics | `/api/<org>/prometheus/api/v1/query_range` and `/query` | PromQL |
 | Traces | `POST /api/<org>/_search?type=traces` on the trace stream | SQL |
 
+### Compare signal support
+
+| Signal | OpenObserve | Datadog | New Relic |
+|---|---|---|---|
+| Logs | Configured stream, search API and SQL filters | Supported | Supported |
+| Metrics | PromQL through the Prometheus-compatible API; expression compatibility varies | Supported | Supported |
+| Traces | Configured trace stream through the search API | Supported | Supported |
+
+Choose a default provider separately for each signal. Query syntax, field
+mappings, and provider limits differ; a query may need translation when moving
+between providers. Alert webhook delivery is separate from querying telemetry.
+
 ### Logs
 
-:::caution Use the Builder in Query Log
-To search logs yourself, open the Kubernetes cluster's page and choose **Monitoring** > **Query Log**. It opens in **Code** mode, with an SQL example as the placeholder, but for OpenObserve the SQL you type in the Code tab is **ignored**:
-- NudgeBee returns the newest logs in the stream, filtered only by any [Default Log Filters](./advanced-settings.md#default-log-filters).
-- The query line under the editor still repeats your SQL, so it looks as if the SQL ran.
+To search logs, open the Kubernetes cluster's page and choose **Monitoring** > **Query Log**. In NudgeBee 1.15.0, **Code** mode sends the SQL you enter to OpenObserve. The selected time range and row limit still apply. Default Log Filters apply in **Builder** mode, so include any filters you need in the SQL when using **Code** mode.
 
-Switch to **Builder** and add at least one filter.
-:::
+On earlier versions that ignore OpenObserve Code-mode SQL, switch to **Builder** and add at least one filter.
 
 A workload's own **Logs** tab needs no query. It loads that workload's logs automatically, by filtering on its namespace and app.
 
@@ -219,9 +242,11 @@ What the Traces page supports with OpenObserve:
 
 | Symptom | Likely Cause | Fix |
 |---------|-------------|-----|
+| HTTP 404 on the streams endpoint | The base URL or organization identifier is wrong | Use the server origin without an `/api/<org>` suffix and verify **Openobserve Org ID** |
+| Test succeeds with a missing-stream note | The configured stream is absent, but another stream of that type exists | Choose one of the stream names in the note and test again; verify a real query afterward |
 | No logs at all, but the test passes | **Openobserve Log Stream** names a stream that does not exist | Set it to the stream your collector writes logs to |
 | A workload's **Logs** tab is empty, but its logs are in OpenObserve | Your pipeline uses different field names, such as Fluent Bit's `kubernetes_namespace_name`, or the workload is not a Deployment | Map `namespace` and `app` in **Advanced Settings** > **Log Label Mapping** |
-| SQL typed in the Query Log **Code** tab has no effect | Code-mode SQL is ignored for OpenObserve | Use the **Builder** |
+| SQL typed in the Query Log **Code** tab has no effect | Your NudgeBee version may predate OpenObserve Code-mode support | Use **Builder**, or upgrade to NudgeBee 1.15.0 |
 | Builder says *Please select at least one label filter* | The Builder needs at least one filter | Add a filter, for example on `k8s_namespace_name` |
 | A `LIKE` or `ILIKE` filter finds nothing | The pattern has no `%` wildcards, so it must match the whole value | Write `%value%` |
 | A Log Label Mapping has no effect | Its target column has one of NudgeBee's own field names, such as `level` or `service` | Map to a column with any other name. See the list under [Logs](#logs). |
