@@ -15,6 +15,8 @@ The runner natively proxies queries to standard logging engines and API-compatib
 *   **[Logz.io](./logz.io.md)**: OpenSearch-compatible endpoint authenticated via `X-API-TOKEN`.
 *   **[Last9](./last9.md)**: Loki-compatible endpoint authenticated via Basic Auth.
 
+The agent can also collect container logs into its bundled ClickHouse, for clusters without a log store. You choose it per cluster in the UI, outside the precedence below. See [ClickHouse Logs](./clickhouse.md).
+
 ---
 
 ## Provider Selection Precedence {#provider-precedence}
@@ -52,7 +54,7 @@ graph TD
    ```bash
    kubectl logs -n nudgebee-agent deploy/nudgebee-agent-runner | grep 'logs provider'
    ```
-   `logs provider selected` names the provider NudgeBee uses; `logs provider: none configured` means none is set.
+   `logs provider selected` names the provider NudgeBee uses; `logs provider: none configured` means none is set. On a cluster that collects logs into ClickHouse, this line says none configured, because you choose ClickHouse in the UI.
 2. **Test Network Reachability**:
    Run an in-cluster curl test from the `nudgebee-agent` namespace to confirm that CoreDNS resolves the logging service and that no `NetworkPolicy` blocks egress on the logging port (e.g. `3100` or `9200`).
 3. **Verify Header Syntax**:
@@ -61,3 +63,4 @@ graph TD
    - [Troubleshoot Grafana Loki](./loki.md#troubleshooting)
    - [Troubleshoot Elasticsearch & OpenSearch](./elk.md#troubleshooting)
    - [Troubleshoot SigNoz](./signoz.md#troubleshooting)
+   - [Troubleshoot ClickHouse Logs](./clickhouse.md#troubleshooting)
