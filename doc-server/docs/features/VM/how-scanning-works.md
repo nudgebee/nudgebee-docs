@@ -14,7 +14,7 @@ A scan has three steps. Nothing is installed on the VMs.
 
 ## When scans run
 
-- **A sweep shortly after the agent connects** — within about a minute of the agent connecting, reconnecting or restarting, or of a config push that creates or changes a discovery datasource. At most once every few minutes per account.
+- **A scan shortly after the agent connects** (sweep, then inventory where SSH login works) — within about a minute of the agent connecting, reconnecting or restarting, or of a config push that creates or changes a discovery datasource. At most once every few minutes per account.
 - **Automatically once a day**, for every enabled discovery datasource.
 - **On demand** with **Scan** on the Virtual Machines tab — for the whole account or one VM.
 

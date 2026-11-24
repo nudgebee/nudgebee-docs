@@ -94,7 +94,7 @@ On macOS the key is at `/usr/local/etc/nudgebee/ssh/id_ed25519.pub`. Instead of 
 
 ## 5. VMs appear
 
-When the agent connects, reconnects or restarts — or a config push from NudgeBee creates or changes a discovery datasource — NudgeBee sweeps the discovery network within about a minute. These sweeps are limited to one every few minutes per account. The daily scan and the **Scan** button on **Infra → VM → Virtual Machines** still work as before; see [How scanning works](./how-scanning-works.md).
+When the agent connects, reconnects or restarts — or a config push from NudgeBee creates or changes a discovery datasource — NudgeBee scans the discovery network within about a minute: it sweeps for hosts, lists those that answer on SSH, and runs the package inventory on any it can log in to. These scans are limited to one every few minutes per account. The daily scan and the **Scan** button on **Infra → VM → Virtual Machines** still work as before; see [How scanning works](./how-scanning-works.md).
 
 - Hosts that answer on the SSH port are listed as VMs, named by IP. Matching them against existing cloud VMs can make this take a few minutes.
 - **Packages** and **Vulnerabilities** need a working SSH login (step 4) and a Linux host: the default pack collects `dpkg` and `rpm` data. A macOS or other non-Linux host shows a failed package scan with an `os-release` error, but NuBi commands still work on it.
