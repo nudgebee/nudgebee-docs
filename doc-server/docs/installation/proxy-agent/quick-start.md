@@ -212,7 +212,7 @@ If you installed with the Linux or macOS script on a new machine, VM discovery i
    Show the running processes on 192.168.1.20.
    ```
 
-VMs on a laptop (UTM, Multipass, Parallels) usually sit on a host-only subnet such as `192.168.64.0/24`, not the LAN — install with `NB_DISCOVERY_CIDR` set to that subnet. See [Connect VMs on your network](../../features/VM/setup.md) for the details and [VM troubleshooting](../../features/VM/troubleshooting.md) if nothing appears.
+VMs on a laptop (UTM, Multipass, Parallels) usually sit on a host-only subnet such as `192.168.64.0/24`, not the LAN — install with `NB_DISCOVERY_CIDR` set to that subnet. See the [VM setup guide](../../features/VM/setup.md) for the details and [VM troubleshooting](../../features/VM/troubleshooting.md) if nothing appears.
 
 ---
 
