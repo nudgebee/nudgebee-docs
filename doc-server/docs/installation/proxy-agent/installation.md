@@ -39,6 +39,8 @@ After installation:
 | `/var/lib/nudgebee/` | Data directory |
 | `nudgebee-forager` | systemd service name |
 
+**VM discovery:** On a new install, the script also sets up VM discovery for the local network: an SSH key in `/etc/nudgebee/ssh/`, a `known_hosts` file, the Linux inventory content pack in `/etc/nudgebee/packs/`, and a `discovery` datasource in the config. Add `NB_DISCOVERY=false` to skip it. The macOS script does the same under `/usr/local/etc/nudgebee/`. See [Set up self-hosted VMs](../../features/VM/setup.md#3-what-the-linux-and-macos-install-sets-up) for the options and the next steps.
+
 **Service management:**
 ```bash
 systemctl status nudgebee-forager   # check status
@@ -46,7 +48,7 @@ journalctl -u nudgebee-forager -f   # stream logs
 systemctl restart nudgebee-forager  # restart
 ```
 
-**Using a local config file:** The installer creates `/etc/nudgebee/forager.yaml` with your access credentials. To add datasources, edit that file and restart:
+**Using a local config file:** The installer creates `/etc/nudgebee/forager.yaml` with your access credentials (and, on a new install, the discovery datasource above). Re-running the installer leaves an existing file untouched, including the credentials in it. To add datasources, edit that file and restart:
 
 ```bash
 sudo nano /etc/nudgebee/forager.yaml

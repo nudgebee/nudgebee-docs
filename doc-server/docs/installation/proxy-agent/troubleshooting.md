@@ -28,7 +28,30 @@ sidebar_position: 7
    {"level":"INFO","msg":"reconnecting to relay","delay":"..."}
    ```
 
+   If the log shows `bad handshake (status=401 ...)` with *invalid credentials*, the server rejected the access key or secret:
+   ```
+   dial failed: websocket: bad handshake (status=401 body="invalid credentials ...")
+   ```
+   Regenerating the Proxy Agent token changes **both** the access key and the secret. Regenerate it in the Proxy Agent integration, then update `access_key` and `access_secret` in the agent's config file and restart the agent. Re-running the install script doesn't replace an existing config file; alternatively, delete the config file and install again. The server caches a failed credential for about a minute, so the first retry after fixing it can still fail.
+
 3. **Firewall / Proxy** — If behind a corporate proxy, WebSocket connections may be blocked. Check with your network team that `wss://` connections are allowed.
+
+4. **Two agents with the same access key** — If the same key runs in two places (for example the agent was installed twice, or with both the install script and Docker), the two agents keep taking the connection from each other and requests time out. Run one agent per access key: stop the extra one, or create a separate Proxy Agent for it.
+
+## Install Script Slow or Stuck
+
+**Symptoms:** The Linux or macOS install script stays at *Downloading forager from ...* for a long time.
+
+Downloads from GitHub can be slow on some networks. Download the binary (and, for VM discovery, `linux-inventory-v2.yaml`) from the [releases page](https://github.com/nudgebee/forager/releases) separately, lay them out like the releases page, and point `NB_DOWNLOAD_URL` at that directory:
+
+```bash
+mkdir -p /tmp/forager/latest/download
+# put nudgebee-forager-<os>-<arch> and linux-inventory-v2.yaml in /tmp/forager/latest/download/
+curl -fsSL <install.sh URL from the dialog> \
+  | sudo NB_DOWNLOAD_URL=file:///tmp/forager NB_ACCESS_KEY=<ACCESS_KEY> NB_ACCESS_SECRET=<ACCESS_SECRET> ... bash
+```
+
+`NB_DOWNLOAD_URL` also accepts an HTTPS mirror with the same path layout as GitHub releases (`<base>/latest/download/<file>`, `<base>/download/<tag>/<file>`).
 
 ## Agent Connected but No Datasources
 
@@ -106,6 +129,10 @@ The agent can't reach the database. Check network connectivity from the agent ho
    ```bash
    journalctl -u nudgebee-forager --tail 50
    ```
+   **macOS (launchd):**
+   ```bash
+   tail -n 50 /usr/local/var/log/nudgebee-forager.log
+   ```
    **Windows** — `Get-Service` only shows status, not logs. To see actual log output, stop the service and run the binary directly in a PowerShell window:
    ```powershell
    Stop-Service NudgebeeForager
@@ -179,6 +206,10 @@ Status   Name               DisplayName
 ------   ----               -----------
 Running  NudgebeeForager    NudgeBee Forager
 ```
+
+## VM Discovery
+
+For VMs that don't appear, scans that fail, and NuBi commands that fail on a VM, see [Troubleshooting self-hosted VMs](../../features/VM/troubleshooting.md).
 
 ## Getting Help
 

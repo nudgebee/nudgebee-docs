@@ -47,7 +47,7 @@ curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install.
   bash
 ```
 
-Installs Forager as a systemd service. Requires root / sudo.
+Installs Forager as a systemd service. Requires root / sudo. On a new install it also sets up [VM discovery](../../features/VM/setup.md) for the local network; add `NB_DISCOVERY=false` to skip it.
 
 </TabItem>
 <TabItem value="windows" label="Windows">
