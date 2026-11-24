@@ -4,12 +4,12 @@ sidebar_position: 2
 
 # Quick Start
 
-Connect your first database to NudgeBee in 5 minutes using the Proxy Agent.
+Connect your first database — or the VMs on your network — to NudgeBee in 5 minutes using the Proxy Agent.
 
 ## Prerequisites
 
 - A NudgeBee account
-- A database you want to connect (PostgreSQL, MySQL, etc.)
+- A database you want to connect (PostgreSQL, MySQL, etc.), or Linux VMs reachable over SSH
 - Network access from the machine running the agent to your database
 
 ## Step 1: Create a Proxy Agent in NudgeBee
@@ -48,6 +48,20 @@ curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install.
 ```
 
 Installs Forager as a systemd service. Requires root / sudo. On a new install it also sets up [VM discovery](../../features/VM/setup.md) for the local network; add `NB_DISCOVERY=false` to skip it.
+
+</TabItem>
+<TabItem value="macos" label="macOS">
+
+```bash
+curl -fsSL https://github.com/nudgebee/forager/releases/latest/download/install-macos.sh | \
+  sudo NB_RELAY_URL=<RELAY_URL> \
+  NB_ACCESS_KEY=<ACCESS_KEY> \
+  NB_ACCESS_SECRET=<ACCESS_SECRET> \
+  NB_SIGNING_PUBLIC_KEY=<SIGNING_PUBLIC_KEY> \
+  bash
+```
+
+Installs Forager as a launchd service. Requires sudo. On a new install it also sets up [VM discovery](../../features/VM/setup.md) for the local network; add `NB_DISCOVERY=false` to skip it.
 
 </TabItem>
 <TabItem value="windows" label="Windows">
@@ -105,6 +119,12 @@ You should see:
 {"level":"INFO","msg":"connected to relay, greeting sent"}
 ```
 
+**macOS** — follow the log file:
+```bash
+tail -f /usr/local/var/log/nudgebee-forager.log
+```
+You should see the same `connected to relay, greeting sent` line.
+
 **Windows** — check the service is running:
 ```powershell
 Get-Service NudgebeeForager
@@ -118,6 +138,8 @@ Running  NudgebeeForager    NudgeBee Forager
 To see the actual log output on Windows, run the binary directly in a PowerShell window — see [Troubleshooting: Windows Service](./troubleshooting.md#windows-service-issues).
 
 In the NudgeBee UI, the agent should appear on the Proxy Agent accounts page.
+
+Connecting VMs rather than a database? Skip to [Connect VMs on your network](#connect-vms-on-your-network).
 
 ## Step 4: Add a Datasource
 
@@ -172,6 +194,25 @@ Verify end-to-end proxy connectivity through your firewall by asking NuBi to ins
    - Bloat estimates and dead tuple percentages.
    - Active database connections, locks, and cache hit ratios.
 4. **Success Verification**: When you receive live table metrics, your Proxy Agent tunnel is fully established and secure.
+
+---
+
+## Connect VMs on your network
+
+If you installed with the Linux or macOS script on a new machine, VM discovery is already set up for the agent's local network. The script's last lines print the network it will scan and the agent's public key.
+
+1. **Authorize the agent on each VM.** Run the `ssh-copy-id` command the installer printed, once per VM:
+   ```bash
+   ssh-copy-id -f -i <CONFIG_DIR>/ssh/id_ed25519.pub <USER>@<VM_IP>
+   ```
+   The user is the one passed as `NB_SSH_USER` (default: the user who ran `sudo`).
+2. **Wait about a minute.** NudgeBee scans the network shortly after the agent connects; the VMs that answer on SSH appear under **Infra → VM → Virtual Machines**, named by IP.
+3. **Ask NuBi**, with the VM account selected:
+   ```text
+   Show the running processes on 192.168.1.20.
+   ```
+
+VMs on a laptop (UTM, Multipass, Parallels) usually sit on a host-only subnet such as `192.168.64.0/24`, not the LAN — install with `NB_DISCOVERY_CIDR` set to that subnet. See [Connect VMs on your network](../../features/VM/setup.md) for the details and [VM troubleshooting](../../features/VM/troubleshooting.md) if nothing appears.
 
 ---
 
