@@ -70,7 +70,7 @@ This is what the Linux install script writes on a new install (macOS uses `/usr/
 ```yaml
 datasources:
   - type: discovery
-    name: "local-network"
+    name: "web-server-54cb96"   # unique per agent within the tenant
     allowed_hosts:
       - "192.168.1.0/24"
     credential_source: local
