@@ -43,7 +43,7 @@ The script creates, under the agent's config directory (`/etc/nudgebee` on Linux
 
 | File | What it is |
 |---|---|
-| `forager.yaml` | The agent config, with a `discovery` datasource named `local-network` |
+| `forager.yaml` | The agent config, with a `discovery` datasource named after the host and the agent's access key (for example `web-server-54cb96`) |
 | `ssh/id_ed25519`, `ssh/id_ed25519.pub` | A new ed25519 SSH key the agent logs in to the VMs with |
 | `known_hosts` | Where the agent records each VM's host key on first contact (`host_key_policy: accept-new`) |
 | `packs/linux-inventory-v2.yaml` | The Linux inventory content pack, downloaded from the same release as the binary |
@@ -56,7 +56,7 @@ You can add these optional variables to the install command, next to `NB_ACCESS_
 |---|---|---|
 | `NB_DISCOVERY_CIDR` | The subnet of the primary network interface, narrowed to the host's `/24` when it is wider than `/22` | The network to scan. Anything wider than `/22` is refused. |
 | `NB_SSH_USER` | The user who ran `sudo`, else `ubuntu` | The login user on the VMs |
-| `NB_DISCOVERY_NAME` | `local-network` | The discovery datasource's name |
+| `NB_DISCOVERY_NAME` | `<hostname>-<first 6 characters of the access key>` | The discovery datasource's name. Keep it unique per agent: agents in one tenant that report the same name share one record in NudgeBee |
 | `NB_DISCOVERY` | `true` | `false` skips discovery setup |
 | `NB_PACK_URL` | The release's `linux-inventory-v2.yaml` | Where to download the content pack from |
 | `NB_DOWNLOAD_URL` | GitHub releases | Download the binary and the pack from a mirror with the same path layout as GitHub releases (`<base>/latest/download/<file>`, `<base>/download/<tag>/<file>`). A `file:///path` base works too. |
