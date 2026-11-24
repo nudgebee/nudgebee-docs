@@ -12,7 +12,7 @@ With a self-hosted account selected, NuBi answers through the **VM Troubleshoote
 
 ## Before you start
 
-Commands reach a VM through an SSH datasource that the proxy agent exposes from its [discovery datasource](../../installation/proxy-agent/discovery.md). Add to the agent config:
+Commands reach a VM through an SSH datasource that the proxy agent exposes from its [discovery datasource](../../installation/proxy-agent/discovery.md). A new Linux or macOS install from the dialog's command already sets this up (see [Set up self-hosted VMs](./setup.md#3-what-the-linux-and-macos-install-sets-up)); you only need to authorize the agent's SSH key on each VM. Otherwise, add to the agent config:
 
 ```yaml
 signing_public_key: "<key>"          # top level; Helm: forager.signingPublicKey
@@ -24,7 +24,8 @@ datasources:
     discovery:
       ssh_access: true
       known_hosts_file: /etc/nudgebee/known_hosts
-      # ...pack_public_key, pack_dir as before
+      host_key_policy: accept-new    # optional: learn host keys on first contact
+      # ...pack_dir as before
 ```
 
 | Setting | Why |
@@ -35,13 +36,13 @@ datasources:
 | `signing_public_key` | The agent only runs commands signed by NuBi. It is set by the install command when your tenant has a signing key; if your install command had no `NB_SIGNING_PUBLIC_KEY`, contact NudgeBee support |
 
 :::warning `known_hosts_file` applies to scans too
-The discovery datasource uses the same `known_hosts_file` for package inventory. Once it is set, every scan refuses a host whose key isn't in that file or has changed, and that VM stops being inventoried. Add every host in `allowed_hosts` first, for example:
+The discovery datasource uses the same `known_hosts_file` for package inventory. Once it is set, every scan refuses a host whose key has changed, and, under the default `host_key_policy: strict`, a host whose key isn't in the file; that VM stops being inventoried. With `host_key_policy: accept-new` unknown hosts' keys are recorded on first contact instead — see [Host keys](../../installation/proxy-agent/discovery.md#host-keys). Under `strict`, add every host in `allowed_hosts` first, for example:
 
 ```bash
 ssh-keyscan -t ed25519,rsa 192.0.2.11 192.0.2.12 >> /etc/nudgebee/known_hosts
 ```
 
-Re-run it for a VM after it is rebuilt.
+After a VM is rebuilt, remove its old line and, under `strict`, add the new key.
 :::
 
 If a setting is missing, the agent logs *ssh_access not enabled* with *ssh_access requires ...* naming it. Restart the agent after the change; an SSH datasource named `<discovery name>-ssh` then appears in **Agent Health → Proxy Agent → Datasources**.

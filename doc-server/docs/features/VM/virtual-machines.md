@@ -31,7 +31,7 @@ With no VMs yet: *No virtual machines yet — VMs appear here once a proxy agent
 
 ## Scan
 
-Scans run automatically once a day. To scan now (needs write access):
+Scans run automatically once a day, and the network is swept shortly after the proxy agent connects. To scan now (needs write access):
 
 - **Scan** in the toolbar scans the whole account — *Scan account for vulnerabilities* → **Start scan**. Results appear as each VM finishes. With no discovery datasource the toolbar Scan reports *no discovery agent is configured to scan this account*.
 - **Scan** on a row scans one VM — *Scan VM for vulnerabilities*. Choose the discovery datasource in **Reach through** (preselected when there is only one), then **Start scan**. The row shows progress until the scan finishes. With no discovery datasource the dialog says *No forager discovery datasource is configured for this account*.

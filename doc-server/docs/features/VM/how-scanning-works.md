@@ -9,11 +9,12 @@ keywords: [vm scan schedule, network sweep, package inventory ssh, cve matching,
 A scan has three steps. Nothing is installed on the VMs.
 
 1. **Sweep** — the proxy agent's discovery datasource looks for hosts in its allowed network ranges by connecting to ports 22, 3389 and 5985 (rate limited, about 100 probes per second by default). When SSH credentials are set, it also logs in to responding hosts to read their cloud identity. IPv4 only; a host that is powered off or has none of those ports open isn't found.
-2. **Inventory** — the agent connects to each responding host over SSH with the discovery datasource's read-only user and runs the signed Linux inventory content pack to read the OS and installed packages. **A host becomes a VM in the account only after a successful inventory** — a host that only answers the sweep isn't listed, so an agent without SSH credentials adds no VMs.
+2. **Inventory** — the agent connects to each responding host over SSH with the discovery datasource's read-only user and runs the Linux inventory content pack to read the OS and installed packages. Hosts that answer on the SSH port are listed as VMs, named by IP, even before an inventory succeeds; their packages need a working SSH login and a Linux host.
 3. **Match** — NudgeBee matches the packages against known vulnerabilities and records each match as a finding.
 
 ## When scans run
 
+- **A sweep shortly after the agent connects** — within about a minute of the agent connecting, reconnecting or restarting, or of a config push that creates or changes a discovery datasource. At most once every few minutes per account.
 - **Automatically once a day**, for every enabled discovery datasource.
 - **On demand** with **Scan** on the Virtual Machines tab — for the whole account or one VM.
 
