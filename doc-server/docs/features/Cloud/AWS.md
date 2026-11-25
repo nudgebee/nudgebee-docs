@@ -162,7 +162,8 @@ the role to your organization: NudgeBee sends your organization's ID as the
 External ID, so no other organization can use the role.
 
 To get both values, open **Add AWS Account**, choose **IAM Role ARN**, paste the
-role ARN and click **Validate**. The form shows the trust policy with the
+ARN the role will have (it does not need to exist in AWS yet) and click
+**Validate**. The form shows the trust policy with the
 principal and your External ID filled in; copy it into the role. On a
 self-hosted install the principal is the `NUDGEBEE_INSTANCE_ROLE` value from the
 Helm values.

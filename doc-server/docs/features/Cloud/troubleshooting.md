@@ -71,7 +71,7 @@ flowchart TD
   aws sts assume-role \
     --role-arn "arn:aws:iam::<TARGET_ACCOUNT_ID>:role/NudgeBeeCrossAccountRole" \
     --role-session-name "NudgeBeeTestSession" \
-    --external-id "<YOUR_ORGANIZATION_ID>" \
+    --external-id "<YOUR_ORGANIZATION_ID_OR_EXTERNAL_ID>" \
     --query 'AssumedRoleUser.Arn' --output text
   ```
 
