@@ -38,6 +38,7 @@ NudgeBee reads telemetry from the platforms below. Connect any combination — f
 | Dynatrace | Metrics, logs, traces | [Dynatrace](./dynatrace.md) |
 | SolarWinds Observability | Metrics, logs | [SolarWinds](./solarwinds.md) |
 | ScienceLogic SL1 | Metrics | [ScienceLogic SL1](./sciencelogic.md) |
+| Site24x7 | Metrics, logs | [Site24x7](./site24x7.md) |
 | Azure Application Insights | Traces | [Azure App Insights](./azure_app_insights.md) |
 | Loggly | Logs | [Loggly](./loggly.md) |
 | Observe | Logs | [Observe](./observe.md) |
