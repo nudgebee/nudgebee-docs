@@ -11,7 +11,7 @@ The UI's install commands download from `registry.nudgebee.com` (installer, imag
 
 ## Prerequisites
 
-- Network access to your NudgeBee Relay Server on port 443 (the relay URL is provided in the NudgeBee UI when you create a Proxy Agent account)
+- Network access to your NudgeBee Relay Server on port 443 (the relay URL is provided in the NudgeBee UI when you create a Proxy Agent account). See [Network Requirements](./network-requirements.md) for the full egress allowlist, proxy settings and pre-install checks
 - Network access from the agent to each datasource you want to monitor
 - Access key and secret from the NudgeBee UI (Admin → Integrations → Servers → Proxy Agent)
 

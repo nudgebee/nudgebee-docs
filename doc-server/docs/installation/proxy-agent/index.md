@@ -107,7 +107,8 @@ Most types above are **dual-mode**: NudgeBee can reach them either through the i
 ## Next Steps
 
 1. [**Quick Start**](./quick-start.md) — Connect your first database in 5 minutes
-2. [Installation](./installation.md) — All deployment options (Linux, Windows, Docker, Helm)
-3. [Configuration Reference](./configuration.md) — Full YAML config reference
-4. [Credential Sources](./credential-sources.md) — Local, Cloud Push, AWS SM, GCP SM, Azure KV
-5. [Troubleshooting](./troubleshooting.md) — Common issues and fixes
+2. [Network Requirements](./network-requirements.md) — How connectivity works, egress allowlist, proxies and pre-install checks
+3. [Installation](./installation.md) — All deployment options (Linux, Windows, Docker, Helm)
+4. [Configuration Reference](./configuration.md) — Full YAML config reference
+5. [Credential Sources](./credential-sources.md) — Local, Cloud Push, AWS SM, GCP SM, Azure KV
+6. [Troubleshooting](./troubleshooting.md) — Common issues and fixes
