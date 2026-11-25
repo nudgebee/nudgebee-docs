@@ -71,7 +71,7 @@ Place Forager where it can reach every datasource you want to connect, such as a
 - **Allow WebSocket upgrades.** Some proxies and next-generation firewalls block the WebSocket `Upgrade` on port 443. This is the most common reason an agent stays "Not Connected".
 - **Idle timeout above 60 seconds.** Forager pings every 30 seconds. A device that drops idle connections faster causes reconnect loops.
 - **TLS inspection.** If a proxy re-signs TLS, add its CA certificate to the Forager host's OS trust store (or the container image), or exempt the relay hostname from inspection.
-- **Corporate HTTP proxy.** Forager honours `HTTPS_PROXY`, `HTTP_PROXY` and `NO_PROXY` for its relay connection. List your internal ranges and hostnames in `NO_PROXY` so datasource traffic goes direct.
+- **Corporate HTTP proxy.** Forager honors `HTTPS_PROXY`, `HTTP_PROXY` and `NO_PROXY` for its relay connection. List your internal ranges and hostnames in `NO_PROXY` so datasource traffic goes direct.
 
 Setting the proxy variables:
 
