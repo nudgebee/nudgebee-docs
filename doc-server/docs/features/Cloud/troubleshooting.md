@@ -64,14 +64,14 @@ flowchart TD
 ### AWS: `sts:AssumeRole` Failed
 * **Symptom**: Account status shows `Disconnected` with message `The role cannot be assumed or does not exist`.
 * **Root Causes**:
-  1. **External ID Mismatch**: If an `ExternalId` condition was specified during onboarding, it must match the account's registered secret in NudgeBee.
+  1. **External ID Mismatch**: The trust policy's `sts:ExternalId` condition must match your NudgeBee organization's ID (shown in **Add AWS Account** under the Role ARN field), or, for an account connected with an External ID of your own choosing, that ID.
   2. **Trust Policy Condition**: The IAM Role's trust policy restricts access to an outdated NudgeBee backend ARN.
 * **Verification Command** (run using the same caller identity as the collector; an unrelated administrator identity does not test the collector's trust relationship):
   ```bash
   aws sts assume-role \
     --role-arn "arn:aws:iam::<TARGET_ACCOUNT_ID>:role/NudgeBeeCrossAccountRole" \
     --role-session-name "NudgeBeeTestSession" \
-    --external-id "<CONFIGURED_EXTERNAL_ID>" \
+    --external-id "<YOUR_ORGANIZATION_ID>" \
     --query 'AssumedRoleUser.Arn' --output text
   ```
 

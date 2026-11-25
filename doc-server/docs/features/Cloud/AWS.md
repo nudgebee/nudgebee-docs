@@ -101,8 +101,11 @@ on the CUR bucket if you want cost data.
 
 1. Enter a **Display Name** and choose an **Access Mode**. If the role is restricted to specific regions, also enter them in **AWS Regions**; otherwise leave that field blank.
 2. Paste the **IAM Role ARN** (e.g. `arn:aws:iam::123456789012:role/NudgebeeRole`).
-3. Optionally provide an **External ID** — required only if the role's trust policy specifies one.
-4. Click **Validate** — NudgeBee probes STS, Cost & Usage Report discovery, and CUR S3 access upfront — then click **Connect**.
+3. Click **Validate** — NudgeBee probes STS, Cost & Usage Report discovery, and CUR S3 access upfront — then click **Connect**.
+
+The role's trust policy must require your organization's ID as the External ID
+(see [Step 1 — Trust policy](#step-1--trust-policy)). The form shows that ID
+under the Role ARN field, and **Validate** shows the full trust policy to use.
 
 Only the STS check has to pass. If no usable CUR is found, the checks show a
 warning and **Connect** stays enabled: the account is created without cost data,
@@ -153,12 +156,16 @@ EventBridge event pipeline is not part of a manual role; add it with
 
 ### Step 1 — Trust policy
 
-NudgeBee assumes your role from its own IAM principal. To find that principal's
-ARN, open **Add AWS Account**, stay on the **CloudFormation** tab and click
-**Connect via AWS Console**: the Quick create page lists it as the
-`NudgebeeIamRole` parameter. Copy the value and close the tab without creating
-the stack. On a self-hosted install it is the `NUDGEBEE_INSTANCE_ROLE` value from
-the Helm values.
+NudgeBee assumes your role from its own IAM principal, and every NudgeBee
+organization shares that principal. The `sts:ExternalId` condition is what ties
+the role to your organization: NudgeBee sends your organization's ID as the
+External ID, so no other organization can use the role.
+
+To get both values, open **Add AWS Account**, choose **IAM Role ARN**, paste the
+role ARN and click **Validate**. The form shows the trust policy with the
+principal and your External ID filled in; copy it into the role. On a
+self-hosted install the principal is the `NUDGEBEE_INSTANCE_ROLE` value from the
+Helm values.
 
 ```json
 {
@@ -168,15 +175,15 @@ the Helm values.
       "Effect": "Allow",
       "Principal": { "AWS": "<NUDGEBEE_IAM_PRINCIPAL_ARN>" },
       "Action": "sts:AssumeRole",
-      "Condition": { "StringEquals": { "sts:ExternalId": "<YOUR_EXTERNAL_ID>" } }
+      "Condition": { "StringEquals": { "sts:ExternalId": "<YOUR_ORGANIZATION_ID>" } }
     }
   ]
 }
 ```
 
-The `Condition` block is optional. If you keep it, enter the same value in the
-**External ID** field when you connect the account — NudgeBee sends it on every
-`sts:AssumeRole` call, and a trust policy that requires it rejects calls without it.
+Keep the `Condition` block. A role whose trust policy does not require your
+organization's ID can be refused when you connect it. Accounts already connected
+with an External ID of your own choosing keep working.
 
 ### Step 2 — Permissions policy
 
