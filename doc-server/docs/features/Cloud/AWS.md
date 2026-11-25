@@ -181,9 +181,11 @@ Helm values.
 }
 ```
 
-Keep the `Condition` block. A role whose trust policy does not require your
-organization's ID can be refused when you connect it. Accounts already connected
-with an External ID of your own choosing keep working.
+Keep the `Condition` block, with your organization's ID as the value. A new
+role that requires an External ID of your own choosing cannot be connected,
+because any organization that learned that ID could connect the role too.
+Accounts already connected with an External ID of your own choosing keep
+working.
 
 ### Step 2 — Permissions policy
 
