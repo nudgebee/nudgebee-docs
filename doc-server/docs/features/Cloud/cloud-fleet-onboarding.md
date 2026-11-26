@@ -113,3 +113,4 @@ When onboarding a cloud fleet, data populates progressively across three phases 
 
 - **Resyncing an Account**: If an account reports stale data or was temporarily offline, open **Agent Health** for that cloud account and click **Sync Now**.
 - **Decommissioning an Account**: Remove or disable the account in NudgeBee when it should no longer be queried. Do not rely on cloud-provider deletion alone to change its NudgeBee status.
+- **Revoking Access from the Cloud Side**: Deleting NudgeBee's role or its trust policy in AWS, or deleting the client secret in Azure, stops NudgeBee from signing in again. Sessions NudgeBee already holds stay valid until they expire: up to about 15 minutes on AWS and up to about 90 minutes on Azure. To cut access sooner, use **Revoke active sessions** on the role in the AWS IAM console, or remove the service principal's role assignments on the Azure subscription (Azure can take a few minutes to apply that).
