@@ -105,12 +105,40 @@ Hosts that answer on the SSH port are listed as VMs, named by IP. Their packages
 
 ## The content pack
 
-Inventory commands come from a **content pack**, not from the agent itself, so adding OS support never needs an agent upgrade. The Linux inventory pack, `linux-inventory-v2.yaml`, ships as an asset of each [proxy agent release](https://github.com/nudgebee/forager/releases/latest); put it in `pack_dir`. A request from NudgeBee only selects a pack version — it can never carry pack contents. When `pack_public_key` is set, the agent verifies each pack's signature before running it; for signed packs, ask NudgeBee support for the pack and its public key. A per-VM **Scan** asks for pack **version 2** (`linux-inventory-v2.yaml`); daily and account scans use the highest version present. For example:
+Inventory commands come from a **content pack**, not from the agent itself, so adding OS support never needs an agent upgrade. The Linux inventory pack, `linux-inventory-v2.yaml`, ships as an asset of each [proxy agent release](https://github.com/nudgebee/forager/releases/latest); put it in `pack_dir`. A request from NudgeBee only selects a pack version — it can never carry pack contents. When `pack_public_key` is set, the agent verifies each pack's signature before running it; the released pack is unsigned, so to require signatures, [sign it yourself](#sign-the-content-pack). A per-VM **Scan** asks for pack **version 2** (`linux-inventory-v2.yaml`); daily and account scans use the highest version present. For example:
 
 ```bash
 kubectl create configmap forager-packs \
   --from-file=linux-inventory-v2.yaml=./linux-inventory-v2.yaml
 ```
+
+### Sign the content pack
+
+Signing is optional and recommended for production: the pack lists the commands the agent runs on your VMs, and with `pack_public_key` set the agent refuses a pack that was changed after you signed it. You create the key pair and keep the private key; the agent only needs the public key.
+
+Run these on a trusted machine, **not the agent host**, in a folder holding the pack and the proxy agent binary for that machine, both downloaded from a [release](https://github.com/nudgebee/forager/releases/latest). The commands below are for Linux on x86-64; for another platform, use its binary name. Read the pack before you sign it.
+
+```bash
+mv nudgebee-forager-linux-amd64 nudgebee-forager && chmod +x nudgebee-forager
+
+# 1. Create the key pair, once. The private key goes to pack.key,
+#    and the public key is printed on screen.
+(umask 077; ./nudgebee-forager pack keygen > pack.key)
+
+# 2. Sign the pack. This rewrites the file with its signature.
+PACK_KEY="$(cat pack.key)" ./nudgebee-forager pack sign linux-inventory-v2.yaml --key-env PACK_KEY
+
+# 3. Check the signature with the public key from step 1.
+./nudgebee-forager pack verify linux-inventory-v2.yaml --key <PUBLIC_KEY>
+```
+
+Then, for the agent:
+
+1. Put the signed `linux-inventory-v2.yaml` in `pack_dir`, readable by the agent's user. For Helm, create the ConfigMap above from the signed file.
+2. Set `discovery.pack_public_key` to the public key.
+3. Restart the agent.
+
+Every pack in `pack_dir` must be signed with that key. Sign a pack again whenever you change it or replace it with one from a newer release; any edit, even to a comment, invalidates the signature. Store `pack.key` somewhere safe, such as a secrets manager: anyone who has it can sign packs your agents will run. If you lose it, create a new pair, re-sign the packs and update `pack_public_key`.
 
 ## Host keys
 
